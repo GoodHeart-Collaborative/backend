@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta property="og:title" content="{{title}}">
+	<meta property="og:image" content="{{image}}">
+	<meta property="og:description" content="{{description}}">
+	<meta property="og:description" content="{{eventDate}}">
+	<meta property="og:url" content="{{url}}">
+	<title>{{title}}></title>
+</head>
+
+<body>
+	<script type="text/javascript">
+		function deepLink(options) {
+			// alert("deepLink()==========================>" + JSON.stringify(options));
+			var ua = window.navigator.userAgent;
+			// alert("ua==========================>" + ua);
+
+			// split the first :// from the url string
+			var split = options.url.split(/:\/\/(.+)/);
+			var scheme = split[0];
+			var path = split[1] || '';
+
+			var urls = {
+				deepLink: options.url,
+				iosLink: options.iosLink,
+				iosStoreLink: options.ios_store_link,
+				android_intent:
+					'intent://' +
+					path +
+					'#Intent;scheme=' +
+					scheme +
+					';package=' +
+					options.android_package_name +
+					';end;',
+				playStoreLink: "https://market.android.com/details?id=" + options.android_package_name,
+				fallback: options.fallback
+			};
+			// alert("urls==========================>" + JSON.stringify(urls));
+
+			var isMobile = {
+				android: function () {
+					return /android/i.test(ua);
+				},
+				ios: function () {
+					return /iPhone|iPad|iPod/i.test(ua);
+				}
+			};
+			// alert("isMobile==========================>" + JSON.stringify(isMobile));
+
+			// fallback to the application store on mobile devices
+			if (isMobile.ios() && urls.iosLink && urls.iosStoreLink) {
+				// alert("11111111111111111111111111111111111");
+				iosLaunch();
+			} else if (isMobile.android() && options.android_package_name) {
+				// alert("22222222222222222222222222222222222");
+				androidLaunch();
+			} else {
+				// alert("33333333333333333333333333333333333");
+				window.location = urls.fallback;
+			}
+
+			function launchWekitApproach(url, fallback) {
+				// alert("launchWekitApproach==========================>" + url + "=====>" + fallback);
+				window.location = url;
+				setTimeout(function () {
+					document.location = fallback;
+				}, 1000);
+			}
+
+			function launchIframeApproach(url, fallback) {
+				// alert("launchIframeApproach==========================>" + url + "=====>" + fallback);
+				var iframe = document.createElement('iframe');
+				iframe.style.border = 'none';
+				iframe.style.width = '1px';
+				iframe.style.height = '1px';
+				iframe.onload = function () {
+					document.location = url;
+				};
+				iframe.src = url;
+
+				window.onload = function () {
+					document.body.appendChild(iframe);
+					setTimeout(function () {
+						window.location = fallback;
+					}, 1000);
+				};
+			}
+
+			function iosLaunch() {
+				// alert("iosLaunch==============================>");
+				// chrome and safari on ios >= 9 don't allow the iframe approach
+				if (
+					ua.match(/CriOS/) ||
+					(ua.match(/Safari/)
+						// && ua.match(/Version\/(9|10|11)/)
+					)
+				) {
+					// alert("safari===========================>");
+					launchWekitApproach(urls.iosLink, urls.iosStoreLink || urls.fallback);
+				} else {
+					// alert("other===========================>");
+					launchIframeApproach(urls.iosLink, urls.iosStoreLink || urls.fallback);
+				}
+			}
+
+			function androidLaunch() {
+				// alert("androidLaunch==============================>");
+				if (ua.match(/Chrome/)) {
+					// alert("chrome===========================>");
+					document.location = urls.android_intent;
+				} else if (ua.match(/Firefox/)) {
+					// alert("firefox===========================>");
+					// launchWekitApproach(urls.deepLink, urls.playStoreLink || urls.fallback);
+					launchWekitApproach(urls.android_intent, urls.playStoreLink || urls.fallback);
+				} else {
+					// alert("other===========================>");
+					launchIframeApproach(urls.deepLink, urls.playStoreLink || urls.fallback);
+				}
+			}
+		}
+	</script>
+	<script type="text/javascript">
+		var options = {
+			fallback: '{{{fallback}}}',
+			url: '{{{url}}}',
+			iosLink: '{{{iosLink}}}',
+			ios_store_link: '{{{ios_store_link}}}',
+			android_package_name: '{{android_package_name}}'
+		}
+		deepLink(options);
+	</script>
+</body>
+
+</html>

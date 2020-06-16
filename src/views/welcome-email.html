@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sylyfe Emailer</title>
+    <style>
+        body {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        @media only screen and (max-width: 680px) {
+
+            body,
+            table,
+            td,
+            p,
+            a {
+                -webkit-text-size-adjust: none !important;
+            }
+
+            img {
+                height: auto !important;
+                max-width: 100% !important;
+            }
+
+            table {
+                width: 100% !important;
+            }
+
+            td {
+                font-size: 13px !important;
+            }
+
+            td.header {
+                width: auto !important;
+            }
+
+            td.header-heading {
+                padding: 49px 0 0 0 !important;
+                font-size: 16px !important;
+            }
+
+            table.invoice-detail {
+                padding: 0 0 !important;
+            }
+
+            td.user {
+                font-size: 16px !important;
+                font-weight: 600 !important;
+            }
+
+            td.detail45 {
+                width: 30% !important;
+            }
+
+            td.detail18 {
+                width: 23.33% !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table border="0" align="center" cellpadding="0" cellspacing="0"
+        style="width: 600px; max-width: 640px; min-width: 320px; -webkit-text-size-adjust: 100%; background: #fff; color: #ffffff; margin: 35px auto 0; border: 1px solid #e6e6e6">
+        <tr>
+            <td>
+                <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff"
+                    style="background-color:#ffffff;padding:0px 0px 30px 0px;">
+                    <tr>
+                        <td valign="top">
+                            <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td colspan="2" style="color:#282939;font-size:20px;font-weight:600;">
+                                        <a href="www.groupsetgo.com">
+                                            <img src="http://design.applaurels.com/groupSetGo/emailer_bg.jpg" alt=" " />
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"
+                                        style="color:#282939;font-size:20px;font-weight:600;padding:30px 30px 30px 30px;">
+                                        Welcome to <span style="color:#7d2360;">RCC.</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"
+                                        style="color:#282939;font-size:14px;line-height:1.4;padding:0 30px 20px 30px;">
+                                        Thank you for signing up with RCC. In order to get started, we need to verify
+                                        that this is your email address. Please
+                                        click the link below to confirm.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding:0 0 30px 30px;text-align:left;" align="left">
+                                        <a href="{{url}}"
+                                            style="display:inline-block;background-color:#aa3560;font-size:16px;color:#ffffff;text-decoration:none;text-transform:uppercase;padding:12px 20px 12px 20px;"
+                                            bgcolor="#ff0d76">Confirm Email Address</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"
+                                        style="color:#282939;font-size:14px;line-height:1.4;padding:0 30px 5px 30px;">
+                                        With Love,
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"
+                                        style="color:#282939;font-size:14px;line-height:1.4; padding:0 30px 0px 30px;">
+                                        RCC Team
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="middle" width="100%" align="right"
+                                        style="text-align:left; padding: 15px 0 0 24px">
+                                        <a href="{{fbLink}}" style="margin-right:10px;display:inline-block;"><img
+                                                style="width:32px"
+                                                src="http://s3.amazonaws.com/appinventiv-development/catholic/1537365958652wO2Gp.png"
+                                                alt="Facebook Logo" /></a>
+                                        <a href="{{twitterLink}}" style="margin-right:10px;display:inline-block;"><img
+                                                style="width:32px"
+                                                src="http://s3.amazonaws.com/appinventiv-development/catholic/1537365934270TeQFe.png"
+                                                alt="Twitter Logo" /></a>
+                                        <a href="{{instalLink}}" style="margin-right:10px;display:inline-block;"><img
+                                                style="width:32px"
+                                                src="http://s3.amazonaws.com/appinventiv-development/catholic/1537366065016nq71x.png"
+                                                alt="Instagram Logo" /></a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>
+                <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" bgcolor="#fff"
+                    style="padding:0px 20px 0px 20px;">
+                    <tr>
+                        <td valign="middle" width="100%"
+                            style="font-size:14px;line-height:1.4;color:#000;text-align:left;padding:24px 8px; border-top: 1px solid #ccc">
+                            {{gsgAddress}}
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+{
+	"video": [
+		{"type": "Flash", "extension": ".flv", "mimetype": "video/x-flv"},
+		{"type": "MPEG-4", "extension": ".mp4", "mimetype": "video/mp4"},
+		{"type": "iPhone Index", "extension": ".m3u8", "mimetype": "application/x-mpegURL"},
+		{"type": "iPhone Segment", "extension": ".ts", "mimetype": "video/MP2T"},
+		{"type": "3GP Mobile", "extension": ".3gp", "mimetype": "video/3gpp"},
+		{"type": "QuickTime", "extension": ".mov", "mimetype": "video/quicktime"},
+		{"type": "A/V Interleave", "extension": ".avi", "mimetype": "video/x-msvideo"},
+		{"type": "Windows Media", "extension": ".wmv", "mimetype": "video/x-ms-wmv"}
+	],
+	"image": [
+		{"type": "JPEG image", "extension": ".jpeg", "mimetype": "image/jpeg"},
+		{"type": "JPEG image", "extension": ".jpe", "mimetype": "image/jpeg"},
+		{"type": "JPEG file interchange format", "extension": ".jpe", "mimetype": "image/pipeg"},
+		{"type": "JPG image", "extension": ".jpg", "mimetype": "image/jpeg"},
+		{"type": "PNG image", "extension": ".png", "mimetype": "image/png"},
+		{"type": "Bitmap", "extension": ".bmp", "mimetype": "image/bmp"},
+		{"type": "Bitmap", "extension": ".bmp", "mimetype": "image/x-windows-bmp"}
+	],
+	"excel": [
+		{"type": "XlSX File", "extension": ".xlsx", "mimetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+		{"type": "XlS File", "extension": ".xls", "mimetype": "application/vnd.ms-excel"},
+		{"type": "CSV File", "extension": ".csv", "mimetype": "application/vnd.ms-excel"},
+		{"type": "CSV File", "extension": ".csv", "mimetype": "text/csv"}
+	]
+}

@@ -1,0 +1,16 @@
+/node_modules
+/idea
+/idea/*
+/build
+/build/*
+/dist/*
+/logs
+/logs/*
+/node_modules/*
+yarn.lock
+yarn-error.log
+package-lock.json
+/app.log
+.env.local
+.env.development
+/.vscode
