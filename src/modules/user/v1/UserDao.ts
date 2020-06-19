@@ -303,18 +303,17 @@ export class UserDao extends BaseDao {
 	// 	return await this.findOneAndUpdate("users", query, update, options);
 	// }
 
-	async checkOTP(params: UserRequest.verifyOTP) {
+	async checkOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {
-			// const mobleCriteria;
 			if (params.mobileNo) {
 				const mobleCriteria = {
+					_id: userData.userId,
 					countryCode: params.countryCode,
 					mobileNo: params.mobileNo,
 				};
 				const options = { lean: true };
-				const projection = { mobileOTP: 1 }
+				const projection = { mobileOtp: 1 }
 				return await this.findOne('users', mobleCriteria, projection, options, {});
-
 			}
 			return;
 		} catch (error) {

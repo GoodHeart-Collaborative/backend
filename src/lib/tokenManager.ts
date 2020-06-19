@@ -65,7 +65,10 @@ export const verifyToken = async function (params, accountLevel, auth) {
 
 export const decodeToken = async function (params) {
 	try {
+		console.log('accessTokenaccessTokenaccessToken', params);
+
 		const jwtPayload = await Jwt.decode(params.accessToken, { complete: true });
+		console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
 		if (!jwtPayload) {
 			return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));
 		} else {

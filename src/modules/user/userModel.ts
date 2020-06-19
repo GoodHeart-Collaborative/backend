@@ -56,6 +56,7 @@ const userSchema = new Schema({
 	// sno: { type: String, required: true },
 	// _id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
 	mobileOtp: { type: Number },
+
 	// social data
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },

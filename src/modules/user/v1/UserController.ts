@@ -139,11 +139,11 @@ export class UserController {
 					if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 					}
-					if (params.email && !params.isEmailVerified) {
+					if (params.email && !step1.isEmailVerified) {
 						console.log('44444444444444444444444444');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
 					}
-					if (params.mobileNo && !params.isMobileVerified) {
+					if (params.mobileNo && !step1.isMobileVerified) {
 						console.log('55555555555555555555555555555555555555555');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED)
 					}
@@ -551,18 +551,65 @@ export class UserController {
 	}
 
 
-	async verifyOTP(params: UserRequest.verifyOTP) {
+	async verifyOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {
+			// if (config.SERVER.ENVIRONMENT === 'development') {
+			// 	console.log('111111111');
+			// 	if (params.otp === config.CONSTANT.BYPASS_OTP) {
+			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
+			// 	}
+			// }
+			const data = await userDao.checkOTP(params, userData);
+
+
 			if (config.SERVER.ENVIRONMENT !== "production") {
-				const data = await userDao.checkOTP(params);
-				if (data.mobileOtp === params.otp) {
-					return userConstant.MESSAGES.SUCCESS.DEFAULT
-				}
-				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
-			} else {
+				console.log('111111111');
 				if (params.otp === config.CONSTANT.BYPASS_OTP) {
+					if (params.type === 'mobile') {
+						const dataToUpdate = {
+							isMobileVerified: true,
+						}
+						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+					}
+					else if (params.type === 'email') {
+						const dataToUpdate = {
+							isEmailVerified: true,
+						}
+						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+					}
 					return userConstant.MESSAGES.SUCCESS.DEFAULT;
 				}
+			} else {
+				// const data = await userDao.checkOTP(params);
+				// console.log('data', data);
+				if (params.type === 'mobile') {
+					if (data.mobileOtp === params.otp) {
+						const dataToUpdate = {
+							isMobileVerified: true,
+							mobileOtp: 0
+						}
+						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+					};
+				}
+				else if (params.type === 'email') {
+					if (data.emailOtp === params.otp) {
+						const dataToUpdate = {
+							isEmailVerified: true,
+						}
+						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+					};
+				}
+				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
+
+
+				// if (data.mobileOtp === params.otp) {
+				// 	return userConstant.MESSAGES.SUCCESS.DEFAULT
+				// }
+
 			}
 
 		} catch (error) {

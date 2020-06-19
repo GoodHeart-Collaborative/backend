@@ -70,6 +70,7 @@ export const
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 							.default(config.CONSTANT.DEFAULT_PASSWORD)
 							.required(),
+						type: Joi.string().allow('mobile', 'email').default('mobile'),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required()
 					},
@@ -181,11 +182,12 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/verify-otp`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const headers: Device = request.headers;
-				console.log('headersheadersheadersheadersheadersheadersheaders', headers);
+				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				console.log('userDatauserDatauserDatauserDatauserData', userData);
 
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {
-					const result = await userController.verifyOTP({ ...headers, ...payload });
+					const result = await userController.verifyOTP({ ...headers, ...payload }, userData);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
@@ -206,9 +208,10 @@ export const
 							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
 							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
 							.optional(),
-						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
-						otp: Joi.number().min(1000).max(9999).required()
+						// mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
+						otp: Joi.number().min(1000).max(9999).required(),
 						// email: Joi.string().lowercase().trim().optional(),
+						type: Joi.string().valid('email', 'mobile').default('mobile')
 					},
 					failAction: appUtils.failActionFunction
 				},

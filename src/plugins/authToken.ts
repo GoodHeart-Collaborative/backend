@@ -70,11 +70,14 @@ export const plugin = {
 					console.log('UserAuthUserAuthUserAuthUserAuthUserAuthUserAuth', accessToken);
 
 					const isValid = await apiKeyFunction(request.headers.api_key);
+					console.log('isValidisValidisValid', isValid);
 					if (!isValid) {
+
 						return ({ isValid: false, credentials: { accessToken: accessToken, tokenData: {} } });
 					} else {
 						// const jwtPayload = JSON.parse(appUtils.decodeBase64(accessToken.split('.')[1]));
 						const jwtPayload = await tokenManager.decodeToken({ accessToken });
+						console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
 						const tokenData = await tokenManager.verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, true);
 						if (config.SERVER.IS_REDIS_ENABLE) {
 							const step1 = await redisClient.getValue(accessToken);

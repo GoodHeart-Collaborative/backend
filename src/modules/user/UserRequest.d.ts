@@ -9,6 +9,7 @@ declare namespace UserRequest {
 		firstName: string;
 		lastName: string;
 		createdAt?: number;
+		type: string;
 	}
 
 	export interface Login extends Device {
@@ -65,5 +66,6 @@ declare namespace UserRequest {
 		countryCode: string;
 		mobileNo: string;
 		otp: number;
+		type: string;
 	}
 }
