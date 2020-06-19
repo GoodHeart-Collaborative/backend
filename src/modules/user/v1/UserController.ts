@@ -39,8 +39,12 @@ export class UserController {
 					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified)
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 				} else {
-					const generateOtp = appUtils.generateOtp();
+					const generateOtp = await appUtils.generateOtp();
+					console.log('generateOtpgenerateOtp', generateOtp, typeof generateOtp);
+
 					params['mobileOtp'] = generateOtp;
+					console.log('paramsparamsparamsparamsparamsparams>>>>>>>>>>>>', params);
+
 					const step2 = await userDao.signup(params);
 					console.log('step2step2step2step2step2', step2);
 
@@ -121,20 +125,26 @@ export class UserController {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				console.log('step1step1step1step1step1', step1);
+
 				if (!step1) {
 					if (params.email) {
+						console.log('1111111111111111111111111');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
 					}
-					if (params.mobileNo && !params.isMobileVerified)
-						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
+					if (params.mobileNo)
+						console.log('222222222222222')
+					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
 					if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 					}
 					if (params.email && !params.isEmailVerified) {
+						console.log('44444444444444444444444444');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
 					}
-					if (params.email && !params.isMobileVerified) {
+					if (params.mobileNo && !params.isMobileVerified) {
+						console.log('55555555555555555555555555555555555555555');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED)
 					}
 					else {

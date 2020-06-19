@@ -96,7 +96,7 @@ export const SERVER = Object.freeze({
 		}
 	},
 	ADMIN_CREDENTIALS: {
-		EMAIL: "admin@rcc.com",
+		EMAIL: "adminwc@yopmail.com",
 		PASSWORD: "Admin@123",
 		NAME: "Rcc Admin"
 	},

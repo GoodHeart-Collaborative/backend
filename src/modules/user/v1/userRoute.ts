@@ -196,10 +196,10 @@ export const
 				description: "User signup via (email | mobile) and password",
 				// notes: "",
 				auth: {
-					strategies: ["BasicAuth"]
+					strategies: ["UserAuth"]
 				},
 				validate: {
-					headers: validator.headerObject["required"],
+					headers: validator.userAuthorizationHeaderObj,
 					payload: {
 						countryCode: Joi.string().trim()
 							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
@@ -207,7 +207,7 @@ export const
 							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
 							.optional(),
 						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
-						otp: Joi.number().min(1000).max(9999)
+						otp: Joi.number().min(1000).max(9999).required()
 						// email: Joi.string().lowercase().trim().optional(),
 					},
 					failAction: appUtils.failActionFunction

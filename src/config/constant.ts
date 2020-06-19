@@ -142,8 +142,8 @@ const MESSAGES = {
 		},
 		MOBILE_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please register your email address.",
-			"type": "EMAIL_NOT_REGISTERED"
+			"message": "Please verify youe mobile number",
+			"type": "MOBILE_NO_NOT_VERIFY"
 		},
 		BLOCKED: {
 			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,

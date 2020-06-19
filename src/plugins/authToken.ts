@@ -67,6 +67,8 @@ export const plugin = {
 			allowChaining: false,
 			validate: async (request: Request, accessToken: string, h: ResponseToolkit) => {
 				try {
+					console.log('UserAuthUserAuthUserAuthUserAuthUserAuthUserAuth', accessToken);
+
 					const isValid = await apiKeyFunction(request.headers.api_key);
 					if (!isValid) {
 						return ({ isValid: false, credentials: { accessToken: accessToken, tokenData: {} } });

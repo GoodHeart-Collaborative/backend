@@ -11,7 +11,7 @@ export const plugin = {
 	register: async function (server) {
 		const swaggerOptions = {
 			info: {
-				title: "RCC API Documentation",
+				title: "WOMEN COMMUNITY API Documentation",
 				description: "RCC",
 				contact: {
 					name: "Rajat Maheshwari",

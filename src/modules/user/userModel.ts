@@ -36,7 +36,7 @@ export interface IUser extends Document {
 	profilePicUrl: string;
 	address: Address;
 	status: string;
-	otp: number;
+	mobileOtp: number;
 	preference: string;
 	industryType: string;
 	experience: number;
@@ -55,7 +55,7 @@ const geoSchema = new Schema({
 const userSchema = new Schema({
 	// sno: { type: String, required: true },
 	// _id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
-
+	mobileOtp: { type: Number },
 	// social data
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },
@@ -90,7 +90,6 @@ const userSchema = new Schema({
 		],
 		default: config.CONSTANT.STATUS.ACTIVE
 	},
-	phoneOtp: { type: Number },
 	emailOtp: { type: Number },
 	preference: { type: String },
 	industryType: { type: String },
