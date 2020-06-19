@@ -17,38 +17,38 @@ class ContactController {
 			params.addContact = _.sortBy(params.addContact, "sno");
 			params.addContact = params.addContact.filter((contact) => contact.mobileNo !== tokenData.countryCode + tokenData.mobileNo && contact.mobileNo !== tokenData.mobileNo); // filter our own number0
 			const promiseResult = [];
-			const step1 = await new Promise(async function (resolve, reject) {
-				for (let i = 0; i < params.addContact.length; i++) {
-					const reqParams = {
-						"userId": tokenData.userId,
-						"mobileNo": params.addContact[i].mobileNo
-					};
-					const step2 = await userDao.contactSyncing(reqParams); // to check is app user
-					let contact: any = {};
-					contact = params.addContact[i];
-					if (step2) {
-						contact.appUserId = step2._id.toString();
-						contact.contactName = step2.fullName ? step2.fullName : contact.contactName;
-						contact.userId = tokenData.userId;
-						contact.deviceId = tokenData.deviceId;
-						contact.profilePicture = step2.profilePicture ? step2.profilePicture : "";
-						contact.isAppUser = true;
-						const step3 = await contactDao.addContact(contact);
-					} else {
-						contact = params.addContact[i];
-						contact.isAppUser = false;
-					}
-					delete contact.deviceId;
-					promiseResult.push(contact);
-				}
-				resolve(Promise.all(promiseResult));
-			});
-			const appContacts = promiseResult.filter(contact => contact.isAppUser === true);
-			if (promiseResult.length) {
-				return { "contacts": appContacts, "lastSno": promiseResult.length ? promiseResult[promiseResult.length - 1].sno : 0 };
-			} else {
-				return { "contacts": [], "lastSno": promiseResult ? promiseResult[promiseResult.length - 1].sno : 0 };
-			}
+			// const step1 = await new Promise(async function (resolve, reject) {
+			// 	for (let i = 0; i < params.addContact.length; i++) {
+			// 		const reqParams = {
+			// 			"userId": tokenData.userId,
+			// 			"mobileNo": params.addContact[i].mobileNo
+			// 		};
+			// 	const step2 = await userDao.contactSyncing(reqParams); // to check is app user
+			// 	let contact: any = {};
+			// 	contact = params.addContact[i];
+			// 	if (step2) {
+			// 		contact.appUserId = step2._id.toString();
+			// 		contact.contactName = step2.fullName ? step2.fullName : contact.contactName;
+			// 		contact.userId = tokenData.userId;
+			// 		contact.deviceId = tokenData.deviceId;
+			// 		contact.profilePicture = step2.profilePicture ? step2.profilePicture : "";
+			// 		contact.isAppUser = true;
+			// 		const step3 = await contactDao.addContact(contact);
+			// 	} else {
+			// 		contact = params.addContact[i];
+			// 		contact.isAppUser = false;
+			// 	}
+			// 	delete contact.deviceId;
+			// 	promiseResult.push(contact);
+			// }
+			// 	resolve(Promise.all(promiseResult));
+			// });
+			// const appContacts = promiseResult.filter(contact => contact.isAppUser === true);
+			// if (promiseResult.length) {
+			// 	return { "contacts": appContacts, "lastSno": promiseResult.length ? promiseResult[promiseResult.length - 1].sno : 0 };
+			// } else {
+			// 	return { "contacts": [], "lastSno": promiseResult ? promiseResult[promiseResult.length - 1].sno : 0 };
+			// }
 		} catch (error) {
 			throw error;
 		}
@@ -68,24 +68,24 @@ class ContactController {
 						"userId": tokenData.userId,
 						"mobileNo": params.updateContact[i].mobileNo
 					};
-					const step2 = await userDao.contactSyncing(reqParams); // to check is app user
-					let contact: any = {};
-					contact = params.updateContact[i];
-					contact.userId = tokenData.userId;
-					contact.deviceId = tokenData.deviceId;
-					if (step2) {
-						contact.appUserId = step2._id.toString();
-						contact.contactName = step2.fullName ? step2.fullName : contact.contactName;
-						contact.profilePicture = step2.profilePicture ? step2.profilePicture : "";
-						contact.isAppUser = true;
-						const step3 = await contactDao.updateContact(contact);
-					} else {
-						contact.isAppUser = false;
-						const step3 = await contactDao.removeContact(contact);
-						delete contact.contactId;
-					}
-					delete contact.deviceId;
-					promiseResult.push(contact);
+					// const step2 = await userDao.contactSyncing(reqParams); // to check is app user
+					// let contact: any = {};
+					// contact = params.updateContact[i];
+					// contact.userId = tokenData.userId;
+					// contact.deviceId = tokenData.deviceId;
+					// if (step2) {
+					// 	contact.appUserId = step2._id.toString();
+					// 	contact.contactName = step2.fullName ? step2.fullName : contact.contactName;
+					// 	contact.profilePicture = step2.profilePicture ? step2.profilePicture : "";
+					// 	contact.isAppUser = true;
+					// 	const step3 = await contactDao.updateContact(contact);
+					// } else {
+					// 	contact.isAppUser = false;
+					// 	const step3 = await contactDao.removeContact(contact);
+					// 	delete contact.contactId;
+					// }
+					// delete contact.deviceId;
+					// promiseResult.push(contact);
 				}
 				resolve(Promise.all(promiseResult));
 			});

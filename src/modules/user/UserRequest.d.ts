@@ -7,9 +7,8 @@ declare namespace UserRequest {
 		mobileNo?: string;
 		fullMobileNo: string;
 		firstName: string;
-		middleName: string;
 		lastName: string;
-		created?: number;
+		createdAt?: number;
 	}
 
 	export interface Login extends Device {
@@ -18,6 +17,9 @@ declare namespace UserRequest {
 		countryCode?: string;
 		mobileNo?: string;
 		hash?: string;
+		isEmailVerified?: boolean;
+		isMobileVerified?: boolean;
+
 	}
 
 	export interface SocialLogin extends Device {
@@ -51,5 +53,17 @@ declare namespace UserRequest {
 
 	export interface ImportUsers {
 		file: any;
+	}
+
+	export interface SendOtp {
+		countryCode: string;
+		mobileNo: string;
+	}
+
+
+	export interface verifyOTP {
+		countryCode: string;
+		mobileNo: string;
+		otp: number;
 	}
 }

@@ -44,7 +44,7 @@ export class BaseDao {
 		}
 	}
 
-	async findOne(model: ModelNames, query: any, projection: any, options: any, populateQuery: any) {
+	async findOne(model: ModelNames, query: any, projection: any, options: any, populateQuery?: any) {
 		try {
 			const ModelName: any = models[model];
 			if (!_.isEmpty(populateQuery)) { // populate

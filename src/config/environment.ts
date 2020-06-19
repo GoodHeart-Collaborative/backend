@@ -133,8 +133,8 @@ export const SERVER = Object.freeze({
 		TWILIO_NUMBER: process.env["TWILIO_NUMBER"]
 	},
 	BASIC_AUTH: {
-		NAME: "rcc",
-		PASS: "rcc@123"
+		NAME: "wc",
+		PASS: "wc@123"
 	},
 	API_KEY: "1234",
 	AWS_IAM_USER: {

@@ -51,35 +51,35 @@ const adminSchema = new Schema({
 		type: String,
 		enum: [
 			config.CONSTANT.STATUS.BLOCKED,
-			config.CONSTANT.STATUS.UN_BLOCKED,
+			config.CONSTANT.STATUS.ACTIVE,
 			config.CONSTANT.STATUS.DELETED
 		],
-		default: config.CONSTANT.STATUS.UN_BLOCKED
+		default: config.CONSTANT.STATUS.ACTIVE
 	},
 	created: { type: Number }
 }, {
-	versionKey: false,
-	collection: config.CONSTANT.DB_MODEL_REF.ADMIN,
-	timestamps: true,
-	// toObject: {
-	// 	virtuals: true
-	// },
-	// toJSON: {
-	// 	virtuals: true
-	// },
-	// toObject: {
-	// 	transform: function(doc, ret){
-	// 		// delete ret._id;
-	// 		console.log(doc, ret, "toObject");
-	// 	}
-	// },
-	// toJSON: {
-	// 	transform: function(doc, ret){
-	// 		console.log(doc, ret, "toJSON");
-	// 		// delete ret._id;
-	// 	}
-	// }
-});
+		versionKey: false,
+		collection: config.CONSTANT.DB_MODEL_REF.ADMIN,
+		timestamps: true,
+		// toObject: {
+		// 	virtuals: true
+		// },
+		// toJSON: {
+		// 	virtuals: true
+		// },
+		// toObject: {
+		// 	transform: function(doc, ret){
+		// 		// delete ret._id;
+		// 		console.log(doc, ret, "toObject");
+		// 	}
+		// },
+		// toJSON: {
+		// 	transform: function(doc, ret){
+		// 		console.log(doc, ret, "toJSON");
+		// 		// delete ret._id;
+		// 	}
+		// }
+	});
 
 // Ensure virtual fields are serialised.
 // adminSchema.set('toJSON', {

@@ -15,13 +15,14 @@ const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config
 autoIncrement.initialize(connection);
 
 export interface IUser extends Document {
-	sno: string;
+	// sno: string;
+	isMobileVerified: boolean;
+	isEmailVerified: boolean;
 	facebookId: string;
 	isFacebookLogin: boolean;
 	googleId: string;
 	isGoogleLogin: boolean;
 	firstName: string;
-	middleName: string;
 	lastName: string;
 	email: string;
 	countryCode: string;
@@ -31,12 +32,16 @@ export interface IUser extends Document {
 	hash: string;
 	forgotToken: string;
 	gender: string;
-	age: number;
 	dob: number;
-	profilePicture: string;
+	profilePicUrl: string;
 	address: Address;
 	status: string;
-	created: number;
+	otp: number;
+	preference: string;
+	industryType: string;
+	experience: number;
+	about: string;
+	createdAt: number;
 }
 
 const geoSchema = new Schema({
@@ -48,15 +53,17 @@ const geoSchema = new Schema({
 	});
 
 const userSchema = new Schema({
-	sno: { type: String, required: true },
-	_id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
+	// sno: { type: String, required: true },
+	// _id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
+
 	// social data
+	isMobileVerified: { type: Boolean, default: false },
+	isEmailVerified: { type: Boolean, default: false },
 	facebookId: { type: String, trim: true, index: true },
 	isFacebookLogin: { type: Boolean, default: false },
 	googleId: { type: String, trim: true, index: true },
 	isGoogleLogin: { type: Boolean, default: false },
 	firstName: { type: String, trim: true, index: true, required: true },
-	middleName: { type: String, trim: true, index: true },
 	lastName: { type: String, trim: true, index: true },
 	email: { type: String, trim: true, index: true, lowercase: true, default: "" },
 	countryCode: { type: String, trim: true, index: true, default: "" },
@@ -68,24 +75,29 @@ const userSchema = new Schema({
 	gender: {
 		type: String,
 		enum: [
-			config.CONSTANT.GENDER.MALE,
 			config.CONSTANT.GENDER.FEMALE
 		]
 	},
-	age: { type: Number },
 	dob: { type: Number },
-	profilePicture: { type: String },
+	profilePicUrl: { type: String },
 	address: geoSchema,
 	status: {
 		type: String,
 		enum: [
 			config.CONSTANT.STATUS.BLOCKED,
-			config.CONSTANT.STATUS.UN_BLOCKED,
+			config.CONSTANT.STATUS.ACTIVE,
 			config.CONSTANT.STATUS.DELETED
 		],
-		default: config.CONSTANT.STATUS.UN_BLOCKED
+		default: config.CONSTANT.STATUS.ACTIVE
 	},
-	created: { type: Number }
+	phoneOtp: { type: Number },
+	emailOtp: { type: Number },
+	preference: { type: String },
+	industryType: { type: String },
+	experience: { type: Number },
+	about: { type: String },
+	createdAt: { type: Number },
+	updatedAt: { type: Number }
 }, {
 		versionKey: false,
 		timestamps: true
@@ -107,39 +119,39 @@ userSchema.virtual("password")
 		this.hash = appUtils.encryptHashPassword(password, salt);
 	});
 
-userSchema.virtual("fullName")
-	.get(function () {
-		if (this.middleName) {
-			this.firstName = this.firstName + " " + this.middleName;
-		} if (this.lastName) {
-			this.firstName = this.firstName + " " + this.lastName;
-		}
-		return this.firstName;
-	});
+// userSchema.virtual("fullName")
+// 	.get(function () {
+// 		if (this.middleName) {
+// 			this.firstName = this.firstName + " " + this.middleName;
+// 		} if (this.lastName) {
+// 			this.firstName = this.firstName + " " + this.lastName;
+// 		}
+// 		return this.firstName;
+// 	});
 
 // If elastic search engine is enabled
-if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
-	// save user data in elastic search db
-	userSchema.post("save", function (doc) {
-		doc = doc.toJSON();
-		const id = doc["_id"];
-		if (doc["_id"]) delete doc["_id"];
-		if (doc["password"]) delete doc["password"];
-		elasticSearch.addDocument("admin_rcc", id, "users", doc);
-	});
+// if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
+// 	// save user data in elastic search db
+// 	userSchema.post("save", function (doc) {
+// 		doc = doc.toJSON();
+// 		const id = doc["_id"];
+// 		if (doc["_id"]) delete doc["_id"];
+// 		if (doc["password"]) delete doc["password"];
+// 		elasticSearch.addDocument("admin_rcc", id, "users", doc);
+// 	});
 
-	// update user data in elastic search db
-	userSchema.post("findOneAndUpdate", async function (doc) {
-		doc = doc.toJSON();
-		const id = doc["_id"];
-		return await elasticSearch.deleteDocument("admin_rcc", id, "users")
-			.then(async () => {
-				if (doc["_id"]) delete doc["_id"];
-				if (doc["password"]) delete doc["password"];
-				return await elasticSearch.addDocument("admin_rcc", id, "users", doc);
-			});
-	});
-}
+// 	// update user data in elastic search db
+// 	userSchema.post("findOneAndUpdate", async function (doc) {
+// 		doc = doc.toJSON();
+// 		const id = doc["_id"];
+// 		return await elasticSearch.deleteDocument("admin_rcc", id, "users")
+// 			.then(async () => {
+// 				if (doc["_id"]) delete doc["_id"];
+// 				if (doc["password"]) delete doc["password"];
+// 				return await elasticSearch.addDocument("admin_rcc", id, "users", doc);
+// 			});
+// 	});
+// }
 
 userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
@@ -150,7 +162,7 @@ userSchema.methods.toJSON = function () {
 mongoose.set("useFindAndModify", false);
 
 // mongoose autoincrement
-userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
+// userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
 
 // Export user
 export const users: Model<IUser> = mongoose.model<IUser>(config.CONSTANT.DB_MODEL_REF.USER, userSchema);

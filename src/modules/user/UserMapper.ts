@@ -46,7 +46,7 @@ export class UserMapper {
 					"Country Code": element.countryCode ? element.countryCode : "",
 					"Moblile Number": element.mobileNo ? element.mobileNo : "",
 					"Registration Date": appUtils.convertTimestampToUnixDate(element.created),
-					"Status": (element.status === config.CONSTANT.STATUS.BLOCKED) ? "Blocked" : (element.status === config.CONSTANT.STATUS.UN_BLOCKED) ? "Active" : ""
+					"Status": (element.status === config.CONSTANT.STATUS.BLOCKED) ? "Blocked" : (element.status === config.CONSTANT.STATUS.ACTIVE) ? "Active" : ""
 				};
 				exportedData.push(obj);
 			});

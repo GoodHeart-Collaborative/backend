@@ -19,6 +19,11 @@ export const MESSAGES = {
 			"message": "Please register your mobile number.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
+		OTP_NOT_MATCH: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "OTP not match",
+			"type": "Verify otp not match"
+		},
 		EMAIL_OR_PHONE_REQUIRED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Either email or phone number is required.",
@@ -46,6 +51,11 @@ export const MESSAGES = {
 		}
 	},
 	SUCCESS: {
+		DEFAULT: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "SUCCESS",
+			"type": "DEFAULT"
+		},
 		SIGNUP: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.CREATED,
@@ -144,5 +154,8 @@ export const MESSAGES = {
 			"message": "Users imported successfully.",
 			"type": "IMPORT_USER"
 		}
-	}
+	},
+	OTP_TEXT: (otp) => {
+		return `Your App code is " + ${otp} + ". " + "Welcome to the community!`
+	},
 };

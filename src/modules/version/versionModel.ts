@@ -39,11 +39,11 @@ const versionSchema = new Schema({
 	status: {
 		type: String,
 		enum: [
-			config.CONSTANT.STATUS.UN_BLOCKED,
+			config.CONSTANT.STATUS.ACTIVE,
 			config.CONSTANT.STATUS.BLOCKED,
 			config.CONSTANT.STATUS.DELETED
 		],
-		default: config.CONSTANT.STATUS.UN_BLOCKED
+		default: config.CONSTANT.STATUS.ACTIVE
 	},
 	created: { type: Number }
 }, {

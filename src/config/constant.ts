@@ -80,7 +80,7 @@ const SOCIAL_LOGIN_TYPE = {
 
 const STATUS = {
 	BLOCKED: "blocked",
-	UN_BLOCKED: "unblocked",
+	ACTIVE: "active",
 	DELETED: "deleted"
 };
 
@@ -94,9 +94,11 @@ const VALIDATION_CRITERIA = {
 	NAME_MIN_LENGTH: 3,
 	COUNTRY_CODE_MIN_LENGTH: 1,
 	COUNTRY_CODE_MAX_LENGTH: 4,
-	PASSWORD_MIN_LENGTH: 3,
+	PASSWORD_MIN_LENGTH: 6,
 	PASSWORD_MAX_LENGTH: 30
 };
+
+const BYPASS_OTP = 4242;
 
 const MESSAGES = {
 	ERROR: {
@@ -129,6 +131,16 @@ const MESSAGES = {
 			};
 		},
 		EMAIL_NOT_REGISTERED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Please register your email address.",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
+		EMAIL_NOT_VERIFIED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Please register your email address.",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
+		MOBILE_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Please register your email address.",
 			"type": "EMAIL_NOT_REGISTERED"
@@ -537,5 +549,6 @@ export const CONSTANT = Object.freeze({
 	MONTHS: MONTHS,
 	MONTH_NAME: MONTH_NAME,
 	JOB_SCHEDULER_TYPE: JOB_SCHEDULER_TYPE,
-	DEFAULT_PASSWORD: "String@123"
+	DEFAULT_PASSWORD: "String@123",
+	BYPASS_OTP,
 });

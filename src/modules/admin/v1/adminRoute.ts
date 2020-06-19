@@ -117,7 +117,7 @@ export const adminRoute: ServerRoute[] = [
 						.optional()
 						.valid([
 							config.CONSTANT.STATUS.BLOCKED,
-							config.CONSTANT.STATUS.UN_BLOCKED
+							config.CONSTANT.STATUS.ACTIVE
 						])
 						.description("Status => 'blocked', 'unblocked'")
 				},
@@ -251,7 +251,7 @@ export const adminRoute: ServerRoute[] = [
 						.required()
 						.valid([
 							config.CONSTANT.STATUS.BLOCKED,
-							config.CONSTANT.STATUS.UN_BLOCKED
+							config.CONSTANT.STATUS.ACTIVE
 						])
 						.description("Status => 'blocked', 'unblocked'")
 				},
@@ -506,7 +506,7 @@ export const adminRoute: ServerRoute[] = [
 						.optional()
 						.valid([
 							config.CONSTANT.STATUS.BLOCKED,
-							config.CONSTANT.STATUS.UN_BLOCKED
+							config.CONSTANT.STATUS.ACTIVE
 						])
 						.description("Status => 'blocked', 'unblocked'"),
 					fromDate: Joi.number().optional().description("in timestamp"),
@@ -616,7 +616,7 @@ export const adminRoute: ServerRoute[] = [
 						.optional()
 						.valid([
 							config.CONSTANT.STATUS.BLOCKED,
-							config.CONSTANT.STATUS.UN_BLOCKED
+							config.CONSTANT.STATUS.ACTIVE
 						])
 						.description("Status => 'blocked', 'unblocked'"),
 					fromDate: Joi.number().optional().description("in timestamp"),

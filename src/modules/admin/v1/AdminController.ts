@@ -152,7 +152,7 @@ class AdminController {
 				switch (params.status) {
 					case config.CONSTANT.STATUS.BLOCKED:
 						return this._blockSubAdmin(params);
-					case config.CONSTANT.STATUS.UN_BLOCKED:
+					case config.CONSTANT.STATUS.ACTIVE:
 						return this._unblockSubAdmin(params);
 				}
 			}

@@ -22,7 +22,7 @@ export class NotificationManager {
 		if (params.gender && params.gender !== config.CONSTANT.GENDER.ALL) {
 			query.gender = params.gender;
 		}
-		query.status = config.CONSTANT.STATUS.UN_BLOCKED;
+		query.status = config.CONSTANT.STATUS.ACTIVE;
 		const step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
 
 		await step1.forEach(async (data) => {
@@ -118,7 +118,7 @@ export class NotificationManager {
 
 	async sendOneToOneNotification(params, tokenData: TokenData) {
 		const populateQuery = [
-			{ path: "userId", model: config.CONSTANT.DB_MODEL_REF.USER, match: { status: config.CONSTANT.STATUS.UN_BLOCKED }, select: "_id" }
+			{ path: "userId", model: config.CONSTANT.DB_MODEL_REF.USER, match: { status: config.CONSTANT.STATUS.ACTIVE }, select: "_id" }
 		];
 		let step1 = await baseDao.find("login_histories", { "userId": { "$in": [params.userId] }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 		step1 = step1.filter((data) => data.userId !== null);

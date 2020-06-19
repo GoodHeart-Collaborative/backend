@@ -264,9 +264,14 @@ const tinyUrl = (url: string) => {
 	});
 };
 
-const getRandomOtp = function () {
-	return randomstring.generate({ charset: "numeric", length: 6 });
-};
+// const getRandomOtp = function () {
+// 	return randomstring.generate({ charset: "numeric", length: 6 });
+// };
+
+const generateOtp = async function () {
+	let otp = (Math.floor(1000 + Math.random() * 9000));
+	return otp
+}
 
 const isValidEmail = function (email: string) {
 	const pattern = config.CONSTANT.REGEX.EMAIL;
@@ -591,7 +596,7 @@ export {
 	encodeToBase64,
 	decodeBase64,
 	tinyUrl,
-	getRandomOtp,
+	// getRandomOtp,
 	isValidEmail,
 	stringToBoolean,
 	stringReplace,
@@ -617,5 +622,6 @@ export {
 	isTimeExpired,
 	generatePassword,
 	mailAttachments,
-	consolelog
+	consolelog,
+	generateOtp
 };
