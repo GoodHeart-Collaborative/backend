@@ -143,7 +143,7 @@ export class MailManager {
 				"name": params.name,
 				"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
 			});
-		// await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+		await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
 	}
 
 	async forgotPasswordEmailToUser(params) {
