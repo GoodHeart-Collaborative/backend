@@ -184,6 +184,7 @@ class AdminController {
 					const accessToken = await tokenManager.generateAdminToken({ "type": "FORGOT_PASSWORD", "object": adminObject });
 					const step2 = adminDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
 					const step3 = mailManager.forgotPasswordEmailToAdmin({ "email": params.email, "name": step1.name, "accessToken": accessToken });
+					console.log('step3step3step3step3step3step3', step3);
 					return adminConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD;
 				}
 			}

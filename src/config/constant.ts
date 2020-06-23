@@ -221,10 +221,10 @@ const EMAIL_TEMPLATE = {
 		FORGOT_PWD_EMAIL: "Reset Password Request",
 		RESET_PASSWORD: "Reset password link",
 		VERIFY_EMAIL: "Verify e-mail address",
-		WELCOME: "Welcome to RCC!",
+		WELCOME: "Welcome to Women community!",
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
-	BCC_MAIL: ["rajat.maheshwari@appinventiv.com"],
+	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
 	FROM_MAIL: "do-not-reply@mail.appinventive.com"
 };
 

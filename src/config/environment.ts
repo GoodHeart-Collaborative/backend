@@ -61,7 +61,7 @@ switch (ENVIRONMENT) {
 }
 
 export const SERVER = Object.freeze({
-	APP_NAME: "RCC",
+	APP_NAME: "WC",
 	// BASE_PATH: process.cwd(),
 	TEMPLATE_PATH: process.cwd() + "/src/views/",
 	UPLOAD_DIR: process.cwd() + "/src/uploads/",
@@ -121,10 +121,14 @@ export const SERVER = Object.freeze({
 			API_KEY: "Rajat@123"
 		},
 		SMTP: {
-			HOST: "mail.appinventive.com",
+			// HOST: "mail.appinventive.com",
+			// PORT: "587",
+			// USER: "do-not-reply@mail.appinventive.com",
+			// PASSWORD: "Appin123!@#"
+			HOST: "smtp.gmail.com",
 			PORT: "587",
-			USER: "do-not-reply@mail.appinventive.com",
-			PASSWORD: "Appin123!@#"
+			USER: "avtopiaaog@gmail.com",
+			PASSWORD: "Avtopia@1234"
 		}
 	},
 	TWILIO: {

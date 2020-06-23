@@ -289,9 +289,8 @@ export const adminRoute: ServerRoute[] = [
 				payload: {
 					email: Joi.string()
 						.trim()
-						.lowercase({ force: true })
-						.email({ minDomainAtoms: 2 })
-						.regex(config.CONSTANT.REGEX.EMAIL)
+						.lowercase()
+						.email()
 						.required()
 				},
 				failAction: appUtils.failActionFunction

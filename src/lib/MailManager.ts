@@ -69,6 +69,8 @@ export class MailManager {
 
 	async sendMailViaSmtp(params) {
 		try {
+			console.log('33444444444444444444444');
+
 			const mailOptions = {
 				from: `${config.SERVER.APP_NAME} <${this.fromEmail}>`,
 				to: params.email,
@@ -116,13 +118,19 @@ export class MailManager {
 
 	async sendMail(params) {
 		if (config.SERVER.MAIL_TYPE === config.CONSTANT.MAIL_SENDING_TYPE.SENDGRID) {
+			console.log('22222223333333333333333333333');
+
 			return await this.sendMailViaSendgrid(params);
 		} else {
+			console.log('qqqqqqqqqqqqqqqqqq');
+
 			return await this.sendMailViaSmtp(params);
 		}
 	}
 
 	async forgotPasswordEmailToAdmin(params) {
+		console.log('params.accessTokenparams.accessTokenparams.accessToken', params.accessToken);
+
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
 				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
@@ -132,7 +140,7 @@ export class MailManager {
 				"name": params.name,
 				"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
 			});
-		await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+		// await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
 	}
 
 	async forgotPasswordEmailToUser(params) {
