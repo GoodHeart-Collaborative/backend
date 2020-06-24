@@ -329,7 +329,7 @@ export const adminRoute: ServerRoute[] = [
 					console.log('LLLLLLLLLLLLLLLLLLLLL');
 					console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL', config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
 
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
 				} else if (error === 'error') {
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
 				} else {

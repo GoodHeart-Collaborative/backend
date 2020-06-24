@@ -75,7 +75,7 @@ export const SERVER = Object.freeze({
 	CHUNK_SIZE: 100,
 	APP_URL: process.env["APP_URL"],
 	ADMIN_URL: process.env["ADMIN_URL"],
-	ADMIN_RESST_PASSWORD_URL: "/auth/reset-password/token",
+	ADMIN_RESST_PASSWORD_URL: "/auth/reset-password/token/",
 	API_BASE_URL: "",
 	API_URL: process.env['API_URL'],
 	// API_BASE_URL: "/rcc/api",
