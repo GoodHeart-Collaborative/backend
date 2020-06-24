@@ -128,17 +128,31 @@ export class MailManager {
 		}
 	}
 
+	// async forgotPasswordEmailToAdmin(params) {
+	// 	console.log('params.accessTokenparams.accessTokenparams.accessToken', params.accessToken);
+	// 	console.log('url>>>>>>>>>>>>>>>>>>', `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
+	// 		`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
+	// 		`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`);
+
+	// 	const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
+	// 		.compileFile({
+	// 			"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
+	// 				`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
+	// 				`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`,
+	// 			"year": new Date().getFullYear(),
+	// 			"name": params.name,
+	// 			"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
+	// 		});
+	// 	await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+	// }
+
 	async forgotPasswordEmailToAdmin(params) {
 		console.log('params.accessTokenparams.accessTokenparams.accessToken', params.accessToken);
-		console.log('url>>>>>>>>>>>>>>>>>>', `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
-			`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
-			`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`);
+		console.log('url>>>>>>>>>>>>>>>>>>', `${config.SERVER.API_BASE_URL}/v1/admin/verifyLink/${params.accessToken}`);
 
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
-				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
-					`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
-					`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`,
+				"url": `${config.SERVER.API_URL}/v1/admin/verifyLink/${params.accessToken}`,
 				"year": new Date().getFullYear(),
 				"name": params.name,
 				"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins

@@ -11,6 +11,7 @@ import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager } from "@lib/MailManager";
 import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/v1/UserDao";
+import { TemplateUtil } from "@utils/TemplateUtil";
 
 class AdminController {
 
@@ -180,9 +181,16 @@ class AdminController {
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
 						"adminType": step1.adminType
 					});
+					console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
+
 					const adminObject = appUtils.buildToken(tokenData);
+					console.log('adminObjectadminObjectadminObject', adminObject);
+
 					const accessToken = await tokenManager.generateAdminToken({ "type": "FORGOT_PASSWORD", "object": adminObject });
+					console.log('accessTokenaccessTokenaccessTokenaccessToken', accessToken);
+
 					const step2 = adminDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
+
 					const step3 = mailManager.forgotPasswordEmailToAdmin({ "email": params.email, "name": step1.name, "accessToken": accessToken });
 					console.log('step3step3step3step3step3step3', step3);
 					return adminConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD;
@@ -385,6 +393,150 @@ class AdminController {
 		} catch (error) {
 			throw error;
 		}
+	}
+
+	async verifyLink(params) {
+		try {
+			console.log('verifyLink(params)verifyLink(params)verifyLink(params)', params.payload.token);
+
+			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.payload.token });
+			console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
+
+			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			console.log('isExpireisExpireisExpire', isExpire);
+			if (isExpire) {
+				let step2;
+				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+				// step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
+				// } 
+				// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
+				// step2 = userDao.emptyForgotToken({ "token": params.token });
+				// }
+				return Promise.reject('LinkExpired');
+			}
+			// if (params.type === "forgot") {
+			const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
+				.compileFile({
+					webUrl: config.SERVER.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL,
+					url: params.android || "", // android scheme,
+					iosLink: params.ios || "", // ios scheme
+					fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+					title: config.SERVER.APP_NAME,
+					android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
+					ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
+				});
+
+			return responseHtml;
+			// }
+			// const findByEmail = {
+			// 	email: result,
+			// };
+			// const adminData = await adminDao.findOne('admins', { email: result.email }, {}, {})
+			// if (!adminData) {
+			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.USER_NOT_FOUND);
+			// } else {
+			// 	const criteria = { email: result };
+			// 	const userExirationTime: any = await adminDao.findOne('admins', criteria, {}, {});
+			// 	const today: any = new Date();
+			// 	const diffMs = (today - userExirationTime.passwordResetTokenExpirationTime);
+			// 	const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+			// 	if (diffMins > 0) { return Promise.reject('LinkExpired'); }
+			// 	else { return {}; } // success
+			// }
+
+
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
+
+	async resetPassword(params) {
+		try {
+			console.log('verifyLink(params)verifyLink(params)verifyLink(params)', params.payload.token);
+			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.payload.token });
+			console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
+
+			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			console.log('isExpireisExpireisExpire', isExpire);
+			if (isExpire) {
+				let step2;
+				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+				step2 = adminDao.emptyForgotToken({ "token": params.query.token });
+				// } 
+				// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
+				// step2 = userDao.emptyForgotToken({ "token": params.token });
+				// }
+				return Promise.reject('LinkExpired');
+			} else {
+				const step1 = await adminDao.findOne('admins', { email: params.email }, {}, {});
+				console.log('step1step1step1step1step1', step1);
+				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+				if (
+					(config.SERVER.ENVIRONMENT !== "production") ?
+						(
+							params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+							step1.hash !== params.hash
+						) :
+						step1.hash !== params.hash
+				) {
+					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
+				} else {
+					salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+					const tokenData = _.extend(params, {
+						"userId": step1._id,
+						"firstName": step1.firstName,
+						"lastName": step1.lastName,
+						"email": step1.email,
+						"countryCode": step1.countryCode,
+						"mobileNo": step1.mobileNo,
+						"salt": salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+					const userObject = appUtils.buildToken(tokenData);
+					accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+				}
+			}
+			let arn;
+			if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
+				// arn = await sns.registerAndroidUser(params.deviceToken);
+				arn = "";
+			} else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
+				// arn = await sns.registerIOSUser(params.deviceToken);
+				arn = "";
+			}
+			const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
+			let step3;
+			if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+				const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
+				step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
+			} else {
+				const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
+				step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
+			}
+			params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": step3 });
+			const step4 = loginHistoryDao.createUserLoginHistory(params);
+			let step5, step6;
+			if (config.SERVER.IS_REDIS_ENABLE) {
+				if (!config.SERVER.IN_ACTIVITY_SESSION)
+					step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+				else
+					step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+				const jobPayload = {
+					jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
+					time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
+					params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
+				};
+				step6 = redisClient.createJobs(jobPayload);
+			}
+			const step7 = await promise.join(step4, step5, step6);
+			return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+		}
+		}
+}
+		} catch (error) {
+	throw error;
+}
 	}
 }
 

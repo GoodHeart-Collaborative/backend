@@ -384,6 +384,9 @@ const DEEPLINK = {
 	IOS_STORE_LINK: "https://itunes.apple.com",
 	ANDROID_PACKAGE_NAME: "com.appinventiv.ustandby" // when app is not installed redirect to google playstore
 };
+const WEBSITE_URL = {
+	ADMIN_URL: "http://womenappdevadmin.appskeeper.com"
+};
 
 let SOCKET = {
 	DEFAULT: {
@@ -551,4 +554,5 @@ export const CONSTANT = Object.freeze({
 	JOB_SCHEDULER_TYPE: JOB_SCHEDULER_TYPE,
 	DEFAULT_PASSWORD: "String@123",
 	BYPASS_OTP,
+	WEBSITE_URL,
 });

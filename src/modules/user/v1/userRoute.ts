@@ -250,11 +250,11 @@ export const
 					payload: {
 						socialLoginType: Joi.string()
 							.trim()
-							.lowercase({ force: true })
+							.lowercase()
 							.required()
 							.valid([
 								config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK,
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE
+								config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE,
 							]),
 						socialId: Joi.string().trim().required(),
 						deviceId: Joi.string().trim().required(),

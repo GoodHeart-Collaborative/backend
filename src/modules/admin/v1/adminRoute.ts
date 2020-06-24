@@ -303,6 +303,180 @@ export const adminRoute: ServerRoute[] = [
 			}
 		}
 	},
+	/**
+	 * @description verify forgot password link
+	 */
+	{
+		method: 'GET',
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/verifyLink/{token}`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			// const headers: Device = request.headers;
+			// const requestInfo: Device = request.info;
+			const payload = request.params;
+			console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
+
+			try {
+				const result = await adminController.verifyLink({ payload });
+				console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link', config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link);
+
+				return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link);
+			} catch (error) {
+				console.log('errorerrorerror', error);
+
+				if (error.JsonWebTokenError) {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
+				} else if (error === 'LinkExpired') {
+					console.log('LLLLLLLLLLLLLLLLLLLLL');
+					console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL', config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+				} else if (error === 'error') {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
+				} else {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+				}
+			}
+		},
+		config: {
+			tags: ["api", "admin"],
+			description: "Admin Login",
+			// notes: "",
+			// auth: {
+			// 	strategies: ["BasicAuth"]
+			// },
+			validate: {
+				// headers: validator.headerObject["required"],
+				params: {
+					token: Joi.string().required(),
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+	{
+		method: 'GET',
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/verifyLink/{token}`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			// const headers: Device = request.headers;
+			// const requestInfo: Device = request.info;
+			const payload = request.params;
+			console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
+
+			try {
+				const result = await adminController.verifyLink({ payload });
+				console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link', config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link);
+
+				return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link);
+			} catch (error) {
+				console.log('errorerrorerror', error);
+
+				if (error.JsonWebTokenError) {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
+				} else if (error === 'LinkExpired') {
+					console.log('LLLLLLLLLLLLLLLLLLLLL');
+					console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL', config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+				} else if (error === 'error') {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
+				} else {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+				}
+			}
+		},
+		config: {
+			tags: ["api", "admin"],
+			description: "Admin Login",
+			// notes: "",
+			// auth: {
+			// 	strategies: ["BasicAuth"]
+			// },
+			validate: {
+				// headers: validator.headerObject["required"],
+				params: {
+					token: Joi.string().required(),
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+
+	{
+		method: 'GET',
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/reset-password`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			// const headers: Device = request.headers;
+			// const requestInfo: Device = request.info;
+			const payload = request.query;
+			console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
+
+			try {
+				const result = await adminController.resetPassword(payload);
+				console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link', config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link);
+
+				return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link);
+			} catch (error) {
+				console.log('errorerrorerror', error);
+
+				if (error.JsonWebTokenError) {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
+				} else if (error === 'LinkExpired') {
+					console.log('LLLLLLLLLLLLLLLLLLLLL');
+					console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL', config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+				} else if (error === 'error') {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
+				} else {
+					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+				}
+			}
+		},
+		config: {
+			tags: ["api", "admin"],
+			description: "Admin Login",
+			// notes: "",
+			auth: {
+				strategies: ["BasicAuth"]
+			},
+			validate: {
+				headers: validator.headerObject["required"],
+				query: {
+					token: Joi.string().required(),
+					password: Joi.string()
+						.trim()
+						.regex(config.CONSTANT.REGEX.PASSWORD)
+						.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+						.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
+						.default(config.CONSTANT.DEFAULT_PASSWORD)
+						.required(),
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+
+
 	{
 		method: "POST",
 		path: `${config.SERVER.API_BASE_URL}/v1/admin/login`,
