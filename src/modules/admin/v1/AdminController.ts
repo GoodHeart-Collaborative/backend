@@ -453,21 +453,23 @@ class AdminController {
 
 	async resetPassword(params) {
 		try {
-			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.payload.token });
+			console.log('paramsparamsparamsparamsparams', params);
+
+			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
 			console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			console.log('isExpireisExpireisExpire', isExpire);
 			if (isExpire) {
-				let step2;
-				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-				// step2 = adminDao.emptyForgotToken({ "token": params.query.token });
-				// } 
-				// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
-				// step2 = userDao.emptyForgotToken({ "token": params.token });
-				// }
-				return Promise.reject('LinkExpired');
+				// 	let step2;
+				// 	// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+				// 	// step2 = adminDao.emptyForgotToken({ "token": params.query.token });
+				// 	// } 
+				// 	// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
+				// 	// step2 = userDao.emptyForgotToken({ "token": params.token });
+				// 	// }
+				// 	return Promise.reject('LinkExpired');
 			} else {
-				const step1 = await adminDao.findOne('admins', { _id: jwtPayload.userId }, {}, {});
+				const step1 = await adminDao.findOne('admins', { _id: jwtPayload.payload.userId }, {}, {});
 				console.log('step1step1step1step1step1', step1);
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 
@@ -484,9 +486,17 @@ class AdminController {
 					"adminType": step1.adminType
 				});
 				const adminObject = appUtils.buildToken(tokenData);
+				console.log('adminObjectadminObjectadminObject', adminObject);
+
 				const accessToken = await tokenManager.generateAdminToken({ "type": "ADMIN_LOGIN", "object": adminObject });
+				console.log('accessTokenaccessTokenaccessToken', accessToken);
+
 				const step3 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
+				console.log('step3step3step3step3step3', step3);
+
 				const step4 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
+				console.log('step4step4step4step4', step4);
+
 				const loginObj = {
 					"userId": step1._id,
 					"remoteAddress": params.remoteAddress,
@@ -495,9 +505,15 @@ class AdminController {
 					"deviceToken": params.deviceToken,
 					"lastLogin": step4
 				};
+				console.log('loginObjloginObjloginObj', loginObj);
+
 				const step5 = loginHistoryDao.createUserLoginHistory(loginObj);
+				console.log('step5step5step5', step5);
+
 				delete step1.salt, delete step1.hash;
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
+				console.log('refreshTokenrefreshTokenrefreshTokenrefreshToken', refreshToken);
+
 				// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
 				// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
 				// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
