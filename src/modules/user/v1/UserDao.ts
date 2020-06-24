@@ -72,6 +72,19 @@ export class UserDao extends BaseDao {
 			} else {
 				query.googleId = params.socialId;
 			}
+			// (payload.loginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
+			// 	set.facebookId = payload.socialId;
+			// 	set.isFacebookLogin = true;
+			// } else if (payload.loginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE) {
+			// 	set.appleId = payload.socialId;
+			// 	set.isAppleLogin = true;
+			// } else if (payload.loginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.LINKED_IN) {
+			// 	set.linkedInId = payload.socialId;
+			// 	set.isLinkedInLogin = true;
+			// } else { // Config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE
+			// 	set.googleId = payload.socialId;
+			// 	set.isGoogleLogin = true;
+			// }
 			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
