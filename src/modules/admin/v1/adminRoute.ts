@@ -327,6 +327,7 @@ export const adminRoute: ServerRoute[] = [
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
 				} else if (error === 'LinkExpired') {
 					console.log('LLLLLLLLLLLLLLLLLLLLL');
+
 					console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL', config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
 
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
@@ -750,5 +751,86 @@ export const adminRoute: ServerRoute[] = [
 				}
 			}
 		}
+	},
+
+	{
+		method: "GET",
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/users`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			const query: AdminRequest.UserReportGraph = request.query;
+			try {
+				const result = await adminController.getUserList(query);
+				return responseHandler.sendSuccess(h, result);
+			} catch (error) {
+				return responseHandler.sendError(error);
+			}
+		},
+		config: {
+			tags: ["api", "admin", "users"],
+			description: "get usetrs list",
+			// notes: "",
+			auth: {
+				strategies: ["AdminAuth"]
+			},
+			validate: {
+				headers: validator.adminAuthorizationHeaderObj,
+				query: {
+					fromDate: Joi.number(),
+					toDate: Joi.number(),
+					page: Joi.number(),
+					limit: Joi.number(),
+					sortBy: Joi.number(),
+					sortType: Joi.number(),
+					status: Joi.string().valid([
+						config.CONSTANT.STATUS.BLOCKED,
+						config.CONSTANT.STATUS.ACTIVE,
+					]),
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+	{
+		method: "GET",
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/users/{userId}`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			const payload = request.params;
+			try {
+				const result = await adminController.getUserById(payload);
+				return responseHandler.sendSuccess(h, result);
+			} catch (error) {
+				return responseHandler.sendError(error);
+			}
+		},
+		config: {
+			tags: ["api", "admin", "users"],
+			description: "get usetrs list",
+			// notes: "",
+			auth: {
+				strategies: ["AdminAuth"]
+			},
+			validate: {
+				headers: validator.adminAuthorizationHeaderObj,
+				params: {
+					userId: Joi.string().required()
+				},
+				failAction: appUtils.failActionFunction
+
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
 	}
+
 ];

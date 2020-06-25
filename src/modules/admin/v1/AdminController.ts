@@ -176,6 +176,7 @@ class AdminController {
 				} else {
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
+						"salt": step1.salt,
 						"name": step1.name,
 						"email": step1.email,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
@@ -477,11 +478,13 @@ class AdminController {
 				// } else {
 				let salt;
 				salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+				console.log('saltsaltsaltsalt', salt);
 
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"name": step1.name,
 					"email": step1.email,
+					"salt": step1.salt,
 					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
 					"adminType": step1.adminType
 				});
@@ -541,6 +544,27 @@ class AdminController {
 
 		}
 		catch (error) {
+			throw error;
+		}
+	}
+
+	async getUserList(params) {
+		try {
+			const data = userDao.getUsers(params);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getUserById(params) {
+		try {
+			const criteria = {
+				_id: params.userId
+			}
+			const data = await userDao.findOne('users', criteria, {}, {}, {});
+			return data;
+		} catch (error) {
 			throw error;
 		}
 	}

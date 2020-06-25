@@ -333,6 +333,76 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
+
+	async getUsers(params) {
+		try {
+			let { page, limit, sortBy, sortType } = params;
+			const { searchTerm, userId, type, status, fromDate, toDate, isByAdmin } = params;
+			if (!limit) { limit = config.CONSTANT.PAGINATION.limit }
+			if (!page) { page = 1; }
+			let sortingType = {};
+			sortType = !sortType ? -1 : sortType;
+			const matchObject: any = { $match: {} };
+			let searchCriteria = {};
+			sortingType = {
+				createdAt: sortType,
+			};
+			if (searchTerm) {
+				// for filtration
+				searchCriteria = {
+					$match: {
+						$or: [
+							{ email: new RegExp('.*' + searchTerm + '.*', 'i') },
+							{ firstName: new RegExp('.*' + searchTerm + '.*', 'i') },
+							{ lastName: new RegExp('.*' + searchTerm + '.*', 'i') },
+						],
+					},
+				};
+			}
+			else {
+				searchCriteria = {
+					$match: {
+					},
+				};
+			}
+
+			if (!status) {
+				matchObject.$match = {
+					$or: [{
+						status: config.CONSTANT.STATUS.ACTIVE,
+					}, {
+						status: config.CONSTANT.STATUS.BLOCKED,
+					},
+					],
+				};
+			}
+
+			// if (userId) { matchObject.$match._id = Types.ObjectId(userId); }
+			// if (isByAdmin) {
+			//     matchObject.$match['type'] = { $ne: Constant.DATABASE.USER_TYPE.TENANT.TYPE };
+			// }
+			if (status) { matchObject.$match['status'] = status; }
+
+			// Date filters
+			if (fromDate && toDate) { matchObject.$match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+			if (fromDate && !toDate) { matchObject.$match['createdAt'] = { $gte: fromDate }; }
+			if (!fromDate && toDate) { matchObject.$match['createdAt'] = { $lte: toDate }; }
+
+			const query = [
+				matchObject,
+				searchCriteria,
+				{
+					$sort: sortingType,
+				},
+			];
+			const data = await this.paginate('users', query, limit, page);
+			console.log('datadatadatadata', data);
+			return data;
+
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
 }
 
 export const userDao = new UserDao();
