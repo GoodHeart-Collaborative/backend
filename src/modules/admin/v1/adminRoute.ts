@@ -757,7 +757,7 @@ export const adminRoute: ServerRoute[] = [
 		method: "GET",
 		path: `${config.SERVER.API_BASE_URL}/v1/admin/users`,
 		handler: async (request: Request, h: ResponseToolkit) => {
-			const query: AdminRequest.UserReportGraph = request.query;
+			const query = request.query;
 			try {
 				const result = await adminController.getUserList(query);
 				return responseHandler.sendSuccess(h, result);
@@ -781,6 +781,7 @@ export const adminRoute: ServerRoute[] = [
 					limit: Joi.number(),
 					sortBy: Joi.number(),
 					sortType: Joi.number(),
+					searchTerm: Joi.string(),
 					status: Joi.string().valid([
 						config.CONSTANT.STATUS.BLOCKED,
 						config.CONSTANT.STATUS.ACTIVE,
