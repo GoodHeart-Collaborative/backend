@@ -72,7 +72,8 @@ export const
 							.required(),
 						type: Joi.string().allow('mobile', 'email').default('mobile'),
 						deviceId: Joi.string().trim().required(),
-						deviceToken: Joi.string().trim().required()
+						deviceToken: Joi.string().trim().required(),
+						profilePicUrl: Joi.string()
 					},
 					failAction: appUtils.failActionFunction
 				},
@@ -296,7 +297,7 @@ export const
 					payload: {
 						socialLoginType: Joi.string()
 							.trim()
-							.lowercase({ force: true })
+							.lowercase()
 							.required()
 							.valid([
 								config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK,

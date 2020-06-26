@@ -103,7 +103,7 @@ export class UserController {
 
 
 					let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-					smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+					// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
 					// let userResponse = appUtils.formatUserData(updateUserQr);
 					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken });
