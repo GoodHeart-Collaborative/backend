@@ -44,6 +44,7 @@ declare namespace UserRequest {
 		dob: number;
 		age: number;
 		created: number;
+		isAppleLogin: boolean;
 	}
 
 	export interface MultiBlock {

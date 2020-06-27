@@ -256,6 +256,7 @@ export const
 							.valid([
 								config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK,
 								config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE,
+								config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE,
 							]),
 						socialId: Joi.string().trim().required(),
 						deviceId: Joi.string().trim().required(),
@@ -301,7 +302,8 @@ export const
 							.required()
 							.valid([
 								config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK,
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE
+								config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE,
+								config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE,
 							]),
 						socialId: Joi.string().trim().required(),
 						firstName: Joi.string()

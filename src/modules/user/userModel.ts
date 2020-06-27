@@ -16,6 +16,8 @@ autoIncrement.initialize(connection);
 
 export interface IUser extends Document {
 	// sno: string;
+	isAppleLogin: boolean;
+	// isAppleVerified: boolean;
 	isMobileVerified: boolean;
 	isEmailVerified: boolean;
 	facebookId: string;
@@ -49,8 +51,8 @@ const geoSchema = new Schema({
 	type: { type: String, default: "Point" },
 	coordinates: { type: [Number], index: "2dsphere" }// [longitude, latitude]
 }, {
-		_id: false
-	});
+	_id: false
+});
 
 const userSchema = new Schema({
 	// sno: { type: String, required: true },
@@ -58,6 +60,7 @@ const userSchema = new Schema({
 	mobileOtp: { type: Number },
 
 	// social data
+	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },
 	facebookId: { type: String, trim: true, index: true },
@@ -99,9 +102,9 @@ const userSchema = new Schema({
 	createdAt: { type: Number },
 	updatedAt: { type: Number }
 }, {
-		versionKey: false,
-		timestamps: true
-	});
+	versionKey: false,
+	timestamps: true
+});
 
 userSchema.set("toObject", {
 	virtuals: true
