@@ -15,7 +15,9 @@ export const generateAdminToken = async function (params) {
 		if (params.type === "CREATE_ADMIN" || params.type === "FORGOT_PASSWORD") {
 			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: "10m" }); // 10 min
 		} else if (params.type === "ADMIN_LOGIN") {
-			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000 }); // 180 days (in secs)
+			console.log('>>>>>>>>>');
+			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }); // 180 days (in secs)
+			// return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000 }); // 180 days (in secs)
 		}
 	} catch (error) {
 		return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.TOKEN_GENERATE_ERROR(error)));

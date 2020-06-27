@@ -396,7 +396,7 @@ export class UserDao extends BaseDao {
 					$sort: sortingType,
 				},
 			];
-			const data = await this.paginate('users', query, limit, page);
+			const data = await this.paginate('users', query, limit, page, {}, true);
 			console.log('datadatadatadata', data);
 			return data;
 
