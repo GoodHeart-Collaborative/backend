@@ -338,19 +338,8 @@ class AdminController {
 	 */
 	async dashboard(params: AdminRequest.Dashboard, tokenData: TokenData) {
 		try {
-			if (params.type === config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year & Month"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Month"));
-			} else {
-				let step1 = await userDao.dashboardGraph(params);
-				step1 = adminMapper.dashboardGraphResponseMapping(params, step1);
-				return adminConstant.MESSAGES.SUCCESS.DASHBOARD({ "users": 6543, "posts": 23331, "reportedPosts": 4233, "category": 1112, "androidUsers": 4553, "iosUsers": 2343 });
-			}
+			const data = await userDao.dashboardGraph();
+			return data;
 		} catch (error) {
 			throw error;
 		}

@@ -185,92 +185,24 @@ export class UserDao extends BaseDao {
 	/**
 		 * @function dashboardGraph
 		 */
-	async dashboardGraph(params: AdminRequest.Dashboard) {
+	async dashboardGraph() {
 		try {
-			const aggPipe = [];
-
-			const match1: any = {};
-			if (params.status) {
-				match1["$and"] = [{ status: { "$ne": config.CONSTANT.STATUS.DELETED } }, { status: params.status }];
-			} else {
-				match1.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-			}
-			aggPipe.push({ "$match": match1 });
-
-			aggPipe.push({
-				"$project": {
-					year: { "$year": "$createdAt" }, month: { "$month": "$createdAt" },
-					day: { "$dayOfMonth": "$createdAt" },
-					week: { "$add": [1, { "$floor": { "$divide": [{ "$dayOfMonth": "$createdAt" }, 7] } }] }, // week starts from monday
-					created: 1
-				}
-			});
-
-			const match2: any = {};
-			if (params.fromDate && !params.toDate) {
-				match2.created = { "$gte": params.fromDate };
-			}
-			if (params.toDate && !params.fromDate) {
-				match2.created = { "$lte": params.toDate };
-			}
-			if (params.fromDate && params.toDate) {
-				match2.created = { "$gte": params.fromDate, "$lte": params.toDate };
-			}
-			aggPipe.push({ "$match": match2 });
-
-			if (params.type === config.CONSTANT.GRAPH_TYPE.DAILY) {
-				aggPipe.push({ "$match": { year: params.year, month: params.month } });
-
-				aggPipe.push({
-					"$group": {
-						_id: { year: "$year", month: "$month", day: "$day" },
-						users: { "$push": { month: "$month", day: "$day" } }
+			const query = {
+				$or: [
+					{
+						status: config.CONSTANT.STATUS.ACTIVE,
+					}, {
+						status: config.CONSTANT.STATUS.BLOCKED
 					}
-				});
-
-				aggPipe.push({ "$group": { _id: "$_id.year", data: { "$push": { day: "$_id.day", count: { "$size": "$users" } } } } });
-
-				aggPipe.push({ "$unwind": "$data" });
-
-				aggPipe.push({ "$replaceRoot": { newRoot: "$data" } });
+				]
 			}
 
-			if (params.type === config.CONSTANT.GRAPH_TYPE.WEEKLY) {
-				aggPipe.push({ "$match": { year: params.year, month: params.month } });
-
-				aggPipe.push({
-					"$group": {
-						_id: { year: "$year", month: "$month", week: "$week" },
-						users: { "$push": { month: "$month", week: "$week" } }
-					}
-				});
-
-				aggPipe.push({ "$group": { _id: "$_id.year", data: { "$push": { week: "$_id.week", count: { "$size": "$users" } } } } });
-
-				aggPipe.push({ "$unwind": "$data" });
-
-				aggPipe.push({ "$replaceRoot": { newRoot: "$data" } });
+			const userCount = await this.count("users", query);
+			console.log('datadatadatadatadata', userCount);
+			return {
+				userCount
 			}
 
-			if (params.type === config.CONSTANT.GRAPH_TYPE.MONTHLY) {
-				aggPipe.push({ "$match": { year: params.year } });
-
-				aggPipe.push({ "$group": { _id: { year: "$year", month: "$month" }, users: { "$push": { month: "$month" } } } });
-
-				aggPipe.push({ "$group": { _id: "$_id.year", data: { "$push": { month: "$_id.month", count: { "$size": "$users" } } } } });
-
-				aggPipe.push({ "$unwind": "$data" });
-
-				aggPipe.push({ "$replaceRoot": { newRoot: "$data" } });
-			}
-
-			if (params.type === config.CONSTANT.GRAPH_TYPE.YEARLY) {
-				aggPipe.push({ "$group": { _id: { year: "$year" }, users: { "$push": { year: "$year" } } } });
-
-				aggPipe.push({ "$project": { year: "$_id.year", _id: 0, count: { "$size": "$users" } } });
-			}
-
-			return await this.aggregate("users", aggPipe, {});
 		} catch (error) {
 			throw error;
 		}

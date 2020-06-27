@@ -554,6 +554,8 @@ export const adminRoute: ServerRoute[] = [
 		path: `${config.SERVER.API_BASE_URL}/v1/admin/details`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+			console.log('tokenDatatokenData', tokenData);
+
 			const query: UserId = request.query;
 			try {
 				const result = await adminController.adminDetails(query, tokenData);
@@ -607,30 +609,6 @@ export const adminRoute: ServerRoute[] = [
 			validate: {
 				headers: validator.adminAuthorizationHeaderObj,
 				query: {
-					year: Joi.number().optional(),
-					month: Joi.number().optional(),
-					type: Joi.string()
-						.trim()
-						.required()
-						.default(config.CONSTANT.GRAPH_TYPE.YEARLY)
-						.valid([
-							config.CONSTANT.GRAPH_TYPE.DAILY,
-							config.CONSTANT.GRAPH_TYPE.WEEKLY,
-							config.CONSTANT.GRAPH_TYPE.MONTHLY,
-							config.CONSTANT.GRAPH_TYPE.YEARLY,
-						])
-						.description("Type => 'Daily', 'Weekly', 'Monthly', 'Yearly'"),
-					status: Joi.string()
-						.trim()
-						.lowercase({ force: true })
-						.optional()
-						.valid([
-							config.CONSTANT.STATUS.BLOCKED,
-							config.CONSTANT.STATUS.ACTIVE
-						])
-						.description("Status => 'blocked', 'unblocked'"),
-					fromDate: Joi.number().optional().description("in timestamp"),
-					toDate: Joi.number().optional().description("in timestamp")
 				},
 				failAction: appUtils.failActionFunction
 			},
