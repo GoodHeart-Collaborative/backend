@@ -75,7 +75,8 @@ const SOCIAL_LOGIN_TYPE = {
 	GOOGLE: "google",
 	INSTA: "instagram",
 	TWITTER: "twitter",
-	LINKED_IN: "linkedin"
+	LINKED_IN: "linkedin",
+	APPLE: "apple"
 };
 
 const STATUS = {
