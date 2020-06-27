@@ -104,7 +104,7 @@ export class UserDao extends BaseDao {
 				params.googleId = params.socialId;
 				params.isAppleLogin = true;
 			}
-			else {
+			else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE) {
 				params.googleId = params.socialId;
 				params.isGoogleLogin = true;
 			}

@@ -311,11 +311,6 @@ export const
 							.min(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MIN_LENGTH)
 							.max(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MAX_LENGTH)
 							.required(),
-						middleName: Joi.string()
-							.trim()
-							.min(config.CONSTANT.VALIDATION_CRITERIA.MIDDLE_NAME_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.MIDDLE_NAME_MAX_LENGTH)
-							.optional(),
 						lastName: Joi.string()
 							.trim()
 							.min(config.CONSTANT.VALIDATION_CRITERIA.LAST_NAME_MIN_LENGTH)
@@ -345,7 +340,8 @@ export const
 							.valid([
 								config.CONSTANT.GENDER.FEMALE
 							]),
-						profilePicture: Joi.string().trim().required(),
+						isEmailUnverified: Joi.boolean(),
+						profilePicUrl: Joi.string().trim().required(),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required()
 					},
