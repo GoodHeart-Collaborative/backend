@@ -187,6 +187,8 @@ export class UserDao extends BaseDao {
 		 */
 	async dashboardGraph() {
 		try {
+			const promise = [];
+
 			const query = {
 				$or: [
 					{
@@ -196,11 +198,31 @@ export class UserDao extends BaseDao {
 					}
 				]
 			}
+			var date = new Date();
+			var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+			var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-			const userCount = await this.count("users", query);
+			promise.push(this.count("users", query));
+
+			const newUsers = {
+				$or: [
+					{
+						status: config.CONSTANT.STATUS.ACTIVE,
+					}, {
+						status: config.CONSTANT.STATUS.BLOCKED
+					}
+				],
+				createdAt: { $gt: firstDay }
+			}
+
+			promise.push(this.count("users", newUsers));
+
+			const [userCount, newUser,] = await Promise.all(promise);
+
 			console.log('datadatadatadatadata', userCount);
 			return {
-				userCount
+				totalUsers: userCount,
+				newUser
 			}
 
 		} catch (error) {
