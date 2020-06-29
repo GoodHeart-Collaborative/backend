@@ -212,7 +212,54 @@ export const
 						// mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
 						otp: Joi.number().min(1000).max(9999).required(),
 						// email: Joi.string().lowercase().trim().optional(),
-						type: Joi.string().valid('email', 'mobile').default('mobile')
+						type: Joi.string().valid('email', 'mobile').default('mobile'),
+						verificationFor: Joi.string().valid('singup', 'forGotPassword'),
+					},
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						// payloadType: 'form',
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+
+		{
+			method: "PATCH",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/verify-forgotPassword`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const headers: Device = request.headers;
+				// const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+
+				const payload: UserRequest.verifyOTP = request.payload;
+				try {
+					const result = await userController.verifyForGotOTP({ ...headers, ...payload });
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			options: {
+				tags: ["api", "user"],
+				description: "User signup via (email | mobile) and password",
+				// notes: "",
+				auth: 'BasicAuth',
+				validate: {
+					headers: validator.headerObject["required"],
+					payload: {
+						mobileNo: Joi.string(),
+						countryCode: Joi.string().trim()
+							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
+							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
+							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
+							.optional(),
+						// mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
+						otp: Joi.number().min(1000).max(9999).required(),
+						deviceId: Joi.string()
+						// email: Joi.string().lowercase().trim().optional(),
+						// type: Joi.string().valid('email', 'mobile').default('mobile'),
 					},
 					failAction: appUtils.failActionFunction
 				},

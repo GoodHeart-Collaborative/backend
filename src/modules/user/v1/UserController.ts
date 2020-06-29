@@ -33,12 +33,21 @@ export class UserController {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1', step1);
 				if (step1) {
+					console.log('q>>>>>>>>>>>>>>>');
+
 					if (step1.email === params.email && step1.isEmailVerified) {
+						console.log('LLLLLLLLLLL');
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					}
-					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified)
+					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified) {
+						console.log('KKKKKKKKKKKKKKKKK');
+
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					}
+
 				} else {
+					console.log('LLLLLLLLLLLLLYTTTTTTTTTTTTTTT');
+
 					const generateOtp = await appUtils.generateOtp();
 					console.log('generateOtpgenerateOtp', generateOtp, typeof generateOtp);
 
@@ -563,7 +572,6 @@ export class UserController {
 			// }
 			const data = await userDao.checkOTP(params, userData);
 
-
 			if (config.SERVER.ENVIRONMENT !== "production") {
 				console.log('111111111');
 				if (params.otp === config.CONSTANT.BYPASS_OTP) {
@@ -572,6 +580,7 @@ export class UserController {
 							isMobileVerified: true,
 						}
 						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+
 						return userConstant.MESSAGES.SUCCESS.DEFAULT;
 					}
 					else if (params.type === 'email') {
@@ -605,6 +614,135 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.DEFAULT;
 					};
 				}
+				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
+
+
+				// if (data.mobileOtp === params.otp) {
+				// 	return userConstant.MESSAGES.SUCCESS.DEFAULT
+				// }
+
+			}
+
+		} catch (error) {
+			return Promise.reject(error)
+		}
+	}
+
+	async verifyForGotOTP(params: UserRequest.verifyOTP) {
+		try {
+			// if (config.SERVER.ENVIRONMENT === 'development') {
+			// 	console.log('111111111');
+			// 	if (params.otp === config.CONSTANT.BYPASS_OTP) {
+			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
+			// 	}
+			// }
+			const data = await userDao.checkForgotOtp(params);
+			console.log('datadatadatadata', data);
+
+			if (!data.salt || !data.hash) {
+				return userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD;
+
+			}
+			console.log('datadatadatadata', data);
+
+			if (config.SERVER.ENVIRONMENT !== "production") {
+				console.log('111111111');
+
+				if (params.otp === config.CONSTANT.BYPASS_OTP) {
+					// if (params.verificationFor === 'forGotPassword') {
+
+					// }
+					// if (params.type === 'mobile') {
+					const dataToUpdate = {
+						isMobileVerified: true,
+					}
+					const criteria = {
+						countryCode: params.countryCode,
+						mobileNo: params.mobileNo,
+					}
+
+					const updatedData = await userDao.updateOne('users', criteria, dataToUpdate, { new: true });
+					// return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+					console.log('updatedDataupdatedDataupdatedData', updatedData);
+
+					const tokenData = _.extend(params, {
+						"userId": data._id,
+						"firstName": data.firstName,
+						"lastName": data.lastName,
+						"countryCode": data.countryCode,
+						"mobileNo": data.mobileNo,
+						"email": data.email,
+						"salt": data.salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+					console.log('tokenDatatokenDatatokenDatatokenDatatokenData', tokenData);
+
+					// const salt = await appUtils.CryptDataMD5(data._id + "." + new Date().getTime() + "." + params.deviceId);
+					// console.log('saltsaltsaltsaltsaltsalt', salt);
+
+
+					const userObject = appUtils.buildToken(tokenData);
+					console.log('userObjectuserObjectuserObjectuserObject', userObject);
+
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": data.salt });
+					console.log('accessTokenaccessTokenaccessTokenaccessToken', accessToken);
+
+					// return userConstant.MESSAGES.SUCCESS.FORGET_PASSWORD({ "accessToken": accessToken, userData: data });
+
+					const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
+					let step3;
+					if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+						const step2 = await loginHistoryDao.removeDeviceById({ "userId": data._id });
+						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": data._id });
+					} else {
+						const step2 = await loginHistoryDao.removeDeviceById({ "userId": data._id, "deviceId": params.deviceId });
+						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": data._id, "deviceId": params.deviceId });
+					}
+					params = _.extend(params, { "salt": data.salt, "refreshToken": refreshToken, "lastLogin": step3 });
+					const step4 = loginHistoryDao.createUserLoginHistory(params);
+					let step5, step6;
+					if (config.SERVER.IS_REDIS_ENABLE) {
+						if (!config.SERVER.IN_ACTIVITY_SESSION)
+							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": data.salt, "userId": data._id }));
+						else
+							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": data.salt, "userId": data._id }));
+						const jobPayload = {
+							jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
+							time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
+							params: { "userId": data._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
+						};
+						step6 = redisClient.createJobs(jobPayload);
+					}
+					const step7 = await promise.join(step4, step5, step6);
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, userData: data });
+				}
+			}
+			else {
+				// const data = await userDao.checkOTP(params);
+				// console.log('data', data);
+				if (params.type === 'mobile') {
+					if (data.mobileOtp === params.otp) {
+						const dataToUpdate = {
+							isMobileVerified: true,
+							mobileOtp: 0
+						}
+						const criteria = {
+							countryCode: params.countryCode,
+							mobileNo: params.mobileNo,
+						}
+						const statusUpdate = await userDao.updateOne('users', criteria, dataToUpdate, {});
+						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+					};
+				}
+				// else if (params.type === 'email') {
+				// 	if (data.emailOtp === params.otp) {
+				// 		const dataToUpdate = {
+				// 			isEmailVerified: true,
+				// 		}
+				// 		const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+				// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
+				// 	};
+				// }
 				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
 
 

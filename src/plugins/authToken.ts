@@ -28,10 +28,14 @@ export const plugin = {
 			validate: async (request: Request, accessToken: string, h: ResponseToolkit) => {
 				try {
 					const isValid = await apiKeyFunction(request.headers.api_key);
+					console.log('isValidisValidisValid', isValid);
+
 					if (!isValid) {
 						return ({ isValid: false, credentials: { accessToken: accessToken, tokenData: {} } });
 					} else {
 						const tokenData = await tokenManager.verifyToken({ accessToken }, config.CONSTANT.ACCOUNT_LEVEL.ADMIN, true);
+						console.log('tokenDatatokenDatatokenData>>>>>>>>>.', tokenData);
+
 						let adminData = await adminDao.findAdminById({ "userId": tokenData.userId });
 						if (!adminData) {
 							return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));
@@ -79,6 +83,8 @@ export const plugin = {
 						const jwtPayload = await tokenManager.decodeToken({ accessToken });
 						console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
 						const tokenData = await tokenManager.verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, true);
+						console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
+
 						if (config.SERVER.IS_REDIS_ENABLE) {
 							const step1 = await redisClient.getValue(accessToken);
 							if (!step1) {
@@ -95,6 +101,8 @@ export const plugin = {
 							}
 						}
 						let userData = await userDao.findUserById({ "userId": tokenData.userId });
+						console.log('userDatauserData', userData);
+
 						if (!userData) {
 							return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));
 						} else {
@@ -103,6 +111,7 @@ export const plugin = {
 								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.BLOCKED));
 							} else {
 								const step3 = await loginHistoryDao.findDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId, "salt": jwtPayload.payload.salt });
+								console.log('step3step3step3', step3);
 								if (!step3) {
 									return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
 								} else {

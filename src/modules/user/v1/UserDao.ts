@@ -116,7 +116,10 @@ export class UserDao extends BaseDao {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
 			params.created = Date.now();
+
+			// const data= await this.da
 			return await this.save("users", params);
+			// return await this.fin
 		} catch (error) {
 			throw error;
 		}
@@ -285,8 +288,27 @@ export class UserDao extends BaseDao {
 				};
 				const options = { lean: true };
 				const projection = { mobileOtp: 1 }
-				return await this.findOne('users', mobleCriteria, projection, options, {});
+				return await this.findOne('users', mobleCriteria, {}, options, {});
 			}
+			return;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async checkForgotOtp(params: UserRequest.verifyOTP, userData?: TokenData) {
+		try {
+			// if (params.mobileNo) {
+			const mobleCriteria = {
+				isMobileVerified: true,
+
+				countryCode: params.countryCode,
+				mobileNo: params.mobileNo,
+			};
+			const options = { lean: true };
+			const projection = { mobileOtp: 1 }
+			return await this.findOne('users', mobleCriteria, {}, options, {});
+			// }
 			return;
 		} catch (error) {
 			throw error;

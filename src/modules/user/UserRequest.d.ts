@@ -69,5 +69,7 @@ declare namespace UserRequest {
 		mobileNo: string;
 		otp: number;
 		type: string;
+		deviceId: string;
+		verificationFor: string;
 	}
 }

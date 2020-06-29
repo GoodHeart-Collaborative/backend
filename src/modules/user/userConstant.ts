@@ -77,6 +77,14 @@ export const MESSAGES = {
 				"data": data
 			};
 		},
+		FORGET_PASSWORD: (data) => {
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"message": "Logged-In successfully.",
+				"type": "LOGIN",
+				"data": data
+			};
+		},
 		FORGOT_PASSWORD_ON_EMAIL: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "Please check your e-mail for password reset link.",
@@ -85,8 +93,13 @@ export const MESSAGES = {
 		FORGOT_PASSWORD_ON_PHONE: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "Please check your number for password reset link.",
-			"type": "FORGOT_PASSWORD_ON_PHONE"
+			"type": "FORGOT_PASSWORD_ON_PHONE",
 		},
+		// FORGET_PASSWORD: {
+		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+		// 	"message": "Please check your number for password reset link.",
+		// 	"type": "FORGOT_PASSWORD_ON_PHONE",
+		// },
 		CHANGE_FORGOT_PASSWORD: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "Password changed successfully.",

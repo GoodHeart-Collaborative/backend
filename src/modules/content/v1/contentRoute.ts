@@ -212,7 +212,8 @@ export const contentRoute: ServerRoute = [
 			const query: ContentRequest.View = request.query;
 			try {
 				const result = await contentController.viewContent({ ...query });
-				return h.view("content-page", { "content": result.data.description });
+				// return h.view("content-page", { "content": result.data.description });
+				return responseHandler.sendSuccess(h, result);
 			} catch (error) {
 				return responseHandler.sendError(error);
 			}
