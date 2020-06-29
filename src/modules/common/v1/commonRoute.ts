@@ -73,128 +73,131 @@ export const commonRoute: ServerRoute = [
 			}
 		}
 	},
-	{
-		method: "POST",
-		path: `${config.SERVER.API_BASE_URL}/v1/common/refresh-token`,
-		handler: async (request: Request, h: ResponseToolkit) => {
-			const tokenData = request.auth.credentials.tokenData;
-			const query: Device = request.query;
-			try {
-				let result;
-				if (tokenData.payload.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-					result = await adminController.refreshToken(tokenData.payload);
-				} else {
-					result = await userController.refreshToken({ "refreshToken": query.refreshToken }, tokenData.payload);
-				}
-				return responseHandler.sendSuccess(h, result);
-			} catch (error) {
-				return responseHandler.sendError(error);
-			}
-		},
-		config: {
-			tags: ["api", "common"],
-			description: "Refresh Token",
-			notes: "Refresh token (admin/user)",
-			auth: {
-				strategies: ["RefreshToken"]
-			},
-			validate: {
-				headers: validator.commonAuthorizationHeaderObj,
-				query: {
-					refreshToken: Joi.string().trim().required()
-				},
-				failAction: appUtils.failActionFunction
-			},
-			plugins: {
-				"hapi-swagger": {
-					// payloadType: 'form',
-					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-				}
-			}
-		}
-	},
-	{
-		method: "POST",
-		path: `${config.SERVER.API_BASE_URL}/v1/common/media-upload`,
-		handler: async (request: Request, h: ResponseToolkit) => {
-			const payload = request.payload;
-			try {
-				const result = await imageUtil.uploadSingleMediaToS3(payload.file);
-				return responseHandler.sendSuccess(h, result);
-			} catch (error) {
-				return responseHandler.sendError(error);
-			}
-		},
-		config: {
-			tags: ["api", "common"],
-			description: "Media Upload",
-			// notes: "",
-			auth: {
-				strategies: ["BasicAuth"]
-			},
-			payload: {
-				maxBytes: 1000 * 1000 * 500,
-				output: "stream",
-				allow: "multipart/form-data", // important
-				parse: true,
-				timeout: false
-			},
-			validate: {
-				headers: validator.headerObject["required"],
-				payload: {
-					file: Joi.any()
-						.meta({ swaggerType: "file" })
-						.required()
-						.description("file exprension .csv|.xlsx|.xls")
-				},
-				failAction: appUtils.failActionFunction
-			},
-			plugins: {
-				"hapi-swagger": {
-					payloadType: "form",
-					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-				}
-			}
-		}
-	},
-	{
-		method: "POST",
-		path: `${config.SERVER.API_BASE_URL}/v1/common/lambda/image-upload`,
-		handler: async (request: Request, h: ResponseToolkit) => {
-			try {
-				const payload = request.payload;
-				const result = await commonController.uploadImage(payload);
-				return responseHandler.sendSuccess(h, result);
-			} catch (error) {
-				return responseHandler.sendError(error);
-			}
-		},
-		options: {
-			tags: ["api", "common"],
-			description: "Image Upload Using Lambda",
-			payload: {
-				maxBytes: 1000 * 1000 * 500,
-				parse: true,
-				output: "file"
-			},
-			validate: {
-				headers: validator.headerObject["required"],
-				payload: {
-					image: Joi.any()
-						.meta({ swaggerType: "file" })
-						.required()
-						.description("file exprension .csv|.xlsx|.xls")
-				},
-				failAction: appUtils.failActionFunction
-			},
-			plugins: {
-				"hapi-swagger": {
-					payloadType: "form",
-					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-				}
-			}
-		}
-	},
+	// {
+	// 	method: "POST",
+	// 	path: `${config.SERVER.API_BASE_URL}/v1/common/refresh-token`,
+	// 	handler: async (request: Request, h: ResponseToolkit) => {
+	// 		const tokenData = request.auth.credentials.tokenData;
+	// 		const query: Device = request.query;
+	// 		try {
+	// 			let result;
+	// 			if (tokenData.payload.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+	// 				result = await adminController.refreshToken(tokenData.payload);
+	// 			} else {
+	// 				result = await userController.refreshToken({ "refreshToken": query.refreshToken }, tokenData.payload);
+	// 			}
+	// 			return responseHandler.sendSuccess(h, result);
+	// 		} catch (error) {
+	// 			return responseHandler.sendError(error);
+	// 		}
+	// 	},
+	// 	config: {
+	// 		tags: ["api", "common"],
+	// 		description: "Refresh Token",
+	// 		notes: "Refresh token (admin/user)",
+	// 		auth: {
+	// 			strategies: ["RefreshToken"]
+	// 		},
+	// 		validate: {
+	// 			headers: validator.commonAuthorizationHeaderObj,
+	// 			query: {
+	// 				refreshToken: Joi.string().trim().required()
+	// 			},
+	// 			failAction: appUtils.failActionFunction
+	// 		},
+	// 		plugins: {
+	// 			"hapi-swagger": {
+	// 				// payloadType: 'form',
+	// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+	// 			}
+	// 		}
+	// 	}
+	// },
+
+
+	// {
+	// 	method: "POST",
+	// 	path: `${config.SERVER.API_BASE_URL}/v1/common/media-upload`,
+	// 	handler: async (request: Request, h: ResponseToolkit) => {
+	// 		const payload = request.payload;
+	// 		try {
+	// 			const result = await imageUtil.uploadSingleMediaToS3(payload.file);
+	// 			return responseHandler.sendSuccess(h, result);
+	// 		} catch (error) {
+	// 			return responseHandler.sendError(error);
+	// 		}
+	// 	},
+	// 	config: {
+	// 		tags: ["api", "common"],
+	// 		description: "Media Upload",
+	// 		// notes: "",
+	// 		auth: {
+	// 			strategies: ["BasicAuth"]
+	// 		},
+	// 		payload: {
+	// 			maxBytes: 1000 * 1000 * 500,
+	// 			output: "stream",
+	// 			allow: "multipart/form-data", // important
+	// 			parse: true,
+	// 			timeout: false
+	// 		},
+	// 		validate: {
+	// 			headers: validator.headerObject["required"],
+	// 			payload: {
+	// 				file: Joi.any()
+	// 					.meta({ swaggerType: "file" })
+	// 					.required()
+	// 					.description("file exprension .csv|.xlsx|.xls")
+	// 			},
+	// 			failAction: appUtils.failActionFunction
+	// 		},
+	// 		plugins: {
+	// 			"hapi-swagger": {
+	// 				payloadType: "form",
+	// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+	// 			}
+	// 		}
+	// 	}
+	// },
+
+	// {
+	// 	method: "POST",
+	// 	path: `${config.SERVER.API_BASE_URL}/v1/common/lambda/image-upload`,
+	// 	handler: async (request: Request, h: ResponseToolkit) => {
+	// 		try {
+	// 			const payload = request.payload;
+	// 			const result = await commonController.uploadImage(payload);
+	// 			return responseHandler.sendSuccess(h, result);
+	// 		} catch (error) {
+	// 			return responseHandler.sendError(error);
+	// 		}
+	// 	},
+	// 	options: {
+	// 		tags: ["api", "common"],
+	// 		description: "Image Upload Using Lambda",
+	// 		payload: {
+	// 			maxBytes: 1000 * 1000 * 500,
+	// 			parse: true,
+	// 			output: "file"
+	// 		},
+	// 		validate: {
+	// 			headers: validator.headerObject["required"],
+	// 			payload: {
+	// 				image: Joi.any()
+	// 					.meta({ swaggerType: "file" })
+	// 					.required()
+	// 					.description("file exprension .csv|.xlsx|.xls")
+	// 			},
+	// 			failAction: appUtils.failActionFunction
+	// 		},
+	// 		plugins: {
+	// 			"hapi-swagger": {
+	// 				payloadType: "form",
+	// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+	// 			}
+	// 		}
+	// 	}
+	// },
 	{
 		method: "GET",
 		path: `${config.SERVER.API_BASE_URL}/v1/common/deepLink`,

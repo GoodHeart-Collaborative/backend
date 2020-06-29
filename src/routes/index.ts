@@ -34,10 +34,10 @@ const baseRoute = [
 export const routes: ServerRoute[] = [
 	// ...baseRoute,
 	...adminRouteV1,
-	...adminNotificationRouteV1,
+	// ...adminNotificationRouteV1,
 	...commonRouteV1,
-	...contentRouteV1,
-	...notificationRouteV1,
+	// ...contentRouteV1,
+	// ...notificationRouteV1,
 	...userRouteV1,
-	...versionRouteV1
+	// ...versionRouteV1
 ];

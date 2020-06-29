@@ -95,7 +95,7 @@ const VALIDATION_CRITERIA = {
 	NAME_MIN_LENGTH: 3,
 	COUNTRY_CODE_MIN_LENGTH: 1,
 	COUNTRY_CODE_MAX_LENGTH: 4,
-	PASSWORD_MIN_LENGTH: 6,
+	PASSWORD_MIN_LENGTH: 8,
 	PASSWORD_MAX_LENGTH: 30
 };
 
@@ -291,7 +291,8 @@ const REGEX = {
 	URL: /^(https?|http|ftp|torrent|image|irc):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i,
 	SSN: /^(?!219-09-9999|078-05-1120)(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$/, // US SSN
 	ZIP_CODE: /^[0-9]{5}(?:-[0-9]{4})?$/,
-	PASSWORD: /(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=[^0-9]*[0-9]).{8,}/, // Minimum 6 characters, At least 1 lowercase alphabetical character, At least 1 uppercase alphabetical character, At least 1 numeric character, At least one special character
+	// PASSWORD: /(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=[^0-9]*[0-9]).{8,}/, // Minimum 6 characters, At least 1 lowercase alphabetical character, At least 1 uppercase alphabetical character, At least 1 numeric character, At least one special character
+	PASSWORD: /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/,
 	COUNTRY_CODE: /^\d{1,4}$/,
 	MOBILE_NUMBER: /^\d{6,16}$/,
 	STRING_REPLACE: /[-+ ()*_$#@!{}|\/^%`~=?,.<>:;'"]/g,

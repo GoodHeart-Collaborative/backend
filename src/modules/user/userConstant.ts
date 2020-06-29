@@ -34,6 +34,11 @@ export const MESSAGES = {
 			"message": "Account with this social id already exist.",
 			"type": "SOCIAL_ACCOUNT_ALREADY_EXIST"
 		},
+		SOCIAL_ACCOUNT_NOT_REGISTERED: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.SOCIAL_ACCOUNT_ALREADY_EXIST,
+			"message": "Account with this social id not registered.",
+			"type": "SOCIAL_ACCOUNT_NOT_REGISTERED"
+		},
 		REFRESH_TOKEN_REQUIRED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Refresh token is required.",

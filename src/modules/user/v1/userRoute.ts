@@ -340,7 +340,7 @@ export const
 							.valid([
 								config.CONSTANT.GENDER.FEMALE
 							]),
-						isEmailUnverified: Joi.boolean(),
+						isEmailVerified: Joi.boolean(),
 						profilePicUrl: Joi.string().trim().required(),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required()
@@ -437,41 +437,43 @@ export const
 			}
 		},
 
-		{
-			method: "DELETE",
-			path: `${config.SERVER.API_BASE_URL}/v1/user/{userId}`,
-			handler: async (request: Request, h: ResponseToolkit) => {
-				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-				const params: UserId = request.params;
-				try {
-					const result = await userController.deleteUser(params, tokenData);
-					return responseHandler.sendSuccess(h, result);
-				} catch (error) {
-					return responseHandler.sendError(error);
-				}
-			},
-			options: {
-				tags: ["api", "user"],
-				description: "Delete User",
-				// notes: "",
-				auth: {
-					strategies: ["AdminAuth"]
-				},
-				validate: {
-					headers: validator.adminAuthorizationHeaderObj,
-					params: {
-						userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
-					},
-					failAction: appUtils.failActionFunction
-				},
-				plugins: {
-					"hapi-swagger": {
-						// payloadType: 'form',
-						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-					}
-				}
-			}
-		},
+		// {
+		// 	method: "DELETE",
+		// 	path: `${config.SERVER.API_BASE_URL}/v1/user/{userId}`,
+		// 	handler: async (request: Request, h: ResponseToolkit) => {
+		// 		const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+		// 		const params: UserId = request.params;
+		// 		try {
+		// 			const result = await userController.deleteUser(params, tokenData);
+		// 			return responseHandler.sendSuccess(h, result);
+		// 		} catch (error) {
+		// 			return responseHandler.sendError(error);
+		// 		}
+		// 	},
+		// 	options: {
+		// 		tags: ["api", "user"],
+		// 		description: "Delete User",
+		// 		// notes: "",
+		// 		auth: {
+		// 			strategies: ["AdminAuth"]
+		// 		},
+		// 		validate: {
+		// 			headers: validator.adminAuthorizationHeaderObj,
+		// 			params: {
+		// 				userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+		// 			},
+		// 			failAction: appUtils.failActionFunction
+		// 		},
+		// 		plugins: {
+		// 			"hapi-swagger": {
+		// 				// payloadType: 'form',
+		// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+		// 			}
+		// 		}
+		// 	}
+		// },
+
+
 		// {
 		// 	method: "GET",
 		// 	path: `${config.SERVER.API_BASE_URL}/v1/user/details`,
