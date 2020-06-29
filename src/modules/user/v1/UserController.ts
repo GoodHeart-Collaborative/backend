@@ -638,10 +638,11 @@ export class UserController {
 			// }
 			const data = await userDao.checkForgotOtp(params);
 			console.log('datadatadatadata', data);
-
+			if (!data) {
+				return config.CONSTANT.MESSAGES.ERROR.INVALID_MOBILE_NUMBER
+			}
 			if (!data.salt || !data.hash) {
 				return userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD;
-
 			}
 			console.log('datadatadatadata', data);
 
@@ -649,10 +650,6 @@ export class UserController {
 				console.log('111111111');
 
 				if (params.otp === config.CONSTANT.BYPASS_OTP) {
-					// if (params.verificationFor === 'forGotPassword') {
-
-					// }
-					// if (params.type === 'mobile') {
 					const dataToUpdate = {
 						isMobileVerified: true,
 					}
