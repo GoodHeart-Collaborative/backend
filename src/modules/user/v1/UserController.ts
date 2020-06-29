@@ -15,7 +15,7 @@ import { smsManager } from "@lib/SMSManager";
 import * as tokenManager from "@lib/tokenManager";
 import * as userConstant from "@modules/user/userConstant";
 import { userDao } from "@modules/user/index";
-
+import { Types } from 'mongoose';
 export class UserController {
 
 	/**
@@ -544,14 +544,15 @@ export class UserController {
 				mobileNo: params.mobileNo,
 			};
 			const findByMobile = await userDao.findOne('users', criteria, {}, {}, {});
+			console.log('findByMobilefindByMoblefindByMobile', findByMobile);
 			if (!findByMobile) {
 				return userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED;
 			}
-			const generateOtp = appUtils.generateOtp();
+			const generateOtp = await appUtils.generateOtp();
 			const dataToUpdate = {
 				mobileOtp: generateOtp
 			}
-			const updateOTP = await userDao.updateOne('users', findByMobile._id, dataToUpdate, {});
+			const updateOTP = await userDao.updateOne('users', { _id: Types.ObjectId(findByMobile._id) }, dataToUpdate, {});
 			let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
 			// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 			return;
