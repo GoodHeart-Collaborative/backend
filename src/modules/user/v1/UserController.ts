@@ -581,7 +581,7 @@ export class UserController {
 						}
 						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
 
-						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
 					}
 					else if (params.type === 'email') {
 						const dataToUpdate = {

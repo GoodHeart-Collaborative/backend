@@ -61,6 +61,14 @@ export const MESSAGES = {
 			"message": "SUCCESS",
 			"type": "DEFAULT"
 		},
+		DEFAULT_WITH_DATA: (data) => {
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"message": "SUCCESS",
+				"type": "DEFAULT",
+				"data": data
+			}
+		},
 		SIGNUP: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.CREATED,
