@@ -300,8 +300,6 @@ export class UserDao extends BaseDao {
 		try {
 			// if (params.mobileNo) {
 			const mobleCriteria = {
-				isMobileVerified: true,
-
 				countryCode: params.countryCode,
 				mobileNo: params.mobileNo,
 			};
