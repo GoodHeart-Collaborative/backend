@@ -44,21 +44,17 @@ export class UserController {
 
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
-
+					// if (!step1.isEmailVerified && !step1.isMobileVerified) {
+					// 	userDao.deleteMany('users', { _id: step1._id })
+					// }
 				} else {
-					console.log('LLLLLLLLLLLLLYTTTTTTTTTTTTTTT');
-
 					const generateOtp = await appUtils.generateOtp();
-					console.log('generateOtpgenerateOtp', generateOtp, typeof generateOtp);
 
 					params['mobileOtp'] = generateOtp;
-					console.log('paramsparamsparamsparamsparamsparams>>>>>>>>>>>>', params);
 
 					const step2 = await userDao.signup(params);
-					console.log('step2step2step2step2step2', step2);
 
 					const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
-					console.log('saltsaltsaltsaltsaltsalt', salt);
 
 					const tokenData = _.extend(params, {
 						"userId": step2._id,
@@ -70,13 +66,10 @@ export class UserController {
 						"salt": salt,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
-					console.log('tokenDatatokenDatatokenDatatokenDatatokenData', tokenData);
 
 					const userObject = appUtils.buildToken(tokenData);
-					console.log('userObjectuserObjectuserObjectuserObject', userObject);
 
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": salt });
-					console.log('accessTokenaccessTokenaccessTokenaccessToken', accessToken);
 					// let arn;
 					// if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 					// 	// arn = await sns.registerAndroidUser(params.deviceToken);

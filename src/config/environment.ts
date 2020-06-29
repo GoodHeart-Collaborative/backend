@@ -26,6 +26,15 @@ switch (ENVIRONMENT) {
 		}
 		break;
 	}
+	case "test":
+	case "testing": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.testing"))) {
+			dotenv.config({ path: ".env.testing" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
 	case "prod":
 	case "production": {
 		if (fs.existsSync(path.join(process.cwd(), "/.env"))) {
