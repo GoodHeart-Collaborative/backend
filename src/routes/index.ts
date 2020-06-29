@@ -36,7 +36,7 @@ export const routes: ServerRoute[] = [
 	...adminRouteV1,
 	// ...adminNotificationRouteV1,
 	...commonRouteV1,
-	// ...contentRouteV1,
+	...contentRouteV1,
 	// ...notificationRouteV1,
 	...userRouteV1,
 	// ...versionRouteV1

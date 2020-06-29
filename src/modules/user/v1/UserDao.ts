@@ -72,7 +72,11 @@ export class UserDao extends BaseDao {
 			// } else {
 			// 	query.googleId = params.socialId;
 			// }
+			console.log('params.socialLoginTypeparams.socialLoginTypeparams.socialLoginType', params.socialLoginType);
+
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
+				console.log('>>>>>>>>>>>>>>>>>>.');
+
 				query.facebookId = params.socialId;
 				// query.isFacebookLogin = true;
 			} else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE) {
