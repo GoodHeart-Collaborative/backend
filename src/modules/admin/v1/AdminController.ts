@@ -245,9 +245,6 @@ class AdminController {
 					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 					console.log('params.hash ', params.hash);
 					console.log('1>>>>>>>>>>>>>', step1.hash);
-
-					console.log('step1.saltstep1.saltstep1.salt', step1.salt);
-
 					if (
 						(config.SERVER.ENVIRONMENT !== "production") ?
 							(

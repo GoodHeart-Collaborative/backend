@@ -817,7 +817,7 @@ export const adminRoute: ServerRoute[] = [
 
 	{
 		method: "PATCH",
-		path: `${config.SERVER.API_BASE_URL}/v1/admin/{userId}/user{status}`,
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/{userId}/user/{status}`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const payload = request.params;
 			try {
