@@ -62,7 +62,7 @@ export class UserDao extends BaseDao {
 					// remove the email from previous one
 					console.log('LLLLLLLLLLLL', userData.isMobileVerified);
 
-					const data = userDao.updateOne('users', { _id: userData._id }, { $set: { mobileNo: "" } }, {})
+					const data = userDao.updateOne('users', { _id: userData._id }, { $set: { mobileNo: "", fullMobileNo: "" } }, {})
 				}
 			}
 
