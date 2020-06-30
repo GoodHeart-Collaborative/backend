@@ -243,6 +243,8 @@ class AdminController {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 				} else {
 					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+					console.log('params.hash ', params.hash);
+					console.log('1>>>>>>>>>>>>>', step1.hash);
 					if (
 						(config.SERVER.ENVIRONMENT !== "production") ?
 							(
@@ -301,13 +303,20 @@ class AdminController {
 	async changePassword(params: ChangePasswordRequest, tokenData: TokenData) {
 		try {
 			const step1 = await adminDao.findAdminById(tokenData);
-			const oldHash = appUtils.encryptHashPassword(params.oldPassword, step1.salt);
+			console.log('step1', step1);
+			console.log('oldPasswordoldPasswordoldPasswordoldPassword', params.oldPassword);
+
+			const oldHash = await appUtils.encryptHashPassword(params.oldPassword, step1.salt);
+			console.log('oldHasholdHash', oldHash);
+
 			if (oldHash !== step1.hash) {
 				return Promise.reject(adminConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
 			} else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = adminDao.changePassword(params, tokenData);
 			}
+			console.log('>>>>>>>>>>>>>>');
+
 			return adminConstant.MESSAGES.SUCCESS.CHANGE_PASSWORD;
 		} catch (error) {
 			throw error;
@@ -552,6 +561,25 @@ class AdminController {
 				_id: params.userId
 			}
 			const data = await userDao.findOne('users', criteria, {}, {}, {});
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async updateStatus(params) {
+		try {
+			const criteria = {
+				_id: params.userId
+			};
+			const dataToUpdate = {
+				status: params.status
+			}
+
+			const data = await userDao.update('users', criteria, dataToUpdate, {})
+			if (!data) {
+				return adminConstant.MESSAGES.ERROR.INVALID_ID;
+			}
 			return data;
 		} catch (error) {
 			throw error;

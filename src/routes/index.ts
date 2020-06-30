@@ -14,7 +14,7 @@ import { commonRoute as commonRouteV1 } from "@modules/common/v1/commonRoute";
 // content routes
 import { contentRoute as contentRouteV1 } from "@modules/content/v1/contentRoute";
 // notification routes
-import { notificationRoute as notificationRouteV1 } from "@modules/notification/v1/notificationRoute";
+// import { notificationRoute as notificationRouteV1 } from "@modules/notification/v1/notificationRoute";
 // user routes
 import { userRoute as userRouteV1 } from "@modules/user/v1/userRoute";
 // version routes

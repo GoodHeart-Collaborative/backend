@@ -7,7 +7,6 @@ import * as promise from "bluebird";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 import { contactDao } from "@modules/contact/v1/ContactDao";
-import { logDao } from "@modules/log/LogDao";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager, redisClient } from "@lib/index";
 import { smsManager } from "@lib/SMSManager";
@@ -16,6 +15,7 @@ import * as tokenManager from "@lib/tokenManager";
 import * as userConstant from "@modules/user/userConstant";
 import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
+import { verifyToken } from '@lib/tokenManager';
 export class UserController {
 
 	/**
@@ -44,73 +44,70 @@ export class UserController {
 
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
-					// if (!step1.isEmailVerified && !step1.isMobileVerified) {
-					// 	userDao.deleteMany('users', { _id: step1._id })
-					// }
-				} else {
-					const generateOtp = await appUtils.generateOtp();
-
-					params['mobileOtp'] = generateOtp;
-
-					const step2 = await userDao.signup(params);
-
-					const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
-
-					const tokenData = _.extend(params, {
-						"userId": step2._id,
-						"firstName": step2.firstName,
-						"lastName": step2.lastName,
-						"countryCode": step2.countryCode,
-						"mobileNo": step2.mobileNo,
-						"email": step2.email,
-						"salt": salt,
-						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					});
-
-					const userObject = appUtils.buildToken(tokenData);
-
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": salt });
-					// let arn;
-					// if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
-					// 	// arn = await sns.registerAndroidUser(params.deviceToken);
-					// 	arn = "";
-					// } else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
-					// 	// arn = await sns.registerIOSUser(params.deviceToken);
-					// 	arn = "";
-					// }
-					const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-					console.log('refreshTokenrefreshTokenrefreshToken', refreshToken);
-
-					params = _.extend(params, { "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
-					console.log('paramsparamsparamsparams', params);
-
-					const step6 = await loginHistoryDao.createUserLoginHistory(params);
-					console.log('step6step6step6step6step6step6', step6);
-
-					let step7, step8;
-					// if (config.SERVER.IS_REDIS_ENABLE) {
-					// 	if (!config.SERVER.IN_ACTIVITY_SESSION)
-					// 		step7 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step2._id }));
-					// 	else
-					// 		step7 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step2._id }));
-					// 	const jobPayload = {
-					// 		jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-					// 		time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-					// 		params: { "userId": step2._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-					// 	};
-					// 	step8 = redisClient.createJobs(jobPayload);
-					// }
-					const step9 = await promise.join(step6, step7, step8);
-					console.log('step9step9step9step9', step9);
-
-
-					let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-					// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
-
-					// let userResponse = appUtils.formatUserData(updateUserQr);
-					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken });
 				}
+				const generateOtp = await appUtils.generateOtp();
+
+				params['mobileOtp'] = generateOtp;
+
+				const step2 = await userDao.signup(params, step1);
+
+				const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
+
+				const tokenData = _.extend(params, {
+					"userId": step2._id,
+					"firstName": step2.firstName,
+					"lastName": step2.lastName,
+					"countryCode": step2.countryCode,
+					"mobileNo": step2.mobileNo,
+					"email": step2.email,
+					"salt": salt,
+					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+				});
+
+				const userObject = appUtils.buildToken(tokenData);
+
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": salt });
+				// let arn;
+				// if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
+				// 	// arn = await sns.registerAndroidUser(params.deviceToken);
+				// 	arn = "";
+				// } else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
+				// 	// arn = await sns.registerIOSUser(params.deviceToken);
+				// 	arn = "";
+				// }
+				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
+				console.log('refreshTokenrefreshTokenrefreshToken', refreshToken);
+
+				params = _.extend(params, { "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
+				console.log('paramsparamsparamsparams', params);
+
+				const step6 = await loginHistoryDao.createUserLoginHistory(params);
+				console.log('step6step6step6step6step6step6', step6);
+
+				let step7, step8;
+				// if (config.SERVER.IS_REDIS_ENABLE) {
+				// 	if (!config.SERVER.IN_ACTIVITY_SESSION)
+				// 		step7 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step2._id }));
+				// 	else
+				// 		step7 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step2._id }));
+				// 	const jobPayload = {
+				// 		jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
+				// 		time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
+				// 		params: { "userId": step2._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
+				// 	};
+				// 	step8 = redisClient.createJobs(jobPayload);
+				// }
+				const step9 = await promise.join(step6, step7, step8);
+				console.log('step9step9step9step9', step9);
+
+
+				let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
+				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+
+				// let userResponse = appUtils.formatUserData(updateUserQr);
+				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken });
 			}
+			// }
 		} catch (error) {
 			throw error;
 		}
@@ -156,12 +153,12 @@ export class UserController {
 						} else {
 							params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 							if (
-								(config.SERVER.ENVIRONMENT !== "production") ?
-									(
-										params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-										step1.hash !== params.hash
-									) :
-									step1.hash !== params.hash
+								// (config.SERVER.ENVIRONMENT !== "production") ?
+								// (
+								// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+								// 	step1.hash !== params.hash
+								// ) :
+								step1.hash !== params.hash
 							) {
 								return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 							} else {
@@ -306,9 +303,12 @@ export class UserController {
 				if (step1 && !step1.isGoogleLogin && !step1.isFacebookLogin) {
 					if (step1.email === params.email) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
-					} else {
+					}
+					else {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
+
+
 				} else {
 					const step2 = await userDao.socialSignup(params);
 					const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
@@ -389,7 +389,7 @@ export class UserController {
 						const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
 						if (params.email) {
 							const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
-							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "middleName": step1.middleName, "lastName": step1.lastName, "accessToken": accessToken });
+							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 							return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
 						} else {
 							const step2 = smsManager.sendForgotPasswordLink(params.countryCode, params.mobileNo, accessToken);
@@ -745,6 +745,50 @@ export class UserController {
 
 		} catch (error) {
 			return Promise.reject(error)
+		}
+	}
+
+	async resetPassword(params) {
+		try {
+			if (params.type === 'mobile') {
+				const checkMobile = await userDao.findUserByEmailOrMobileNo(params);
+
+				const step1 = await userDao.findOne('users', { _id: checkMobile._id }, {}, {})  //(tokenData);
+				console.log('step1step1step1', step1);
+
+				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+				const step2 = userDao.changeForgotPassword(params, { userId: checkMobile._id });
+				// }
+				return userConstant.MESSAGES.SUCCESS.DEFAULT;
+
+			} else {
+				const tokenData = await verifyToken(params, 'common', false)
+				console.log('tokeDatatokeDatatokeData', tokenData);
+
+				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				// const step1 = await userDao.findOne('users', { _id: tokeData.userId }, {}, {})
+				// console.log('step1step1step1step1', step1);
+
+				const step1 = await userDao.findOne('users', { _id: tokenData.userId }, {}, {})  //(tokenData);
+				console.log('step1step1step1', step1);
+
+				const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
+				// if (oldHash !== step1.hash) {
+				// 	return Promise.reject(adminConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
+				// } else {
+
+				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+				const step2 = userDao.changeForgotPassword(params, tokenData);
+				// }
+				return userConstant.MESSAGES.SUCCESS.DEFAULT;
+
+
+				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
+
+			}
+
+		} catch (error) {
+			throw error;
 		}
 	}
 }

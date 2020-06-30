@@ -52,6 +52,9 @@ export class CommonController {
 	async deepLink(params: DeeplinkRequest) {
 		try {
 			console.log("deepLink===================>", JSON.stringify(params));
+			console.log('params.androidparams.android', params.android);
+			console.log('iosLink: params.iosiosLink: params.ios', params.ios);
+
 			if (params.type === "login") {
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 					.compileFile({

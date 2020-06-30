@@ -16,6 +16,7 @@ autoIncrement.initialize(connection);
 
 export interface IUser extends Document {
 	// sno: string;
+	appleId: string;
 	isAppleLogin: boolean;
 	// isAppleVerified: boolean;
 	isMobileVerified: boolean;
@@ -63,6 +64,7 @@ const userSchema = new Schema({
 	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },
+	appleId: { type: String, trim: true, index: true },
 	facebookId: { type: String, trim: true, index: true },
 	isFacebookLogin: { type: Boolean, default: false },
 	googleId: { type: String, trim: true, index: true },
@@ -79,7 +81,9 @@ const userSchema = new Schema({
 	gender: {
 		type: String,
 		enum: [
-			config.CONSTANT.GENDER.FEMALE
+			config.CONSTANT.GENDER.FEMALE,
+			config.CONSTANT.GENDER.MALE,
+			// config.CONSTANT.GENDER.,
 		]
 	},
 	dob: { type: Number },
