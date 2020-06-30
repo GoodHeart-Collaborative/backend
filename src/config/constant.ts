@@ -144,7 +144,7 @@ const MESSAGES = {
 		},
 		MOBILE_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please verify youe mobile number",
+			"message": "Please verify your mobile number",
 			"type": "MOBILE_NO_NOT_VERIFY"
 		},
 		BLOCKED: {
