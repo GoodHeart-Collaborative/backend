@@ -490,7 +490,7 @@ export const
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const headers: Device = request.headers;
 				// const requestInfo: Device = request.info;
-				const payload = request.query;
+				const payload = request.payload;
 				console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
 				try {
 					const result = await userController.resetPassword({ ...payload, ...headers });
@@ -503,15 +503,15 @@ export const
 				}
 			},
 			config: {
-				tags: ["api", "admin"],
-				description: "Admin Login",
+				tags: ["api", "user"],
+				description: "user reset password",
 				// notes: "",
 				auth: {
 					strategies: ["BasicAuth"]
 				},
 				validate: {
 					headers: validator.headerObject["required"],
-					query: {
+					payload: {
 						token: Joi.string(),
 						password: Joi.string()
 							.trim()
