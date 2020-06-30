@@ -139,7 +139,7 @@ const MESSAGES = {
 		},
 		EMAIL_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please register your email address.",
+			"message": "Please verify your email address.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		MOBILE_NOT_VERIFIED: {

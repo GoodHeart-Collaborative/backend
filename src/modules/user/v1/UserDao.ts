@@ -49,8 +49,24 @@ export class UserDao extends BaseDao {
 	/**
 	 * @function signup
 	 */
-	async signup(params: UserRequest.Signup) {
+	async signup(params: UserRequest.Signup, userData?) {
 		try {
+			if (userData) {
+				if (userData.email === params.email && (!userData.isFacebookLogin || !userData.isGoogleLogin || !userData.isFacebookLogin || !userData.isEmailVerified)) {
+					// remove the email from previous one
+					console.log('LLLLLLLLLLLL');
+
+					const data = userDao.updateOne('users', { _id: userData._id }, { $set: { email: "" } }, {})
+				}
+				if (userData.mobileNo === params.mobileNo && !userData.isMobileVerified) {
+					// remove the email from previous one
+					console.log('LLLLLLLLLLLL', userData.isMobileVerified);
+
+					const data = userDao.updateOne('users', { _id: userData._id }, { $set: { mobileNo: "" } }, {})
+				}
+			}
+
+
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}

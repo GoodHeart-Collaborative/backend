@@ -812,6 +812,48 @@ export const adminRoute: ServerRoute[] = [
 				}
 			}
 		}
+	},
+
+
+	{
+		method: "GET",
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/{userId}/user{status}`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			const payload = request.params;
+			try {
+				const result = await adminController.updateStatus(payload);
+				return responseHandler.sendSuccess(h, result);
+			} catch (error) {
+				return responseHandler.sendError(error);
+			}
+		},
+		config: {
+			tags: ["api", "admin", "users"],
+			description: "get usetrs list",
+			// notes: "",
+			auth: {
+				strategies: ["AdminAuth"]
+			},
+			validate: {
+				headers: validator.adminAuthorizationHeaderObj,
+				params: {
+					status: Joi.string().valid([
+						config.CONSTANT.STATUS.BLOCKED,
+						config.CONSTANT.STATUS.ACTIVE,
+						config.CONSTANT.STATUS.DELETED
+					]),
+					userId: Joi.string().required()
+				},
+				failAction: appUtils.failActionFunction
+
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
 	}
 
 ];

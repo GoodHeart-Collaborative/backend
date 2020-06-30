@@ -13,6 +13,11 @@ export const MESSAGES = {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Old password is invalid.",
 			"type": "INVALID_OLD_PASSWORD"
+		},
+		INVALID_ID: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Ivalid Id",
+			"type": "INVALID_ID_PROVIDED"
 		}
 	},
 	SUCCESS: {
