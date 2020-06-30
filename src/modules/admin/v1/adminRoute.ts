@@ -538,7 +538,7 @@ export const adminRoute: ServerRoute[] = [
 						.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
 						.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 						.default(config.CONSTANT.DEFAULT_PASSWORD)
-						.required()
+						.required(),
 				},
 				failAction: appUtils.failActionFunction
 			},

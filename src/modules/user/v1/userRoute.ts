@@ -10,6 +10,7 @@ import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import { userController } from "@modules/user/v1/UserController";
+import { join } from "path";
 
 export const
 	userRoute: ServerRoute = [
@@ -511,7 +512,7 @@ export const
 				validate: {
 					headers: validator.headerObject["required"],
 					query: {
-						token: Joi.string().required(),
+						token: Joi.string(),
 						password: Joi.string()
 							.trim()
 							.regex(config.CONSTANT.REGEX.PASSWORD)
@@ -519,6 +520,9 @@ export const
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 							.default(config.CONSTANT.DEFAULT_PASSWORD)
 							.required(),
+						countryCode: Joi.string(),
+						mobileNo: Joi.string(),
+						type: Joi.string().valid(['mobile', 'email']).required()
 						// deviceId: Joi.string(),
 						// deviceToken: Joi.string()
 					},

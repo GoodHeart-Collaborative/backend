@@ -156,12 +156,12 @@ export class UserController {
 						} else {
 							params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 							if (
-								(config.SERVER.ENVIRONMENT !== "production") ?
-									(
-										params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-										step1.hash !== params.hash
-									) :
-									step1.hash !== params.hash
+								// (config.SERVER.ENVIRONMENT !== "production") ?
+								// (
+								// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+								// 	step1.hash !== params.hash
+								// ) :
+								step1.hash !== params.hash
 							) {
 								return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 							} else {
@@ -389,7 +389,7 @@ export class UserController {
 						const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
 						if (params.email) {
 							const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
-							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "middleName": step1.middleName, "lastName": step1.lastName, "token": accessToken });
+							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 							return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
 						} else {
 							const step2 = smsManager.sendForgotPasswordLink(params.countryCode, params.mobileNo, accessToken);
@@ -750,28 +750,42 @@ export class UserController {
 
 	async resetPassword(params) {
 		try {
-			const tokenData = await verifyToken(params, 'common', false)
-			console.log('tokeDatatokeDatatokeData', tokenData);
+			if (params.type === 'mobile') {
+				const checkMobile = await userDao.findUserByEmailOrMobileNo(params);
 
-			// const step1 = await userDao.findUserByEmailOrMobileNo(params);
-			// const step1 = await userDao.findOne('users', { _id: tokeData.userId }, {}, {})
-			// console.log('step1step1step1step1', step1);
+				const step1 = await userDao.findOne('users', { _id: checkMobile._id }, {}, {})  //(tokenData);
+				console.log('step1step1step1', step1);
 
-			const step1 = await userDao.findOne('users', { _id: tokenData.userId }, {}, {})  //(tokenData);
-			console.log('step1step1step1', step1);
+				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+				const step2 = userDao.changeForgotPassword(params, { userId: checkMobile._id });
+				// }
+				return userConstant.MESSAGES.SUCCESS.DEFAULT;
 
-			const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
-			// if (oldHash !== step1.hash) {
-			// 	return Promise.reject(adminConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
-			// } else {
+			} else {
+				const tokenData = await verifyToken(params, 'common', false)
+				console.log('tokeDatatokeDatatokeData', tokenData);
 
-			params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-			const step2 = userDao.changeForgotPassword(params, tokenData);
-			// }
-			return userConstant.MESSAGES.SUCCESS.DEFAULT;
+				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				// const step1 = await userDao.findOne('users', { _id: tokeData.userId }, {}, {})
+				// console.log('step1step1step1step1', step1);
+
+				const step1 = await userDao.findOne('users', { _id: tokenData.userId }, {}, {})  //(tokenData);
+				console.log('step1step1step1', step1);
+
+				const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
+				// if (oldHash !== step1.hash) {
+				// 	return Promise.reject(adminConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
+				// } else {
+
+				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+				const step2 = userDao.changeForgotPassword(params, tokenData);
+				// }
+				return userConstant.MESSAGES.SUCCESS.DEFAULT;
 
 
-			// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
+				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
+
+			}
 
 		} catch (error) {
 			throw error;
