@@ -125,7 +125,9 @@ export class UserController {
 			} else {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1', step1);
-
+				if (!step1.hash) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
+				}
 				if (!step1) {
 					if (params.email) {
 						console.log('1111111111111111111111111');

@@ -21,7 +21,7 @@ export const MESSAGES = {
 		},
 		OTP_NOT_MATCH: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "OTP not match",
+			"message": "Incorrect Otp",
 			"type": "Verify otp not match"
 		},
 		EMAIL_OR_PHONE_REQUIRED: {
@@ -53,6 +53,11 @@ export const MESSAGES = {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			message: "You cannot reset your password since you have logged in using Social Account.",
 			type: "CANNOT_CHANGE_PASSWORD"
+		},
+		CANNOT_LOGIN: {
+			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			message: "You cannot login since you have logged in using Social Account.",
+			type: "CANNOT_LOGIN"
 		}
 	},
 	SUCCESS: {

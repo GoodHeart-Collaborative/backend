@@ -204,6 +204,7 @@ export const commonRoute: ServerRoute = [
 		handler: async (request: Request, h: ResponseToolkit) => {
 			try {
 				const query: DeeplinkRequest = request.query;
+				console.log('queryqueryqueryquery', query);
 				return await commonController.deepLink(query);
 			} catch (error) {
 				const message = "Your link has been expired. Please regenerate your link again.";

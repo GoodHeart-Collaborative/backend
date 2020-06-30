@@ -118,10 +118,10 @@ export const
 							.optional(),
 						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
 						password: Joi.string().trim()
-							.regex(config.CONSTANT.REGEX.PASSWORD)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+							// .regex(config.CONSTANT.REGEX.PASSWORD)
+							// .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
-							.default(config.CONSTANT.DEFAULT_PASSWORD)
+							// .default(config.CONSTANT.DEFAULT_PASSWORD)
 							.required(),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required()
@@ -155,11 +155,11 @@ export const
 				tags: ["api", "user"],
 				description: "User signup via (email | mobile) and password",
 				// notes: "",
-				auth: {
-					strategies: ["BasicAuth"]
-				},
+				// auth: {
+				// 	strategies: ["BasicAuth"]
+				// },
 				validate: {
-					headers: validator.headerObject["required"],
+					// headers: validator.headerObject["required"],
 					payload: {
 						countryCode: Joi.string().trim()
 							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
