@@ -38,15 +38,15 @@ const adminNotificationSchema = new Schema({
 		enum: [
 			config.CONSTANT.GENDER.MALE,
 			config.CONSTANT.GENDER.FEMALE,
-			config.CONSTANT.GENDER.ALL
+			// config.CONSTANT.GENDER.ALL
 		]
 	},
 	sentCount: { type: Number },
 	created: { type: Number }
 }, {
-		versionKey: false,
-		timestamps: true
-	});
+	versionKey: false,
+	timestamps: true
+});
 
 adminNotificationSchema.set("toObject", {
 	virtuals: true

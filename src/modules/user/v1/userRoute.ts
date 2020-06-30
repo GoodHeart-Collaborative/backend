@@ -213,7 +213,6 @@ export const
 						otp: Joi.number().min(1000).max(9999).required(),
 						// email: Joi.string().lowercase().trim().optional(),
 						type: Joi.string().valid('email', 'mobile').default('mobile'),
-						verificationFor: Joi.string().valid('singup', 'forGotPassword'),
 					},
 					failAction: appUtils.failActionFunction
 				},
@@ -382,10 +381,10 @@ export const
 						dob: Joi.number().optional(),
 						gender: Joi.string()
 							.trim()
-							.lowercase({ force: true })
 							.optional()
 							.valid([
-								config.CONSTANT.GENDER.FEMALE
+								config.CONSTANT.GENDER.FEMALE,
+								config.CONSTANT.GENDER.MALE,
 							]),
 						isEmailVerified: Joi.boolean(),
 						profilePicUrl: Joi.string().trim().required(),
@@ -473,6 +472,56 @@ export const
 				},
 				validate: {
 					headers: validator.userAuthorizationHeaderObj,
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						// payloadType: 'form',
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+
+		{
+			method: 'PATCH',
+			path: `${config.SERVER.API_BASE_URL}/v1/user/reset-password`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const headers: Device = request.headers;
+				// const requestInfo: Device = request.info;
+				const payload = request.query;
+				console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
+				try {
+					const result = await userController.resetPassword({ ...payload, ...headers });
+
+					return responseHandler.sendSuccess(h, result);
+
+				} catch (error) {
+					console.log('errorerrorerror', error);
+					return responseHandler.sendError(error);
+				}
+			},
+			config: {
+				tags: ["api", "admin"],
+				description: "Admin Login",
+				// notes: "",
+				auth: {
+					strategies: ["BasicAuth"]
+				},
+				validate: {
+					headers: validator.headerObject["required"],
+					query: {
+						token: Joi.string().required(),
+						password: Joi.string()
+							.trim()
+							.regex(config.CONSTANT.REGEX.PASSWORD)
+							.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
+							.default(config.CONSTANT.DEFAULT_PASSWORD)
+							.required(),
+						// deviceId: Joi.string(),
+						// deviceToken: Joi.string()
+					},
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {

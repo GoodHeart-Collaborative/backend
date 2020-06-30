@@ -67,7 +67,8 @@ const ADMIN_TYPE = {
 const GENDER = {
 	MALE: "male",
 	FEMALE: "female",
-	ALL: "all"
+	// ALL: "all"
+	// TRANSG
 };
 
 const SOCIAL_LOGIN_TYPE = {
@@ -382,10 +383,11 @@ const DEEPLINK = {
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
 	ANDROID_SCHEME: "com.womencommunity://" + SERVER.APP_URL.split("://")[1],
 	// for ios user deeplink
-	IOS_SCHEME: "ustandbyuser:///", // ustandbyuser:///appointment@token=&status=
+	IOS_SCHEME: "com.womencommunity://" + SERVER.APP_URL.split("://")[1],
 	// for ios sp deeplink
 	IOS_STORE_LINK: "https://itunes.apple.com",
-	ANDROID_PACKAGE_NAME: "com.appinventiv.ustandby" // when app is not installed redirect to google playstore
+	ANDROID_PACKAGE_NAME: "com.womencommunity", // when app is not installed redirect to google playstore
+	IOS_PACKAGE_NAME: "com.womencommunity"
 };
 const WEBSITE_URL = {
 	ADMIN_URL: "http://womenappdevadmin.appskeeper.com"

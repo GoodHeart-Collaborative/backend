@@ -7,7 +7,6 @@ import * as promise from "bluebird";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 import { contactDao } from "@modules/contact/v1/ContactDao";
-import { logDao } from "@modules/log/LogDao";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager, redisClient } from "@lib/index";
 import { smsManager } from "@lib/SMSManager";
@@ -16,6 +15,7 @@ import * as tokenManager from "@lib/tokenManager";
 import * as userConstant from "@modules/user/userConstant";
 import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
+import { verifyToken } from '@lib/tokenManager';
 export class UserController {
 
 	/**
@@ -389,7 +389,7 @@ export class UserController {
 						const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
 						if (params.email) {
 							const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
-							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "middleName": step1.middleName, "lastName": step1.lastName, "accessToken": accessToken });
+							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "middleName": step1.middleName, "lastName": step1.lastName, "token": accessToken });
 							return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
 						} else {
 							const step2 = smsManager.sendForgotPasswordLink(params.countryCode, params.mobileNo, accessToken);
@@ -745,6 +745,36 @@ export class UserController {
 
 		} catch (error) {
 			return Promise.reject(error)
+		}
+	}
+
+	async resetPassword(params) {
+		try {
+			const tokenData = await verifyToken(params, 'common', false)
+			console.log('tokeDatatokeDatatokeData', tokenData);
+
+			// const step1 = await userDao.findUserByEmailOrMobileNo(params);
+			// const step1 = await userDao.findOne('users', { _id: tokeData.userId }, {}, {})
+			// console.log('step1step1step1step1', step1);
+
+			const step1 = await userDao.findOne('users', { _id: tokenData.userId }, {}, {})  //(tokenData);
+			console.log('step1step1step1', step1);
+
+			const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
+			// if (oldHash !== step1.hash) {
+			// 	return Promise.reject(adminConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
+			// } else {
+
+			params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+			const step2 = userDao.changeForgotPassword(params, tokenData);
+			// }
+			return userConstant.MESSAGES.SUCCESS.DEFAULT;
+
+
+			// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
+
+		} catch (error) {
+			throw error;
 		}
 	}
 }

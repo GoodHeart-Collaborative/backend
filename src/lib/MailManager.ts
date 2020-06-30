@@ -161,12 +161,18 @@ export class MailManager {
 	}
 
 	async forgotPasswordEmailToUser(params) {
+		console.log('params.token', params.token);
+
+		console.log('KKKKKKKKKKKKKKKKKKIIIIIIIIIOOOOOOOOOOOOOO>>>>', `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+			`?token=${params.token}&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}token@${params.token}&token=${params.token}` +
+			`&type=forgot&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.middleName + " " + params.lastName}`);
+
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
-				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-					`?token=${params.token}&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}token@${params.token}&token=${params.token}` +
-					`&type=forgot&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.middleName + " " + params.lastName}`,
-				"name": params.firstName + " " + params.middleName + " " + params.lastName,
+				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+					`?token=${params.token}&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}&token@${params.token}&token=${params.token}` +
+					`&type=forgot&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
+				"name": params.firstName + " " + params.lastName,
 				"year": new Date().getFullYear(),
 				"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
 			});
