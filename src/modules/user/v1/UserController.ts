@@ -586,7 +586,9 @@ export class UserController {
 					}
 					return userConstant.MESSAGES.SUCCESS.DEFAULT;
 				}
-			} else {
+				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
+			}
+			else if (config.SERVER.ENVIRONMENT == "production") {
 				// const data = await userDao.checkOTP(params);
 				// console.log('data', data);
 				if (params.type === 'mobile') {
@@ -609,7 +611,6 @@ export class UserController {
 					};
 				}
 				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
-
 
 				// if (data.mobileOtp === params.otp) {
 				// 	return userConstant.MESSAGES.SUCCESS.DEFAULT
