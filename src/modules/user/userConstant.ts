@@ -66,6 +66,11 @@ export const MESSAGES = {
 			"message": "SUCCESS",
 			"type": "DEFAULT"
 		},
+		PASSWORD_SUCCESSFULLY_CHANGED: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Password successfully changed",
+			"type": "DEFAULT"
+		},
 		DEFAULT_WITH_DATA: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
