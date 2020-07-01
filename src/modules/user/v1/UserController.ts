@@ -755,6 +755,7 @@ export class UserController {
 
 	async resetPassword(params) {
 		try {
+
 			if (params.type === 'mobile') {
 				const checkMobile = await userDao.findUserByEmailOrMobileNo(params);
 
@@ -767,7 +768,10 @@ export class UserController {
 				return userConstant.MESSAGES.SUCCESS.DEFAULT;
 
 			} else {
-				const tokenData = await verifyToken(params, 'common', false)
+				if (params.token) {
+					params['accessToken'] = params.token;
+				}
+				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
 				console.log('tokeDatatokeDatatokeData', tokenData);
 
 				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
