@@ -51,21 +51,20 @@ export class UserDao extends BaseDao {
 	 */
 	async signup(params: UserRequest.Signup, userData?) {
 		try {
-			if (userData) {
-				if (userData.email === params.email && (!userData.isFacebookLogin || !userData.isGoogleLogin || !userData.isFacebookLogin || !userData.isEmailVerified)) {
-					// remove the email from previous one
-					console.log('LLLLLLLLLLLL');
+			// if (userData) {
+			// 	if (userData.email === params.email && (!userData.isFacebookLogin || !userData.isGoogleLogin || !userData.isFacebookLogin || !userData.isEmailVerified)) {
+			// 		// remove the email from previous one
+			// 		console.log('LLLLLLLLLLLL');
 
-					const data = userDao.updateOne('users', { _id: userData._id }, { $set: { email: "" } }, {})
-				}
-				if (userData.mobileNo === params.mobileNo && !userData.isMobileVerified) {
-					// remove the email from previous one
-					console.log('LLLLLLLLLLLL', userData.isMobileVerified);
+			// 		const data = userDao.updateOne('users', { _id: userData._id }, { $set: { email: "" } }, {})
+			// 	}
+			// 	if (userData.mobileNo === params.mobileNo && !userData.isMobileVerified) {
+			// 		// remove the email from previous one
+			// 		console.log('LLLLLLLLLLLL', userData.isMobileVerified);
 
-					const data = userDao.updateOne('users', { _id: userData._id }, { $set: { mobileNo: "", fullMobileNo: "" } }, {})
-				}
-			}
-
+			// 		const data = userDao.updateOne('users', { _id: userData._id }, { $set: { mobileNo: "", fullMobileNo: "" } }, {})
+			// 	}
+			// }
 
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;

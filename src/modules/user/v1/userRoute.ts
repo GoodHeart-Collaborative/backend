@@ -183,9 +183,12 @@ export const
 			method: "POST",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/verify-otp`,
 			handler: async (request: Request, h: ResponseToolkit) => {
-				const headers: Device = request.headers;
 				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-				console.log('userDatauserDatauserDatauserDatauserData', userData);
+				console.log('userDatauserDatauserDatauserDatauserData>>>>>>>>>', userData);
+
+				const headers: Device = request.headers;
+				console.log('headersheadersheaders', headers);
+
 
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {
@@ -197,7 +200,7 @@ export const
 			},
 			options: {
 				tags: ["api", "user"],
-				description: "User signup via (email | mobile) and password",
+				description: "User verify OTP (email | mobile) and password",
 				// notes: "",
 				auth: {
 					strategies: ["UserAuth"]

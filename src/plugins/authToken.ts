@@ -117,6 +117,7 @@ export const plugin = {
 								} else {
 									userData = _.extend(userData, { "deviceId": tokenData.deviceId, "accountLevel": tokenData.accountLevel, "platform": tokenData.platform, "userId": tokenData.userId, "lastLogin": step3.lastLogin });
 									tokenData["userData"] = userData;
+									console.log('tokenDatatokenDatatokenData', tokenData);
 									return ({ isValid: true, credentials: { accessToken: accessToken, tokenData: tokenData } });
 								}
 							}

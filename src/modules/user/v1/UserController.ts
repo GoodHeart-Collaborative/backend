@@ -49,7 +49,7 @@ export class UserController {
 
 				params['mobileOtp'] = generateOtp;
 
-				const step2 = await userDao.signup(params, step1);
+				const step2 = await userDao.signup(params);
 
 				const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
 
