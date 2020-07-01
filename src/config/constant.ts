@@ -381,9 +381,9 @@ const DEEPLINK = {
 	DEFAULT_FALLBACK_URL: "https://google.com",
 	// for android deeplink
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
-	ANDROID_SCHEME: "com.womencommunity://" + SERVER.APP_URL.split("://")[1],
+	ANDROID_SCHEME: "com.womencommunity",
 	// for ios user deeplink
-	IOS_SCHEME: "com.womencommunity://" + SERVER.APP_URL.split("://")[1],
+	IOS_SCHEME: "com.womencommunity://",
 	// for ios sp deeplink
 	IOS_STORE_LINK: "https://itunes.apple.com",
 	ANDROID_PACKAGE_NAME: "com.womencommunity", // when app is not installed redirect to google playstore
