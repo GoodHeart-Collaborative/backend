@@ -263,9 +263,9 @@ export const commonRoute: ServerRoute = [
 					token: Joi.string().trim().optional(),
 					name: Joi.string().required(),
 					type: Joi.string().trim().valid(["verifyEmail"]).optional(),
-					// accountLevel: Joi.string().trim().valid([
-					// 	config.CONSTANT.ACCOUNT_LEVEL.USER
-					// ]).required()
+					accountLevel: Joi.string().trim().valid([
+						config.CONSTANT.ACCOUNT_LEVEL.USER
+					]).required()
 				},
 				failAction: appUtils.failActionFunction
 			},
