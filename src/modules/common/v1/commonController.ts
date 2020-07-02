@@ -131,7 +131,9 @@ export class CommonController {
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 			}
 			if (params.type === "verifyEmail") {
-				const step1 = await baseDao.findOne("users", { "_id": jwtPayload.payload.userId }, {}, {}, {});
+				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
+				const step1 = await baseDao.updateOne("users", { _id: jwtPayload.payload.userId }, { isEmailVerified: true }, {});
+
 				console.log('step1step1step1', step1);
 
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
