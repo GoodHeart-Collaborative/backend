@@ -236,5 +236,45 @@ export const commonRoute: ServerRoute = [
 				}
 			}
 		}
+	},
+
+
+	{
+		method: "GET",
+		path: `${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			try {
+				const query: DeeplinkRequest = request.query;
+				console.log('queryqueryqueryquery', query);
+				return await commonController.veryEmail(query);
+			} catch (error) {
+				const message = "Your link has been expired. Please regenerate your link again.";
+				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
+			}
+		},
+		options: {
+			tags: ["api", "user"],
+			description: "user verify email register Deep Link",
+			validate: {
+				query: {
+					android: Joi.string().trim().optional(),
+					ios: Joi.string().trim().optional(),
+					fallback: Joi.string().trim().optional(),
+					token: Joi.string().trim().optional(),
+					name: Joi.string().required(),
+					type: Joi.string().trim().valid(["verifyEmail"]).optional(),
+					// accountLevel: Joi.string().trim().valid([
+					// 	config.CONSTANT.ACCOUNT_LEVEL.USER
+					// ]).required()
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: "form",
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
 	}
 ];

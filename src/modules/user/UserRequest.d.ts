@@ -47,6 +47,7 @@ declare namespace UserRequest {
 		isAppleLogin: boolean;
 		isEmailVerified?: boolean;
 		gender: string;
+		appleId: string;
 	}
 
 	export interface MultiBlock {

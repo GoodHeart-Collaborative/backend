@@ -111,6 +111,47 @@ export class CommonController {
 			throw error;
 		}
 	}
+
+	async veryEmail(params) {
+		try {
+			console.log("deepLink===================>", JSON.stringify(params));
+			console.log('params.androidparams.android', params.android);
+			console.log('iosLink: params.iosiosLink: params.ios', params.ios);
+
+			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
+			console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
+			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			if (isExpire) {
+				// let step2;
+				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+				// 	step2 = adminDao.emptyForgotToken({ "token": params.token });
+				// } else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
+				// 	step2 = userDao.emptyForgotToken({ "token": params.token });
+				// }
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+			}
+			if (params.type === "verifyEmail") {
+				const step1 = await baseDao.findOne("users", { "_id": jwtPayload.payload.userId }, {}, {}, {});
+				console.log('step1step1step1', step1);
+
+				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
+					.compileFile({
+						url: params.android || "", // android scheme,
+						iosLink: params.ios || "", // ios scheme
+						fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+						title: config.SERVER.APP_NAME,
+						android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
+						ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
+					});
+
+				return responseHtml;
+			}
+
+
+		} catch (error) {
+			return Promise.reject(error)
+		}
+	}
 }
 
 export const commonController = new CommonController();

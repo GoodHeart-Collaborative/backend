@@ -104,6 +104,8 @@ export class UserController {
 				let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
 				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
+
+				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 				// let userResponse = appUtils.formatUserData(updateUserQr);
 				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken });
 			}
@@ -377,7 +379,7 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 					}
 				} else {
-					if (step1.isGoogleLogin || step1.isFacebookLogin) {
+					if ((step1.isGoogleLogin || step1.isFacebookLogin || step1.isAppleLogin) && !step1.hash) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD);
 					} else {
 						const tokenData = _.extend(params, {
