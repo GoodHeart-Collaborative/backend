@@ -142,6 +142,11 @@ const MESSAGES = {
 			"message": "Please verify your email address.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
+		EMAIL_ALREADY_VERIFIED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Email already verified.",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
 		MOBILE_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Please verify your mobile number",

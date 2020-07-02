@@ -118,8 +118,6 @@ export class CommonController {
 			console.log('params.androidparams.android', params.android);
 			console.log('iosLink: params.iosiosLink: params.ios', params.ios);
 
-
-
 			console.log('paramsparamsparamsparamsparams', params);
 
 			// const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
@@ -135,6 +133,23 @@ export class CommonController {
 			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 			// }
 			if (params.type === "verifyEmail") {
+
+				const userData = await baseDao.findOne("users", { _id: params.userId }, {}, {});
+				if (!userData) {
+					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+				}
+				if (userData.isEmailVerified) {
+					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+				}
+
+				if (userData) {
+					const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
+					console.log('findAllAccountfindAllAccount', findSameEmail);
+					if (findSameEmail) {
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+					}
+				}
+
 				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
 				const step1 = await baseDao.updateOne("users", { _id: params.userId }, { isEmailVerified: true }, {});
 
