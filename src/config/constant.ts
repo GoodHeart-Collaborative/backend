@@ -381,7 +381,7 @@ const DEEPLINK = {
 	DEFAULT_FALLBACK_URL: "https://google.com",
 	// for android deeplink
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
-	ANDROID_SCHEME: "com.womencommunity://://",
+	ANDROID_SCHEME: "com.womencommunity://",
 	// for ios user deeplink
 	IOS_SCHEME: "com.womencommunity://",
 	// for ios sp deeplink

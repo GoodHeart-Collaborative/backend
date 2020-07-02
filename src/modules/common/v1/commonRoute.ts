@@ -260,7 +260,8 @@ export const commonRoute: ServerRoute = [
 					android: Joi.string().trim().optional(),
 					ios: Joi.string().trim().optional(),
 					fallback: Joi.string().trim().optional(),
-					token: Joi.string().trim().optional(),
+					// token: Joi.string().trim().optional(),
+					userId: Joi.string().required(),
 					name: Joi.string().required(),
 					type: Joi.string().trim().valid(["verifyEmail"]).optional(),
 					accountLevel: Joi.string().trim().valid([

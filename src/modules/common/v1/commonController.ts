@@ -118,21 +118,25 @@ export class CommonController {
 			console.log('params.androidparams.android', params.android);
 			console.log('iosLink: params.iosiosLink: params.ios', params.ios);
 
-			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
-			console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
-			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
-			if (isExpire) {
-				// let step2;
-				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-				// 	step2 = adminDao.emptyForgotToken({ "token": params.token });
-				// } else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
-				// 	step2 = userDao.emptyForgotToken({ "token": params.token });
-				// }
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
-			}
+
+
+			console.log('paramsparamsparamsparamsparams', params);
+
+			// const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
+			// console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
+			// const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			// if (isExpire) {
+			// 	// let step2;
+			// 	// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+			// 	// 	step2 = adminDao.emptyForgotToken({ "token": params.token });
+			// 	// } else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
+			// 	// 	step2 = userDao.emptyForgotToken({ "token": params.token });
+			// 	// }
+			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+			// }
 			if (params.type === "verifyEmail") {
 				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
-				const step1 = await baseDao.updateOne("users", { _id: jwtPayload.payload.userId }, { isEmailVerified: true }, {});
+				const step1 = await baseDao.updateOne("users", { _id: params.userId }, { isEmailVerified: true }, {});
 
 				console.log('step1step1step1', step1);
 
