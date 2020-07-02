@@ -105,7 +105,8 @@ export class UserController {
 				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
 
-				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
+
+				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken });
 				// let userResponse = appUtils.formatUserData(updateUserQr);
 				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken });
 			}
