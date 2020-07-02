@@ -76,8 +76,8 @@ export const SERVER = Object.freeze({
 	UPLOAD_DIR: process.cwd() + "/src/uploads/",
 	// ONE_DAY_TIME_STAMP: 24 * 60 * 60 * 1000, // 1 day
 	// LOGIN_TOKEN_EXPIRATION_TIME: "180d", // 180 days
-	// LOGIN_TOKEN_EXPIRATION_TIME: 180 * 24 * 60 * 60 * 1000, // 180 days
-	LOGIN_TOKEN_EXPIRATION_TIME: '20h', // 180 days
+	LOGIN_TOKEN_EXPIRATION_TIME: 180 * 24 * 60 * 60 * 1000, // 180 days
+	// LOGIN_TOKEN_EXPIRATION_TIME: '20h', // 180 days
 
 	JWT_CERT_KEY: "g8b9(-=~Sdf)",
 	SALT_ROUNDS: 10,
