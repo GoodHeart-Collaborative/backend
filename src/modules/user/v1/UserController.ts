@@ -145,9 +145,13 @@ export class UserController {
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
 					console.log('step2step2', step2);
 					if (step2 && step2.hash == null) {
+						console.log('>>>>>111111111111111111');
+
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
 					if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
+						console.log('22222222222222222222222');
+
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 					}
 					if (params.email && !step2) {
