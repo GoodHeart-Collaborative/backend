@@ -160,35 +160,35 @@ export class UserController {
 					}
 					else {
 						let salt, accessToken;
-						if (!step1.hash) {
+						// if (!step1.hash) {
+						// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
+						// } else {
+						params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+						if (
+							// (config.SERVER.ENVIRONMENT !== "production") ?
+							// (
+							// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+							// 	step1.hash !== params.hash
+							// ) :
+							step2.hash !== params.hash
+						) {
 							return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 						} else {
-							params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-							if (
-								// (config.SERVER.ENVIRONMENT !== "production") ?
-								// (
-								// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-								// 	step1.hash !== params.hash
-								// ) :
-								step1.hash !== params.hash
-							) {
-								return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-							} else {
-								salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-								const tokenData = _.extend(params, {
-									"userId": step1._id,
-									"firstName": step1.firstName,
-									"lastName": step1.lastName,
-									"email": step1.email,
-									"countryCode": step1.countryCode,
-									"mobileNo": step1.mobileNo,
-									"salt": salt,
-									"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-								});
-								const userObject = appUtils.buildToken(tokenData);
-								accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
-							}
+							salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+							const tokenData = _.extend(params, {
+								"userId": step1._id,
+								"firstName": step1.firstName,
+								"lastName": step1.lastName,
+								"email": step1.email,
+								"countryCode": step1.countryCode,
+								"mobileNo": step1.mobileNo,
+								"salt": salt,
+								"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+							});
+							const userObject = appUtils.buildToken(tokenData);
+							accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
 						}
+						// }
 						let arn;
 						if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 							// arn = await sns.registerAndroidUser(params.deviceToken);
