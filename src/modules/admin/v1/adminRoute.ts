@@ -558,6 +558,9 @@ export const adminRoute: ServerRoute[] = [
 
 			const query: UserId = request.query;
 			try {
+				if (!query.userId) {
+					return responseHandler.sendSuccess(h, tokenData);
+				}
 				const result = await adminController.adminDetails(query, tokenData);
 				return responseHandler.sendSuccess(h, result);
 			} catch (error) {
@@ -574,7 +577,7 @@ export const adminRoute: ServerRoute[] = [
 			validate: {
 				headers: validator.adminAuthorizationHeaderObj,
 				query: {
-					userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+					userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID)
 				},
 				failAction: appUtils.failActionFunction
 			},
