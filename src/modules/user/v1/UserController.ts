@@ -167,7 +167,7 @@ export class UserController {
 						// if (!step1.hash) {
 						// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 						// } else {
-						params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+						params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
 						if (
 							// (config.SERVER.ENVIRONMENT !== "production") ?
 							// (
