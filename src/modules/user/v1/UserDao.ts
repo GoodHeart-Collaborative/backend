@@ -39,7 +39,7 @@ export class UserDao extends BaseDao {
 			if (params.mobileNo) {
 				console.log(3333333333333333);
 
-				query["$or"] = [{ "mobileNo": params.mobileNo, isMobileVerified: true }];
+				query["$or"] = [{ "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
 				query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 			}
 			const options = { lean: true };
