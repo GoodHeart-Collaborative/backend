@@ -142,14 +142,19 @@ export class UserController {
 						console.log('222222222222222')
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
+					const step2 = await userDao.findVerifiedEmailOrMobile(params);
+					console.log('step2step2', step2);
+					if (step2 && step2.hash == null) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
+					}
 					if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 					}
-					if (params.email && !step1.isEmailVerified) {
+					if (params.email && !step2) {
 						console.log('44444444444444444444444444');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
 					}
-					if (params.mobileNo && !step1.isMobileVerified) {
+					if (params.mobileNo && !step2) {
 						console.log('55555555555555555555555555555555555555555');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED)
 					}
@@ -314,6 +319,29 @@ export class UserController {
 					else {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
+
+					// if (step1) {
+					// 	if (params.mobileNo && params.countryCode) {
+					// 		const step2 = await userDao.findUserByEmailOrMobileNo(params);
+
+					// 	} else if (params.email) {
+
+					// 	} else if (params.email && params.mobileNo && params.countryCode) {
+
+					// 	}
+					// 	const step1 = await userDao.findUserByEmailOrMobileNo(params);
+
+					// 	const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
+					// }
+
+					// if (step1 && !step1.isGoogleLogin && !step1.isFacebookLogin) {
+
+					// 	if (step1.email === params.email) {
+					// 		return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+					// 	}
+					// 	else {
+					// 		return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					// 	}
 
 
 				} else {

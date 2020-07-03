@@ -170,7 +170,8 @@ export class MailManager {
 					`&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
 				"name": params.firstName + " " + params.lastName,
 				"year": new Date().getFullYear(),
-				"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
+				"validity": appUtils.timeConversion(10 * 60 * 1000), // 10 mins
+				"logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png",
 			});
 		await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
 	}

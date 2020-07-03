@@ -27,6 +27,36 @@ export class UserDao extends BaseDao {
 		}
 	}
 
+	async findVerifiedEmailOrMobile(params: UserRequest.Login) {
+		try {
+			const query: any = {};
+			if (params.email) {
+				console.log(222222222222222);
+				query["$or"] = [{ "email": params.email, isEmailVerified: true }];
+				query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			}
+
+			if (params.mobileNo) {
+				console.log(3333333333333333);
+
+				query["$or"] = [{ "mobileNo": params.mobileNo, isMobileVerified: true }];
+				query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			}
+			const options = { lean: true };
+
+			// const query: any = {};
+			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
+			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			console.log('queryqueryquery', query);
+
+
+			return await this.findOne("users", query, {}, options, {});
+		} catch (error) {
+			throw error;
+		}
+	}
+
+
 	/**
 	 * @function findUserById
 	 */
