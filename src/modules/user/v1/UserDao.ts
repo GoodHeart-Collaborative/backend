@@ -161,6 +161,7 @@ export class UserDao extends BaseDao {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
 			params.created = Date.now();
+			params['status'] = config.CONSTANT.STATUS.ACTIVE;
 
 			// const data= await this.da
 			return await this.save("users", params);
