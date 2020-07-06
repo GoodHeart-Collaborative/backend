@@ -341,6 +341,30 @@ class AdminController {
 			throw error;
 		}
 	}
+	/**
+	 * 
+	 * @param params 
+	 * @param tokenData 
+	 * @function admin update profile
+	 */
+	async Profile(params, tokenData: TokenData) {
+		try {
+			const criteria = {
+				_id: tokenData.userId,
+			};
+			const dataToUpdate = {
+				name: params.name,
+				profilePicture: params.profilePicture,
+			}
+			const data = await adminDao.updateOne('admins', criteria, dataToUpdate, {});
+
+			return adminConstant.MESSAGES.SUCCESS.EDIT_PROFILE;
+
+		} catch (error) {
+			throw error;
+		}
+	}
+
 
 	/**
 	 * @function dashboard

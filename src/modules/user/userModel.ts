@@ -96,7 +96,7 @@ const userSchema = new Schema({
 			config.CONSTANT.STATUS.ACTIVE,
 			config.CONSTANT.STATUS.DELETED
 		],
-		default: config.CONSTANT.STATUS.ACTIVE
+		default: config.CONSTANT.STATUS.BLOCKED
 	},
 	emailOtp: { type: Number },
 	preference: { type: String },

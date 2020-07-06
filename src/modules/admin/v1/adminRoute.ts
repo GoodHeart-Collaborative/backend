@@ -590,6 +590,47 @@ export const adminRoute: ServerRoute[] = [
 		}
 	},
 	{
+		method: "PATCH",
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/details`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+			console.log('tokenDatatokenData', tokenData);
+
+			const payload = request.payload;
+			console.log('payloadpayloadpayload', payload);
+
+			try {
+				const result = await adminController.Profile(payload, tokenData);
+				return responseHandler.sendSuccess(h, result);
+			} catch (error) {
+				return responseHandler.sendError(error);
+			}
+		},
+		config: {
+			tags: ["api", "admin"],
+			description: "Admin Details",
+			// notes: "",
+			auth: {
+				strategies: ["AdminAuth"]
+			},
+			validate: {
+				headers: validator.adminAuthorizationHeaderObj,
+				payload: {
+					name: Joi.string().required(),
+					profilePicture: Joi.string().allow(''),
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+	{
 		method: "GET",
 		path: `${config.SERVER.API_BASE_URL}/v1/admin/dashboard`,
 		handler: async (request: Request, h: ResponseToolkit) => {

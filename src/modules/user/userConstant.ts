@@ -9,6 +9,11 @@ export const MESSAGES = {
 			"message": "User with this email is already registered.",
 			"type": "EMAIL_ALREADY_EXIST"
 		},
+		USER_ACCOUNT_SCREENING: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Your Account is in screening",
+			"type": "BLOCKED_USER"
+		},
 		MOBILE_NO_ALREADY_EXIST: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "User with this mobile number is already registered.",
