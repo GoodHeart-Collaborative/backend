@@ -38,7 +38,7 @@ class CategoryController {
     async getCategory(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm } = params;
             const aggPipe = [];
 
             const match: any = {};
@@ -48,12 +48,11 @@ class CategoryController {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
-            // if (searchKey) {
-            // 	match["$or"] = [
-            // 		{ "name": { "$regex": searchKey, "$options": "-i" } },
-            // 		{ "email": { "$regex": searchKey, "$options": "-i" } }
-            // 	];
-            // }
+            if (searchTerm) {
+                match["$or"] = [
+                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
             aggPipe.push({ "$match": match });

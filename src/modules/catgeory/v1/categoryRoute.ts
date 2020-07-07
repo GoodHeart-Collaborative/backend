@@ -74,7 +74,8 @@ export const categoryRoute: ServerRoute[] = [
                 headers: validator.adminAuthorizationHeaderObj,
                 query: {
                     limit: Joi.number(),
-                    page: Joi.number()
+                    page: Joi.number(),
+                    searchTerm: Joi.string()
                 },
                 failAction: appUtils.failActionFunction
             },
