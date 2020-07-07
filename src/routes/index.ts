@@ -20,6 +20,9 @@ import { userRoute as userRouteV1 } from "@modules/user/v1/userRoute";
 // version routes
 import { versionRoute as versionRouteV1 } from "@modules/version/v1/versionRoute";
 
+import { categoryRoute as categoryRouteV1 } from '@modules/catgeory/v1/categoryRoute';
+import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
+
 // simple routing
 const baseRoute = [
 	{
@@ -39,5 +42,7 @@ export const routes: ServerRoute[] = [
 	...contentRouteV1,
 	// ...notificationRouteV1,
 	...userRouteV1,
+	...categoryRouteV1,
+	...postRouteV1,
 	// ...versionRouteV1
 ];

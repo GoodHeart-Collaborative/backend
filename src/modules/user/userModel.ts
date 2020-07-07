@@ -1,6 +1,6 @@
 "use strict";
 
-import * as autoIncrement from "mongoose-auto-increment";
+// import * as autoIncrement from "@modules/category/node_modules/mongoose-auto-increment";
 // import * as bcrypt from "bcrypt";
 import * as mongoose from "mongoose";
 import { Schema, Model, Document } from "mongoose";
@@ -11,8 +11,8 @@ import { ElasticSearch } from "@lib/ElasticSearch";
 
 const elasticSearch = new ElasticSearch();
 
-const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
-autoIncrement.initialize(connection);
+// const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
+// autoIncrement.initialize(connection);
 
 export interface IUser extends Document {
 	// sno: string;
@@ -44,6 +44,8 @@ export interface IUser extends Document {
 	industryType: string;
 	experience: number;
 	about: string;
+	userPrivacy: string;
+
 	createdAt: number;
 }
 
@@ -96,13 +98,45 @@ const userSchema = new Schema({
 			config.CONSTANT.STATUS.ACTIVE,
 			config.CONSTANT.STATUS.DELETED
 		],
-		default: config.CONSTANT.STATUS.BLOCKED
+		default: config.CONSTANT.STATUS.ACTIVE
 	},
 	emailOtp: { type: Number },
 	preference: { type: String },
-	industryType: { type: String },
+	industryType: {
+		type: String, enum: [
+			config.INDUSTRIES.AGRI_FOREST_FISH.value,
+			config.INDUSTRIES.ADVERTISING.value,
+			config.INDUSTRIES.BUSINESS_INFORMATION.value,
+			config.INDUSTRIES.CONST_UTIL_CONTRACT.value,
+			config.INDUSTRIES.EDUCATION.value,
+			config.INDUSTRIES.ENTERTAINMENT_FASHION.value,
+			config.INDUSTRIES.FINANCE_INSURANCE.value,
+			config.INDUSTRIES.FOOD_HOSPITALITY.value,
+			config.INDUSTRIES.GAMING.value,
+			config.INDUSTRIES.HEALTH_SERVICES.value,
+			config.INDUSTRIES.INFORMATION_TECHNOLOGY.value,
+			config.INDUSTRIES.MANUFACTURING.value,
+			config.INDUSTRIES.MOTOR_VEHICLE.value,
+			config.INDUSTRIES.MUSIC_MEDIA.value,
+			config.INDUSTRIES.NATURAL_RES_ENV.value,
+			config.INDUSTRIES.OTHER.value,
+			config.INDUSTRIES.PERSONAL_SERVICES.value,
+			config.INDUSTRIES.REAL_ESTATE_HOUSING.value,
+			config.INDUSTRIES.RETAIL.value,
+			config.INDUSTRIES.SAFETY_SECURITY_LEGAL.value,
+			config.INDUSTRIES.TRANSPORTATION.value,
+		]
+	},
+	isAdminVerified: { type: Boolean, default: false },
 	experience: { type: Number },
 	about: { type: String },
+	userPrivacy: {
+		type: String, enum: [
+			config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+			config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+			config.CONSTANT.PRIVACY_STATUS.PUBLIC,
+		]
+	},
 	createdAt: { type: Number },
 	updatedAt: { type: Number }
 }, {

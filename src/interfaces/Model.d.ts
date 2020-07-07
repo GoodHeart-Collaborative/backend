@@ -109,4 +109,6 @@ declare type ModelNames =
 	"login_histories" |
 	"notifications" |
 	"users" |
-	"versions";
+	"versions" |
+	"categories" |
+	"posts";

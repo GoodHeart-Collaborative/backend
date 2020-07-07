@@ -153,7 +153,11 @@ export class BaseDao {
 
 	async insert(model: ModelNames, data, options: QueryFindOneAndUpdateOptions) {
 		try {
+			console.log('modelmodelmodel', model);
+
 			const ModelName: any = models[model];
+			console.log('ModelNameModelName', ModelName, data);
+
 			const obj = new ModelName(data);
 			await obj.save();
 			return obj;

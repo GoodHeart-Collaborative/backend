@@ -596,8 +596,15 @@ class AdminController {
 			const criteria = {
 				_id: params.userId
 			};
-			const dataToUpdate = {
-				status: params.status
+			let dataToUpdate;
+			if (params.status) {
+				dataToUpdate = {
+					status: params.status
+				}
+			} else {
+				dataToUpdate = {
+					isAdminVerified: params.isAdminVerified
+				}
 			}
 
 			const data = await userDao.update('users', criteria, dataToUpdate, {})

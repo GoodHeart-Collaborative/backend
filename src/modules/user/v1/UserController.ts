@@ -152,6 +152,10 @@ export class UserController {
 					if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
 
+						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
+					}
+					if (!step1.isAdminVerified) {
+						console.log('3333333333333333333');
 						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					}
 					if (params.email && !step2) {

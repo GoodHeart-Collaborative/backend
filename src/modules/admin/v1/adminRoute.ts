@@ -886,6 +886,7 @@ export const adminRoute: ServerRoute[] = [
 						config.CONSTANT.STATUS.ACTIVE,
 						config.CONSTANT.STATUS.DELETED
 					]),
+					isAdminVerified: Joi.boolean(),
 					userId: Joi.string().required()
 				},
 				failAction: appUtils.failActionFunction
@@ -899,5 +900,7 @@ export const adminRoute: ServerRoute[] = [
 			}
 		}
 	}
+
+
 
 ];
