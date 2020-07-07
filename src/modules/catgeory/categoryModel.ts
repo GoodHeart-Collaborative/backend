@@ -21,6 +21,13 @@ const categorySchema = new Schema({
     // subCategoryId: { type: Schema.Types.ObjectId },
     name: { type: String },
     title: { type: String },
+    status: {
+        type: String, enum: [
+            config.CONSTANT.STATUS.ACTIVE,
+            config.CONSTANT.STATUS.BLOCKED,
+            config.CONSTANT.STATUS.DELETED
+        ], default: config.CONSTANT.STATUS.ACTIVE,
+    },
     imageUrl: { type: String },
     updatedAt: { type: Number },
 

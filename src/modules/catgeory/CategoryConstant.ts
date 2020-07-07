@@ -9,6 +9,15 @@ export const MESSAGES = {
             "message": "Email already exists.",
             "type": "EMAIL_ALREADY_EXIST"
         },
-
+        ALRADY_EXIST: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Category already exists.",
+            "type": "EMAIL_ALREADY_EXIST"
+        },
     },
 };
+
+
+// export const CategoryConstant = {
+
+// }

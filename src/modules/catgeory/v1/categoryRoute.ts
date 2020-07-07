@@ -47,4 +47,129 @@ export const categoryRoute: ServerRoute[] = [
             }
         }
     },
+
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/category`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload = request.query;
+            console.log('payloadpayloadpayloadpayload', payload);
+
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await categoryController.getCategory(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "category"],
+            description: "Add category",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                query: {
+                    limit: Joi.number(),
+                    page: Joi.number()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
+    {
+        method: "PATCH",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/category/{categoryId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload = {
+                ...request.params,
+                ...request.payload
+            }
+            console.log('payloadpayloadpayloadpayload', payload);
+
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await categoryController.updateCategory(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "category"],
+            description: "update category",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: {
+                    categoryId: Joi.string().required()
+                },
+                payload: {
+                    title: Joi.string().required(),
+                    imageUrl: Joi.string()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/category/{categoryId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload = {
+                ...request.params,
+                ...request.payload
+            }
+            console.log('payloadpayloadpayloadpayload', payload);
+
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await categoryController.getById(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "category"],
+            description: "update category",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: {
+                    categoryId: Joi.string().required()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
 ];
