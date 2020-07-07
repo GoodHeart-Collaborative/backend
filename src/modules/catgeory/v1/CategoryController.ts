@@ -127,6 +127,26 @@ class CategoryController {
             return Promise.reject(error);
         }
     }
+
+    async updateStatus(params) {
+        try {
+
+            const criteria = {
+                _id: params.categoryId,
+            };
+            const dataToUpdate = {
+                status: params.status
+            }
+            const data = await categoryDao.updateOne('categories', criteria, dataToUpdate, {});
+            // if (data['nModified'] == 0){
+
+            // }
+
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export const categoryController = new CategoryController();
