@@ -23,7 +23,7 @@ const categorySchema = new Schema({
 
     updatedAt: { type: Number },
 
-    created: { type: Number }
+    createdAt: { type: Number }
 }, {
     versionKey: false,
     // collection: config.CONSTANT.DB_MODEL_REF.CATEGORY,

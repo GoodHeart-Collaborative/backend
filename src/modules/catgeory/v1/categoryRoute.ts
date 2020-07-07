@@ -33,9 +33,8 @@ export const categoryRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 payload: {
-                    name: Joi.string().required(),
+                    // name: Joi.string().lowercase().required(),
                     title: Joi.string().required(),
-
                 },
                 failAction: appUtils.failActionFunction
             },

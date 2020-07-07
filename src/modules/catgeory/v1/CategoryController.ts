@@ -18,6 +18,14 @@ class CategoryController {
     async addCategory(params) {
         try {
 
+            const name = params.title.toLowerCase();
+            console.log('namenamename', name);
+
+            var result = name.replace(/ /g, "_");
+            console.log('resultresultresult', result);
+
+            params['name'] = result;
+            console.log('paramsparamsparamsparams', params);
             const data = await categoryDao.insert('categories', params, {});
             console.log('datadatadatadata', data);
             return data;
