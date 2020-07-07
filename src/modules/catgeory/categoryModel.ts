@@ -11,6 +11,7 @@ export interface ICategory extends Document {
     // subCategoryId: string;
     title: string;
     name: string;
+    imageUrl: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -20,7 +21,7 @@ const categorySchema = new Schema({
     // subCategoryId: { type: Schema.Types.ObjectId },
     name: { type: String },
     title: { type: String },
-
+    imageUrl: { type: String },
     updatedAt: { type: Number },
 
     createdAt: { type: Number }
