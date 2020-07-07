@@ -861,9 +861,14 @@ export const adminRoute: ServerRoute[] = [
 
 	{
 		method: "PATCH",
-		path: `${config.SERVER.API_BASE_URL}/v1/admin/{userId}/user/{status}`,
+		path: `${config.SERVER.API_BASE_URL}/v1/admin/user/{userId}/status`,
 		handler: async (request: Request, h: ResponseToolkit) => {
-			const payload = request.params;
+			const payload = {
+				...request.payload,
+				...request.params
+			};
+			console.log('payloadpayload', payload);
+
 			try {
 				const result = await adminController.updateStatus(payload);
 				return responseHandler.sendSuccess(h, result);
@@ -873,7 +878,7 @@ export const adminRoute: ServerRoute[] = [
 		},
 		config: {
 			tags: ["api", "admin", "users"],
-			description: "get usetrs list",
+			description: "get update user status and verified",
 			// notes: "",
 			auth: {
 				strategies: ["AdminAuth"]
@@ -881,13 +886,15 @@ export const adminRoute: ServerRoute[] = [
 			validate: {
 				headers: validator.adminAuthorizationHeaderObj,
 				params: {
+					userId: Joi.string().required()
+				},
+				payload: {
 					status: Joi.string().valid([
 						config.CONSTANT.STATUS.BLOCKED,
 						config.CONSTANT.STATUS.ACTIVE,
 						config.CONSTANT.STATUS.DELETED
 					]),
 					isAdminVerified: Joi.boolean(),
-					userId: Joi.string().required()
 				},
 				failAction: appUtils.failActionFunction
 
