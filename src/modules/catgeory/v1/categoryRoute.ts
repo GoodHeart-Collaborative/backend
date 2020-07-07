@@ -35,7 +35,7 @@ export const categoryRoute: ServerRoute[] = [
                 payload: {
                     // name: Joi.string().lowercase().required(),
                     title: Joi.string().required(),
-                    imageUrl: Joi.strig()
+                    imageUrl: Joi.string()
                 },
                 failAction: appUtils.failActionFunction
             },
