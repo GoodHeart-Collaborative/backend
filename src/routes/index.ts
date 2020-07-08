@@ -22,7 +22,7 @@ import { versionRoute as versionRouteV1 } from "@modules/version/v1/versionRoute
 
 import { categoryRoute as categoryRouteV1 } from '@modules/catgeory/v1/categoryRoute';
 import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
-import { inspirationRoute as inspirationRouteV1 } from '@modules/dailyInspiration/v1/inspirationRoute';
+import { inspirationRoute as inspirationRouteV1 } from "@modules/dailyInspiration/v1/inspirationRoute";
 // simple routing
 const baseRoute = [
 	{
