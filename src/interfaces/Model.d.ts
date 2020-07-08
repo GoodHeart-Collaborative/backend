@@ -111,4 +111,5 @@ declare type ModelNames =
 	"users" |
 	"versions" |
 	"categories" |
-	"posts";
+	"posts" |
+	"inspiration";

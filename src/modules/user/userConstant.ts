@@ -29,6 +29,11 @@ export const MESSAGES = {
 			"message": "Please register your mobile number.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
+		EMAIL_NOT_REGISTERED: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Please register your email.",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
 		OTP_NOT_MATCH: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Incorrect Otp",
