@@ -33,7 +33,7 @@ export const postRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 payload: {
-                    userId: Joi.string().required(), // 
+                    userId: Joi.string().optinal(), // 
                     categoryId: Joi.string().required(),
                     // subCategoryId: Joi.string().required(),
                     title: Joi.string(),
