@@ -142,7 +142,7 @@ export const inspirationRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = {
-                ...request.query,
+                ...request.payload,
                 ...request.params
             };
             try {
@@ -164,7 +164,7 @@ export const inspirationRoute: ServerRoute[] = [
                 params: {
                     Id: Joi.string().required()
                 },
-                query: {
+                payload: {
                     status: Joi.string().valid([
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.DELETED,
