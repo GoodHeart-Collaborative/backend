@@ -240,7 +240,7 @@ const MESSAGES = {
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_VERIFIED: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"statusCode": HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
 			"message": "Please verify your email address.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
@@ -250,7 +250,7 @@ const MESSAGES = {
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		MOBILE_NOT_VERIFIED: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"statusCode": HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
 			"message": "Please verify your mobile number",
 			"type": "MOBILE_NO_NOT_VERIFY"
 		},

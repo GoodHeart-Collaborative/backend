@@ -25,12 +25,12 @@ export const MESSAGES = {
 			"type": "MOBILE_NO_ALREADY_EXIST"
 		},
 		MOBILE_NO_NOT_REGISTERED: {
-			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NOT_REGISTER,
 			"message": "Please register your mobile number.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
 		EMAIL_NOT_REGISTERED: {
-			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_REGISTER,
 			"message": "Please register your email.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},

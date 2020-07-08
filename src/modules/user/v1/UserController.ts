@@ -136,7 +136,7 @@ export class UserController {
 				if (!step1) {
 					if (params.email) {
 						console.log('1111111111111111111111111');
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
+						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
 					}
 					if (params.mobileNo)
 						console.log('222222222222222')
@@ -146,17 +146,31 @@ export class UserController {
 					console.log('step2step2', step2);
 					if (step2 && step2.hash == null) {
 						console.log('>>>>>111111111111111111');
-
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
 					if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
-
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
 					if (params.email && !step2) {
 						console.log('44444444444444444444444444');
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
+
+						const tokenData = _.extend(params, {
+							"userId": step1._id,
+							"name": step1.name,
+							"email": step1.email,
+							"countryCode": step1.countryCode,
+							"mobileNo": step1.mobileNo,
+							"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+						});
+						const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
+						const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
+						if (params.email) {
+							const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
+							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
+
+							return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
+						}
 					}
 					if (params.mobileNo && !step2) {
 						console.log('55555555555555555555555555555555555555555');
@@ -417,9 +431,9 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 					}
 				} else {
-					// if ((step1.isGoogleLogin || step1.isFacebookLogin || step1.isAppleLogin) && !step1.hash) {
-					// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD);
-					// } 
+					if ((step1.isGoogleLogin || step1.isFacebookLogin || step1.isAppleLogin) && !step1.hash) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD);
+					}
 					// else {
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
