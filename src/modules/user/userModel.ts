@@ -36,7 +36,7 @@ export interface IUser extends Document {
 	forgotToken: string;
 	gender: string;
 	dob: number;
-	profilePicUrl: string;
+	profilePicUrl: [string];
 	address: Address;
 	status: string;
 	mobileOtp: number;
