@@ -74,7 +74,7 @@ export const
 						// type: Joi.string().allow('mobile', 'email').default('mobile'),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required(),
-						profilePicUrl: Joi.string(),
+						profilePicUrl: Joi.array().items(Joi.string()),
 						gender: Joi.string()
 							.trim()
 							.optional()
@@ -399,7 +399,7 @@ export const
 							]),
 
 						// isEmailVerified: Joi.boolean(),
-						profilePicUrl: Joi.string().trim().required(),
+						profilePicUrl: Joi.array().items(Joi.string()),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required()
 					},

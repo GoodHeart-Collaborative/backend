@@ -89,7 +89,8 @@ const userSchema = new Schema({
 		]
 	},
 	dob: { type: Number },
-	profilePicUrl: { type: String },
+	// profilePicUrl: { type: String },
+	profilePicUrl: [Schema.Types.String],
 	address: geoSchema,
 	status: {
 		type: String,
