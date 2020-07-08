@@ -154,10 +154,6 @@ export class UserController {
 
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
-					if (!step1.isAdminVerified) {
-						console.log('3333333333333333333');
-						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
-					}
 					if (params.email && !step2) {
 						console.log('44444444444444444444444444');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
@@ -165,6 +161,10 @@ export class UserController {
 					if (params.mobileNo && !step2) {
 						console.log('55555555555555555555555555555555555555555');
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED)
+					}
+					if (!step1.isAdminVerified) {
+						console.log('3333333333333333333');
+						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					}
 					else {
 						let salt, accessToken;

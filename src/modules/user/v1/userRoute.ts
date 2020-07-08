@@ -71,10 +71,17 @@ export const
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 							.default(config.CONSTANT.DEFAULT_PASSWORD)
 							.required(),
-						type: Joi.string().allow('mobile', 'email').default('mobile'),
+						// type: Joi.string().allow('mobile', 'email').default('mobile'),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required(),
-						profilePicUrl: Joi.string()
+						profilePicUrl: Joi.string(),
+						gender: Joi.string()
+							.trim()
+							.optional()
+							.valid([
+								config.CONSTANT.GENDER.FEMALE,
+								config.CONSTANT.GENDER.MALE,
+							]),
 					},
 					failAction: appUtils.failActionFunction
 				},
@@ -382,7 +389,7 @@ export const
 							.trim()
 							.regex(config.CONSTANT.REGEX.MOBILE_NUMBER)
 							.optional(),
-						dob: Joi.number().optional(),
+						// dob: Joi.number().optional(),
 						gender: Joi.string()
 							.trim()
 							.optional()
@@ -390,7 +397,8 @@ export const
 								config.CONSTANT.GENDER.FEMALE,
 								config.CONSTANT.GENDER.MALE,
 							]),
-						isEmailVerified: Joi.boolean(),
+
+						// isEmailVerified: Joi.boolean(),
 						profilePicUrl: Joi.string().trim().required(),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required()
