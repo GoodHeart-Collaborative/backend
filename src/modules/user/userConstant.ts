@@ -9,6 +9,11 @@ export const MESSAGES = {
 			"message": "User with this email is already registered.",
 			"type": "EMAIL_ALREADY_EXIST"
 		},
+		SOCIAL_ACCOUNT_ALREADY_EXIST: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Social Account already exist",
+			"type": "SOCIAL_ACCOUNT_ALREADY_EXIST"
+		},
 		BLOCKED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.UNAUTHORIZED,
 			"message": "Your account have been blocked by admin.",
