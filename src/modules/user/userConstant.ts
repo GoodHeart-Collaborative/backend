@@ -15,8 +15,8 @@ export const MESSAGES = {
 			"type": "USER_BLOCKED"
 		},
 		REGISTER_BDAY: {
-			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "User with this email is already registered.",
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY,
+			"message": "please setnup your profile",
 			"type": "EMAIL_ALREADY_EXIST"
 		},
 		USER_ACCOUNT_SCREENING: {
