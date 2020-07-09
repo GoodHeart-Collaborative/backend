@@ -211,7 +211,7 @@ export const unicornRoute: ServerRoute[] = [
                     //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
                     //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
                     // ]),
-                    description: Joi.string().required(),
+                    description: Joi.string(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
