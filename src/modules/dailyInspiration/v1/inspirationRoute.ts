@@ -184,4 +184,61 @@ export const inspirationRoute: ServerRoute[] = [
             }
         }
     },
+
+    {
+        method: "PATCH",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload = {
+                ...request.payload,
+                ...request.params
+            };
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await inspirationController.updatePost(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "inspiration"],
+            description: "get inspiration list",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: {
+                    Id: Joi.string().required()
+                },
+                payload: {
+                    status: Joi.string().valid([
+                        config.CONSTANT.STATUS.ACTIVE,
+                        config.CONSTANT.STATUS.DELETED,
+                        // config.CONSTANT.STATUS.BLOCKED
+                    ]),
+                    title: Joi.string().required(),
+                    // privacy: Joi.string().valid([
+                    //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
+                    //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+                    //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
+                    // ]),
+                    description: Joi.string().required(),
+                    // shortDescription: string;
+                    imageUrl: Joi.string(),
+                    isPostLater: Joi.boolean().default(false),
+                    createdAt: Joi.number()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
 ];
