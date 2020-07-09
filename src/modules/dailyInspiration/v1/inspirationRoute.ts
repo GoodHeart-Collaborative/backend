@@ -66,6 +66,8 @@ export const inspirationRoute: ServerRoute[] = [
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await inspirationController.getPostById(payload);
+                // console.log('resultresultresultresultresult', result);
+
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -123,7 +125,8 @@ export const inspirationRoute: ServerRoute[] = [
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.DELETED,
-                    ])
+                    ]),
+                    searchTerm: Joi.string(),
                 },
                 failAction: appUtils.failActionFunction
             },

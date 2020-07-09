@@ -40,7 +40,9 @@ class InspirationController {
                 return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
             console.log('datadatadatadata', data);
-            return data;
+            return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+
+            // return data;
         } catch (error) {
             throw error;
         }

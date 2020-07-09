@@ -309,8 +309,8 @@ const clean = function (object) {
 			delete object[propName];
 		}
 	}
-	delete object["createdAt"];
-	delete object["updatedAt"];
+	// delete object["createdAt"];
+	// delete object["updatedAt"];
 	return object;
 };
 
