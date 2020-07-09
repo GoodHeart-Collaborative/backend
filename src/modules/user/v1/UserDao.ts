@@ -352,8 +352,7 @@ export class UserDao extends BaseDao {
 			const options = { lean: true };
 			const projection = { mobileOtp: 1 }
 			return await this.findOne('users', mobleCriteria, {}, options, {});
-			// }
-			return;
+
 		} catch (error) {
 			throw error;
 		}

@@ -163,12 +163,11 @@ export class UserController {
 						});
 						const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
 						const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
-						if (params.email) {
-							const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
-							const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
+						const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
+						const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 
-							return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
-						}
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
+
 					}
 					if (params.mobileNo && !step2) {
 						console.log('55555555555555555555555555555555555555555');
@@ -605,7 +604,7 @@ export class UserController {
 			const findByMobile = await userDao.findOne('users', criteria, {}, {}, {});
 			console.log('findByMobilefindByMoblefindByMobile', findByMobile);
 			if (!findByMobile) {
-				return userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED;
+				return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 			}
 			const generateOtp = await appUtils.generateOtp();
 			const dataToUpdate = {
@@ -652,7 +651,7 @@ export class UserController {
 					}
 					return userConstant.MESSAGES.SUCCESS.DEFAULT;
 				}
-				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
+				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 			}
 			else if (config.SERVER.ENVIRONMENT == "production") {
 				// const data = await userDao.checkOTP(params);
@@ -676,7 +675,7 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.DEFAULT;
 					};
 				}
-				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
+				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 
 				// if (data.mobileOtp === params.otp) {
 				// 	return userConstant.MESSAGES.SUCCESS.DEFAULT
@@ -700,10 +699,10 @@ export class UserController {
 			const data = await userDao.checkForgotOtp(params);
 			console.log('datadatadatadata', data);
 			if (!data) {
-				return config.CONSTANT.MESSAGES.ERROR.INVALID_MOBILE_NUMBER
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_MOBILE_NUMBER)
 			}
 			if (!data.salt || !data.hash) {
-				return userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD;
+				return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD);
 			}
 			console.log('datadatadatadata', data);
 
@@ -774,7 +773,7 @@ export class UserController {
 					const step7 = await promise.join(step4, step5, step6);
 					return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, userData: data });
 				}
-				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH;
+				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 			}
 			else {
 				// const data = await userDao.checkOTP(params);

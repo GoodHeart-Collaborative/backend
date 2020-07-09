@@ -25,6 +25,8 @@ import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
 import { inspirationRoute as inspirationRouteV1 } from "@modules/dailyInspiration/v1/inspirationRoute";
 
 import { unicornRoute as unicornRouteV1 } from "@modules/unicornHumour/v1/UnicornRoute";
+
+import { adviceROute as adviceROuteV1 } from '@modules/dailyAdvice/v1/AdviceRoute';
 // simple routing
 const baseRoute = [
 	{
@@ -48,5 +50,6 @@ export const routes: ServerRoute[] = [
 	...postRouteV1,
 	...inspirationRouteV1,
 	...unicornRouteV1,
+	...adviceROuteV1,
 	// ...versionRouteV1
 ];
