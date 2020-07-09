@@ -163,10 +163,9 @@ export const
 				description: "User signup via (email | mobile) and password",
 				// notes: "",
 				auth: {
-					strategies: ["UserAuth"],
+					strategies: ["UserAuth"]
 				},
 				validate: {
-					headers: validator.userAuthorizationHeaderObj["required"],
 					payload: {
 						countryCode: Joi.string().trim()
 							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
@@ -176,6 +175,7 @@ export const
 						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).required(),
 						// email: Joi.string().lowercase().trim(),
 					},
+					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
