@@ -109,7 +109,7 @@ export class UserController {
 
 				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
 				// let userResponse = appUtils.formatUserData(updateUserQr);
-				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken });
+				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken, mobileNo: step2.mobileNo, countryCode: step2.countryCode });
 			}
 			// }
 		} catch (error) {
@@ -407,7 +407,7 @@ export class UserController {
 						step5 = redisClient.createJobs(jobPayload);
 					}
 					const step6 = await promise.join(step3, step4, step5);
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step2.countryCode, "mobileNo": step2.mobileNo });
 				}
 			}
 		} catch (error) {
