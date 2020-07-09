@@ -111,7 +111,12 @@ export const unicornRoute: ServerRoute[] = [
                 query: {
                     limit: Joi.number(),
                     page: Joi.number(),
-                    searchTerm: Joi.string()
+                    searchTerm: Joi.string(),
+                    status: Joi.string().valid([
+                        config.CONSTANT.STATUS.ACTIVE,
+                        config.CONSTANT.STATUS.BLOCKED,
+                        config.CONSTANT.STATUS.DELETED,
+                    ])
                 },
                 failAction: appUtils.failActionFunction
             },
