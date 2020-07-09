@@ -97,9 +97,19 @@ class UnicornController {
         }
     }
 
-    async updateStatus(params){
+    async updateStatus(params) {
         try {
-            
+            const criteria = {
+                _id: params.Id
+            }
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
+            console.log('dataToUpdatedataToUpdate', data);
+            return data;
+
+
         } catch (error) {
             return Promise.reject(error);
         }
@@ -107,6 +117,16 @@ class UnicornController {
 
     async updatePost(params) {
         try {
+
+            const criteria = {
+                _id: params.Id
+            }
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
+            console.log('dataToUpdatedataToUpdate', data);
+            return data;
 
         } catch (error) {
             return Promise.reject(error);

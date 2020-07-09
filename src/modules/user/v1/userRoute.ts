@@ -162,19 +162,19 @@ export const
 				tags: ["api", "user"],
 				description: "User signup via (email | mobile) and password",
 				// notes: "",
-				// auth: {
-				// 	strategies: ["BasicAuth"]
-				// },
+				auth: {
+					strategies: ["UserAuth"],
+				},
 				validate: {
-					// headers: validator.headerObject["required"],
+					headers: validator.userAuthorizationHeaderObj["required"],
 					payload: {
 						countryCode: Joi.string().trim()
 							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
 							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
 							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.optional(),
-						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
-						email: Joi.string().lowercase().trim(),
+							.required(),
+						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).required(),
+						// email: Joi.string().lowercase().trim(),
 					},
 					failAction: appUtils.failActionFunction
 				},
@@ -215,11 +215,11 @@ export const
 				validate: {
 					headers: validator.userAuthorizationHeaderObj,
 					payload: {
-						countryCode: Joi.string().trim()
-							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.optional(),
+						// countryCode: Joi.string().trim()
+						// 	.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
+						// 	.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
+						// 	.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
+						// 	.optional(),
 						// mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
 						otp: Joi.number().min(1000).max(9999).required(),
 						// email: Joi.string().lowercase().trim().optional(),

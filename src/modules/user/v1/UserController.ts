@@ -34,14 +34,12 @@ export class UserController {
 				console.log('step1step1step1step1step1', step1);
 				if (step1) {
 					console.log('q>>>>>>>>>>>>>>>');
-
 					if (step1.email === params.email && step1.isEmailVerified) {
 						console.log('LLLLLLLLLLL');
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					}
 					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified) {
 						console.log('KKKKKKKKKKKKKKKKK');
-
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
 				}

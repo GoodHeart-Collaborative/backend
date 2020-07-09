@@ -72,7 +72,7 @@ export const unicornRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 params: {
-                    userId: Joi.string().optional(), // 
+                    Id: Joi.string().optional(), // 
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -127,7 +127,7 @@ export const unicornRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}/{status}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.params;
