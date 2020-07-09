@@ -102,7 +102,7 @@ class InspirationController {
     async updatePost(params) {
         try {
             const criteria = {
-
+                _id: params.Id
             };
             const datatoUpdate = {
                 ...params
