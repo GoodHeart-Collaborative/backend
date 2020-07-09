@@ -49,7 +49,7 @@ class UnicornController {
     async getPosts(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { sortBy, sortOrder, limit, page, searchTerm } = params;
+            const { sortBy, sortOrder, limit, page, searchTerm, status } = params;
             const aggPipe = [];
 
             const match: any = {};
