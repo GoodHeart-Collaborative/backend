@@ -614,7 +614,7 @@ export class UserController {
 			const updateOTP = await userDao.updateOne('users', { _id: Types.ObjectId(findByMobile._id) }, dataToUpdate, {});
 			let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
 			// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
-			return;
+			return {};
 
 		} catch (error) {
 			return Promise.reject(error)
