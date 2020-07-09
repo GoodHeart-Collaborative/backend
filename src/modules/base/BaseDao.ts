@@ -153,7 +153,7 @@ export class BaseDao {
 
 	async insert(model: ModelNames, data, options: QueryFindOneAndUpdateOptions) {
 		try {
-			data['createdAt'] = Date.now();
+			(data && data['createdAt']) ? data['createdAt'] : Date.now();
 			data['updatedAt'] = Date.now();
 
 			const ModelName: any = models[model];

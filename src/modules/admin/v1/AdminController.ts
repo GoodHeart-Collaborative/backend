@@ -264,7 +264,7 @@ class AdminController {
 						});
 						const adminObject = appUtils.buildToken(tokenData);
 						const accessToken = await tokenManager.generateAdminToken({ "type": "ADMIN_LOGIN", "object": adminObject });
-						const step3 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
+						// const step3 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
 						const step4 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
 						const loginObj = {
 							"userId": step1._id,
