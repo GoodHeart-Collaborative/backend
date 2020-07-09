@@ -14,8 +14,13 @@ export const MESSAGES = {
 			"message": "Your account have been blocked by admin.",
 			"type": "USER_BLOCKED"
 		},
-		USER_ACCOUNT_SCREENING: {
+		REGISTER_BDAY: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "User with this email is already registered.",
+			"type": "EMAIL_ALREADY_EXIST"
+		},
+		USER_ACCOUNT_SCREENING: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING,
 			"message": "Your Account is in screening",
 			"type": "BLOCKED_USER"
 		},

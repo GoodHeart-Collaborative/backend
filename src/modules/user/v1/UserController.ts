@@ -268,7 +268,14 @@ export class UserController {
 			} else {
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
-				} else {
+				}
+				else if (!step1.dob) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
+				}
+				else if (!step1.isAdminVerified) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+				}
+				else {
 					const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
@@ -364,8 +371,6 @@ export class UserController {
 					// 	else {
 					// 		return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					// 	}
-
-
 				} else {
 					const step2 = await userDao.socialSignup(params);
 					const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);

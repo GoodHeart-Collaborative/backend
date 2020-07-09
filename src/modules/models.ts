@@ -12,3 +12,4 @@ export { versions } from "./version/versionModel";
 export { categories } from "./catgeory/categoryModel";
 export { posts } from './post/postModel'
 export { inspiration } from './dailyInspiration/inspirationModel';
+export { unicorn } from './unicornHumour/unicornModel';

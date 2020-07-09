@@ -35,8 +35,10 @@ const HTTP_STATUS_CODE = {
 
 	EMAIL_NOT_REGISTER: 411,
 	MOBILE_NOT_REGISTER: 412,
-	EMAIL_NOT_VERIFIED: 413,
-	MOBILE_NO_NOT_VERIFY: 414,
+	// EMAIL_NOT_VERIFIED: 413,
+	// MOBILE_NO_NOT_VERIFY: 414,
+	REGISTER_BDAY: 413,
+	ADMIN_ACCOUNT_SCREENING: 414
 };
 
 const ACCOUNT_LEVEL = {
@@ -57,7 +59,8 @@ const DB_MODEL_REF = {
 	VERSION: "version",
 	POST: "posts",
 	CATEGORY: "categories",
-	INSPIRATION: 'inspiration'
+	INSPIRATION: 'inspiration',
+	UNICORN: 'unicorn',
 
 };
 
@@ -240,7 +243,7 @@ const MESSAGES = {
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_VERIFIED: {
-			"statusCode": HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Please verify your email address.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
@@ -250,7 +253,7 @@ const MESSAGES = {
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		MOBILE_NOT_VERIFIED: {
-			"statusCode": HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Please verify your mobile number",
 			"type": "MOBILE_NO_NOT_VERIFY"
 		},

@@ -45,7 +45,7 @@ export interface IUser extends Document {
 	experience: number;
 	about: string;
 	userPrivacy: string;
-
+	loginToken: string;
 	createdAt: number;
 }
 
@@ -80,6 +80,7 @@ const userSchema = new Schema({
 	salt: { type: String, required: false },
 	hash: { type: String, required: false },
 	forgotToken: { type: String },
+	loginToken: { type: String },
 	gender: {
 		type: String,
 		enum: [

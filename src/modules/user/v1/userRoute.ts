@@ -397,8 +397,7 @@ export const
 								config.CONSTANT.GENDER.FEMALE,
 								config.CONSTANT.GENDER.MALE,
 							]),
-
-						// isEmailVerified: Joi.boolean(),
+						isEmailVerified: Joi.boolean().default(true),
 						profilePicUrl: Joi.array().items(Joi.string()),
 						deviceId: Joi.string().trim().required(),
 						deviceToken: Joi.string().trim().required()
