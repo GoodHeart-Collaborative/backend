@@ -201,6 +201,7 @@ export const
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {
 					const result = await userController.verifyOTP({ ...headers, ...payload }, userData);
+					result["data"] = {}
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
