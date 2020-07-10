@@ -151,24 +151,34 @@ export class UserController {
 						console.log('222222222222222')
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
-					if (!step1.hash) {
-						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
-					}
+					// if (!step1.hash) {
+					// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
+					// }
 					console.log('2222222222');
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
-					console.log('step2step2', step2);
+					console.log('step2step2step2', step2);
+
+					if (!step2 && params.email) {
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
+					}
+					else if (!step2 && params.mobileNo) {
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED);
+					}
 					if (step2 && step2.hash == null) {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
-					if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
+
+
+					else if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
-					if (!step2.dob) {
+					else if (step2 && !step2.dob || !step2.dob == null) {
+						console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLlll');
 						return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
 					}
-					if (!step2.isAdminVerified) {
+					else if (!step2.isAdminVerified) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					}
 
