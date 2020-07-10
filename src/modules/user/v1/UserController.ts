@@ -647,9 +647,9 @@ export class UserController {
 							isEmailVerified: true,
 						}
 						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
-						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
 					}
-					return userConstant.MESSAGES.SUCCESS.DEFAULT;
+					return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
 				}
 				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 			}
@@ -663,7 +663,7 @@ export class UserController {
 							mobileOtp: 0
 						}
 						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
-						return userConstant.MESSAGES.SUCCESS.DEFAULT;
+						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({})
 					};
 				}
 				else if (params.type === 'email') {
@@ -827,7 +827,7 @@ export class UserController {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = userDao.changeForgotPassword(params, { userId: checkMobile._id });
 				// }
-				return userConstant.MESSAGES.SUCCESS.DEFAULT;
+				return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
 
 			} else {
 				if (params.token) {

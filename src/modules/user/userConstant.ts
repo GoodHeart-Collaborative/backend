@@ -89,6 +89,7 @@ export const MESSAGES = {
 		DEFAULT: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "SUCCESS",
+			data: {},
 			"type": "DEFAULT"
 		},
 		PASSWORD_SUCCESSFULLY_CHANGED: {
@@ -131,6 +132,7 @@ export const MESSAGES = {
 		FORGOT_PASSWORD_ON_EMAIL: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "Please check your e-mail for password reset link.",
+			"data": {},
 			"type": "FORGOT_PASSWORD_ON_EMAIL"
 		},
 		FORGOT_PASSWORD_ON_PHONE: {

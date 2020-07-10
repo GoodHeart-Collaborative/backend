@@ -162,8 +162,9 @@ export const
 				tags: ["api", "user"],
 				description: "User signup via (email | mobile) and password",
 				// notes: "",
+				// auth: {
 				auth: {
-					strategies: ["UserAuth"]
+					strategies: ["BasicAuth"]
 				},
 				validate: {
 					payload: {
@@ -175,7 +176,7 @@ export const
 						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).required(),
 						// email: Joi.string().lowercase().trim(),
 					},
-					headers: validator.userAuthorizationHeaderObj,
+					headers: validator.headerObject["optional"],
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
