@@ -26,7 +26,7 @@ export const MESSAGES = {
 		},
 		USER_ACCOUNT_SCREENING: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING,
-			"message": "Your Account is in screening",
+			"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
 			"type": "BLOCKED_USER"
 		},
 		MOBILE_NO_ALREADY_EXIST: {
