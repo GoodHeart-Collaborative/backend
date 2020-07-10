@@ -140,6 +140,8 @@ export class UserController {
 						console.log('222222222222222')
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
+					console.log('2222222222');
+
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
 					console.log('step2step2', step2);
 					if (step2 && step2.hash == null) {

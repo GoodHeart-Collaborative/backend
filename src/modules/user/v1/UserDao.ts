@@ -15,12 +15,12 @@ export class UserDao extends BaseDao {
 	 */
 	async findUserByEmailOrMobileNo(params) {
 		try {
-			let { mobileNo, countryCode, email} = params
+			let { mobileNo, countryCode, email } = params
 			let query: any = {};
-			if(countryCode && mobileNo) {
-				query = {"countryCode": countryCode, "mobileNo": mobileNo}
+			if (countryCode && mobileNo) {
+				query = { "countryCode": countryCode, "mobileNo": mobileNo }
 			} else {
-				query = {"email": email }
+				query = { "email": email }
 			}
 			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
@@ -36,16 +36,23 @@ export class UserDao extends BaseDao {
 
 	async findVerifiedEmailOrMobile(params: UserRequest.Login) {
 		try {
+			console.log('kkkkkkkkkkkkk', params);
+
 			let query: any = {};
 			if (params.email) {
-				query = [{ "email": params.email, isEmailVerified: true }];
+				query = { "email": params.email, isEmailVerified: true };
 			}
 			if (params.mobileNo) {
-				query= [{ "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
+				query = { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true };
 			}
 			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			let options = { lean: true };
-			return await this.findOne("users", query, {}, options, {});
+			console.log('queryqueryquery', query);
+
+			const data = await this.findOne("users", query, {}, options, {});
+			console.log('datadata', data);
+			return data;
+
 		} catch (error) {
 			throw error;
 		}
