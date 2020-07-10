@@ -15,9 +15,16 @@ export class UserDao extends BaseDao {
 	 */
 	async findUserByEmailOrMobileNo(params) {
 		try {
-			const query: any = {};
-			query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			let { mobileNo, countryCode, email} = params
+			let query: any = {};
+			if(countryCode && mobileNo) {
+				query = {"countryCode": countryCode, "mobileNo": mobileNo}
+			} else {
+				query = {"email": email }
+			}
+			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
+			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
 
@@ -29,27 +36,15 @@ export class UserDao extends BaseDao {
 
 	async findVerifiedEmailOrMobile(params: UserRequest.Login) {
 		try {
-			const query: any = {};
+			let query: any = {};
 			if (params.email) {
-				console.log(222222222222222);
-				query["$or"] = [{ "email": params.email, isEmailVerified: true }];
-				query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+				query = [{ "email": params.email, isEmailVerified: true }];
 			}
-
 			if (params.mobileNo) {
-				console.log(3333333333333333);
-
-				query["$or"] = [{ "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
-				query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+				query= [{ "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
 			}
-			const options = { lean: true };
-
-			// const query: any = {};
-			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-			console.log('queryqueryquery', query);
-
-
+			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			let options = { lean: true };
 			return await this.findOne("users", query, {}, options, {});
 		} catch (error) {
 			throw error;

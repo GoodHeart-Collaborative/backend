@@ -15,7 +15,7 @@ export const MESSAGES = {
 			"type": "SOCIAL_ACCOUNT_ALREADY_EXIST"
 		},
 		BLOCKED: {
-			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Your account have been blocked by admin.",
 			"type": "USER_BLOCKED"
 		},
@@ -36,12 +36,12 @@ export const MESSAGES = {
 		},
 		MOBILE_NO_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NOT_REGISTER,
-			"message": "Please register your mobile number.",
+			"message": "User does not exist.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_REGISTER,
-			"message": "Please register your email.",
+			"message": "User does not exist.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		OTP_NOT_MATCH: {
