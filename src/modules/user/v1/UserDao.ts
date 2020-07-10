@@ -17,13 +17,13 @@ export class UserDao extends BaseDao {
 		try {
 			let { mobileNo, countryCode, email } = params
 			let query: any = {};
-			if (countryCode && mobileNo) {
-				query = { "countryCode": countryCode, "mobileNo": mobileNo }
-			} else {
-				query = { "email": email }
-			}
-			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
-			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
+			// if (countryCode && mobileNo) {
+			// 	query = { "countryCode": countryCode, "mobileNo": mobileNo }
+			// } else {
+			// 	query = { "email": email }
+			// }
+			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
 			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };

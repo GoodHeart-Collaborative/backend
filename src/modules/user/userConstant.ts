@@ -21,7 +21,7 @@ export const MESSAGES = {
 		},
 		REGISTER_BDAY: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY,
-			"message": "please setnup your profile",
+			"message": "please setup your profile",
 			"type": "EMAIL_ALREADY_EXIST"
 		},
 		USER_ACCOUNT_SCREENING: {
@@ -52,6 +52,11 @@ export const MESSAGES = {
 		EMAIL_OR_PHONE_REQUIRED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Either email or phone number is required.",
+			"type": "EMAIL_OR_PHONE_REQUIRED"
+		},
+		USER_ALREADY_EXIST: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "User already exist",
 			"type": "EMAIL_OR_PHONE_REQUIRED"
 		},
 		// SOCIAL_ACCOUNT_ALREADY_EXIST: {

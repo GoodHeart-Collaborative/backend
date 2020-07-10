@@ -38,9 +38,20 @@ export class UserController {
 						console.log('LLLLLLLLLLL');
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					}
-					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified) {
+					else if (step1.mobileNo === params.mobileNo && step1.isMobileVerified) {
 						console.log('KKKKKKKKKKKKKKKKK');
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					}
+					else {
+						if (step1.mobileNo === params.mobileNo && step1.email === params.email) {
+							return Promise.reject(userConstant.MESSAGES.ERROR.USER_ALREADY_EXIST);
+						}
+						if (step1.mobileNo === params.mobileNo) {
+							return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+						}
+						if (step1.email === params.email) {
+							return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+						}
 					}
 				}
 				const generateOtp = await appUtils.generateOtp();
@@ -128,9 +139,6 @@ export class UserController {
 			else {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1', step1);
-				// if (!step1.hash) {
-				// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
-				// }
 				if (!step1) {
 					if (params.email) {
 						console.log('1111111111111111111111111');
@@ -140,8 +148,10 @@ export class UserController {
 						console.log('222222222222222')
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
+					if (!step1.hash) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
+					}
 					console.log('2222222222');
-
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
 					console.log('step2step2', step2);
 					if (step2 && step2.hash == null) {
@@ -152,6 +162,18 @@ export class UserController {
 						console.log('22222222222222222222222');
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
+					if (!step2.dob) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
+					}
+					if (!step2.isAdminVerified) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+					}
+
+					// EMAIL_NOT_VERIFIED: 411,
+					// MOBILE_NO_NOT_VERIFY: 412,
+					// REGISTER_BDAY: 413,
+					// ADMIN_ACCOUNT_SCREENING: 414
+
 					if (params.email && !step2) {
 						console.log('44444444444444444444444444');
 

@@ -20,7 +20,6 @@ export const
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const headers: Device = request.headers;
 				console.log('headersheadersheadersheadersheadersheadersheaders', headers);
-
 				const payload: UserRequest.Signup = request.payload;
 				try {
 					const result = await userController.signup({ ...headers, ...payload });
