@@ -118,6 +118,14 @@ export const MESSAGES = {
 				"data": data
 			};
 		},
+		OTP_VERIFIED_SUCCESSFULLY: (data) => {
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"message": "OTP verified successfully.",
+				"type": "VERIFY_FORGOT_OTP",
+				"data": data
+			}
+		},
 		LOGIN: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,

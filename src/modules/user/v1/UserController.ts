@@ -141,7 +141,7 @@ export class UserController {
 			}
 			else {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
-				console.log('step1step1step1step1step1', step1);
+				console.log('step1step1step1step1step1>>>>>>>>>>>>', step1);
 				if (!step1) {
 					if (params.email) {
 						console.log('1111111111111111111111111');
@@ -168,8 +168,6 @@ export class UserController {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
-
-
 					else if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
@@ -749,12 +747,12 @@ export class UserController {
 				if (params.otp === config.CONSTANT.BYPASS_OTP) {
 					const dataToUpdate = {
 						isMobileVerified: true,
+						mobileOtp: 0
 					}
 					const criteria = {
 						countryCode: params.countryCode,
 						mobileNo: params.mobileNo,
 					}
-
 					const updatedData = await userDao.updateOne('users', criteria, dataToUpdate, { new: true });
 					// return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
 					console.log('updatedDataupdatedDataupdatedData', updatedData);
@@ -773,7 +771,6 @@ export class UserController {
 
 					// const salt = await appUtils.CryptDataMD5(data._id + "." + new Date().getTime() + "." + params.deviceId);
 					// console.log('saltsaltsaltsaltsaltsalt', salt);
-
 
 					const userObject = appUtils.buildToken(tokenData);
 					console.log('userObjectuserObjectuserObjectuserObject', userObject);
@@ -808,7 +805,7 @@ export class UserController {
 						step6 = redisClient.createJobs(jobPayload);
 					}
 					const step7 = await promise.join(step4, step5, step6);
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, userData: data });
+					return userConstant.MESSAGES.SUCCESS.OTP_VERIFIED_SUCCESSFULLY({ "accessToken": accessToken });
 				}
 				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 			}
