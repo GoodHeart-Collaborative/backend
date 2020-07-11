@@ -36,12 +36,12 @@ export const MESSAGES = {
 		},
 		MOBILE_NO_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NOT_REGISTER,
-			"message": "User does not exist.",
+			"message": "Mobile No. is not registred with us.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_REGISTER,
-			"message": "User does not exist.",
+			"message": "Email is not registred with us.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		OTP_NOT_MATCH: {
