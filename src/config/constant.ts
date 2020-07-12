@@ -313,6 +313,16 @@ const MESSAGES = {
 			"message": "Success",
 			"type": "DEFAULT"
 		},
+		SUCCESSFULLY_ADDED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully added",
+			"type": "DEFAULT"
+		},
+		SUCCESSFULLY_UPDATED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully updated",
+			"type": "DEFAULT"
+		},
 		REFRESH_TOKEN: (data) => {
 			return {
 				"statusCode": HTTP_STATUS_CODE.OK,

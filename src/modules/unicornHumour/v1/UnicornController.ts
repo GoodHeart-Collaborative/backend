@@ -25,7 +25,7 @@ class UnicornController {
 
             const data = await unicornDao.insert("unicorn", params, {});
             console.log('dataaaaaaaaaaaaa', data);
-            return UnicornConstant.MESSAGES.SUCCESS.DEFAULT;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;
@@ -107,7 +107,7 @@ class UnicornController {
             }
             const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
             console.log('dataToUpdatedataToUpdate', data);
-            return data;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
 
         } catch (error) {
@@ -117,7 +117,6 @@ class UnicornController {
 
     async updatePost(params) {
         try {
-
             const criteria = {
                 _id: params.Id
             }
@@ -126,7 +125,7 @@ class UnicornController {
             }
             const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
             console.log('dataToUpdatedataToUpdate', data);
-            return data;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
 
         } catch (error) {
             return Promise.reject(error);

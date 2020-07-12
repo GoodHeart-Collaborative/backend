@@ -21,6 +21,11 @@ export const MESSAGES = {
             "message": "SUCCESS",
             "type": "DEFAULT"
         },
+        SUCCESSFULLY_ADDED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Successfully added",
+            "type": "DEFAULT"
+        },
 
         DEFAULT_WITH_DATA: (data) => {
             return {

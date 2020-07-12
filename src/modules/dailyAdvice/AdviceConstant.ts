@@ -16,7 +16,7 @@ export const MESSAGES = {
             "message": "SUCCESS",
             "type": "DEFAULT"
         },
-        SUCCESS_ADDED: {
+        SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
             "message": "successfully added",
             "type": "DEFAULT"

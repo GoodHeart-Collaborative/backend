@@ -20,9 +20,9 @@ class InspirationController {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
-            const data = await inspirationDao.insert("inspiration", params, {});
+            const data = await inspirationDao.insert("advice", params, {});
             console.log('dataaaaaaaaaaaaa', data);
-            return inspirationConstant.MESSAGES.SUCCESS.DEFAULT;
+            return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;
@@ -109,7 +109,7 @@ class InspirationController {
             };
             const data = await inspirationDao.updateOne('inspiration', criteria, datatoUpdate, {})
             console.log('datadatadatadatadata', data);
-            return data;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
         } catch (error) {
             throw error;

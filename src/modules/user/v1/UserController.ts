@@ -41,7 +41,7 @@ export class UserController {
 						console.log('LLLLLLLLLLL');
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					}
-					else if (step1.mobileNo === params.mobileNo && step1.isMobileVerified) {
+					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified) {
 						console.log('KKKKKKKKKKKKKKKKK');
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
@@ -627,6 +627,19 @@ export class UserController {
 			return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
 		} catch (error) {
 			throw error;
+		}
+	}
+
+	async updateProfile(params) {
+		try {
+			const updateCriteria = {
+				_id: params.userId
+			};
+			const dataToUpdate = {
+				...params
+			}
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 

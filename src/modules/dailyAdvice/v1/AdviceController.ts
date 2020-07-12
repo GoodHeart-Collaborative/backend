@@ -21,7 +21,7 @@ class AdviceController {
             // const dataToInsert =
             const data = await adviceDao.insert("advice", params, {});
             console.log('dataaaaaaaaaaaaa', data);
-            return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_ADDED;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;

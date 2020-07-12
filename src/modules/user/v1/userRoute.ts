@@ -650,5 +650,66 @@ export const
 					}
 				}
 			}
-		}
+		},
+		{
+			method: "PATCH",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const payload = request.payload
+				try {
+					const result = await userController.updateProfile({ ...payload, ...tokenData });
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			options: {
+				tags: ["api", "user"],
+				description: "User Profile",
+				// notes: "",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					payload: {
+						profession: Joi.string(),
+						industryType: Joi.string().valid([
+							config.INDUSTRIES.AGRI_FOREST_FISH.value,
+							config.INDUSTRIES.ADVERTISING.value,
+							config.INDUSTRIES.BUSINESS_INFORMATION.value,
+							config.INDUSTRIES.CONST_UTIL_CONTRACT.value,
+							config.INDUSTRIES.EDUCATION.value,
+							config.INDUSTRIES.ENTERTAINMENT_FASHION.value,
+							config.INDUSTRIES.FINANCE_INSURANCE.value,
+							config.INDUSTRIES.FOOD_HOSPITALITY.value,
+							config.INDUSTRIES.GAMING.value,
+							config.INDUSTRIES.HEALTH_SERVICES.value,
+							config.INDUSTRIES.INFORMATION_TECHNOLOGY.value,
+							config.INDUSTRIES.MANUFACTURING.value,
+							config.INDUSTRIES.MOTOR_VEHICLE.value,
+							config.INDUSTRIES.MUSIC_MEDIA.value,
+							config.INDUSTRIES.NATURAL_RES_ENV.value,
+							config.INDUSTRIES.OTHER.value,
+							config.INDUSTRIES.PERSONAL_SERVICES.value,
+							config.INDUSTRIES.REAL_ESTATE_HOUSING.value,
+							config.INDUSTRIES.RETAIL.value,
+							config.INDUSTRIES.SAFETY_SECURITY_LEGAL.value,
+							config.INDUSTRIES.TRANSPORTATION.value,
+						]).required(),
+						experience: Joi.number(),
+						about: Joi.string()
+					},
+					headers: validator.userAuthorizationHeaderObj,
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						// payloadType: 'form',
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+
 	];
