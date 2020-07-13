@@ -674,7 +674,7 @@ export const
 				validate: {
 					payload: {
 						dob: Joi.string(),
-						profession: Joi.string(),
+						profession: Joi.string().allow(''),
 						userName: Joi.string(),
 						industryType: Joi.string().valid([
 							config.INDUSTRIES.AGRI_FOREST_FISH.value,
@@ -698,9 +698,9 @@ export const
 							config.INDUSTRIES.RETAIL.value,
 							config.INDUSTRIES.SAFETY_SECURITY_LEGAL.value,
 							config.INDUSTRIES.TRANSPORTATION.value,
-						]).required(),
+						]).allow(''),
 						experience: Joi.number(),
-						about: Joi.string()
+						about: Joi.string().allow('')
 					},
 					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction
