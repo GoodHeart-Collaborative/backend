@@ -86,90 +86,11 @@ const GENDER = {
 };
 
 export const INDUSTRIES = {
-	AGRI_FOREST_FISH: {
-		label: 'Agriculture & Forestry/Wildlife',
-		value: 'AGRI_FOREST_FISH',
-	},
-	ADVERTISING: {
-		label: 'Advertising',
-		value: 'ADVERTISING',
-	},
-	BUSINESS_INFORMATION: {
-		label: 'Business & Information',
-		value: 'BUSINESS_INFORMATION',
-	},
-	CONST_UTIL_CONTRACT: {
-		label: 'Construction/Utilities/Contracting',
-		value: 'CONST_UTIL_CONTRACT',
-	},
-	EDUCATION: {
-		label: 'Education',
-		value: 'EDUCATION',
-	},
-	ENTERTAINMENT_FASHION: {
-		label: 'Entertainment & Fashion',
-		value: 'ENTERTAINMENT_FASHION',
-	},
-	FINANCE_INSURANCE: {
-		label: 'Finance & Insurance',
-		value: 'FINANCE_INSURANCE',
-	},
-	FOOD_HOSPITALITY: {
-		label: 'Food & Hospitality',
-		value: 'FOOD_HOSPITALITY',
-	},
-	GAMING: {
-		label: 'Gaming',
-		value: 'GAMING',
-	},
-	HEALTH_SERVICES: {
-		label: 'Health Services',
-		value: 'HEALTH_SERVICES',
-	},
-	INFORMATION_TECHNOLOGY: {
-		label: 'Information Technology',
-		value: 'INFORMATION_TECHNOLOGY',
-	},
-	MANUFACTURING: {
-		label: 'Manufacturing',
-		value: 'MANUFACTURING',
-	},
-	MOTOR_VEHICLE: {
-		label: 'Motor Vehicle',
-		value: 'MOTOR_VEHICLE',
-	},
-	MUSIC_MEDIA: {
-		label: 'Music & Media',
-		value: 'MUSIC_MEDIA',
-	},
-	NATURAL_RES_ENV: {
-		label: 'Natural Resources/Environmental',
-		value: 'NATURAL_RES_ENV',
-	},
-	OTHER: {
-		label: 'Other',
-		value: 'OTHER',
-	},
-	PERSONAL_SERVICES: {
-		label: 'Personal Services',
-		value: 'PERSONAL_SERVICES',
-	},
-	REAL_ESTATE_HOUSING: {
-		label: 'Real Estate & Housing',
-		value: 'REAL_ESTATE_HOUSING',
-	},
-	RETAIL: {
-		label: 'Retail',
-		value: 'RETAIL',
-	},
-	SAFETY_SECURITY_LEGAL: {
-		label: 'Safety/Security & Legal',
-		value: 'SAFETY_SECURITY_LEGAL',
-	},
-	TRANSPORTATION: {
-		label: 'Transportation',
-		value: 'TRANSPORTATION',
-	},
+	Experts_in_Executive_Burnout: "Experts in Executive Burnout",
+	Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
+	Wellness_Coaches: "Wellness Coaches",
+	Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
+	Compassion_Fatigue: 'Compassion Fatigue'
 };
 
 const SOCIAL_LOGIN_TYPE = {

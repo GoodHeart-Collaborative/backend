@@ -106,31 +106,19 @@ const userSchema = new Schema({
 	preference: { type: String },
 	industryType: {
 		type: String, enum: [
-			config.INDUSTRIES.AGRI_FOREST_FISH.value,
-			config.INDUSTRIES.ADVERTISING.value,
-			config.INDUSTRIES.BUSINESS_INFORMATION.value,
-			config.INDUSTRIES.CONST_UTIL_CONTRACT.value,
-			config.INDUSTRIES.EDUCATION.value,
-			config.INDUSTRIES.ENTERTAINMENT_FASHION.value,
-			config.INDUSTRIES.FINANCE_INSURANCE.value,
-			config.INDUSTRIES.FOOD_HOSPITALITY.value,
-			config.INDUSTRIES.GAMING.value,
-			config.INDUSTRIES.HEALTH_SERVICES.value,
-			config.INDUSTRIES.INFORMATION_TECHNOLOGY.value,
-			config.INDUSTRIES.MANUFACTURING.value,
-			config.INDUSTRIES.MOTOR_VEHICLE.value,
-			config.INDUSTRIES.MUSIC_MEDIA.value,
-			config.INDUSTRIES.NATURAL_RES_ENV.value,
-			config.INDUSTRIES.OTHER.value,
-			config.INDUSTRIES.PERSONAL_SERVICES.value,
-			config.INDUSTRIES.REAL_ESTATE_HOUSING.value,
-			config.INDUSTRIES.RETAIL.value,
-			config.INDUSTRIES.SAFETY_SECURITY_LEGAL.value,
-			config.INDUSTRIES.TRANSPORTATION.value,
+			config.INDUSTRIES.Compassion_Fatigue,
+			config.INDUSTRIES.Experts_in_Executive_Burnout,
+			config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
+			config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
+			config.INDUSTRIES.Wellness_Coaches,
 		]
 	},
 	isAdminVerified: { type: Boolean, default: false },
-	experience: { type: Number },
+	experience: {
+		type: String, enum: [
+			'Junior', 'Mid', 'Senior',
+		]
+	},
 	about: { type: String },
 	userPrivacy: {
 		type: String, enum: [
