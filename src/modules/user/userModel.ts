@@ -47,6 +47,8 @@ export interface IUser extends Document {
 	userPrivacy: string;
 	loginToken: string;
 	createdAt: number;
+	countMember: number;
+	memberCreatedAt: number;
 }
 
 const geoSchema = new Schema({
@@ -119,6 +121,8 @@ const userSchema = new Schema({
 			'Junior', 'Mid', 'Senior',
 		]
 	},
+	countMember: { type: Number, default: 0 },
+	memberCreatedAt: { type: Number },
 	about: { type: String },
 	userPrivacy: {
 		type: String, enum: [

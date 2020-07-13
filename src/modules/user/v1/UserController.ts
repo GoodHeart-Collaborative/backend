@@ -890,20 +890,21 @@ export class UserController {
 				params['accessToken'] = params.token;
 			}
 			if (params.type === 'mobile') {
-
 				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
 				console.log('tokeDatatokeDatatokeData', tokenData);
 
 				console.log('paramsparamsparamsparams', params);
+				params['countryCode'] = tokenData['countryCode'];
+				params['mobileNo'] = tokenData['mobileNo'];
 
-				const checkMobile = await userDao.findUserByEmailOrMobileNo(params);
-				console.log('checkMobilecheckMobile', checkMobile);
+				// const checkMobile = await userDao.findUserByEmailOrMobileNo(params);
+				// console.log('checkMobilecheckMobile', checkMobile);
 
-				const step1 = await userDao.findOne('users', { _id: checkMobile._id }, {}, {})  //(tokenData);
+				const step1 = await userDao.findOne('users', { _id: tokenData.userId }, {}, {})  //(tokenData);
 				console.log('step1step1step1', step1);
 
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-				const step2 = userDao.changeForgotPassword(params, { userId: checkMobile._id });
+				const step2 = userDao.changeForgotPassword(params, { userId: tokenData.userId });
 				// }
 				return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
 
