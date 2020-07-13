@@ -50,7 +50,7 @@ class AdviceController {
     async getPosts(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page, searchTerm } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
             console.log('statusstatusstatusstatus', status);
 
             const aggPipe = [];
@@ -68,6 +68,10 @@ class AdviceController {
                 ];
             }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
+
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
             aggPipe.push({ "$match": match });
 

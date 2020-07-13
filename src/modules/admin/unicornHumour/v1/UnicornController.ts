@@ -49,13 +49,13 @@ class UnicornController {
     async getPosts(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { sortBy, sortOrder, limit, page, searchTerm, status } = params;
+            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
             const aggPipe = [];
 
             const match: any = {};
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
-                match["$and"] = [{ status: status }, { "$ne": config.CONSTANT.STATUS.DELETED }];
+                match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
@@ -66,6 +66,9 @@ class UnicornController {
             }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
             aggPipe.push({ "$match": match });
 
             console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);

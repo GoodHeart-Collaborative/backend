@@ -126,6 +126,8 @@ export const inspirationRoute: ServerRoute[] = [
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.DELETED,
                     ]),
+                    fromDate: Joi.number(),
+                    toDate: Joi.number(),
                     searchTerm: Joi.string(),
                 },
                 failAction: appUtils.failActionFunction

@@ -418,6 +418,7 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/forgot-password`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const payload: ForgotPasswordRequest = request.payload;
+				console.log('payloadpayloadpayloadpayloadpayloadpayloadpayloadpayload', payload);
 				try {
 					const result = await userController.forgotPassword(payload);
 					return responseHandler.sendSuccess(h, result);
@@ -437,9 +438,8 @@ export const
 					payload: {
 						email: Joi.string()
 							.trim()
-							.lowercase({ force: true })
-							.email({ minDomainAtoms: 2 })
-							.regex(config.CONSTANT.REGEX.EMAIL)
+							.lowercase()
+							.email()
 							.optional(),
 						countryCode: Joi.string()
 							.trim()
@@ -523,7 +523,7 @@ export const
 				validate: {
 					headers: validator.headerObject["required"],
 					payload: {
-						token: Joi.string(),
+						token: Joi.string().required(),
 						password: Joi.string()
 							.trim()
 							// .regex(config.CONSTANT.REGEX.PASSWORD)
@@ -531,8 +531,8 @@ export const
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 							.default(config.CONSTANT.DEFAULT_PASSWORD)
 							.required(),
-						countryCode: Joi.string(),
-						mobileNo: Joi.string(),
+						// countryCode: Joi.string(),
+						// mobileNo: Joi.string(),
 						type: Joi.string().valid(['mobile', 'email']).required()
 						// deviceId: Joi.string(),
 						// deviceToken: Joi.string()
@@ -655,10 +655,10 @@ export const
 			method: "PATCH",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
 			handler: async (request: Request, h: ResponseToolkit) => {
-				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const payload = request.payload
 				try {
-					const result = {}//await userController.updateProfile({ ...payload, ...tokenData });
+					const result = await userController.updateProfile(payload, userData);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
@@ -674,7 +674,7 @@ export const
 				validate: {
 					payload: {
 						dob: Joi.string(),
-						profession: Joi.string(),
+						profession: Joi.string().allow(''),
 						userName: Joi.string(),
 						industryType: Joi.string().valid([
 							config.INDUSTRIES.AGRI_FOREST_FISH.value,
@@ -698,9 +698,9 @@ export const
 							config.INDUSTRIES.RETAIL.value,
 							config.INDUSTRIES.SAFETY_SECURITY_LEGAL.value,
 							config.INDUSTRIES.TRANSPORTATION.value,
-						]).required(),
+						]).allow(''),
 						experience: Joi.number(),
-						about: Joi.string()
+						about: Joi.string().allow('')
 					},
 					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction

@@ -29,6 +29,16 @@ export const MESSAGES = {
 			"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
 			"type": "BLOCKED_USER"
 		},
+		EMAIL_NOT_VERIFIED: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Email is not verified.",
+			"type": "EMAIL_NOT_VERIFIED"
+		},
+		MOBILE_NOT_VERIFIED: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Phone no. is not verified.",
+			"type": "MOBILE_NOT_VERIFIED"
+		},
 		MOBILE_NO_ALREADY_EXIST: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "User with this mobile number is already registered.",
@@ -148,10 +158,13 @@ export const MESSAGES = {
 			"data": {},
 			"type": "FORGOT_PASSWORD_ON_EMAIL"
 		},
-		FORGOT_PASSWORD_ON_PHONE: {
-			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-			"message": "Please check your number for password reset link.",
-			"type": "FORGOT_PASSWORD_ON_PHONE",
+		FORGOT_PASSWORD_ON_PHONE: (data) => {
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"message": "Please check your number for otp.",
+				"type": "FORGOT_PASSWORD_ON_PHONE",
+				"data": data
+			}
 		},
 		// FORGET_PASSWORD: {
 		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,

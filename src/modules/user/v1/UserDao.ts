@@ -64,7 +64,37 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
+	// for gorgot password
+	async findForGotVerifiedEmailOrMobile(params: ForgotPasswordRequest) {
+		try {
+			let query: any = {};
 
+			console.log('kkkkkkkkkkkkk', params);
+
+			if (params.email && params.mobileNo && params.countryCode) {
+				query["$or"] = [{ "email": params.email, isEmailVerified: true }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
+
+			} else {
+				if (params.email) {
+					query = { "email": params.email, isEmailVerified: true };
+				}
+				if (params.mobileNo) {
+					query = { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true };
+				}
+			}
+
+			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			let options = { lean: true };
+			console.log('queryqueryquery', query);
+
+			const data = await this.findOne("users", query, {}, options, {});
+			console.log('datadata', data);
+			return data;
+
+		} catch (error) {
+			throw error;
+		}
+	}
 
 	/**
 	 * @function findUserById
