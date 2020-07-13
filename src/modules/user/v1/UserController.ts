@@ -807,7 +807,7 @@ export class UserController {
 					const userObject = appUtils.buildToken(tokenData);
 					console.log('userObjectuserObjectuserObjectuserObject', userObject);
 
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": data.salt });
+					const accessToken = await tokenManager.generateUserToken({ "type": "FORGOT_PASSWORD", "object": userObject, "salt": data.salt });
 					console.log('accessTokenaccessTokenaccessTokenaccessToken', accessToken);
 
 					// return userConstant.MESSAGES.SUCCESS.FORGET_PASSWORD({ "accessToken": accessToken, userData: data });
