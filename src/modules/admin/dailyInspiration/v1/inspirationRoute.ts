@@ -1,7 +1,7 @@
 "use strict";
 
-import { ServerRoute, Request, ResponseToolkit }  from "hapi";
-import * as Joi  from "joi";
+import { ServerRoute, Request, ResponseToolkit } from "hapi";
+import * as Joi from "joi";
 
 import { inspirationController } from "@modules/admin/dailyInspiration/v1/inspirationController";
 import * as appUtils from "@utils/appUtils";
@@ -44,6 +44,7 @@ export const inspirationRoute: ServerRoute[] = [
                     description: Joi.string().required(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
+                    postedAt: Joi.number(),
                     isPostLater: Joi.boolean().default(false),
                     createdAt: Joi.number()
                 },

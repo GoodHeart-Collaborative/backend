@@ -30,6 +30,7 @@ import { inspirationRoute as inspirationRouteV1 } from "@modules/admin/dailyInsp
 import { unicornRoute as unicornRouteV1 } from "@modules/admin/unicornHumour/v1/UnicornRoute";
 
 import { adviceROute as adviceROuteV1 } from '@modules/admin/dailyAdvice/v1/AdviceRoute';
+import { memberRoute as memberRouteV1 } from '@modules/admin/memberOfDay/v1/MemberRoute';
 // simple routing
 const baseRoute = [
 	{
@@ -55,5 +56,6 @@ export const routes: ServerRoute[] = [
 	...inspirationRouteV1,
 	...unicornRouteV1,
 	...adviceROuteV1,
+	...memberRouteV1,
 	// ...versionRouteV1
 ];

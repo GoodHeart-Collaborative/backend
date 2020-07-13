@@ -63,6 +63,7 @@ const DB_MODEL_REF = {
 	INSPIRATION: 'inspiration',
 	UNICORN: 'unicorn',
 	ADVICE: 'advice',
+	MEMBER: 'member',
 
 };
 

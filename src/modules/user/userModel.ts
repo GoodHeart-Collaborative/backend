@@ -47,6 +47,8 @@ export interface IUser extends Document {
 	userPrivacy: string;
 	loginToken: string;
 	createdAt: number;
+	memberDate: number;
+	countMemberDay: number;
 }
 
 const geoSchema = new Schema({
@@ -113,6 +115,9 @@ const userSchema = new Schema({
 			config.INDUSTRIES.Wellness_Coaches,
 		]
 	},
+	memberDate: { type: Number },
+	countMember: { type: Number },
+
 	isAdminVerified: { type: Boolean, default: false },
 	experience: {
 		type: String, enum: [

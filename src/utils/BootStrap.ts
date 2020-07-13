@@ -91,6 +91,14 @@ export class BootStrap {
 		}
 	}
 
+	async generateMemberOfDay() {
+		try {
+
+		} catch (error) {
+			return Promise.resolve();
+		}
+	}
+
 	async initiateSocket(server) {
 		socket.connectSocket(server);
 	}
