@@ -512,7 +512,7 @@ export class UserController {
 					} else {
 						console.log('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', params);
 						const step2 = smsManager.sendForgotPasswordLink(params.countryCode, params.mobileNo, accessToken);
-						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_PHONE({ "forgotToken": accessToken });
+						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_PHONE({});
 					}
 					// }
 				}
