@@ -657,6 +657,9 @@ export class UserController {
 			const dataToUpdate = {
 				...params
 			}
+
+			const data = await userDao.updateOne('users', updateCriteria, dataToUpdate, {});
+			return {};
 		} catch (error) {
 			return Promise.reject(error);
 		}
