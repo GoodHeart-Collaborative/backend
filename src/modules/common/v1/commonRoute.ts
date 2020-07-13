@@ -57,7 +57,7 @@ export const commonRoute: ServerRoute = [
 				payload: {
 					password: Joi.string()
 						.trim()
-						.regex(config.CONSTANT.REGEX.PASSWORD)
+						// .regex(config.CONSTANT.REGEX.PASSWORD)
 						.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
 						.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 						.default(config.CONSTANT.DEFAULT_PASSWORD)
