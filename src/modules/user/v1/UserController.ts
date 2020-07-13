@@ -160,9 +160,11 @@ export class UserController {
 					console.log('step2step2step2', step2);
 
 					if (!step2 && params.email) {
+						// if user is not verified us user ki userid and user ki email 
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
 					}
 					else if (!step2 && params.mobileNo) {
+
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED);
 					}
 					if (step2 && step2.hash == null) {
@@ -180,12 +182,10 @@ export class UserController {
 					else if (!step2.isAdminVerified) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					}
-
 					// EMAIL_NOT_VERIFIED: 411,
 					// MOBILE_NO_NOT_VERIFY: 412,
 					// REGISTER_BDAY: 413,
 					// ADMIN_ACCOUNT_SCREENING: 414
-
 					if (params.email && !step2) {
 						console.log('44444444444444444444444444');
 
@@ -463,25 +463,38 @@ export class UserController {
 	 */
 	async forgotPassword(params: ForgotPasswordRequest) {
 		try {
+			console.log('paramsparamsparamsparamsparamsooopppppppppppo', params);
+
 			if (!params.email && (!params.countryCode || !params.mobileNo)) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
-				const step1 = await userDao.findUserByEmailOrMobileNo(params);
-				if (!step1) {
+				const step = await userDao.findUserByEmailOrMobileNo(params)
+				console.log('stepstep', step);
+
+				if (!step) {
 					if (params.email) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
 					} else {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 					}
-				} else {
+				}
+				const step1 = await userDao.findForGotVerifiedEmailOrMobile(params);
+				console.log('step1step1', step1);
+
+				if (!step1) {
+					if (params.email) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
+					} else {
+						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NOT_VERIFIED);
+					}
+				}
+				else {
 					if ((step1.isGoogleLogin || step1.isFacebookLogin || step1.isAppleLogin) && !step1.hash) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD);
 					}
 					// else {
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
-						"name": step1.name,
-						"email": step1.email,
 						"countryCode": step1.countryCode,
 						"mobileNo": step1.mobileNo,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
@@ -489,12 +502,17 @@ export class UserController {
 					const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
 					const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
 					if (params.email) {
+						console.log('paramsparamsparamsLOOPPPPPPPPPPPP', params);
+
+						console.log('LLLLLLLLLLLLLLLLLLparams.emailparams.email');
+
 						const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
 						const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
 					} else {
+						console.log('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', params);
 						const step2 = smsManager.sendForgotPasswordLink(params.countryCode, params.mobileNo, accessToken);
-						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_PHONE;
+						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_PHONE({ "forgotToken": accessToken });
 					}
 					// }
 				}
@@ -865,9 +883,18 @@ export class UserController {
 
 	async resetPassword(params) {
 		try {
-
+			if (params.token) {
+				params['accessToken'] = params.token;
+			}
 			if (params.type === 'mobile') {
+
+				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
+				console.log('tokeDatatokeDatatokeData', tokenData);
+
+				console.log('paramsparamsparamsparams', params);
+
 				const checkMobile = await userDao.findUserByEmailOrMobileNo(params);
+				console.log('checkMobilecheckMobile', checkMobile);
 
 				const step1 = await userDao.findOne('users', { _id: checkMobile._id }, {}, {})  //(tokenData);
 				console.log('step1step1step1', step1);
@@ -878,9 +905,9 @@ export class UserController {
 				return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
 
 			} else {
-				if (params.token) {
-					params['accessToken'] = params.token;
-				}
+				// if (params.token) {
+				// 	params['accessToken'] = params.token;
+				// }
 				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
 				console.log('tokeDatatokeDatatokeData', tokenData);
 

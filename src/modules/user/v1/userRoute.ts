@@ -418,6 +418,7 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/forgot-password`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const payload: ForgotPasswordRequest = request.payload;
+				console.log('payloadpayloadpayloadpayloadpayloadpayloadpayloadpayload', payload);
 				try {
 					const result = await userController.forgotPassword(payload);
 					return responseHandler.sendSuccess(h, result);
@@ -437,9 +438,8 @@ export const
 					payload: {
 						email: Joi.string()
 							.trim()
-							.lowercase({ force: true })
-							.email({ minDomainAtoms: 2 })
-							.regex(config.CONSTANT.REGEX.EMAIL)
+							.lowercase()
+							.email()
 							.optional(),
 						countryCode: Joi.string()
 							.trim()
@@ -523,7 +523,7 @@ export const
 				validate: {
 					headers: validator.headerObject["required"],
 					payload: {
-						token: Joi.string(),
+						token: Joi.string().required(),
 						password: Joi.string()
 							.trim()
 							// .regex(config.CONSTANT.REGEX.PASSWORD)
@@ -531,8 +531,8 @@ export const
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 							.default(config.CONSTANT.DEFAULT_PASSWORD)
 							.required(),
-						countryCode: Joi.string(),
-						mobileNo: Joi.string(),
+						// countryCode: Joi.string(),
+						// mobileNo: Joi.string(),
 						type: Joi.string().valid(['mobile', 'email']).required()
 						// deviceId: Joi.string(),
 						// deviceToken: Joi.string()
