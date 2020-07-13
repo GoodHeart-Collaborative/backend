@@ -11,6 +11,6 @@ export { users } from "./user/userModel";
 export { versions } from "./version/versionModel";
 export { categories } from "./catgeory/categoryModel";
 export { posts } from './post/postModel'
-export { inspiration } from './dailyInspiration/inspirationModel';
-export { unicorn } from './unicornHumour/unicornModel';
-export { advice } from './dailyAdvice/adviceModel'
+export { inspiration } from './admin/dailyInspiration/inspirationModel';
+export { unicorn } from './admin/unicornHumour/unicornModel';
+export { advice } from './admin/dailyAdvice/adviceModel'

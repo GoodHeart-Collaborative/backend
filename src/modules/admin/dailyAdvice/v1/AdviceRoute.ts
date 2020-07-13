@@ -3,29 +3,29 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { inspirationController } from "@modules/dailyInspiration/v1/inspirationController";
+import { adviceController } from "@modules/admin/dailyAdvice/v1/AdviceController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 
-export const inspirationRoute: ServerRoute[] = [
+export const adviceROute: ServerRoute[] = [
     {
         method: "POST",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/advice`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.addInspiration(payload);
+                const result = await adviceController.addAdvice(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
+            tags: ["api", "advice"],
             description: "Add inspiration post",
             auth: {
                 strategies: ["AdminAuth"]
@@ -33,19 +33,12 @@ export const inspirationRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 payload: {
-                    // categoryId: Joi.string(),
-                    // subCategoryId: Joi.string().required(),
                     title: Joi.string().required(),
-                    // privacy: Joi.string().valid([
-                    //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-                    //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                    //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
-                    // ]),
                     description: Joi.string().required(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    createdAt: Joi.number()
+                    postedAt: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -59,13 +52,13 @@ export const inspirationRoute: ServerRoute[] = [
     },
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/advice/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.getPostById(payload);
+                const result = await adviceController.getPostById(payload);
                 // console.log('resultresultresultresultresult', result);
 
                 return responseHandler.sendSuccess(h, result);
@@ -74,8 +67,8 @@ export const inspirationRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration by id",
+            tags: ["api", "advice"],
+            description: "get advice by id",
             auth: {
                 strategies: ["AdminAuth"]
             },
@@ -98,21 +91,21 @@ export const inspirationRoute: ServerRoute[] = [
 
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/advice`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.getPosts(payload);
+                const result = await adviceController.getPosts(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration list",
+            tags: ["api", "advice"],
+            description: "get advice list",
             auth: {
                 strategies: ["AdminAuth"]
             },
@@ -141,33 +134,29 @@ export const inspirationRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}/status`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/advice/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
-                ...request.payload,
-                ...request.params
-            };
+            const payload = request.params
+
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.updatePost(payload);
+                const result = await adviceController.updatePost(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration list",
+            tags: ["api", "advice"],
+            description: "get advice list",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 params: {
-                    Id: Joi.string().required()
-                },
-                payload: {
+                    Id: Joi.string().required(),
                     status: Joi.string().valid([
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.DELETED,
@@ -187,7 +176,7 @@ export const inspirationRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/advice/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = {
@@ -196,15 +185,15 @@ export const inspirationRoute: ServerRoute[] = [
             };
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.updatePost(payload);
+                const result = await adviceController.updatePost(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration list",
+            tags: ["api", "advice"],
+            description: "get advice list",
             auth: {
                 strategies: ["AdminAuth"]
             },
@@ -220,16 +209,11 @@ export const inspirationRoute: ServerRoute[] = [
                         // config.CONSTANT.STATUS.BLOCKED
                     ]),
                     title: Joi.string().required(),
-                    // privacy: Joi.string().valid([
-                    //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-                    //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                    //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
-                    // ]),
                     description: Joi.string().required(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    createdAt: Joi.number()
+                    postedAt: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
             },

@@ -2,24 +2,28 @@
 
 import * as _ from "lodash";
 import fs = require("fs");
+import * as promise from "bluebird";
 
+import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import * as inspirationConstant from "@modules/dailyAdvice/AdviceConstant";
-import { adviceDao } from "@modules/dailyAdvice/v1/AdviceDao";
+// import * as sns from "@lib/pushNotification/sns";
+import * as UnicornConstant from "@modules/admin/unicornHumour/UnicornConstant";
+import { unicornDao } from "@modules/admin/unicornHumour/index";
 
 
-class AdviceController {
+class UnicornController {
 
 	/**
 	 * @function signup
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async addAdvice(params) {
+    async addPost(params) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
-            const data = await adviceDao.insert("advice", params, {});
+
+            const data = await unicornDao.insert("unicorn", params, {});
             console.log('dataaaaaaaaaaaaa', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -34,14 +38,9 @@ class AdviceController {
                 _id: params.Id,
             };
 
-            const data = await adviceDao.findOne('advice', criteria, {}, {})
-            if (!data) {
-                return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
-            }
+            const data = await unicornDao.findOne('unicorn', criteria, {}, {})
             console.log('datadatadatadata', data);
-            return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-
-            // return data;
+            return data;
         } catch (error) {
             throw error;
         }
@@ -50,15 +49,13 @@ class AdviceController {
     async getPosts(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page, searchTerm } = params;
-            console.log('statusstatusstatusstatus', status);
-
+            const { sortBy, sortOrder, limit, page, searchTerm, status } = params;
             const aggPipe = [];
 
             const match: any = {};
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
-                match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
+                match["$and"] = [{ status: status }, { "$ne": config.CONSTANT.STATUS.DELETED }];
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
@@ -90,9 +87,29 @@ class AdviceController {
 
             console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
-            const data = await adviceDao.paginate('advice', aggPipe, limit, page, {}, true);
+
+            const data = await unicornDao.paginate('unicorn', aggPipe, limit, page, {}, true);
             console.log('datadatadata', data);
             return data;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async updateStatus(params) {
+        try {
+            const criteria = {
+                _id: params.Id
+            }
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
+            console.log('dataToUpdatedataToUpdate', data);
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+
+
         } catch (error) {
             return Promise.reject(error);
         }
@@ -102,17 +119,19 @@ class AdviceController {
         try {
             const criteria = {
                 _id: params.Id
-            };
-            const datatoUpdate = {
+            }
+            const dataToUpdate = {
                 ...params
-            };
-            const data = await adviceDao.updateOne('advice', criteria, datatoUpdate, {})
-            console.log('datadatadatadatadata', data);
-            return data;
+            }
+            const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
+            console.log('dataToUpdatedataToUpdate', data);
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
 
         } catch (error) {
-            throw error;
+            return Promise.reject(error);
         }
     }
 }
-export const adviceController = new AdviceController();
+
+
+export const unicornController = new UnicornController();

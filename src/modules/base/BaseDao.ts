@@ -34,6 +34,15 @@ export class BaseDao {
 			return Promise.reject(error);
 		}
 	}
+	async findAll(model: ModelNames, query: any, projection: any, options: QueryFindOneAndUpdateOptions) {
+		try {
+			let ModelName: any = models[model];
+			let cehck = await ModelName.find(query, projection, options);
+			return cehck;
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
 
 	async distinct(model: ModelNames, path: string, query: any) {
 		try {
@@ -51,6 +60,18 @@ export class BaseDao {
 				return await ModelName.findOne(query, projection, options).populate(populateQuery).exec();
 			} else {
 				return await ModelName.findOne(query, projection, options);
+			}
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+	async findOneWithSort(model: ModelNames, query: any, projection: any, options: any, populateQuery?: any, sort?:any) {
+		try {
+			const ModelName: any = models[model];
+			if (!_.isEmpty(populateQuery)) { // populate
+				return await ModelName.findOne(query, projection, options).populate(populateQuery).exec();
+			} else {
+				return await ModelName.findOne(query, projection, options).sort(sort);
 			}
 		} catch (error) {
 			return Promise.reject(error);

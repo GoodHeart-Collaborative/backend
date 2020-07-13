@@ -10,7 +10,7 @@ import * as config from "@config/index";
 // const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
 // autoIncrement.initialize(connection);
 
-export interface Iunicorn extends Document {
+export interface Inspiration extends Document {
 
     // categoryId: string,
     likeCount: number,
@@ -28,7 +28,7 @@ export interface Iunicorn extends Document {
 }
 
 
-const unicrornSchema = new Schema({
+const inspirationSchema = new Schema({
     // categoryId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Schema.Types.Number, default: 0 },
     totalComments: { type: Schema.Types.Number, default: 0 },
@@ -42,8 +42,18 @@ const unicrornSchema = new Schema({
         ],
         default: config.CONSTANT.STATUS.ACTIVE
     },
-    shortDescription: { type: String },
+    // privacy: {
+    //     type: String, enum: [
+    //         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+    //         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+    //         config.CONSTANT.PRIVACY_STATUS.PUBLIC,
+    //     ],
+    //     default: config.CONSTANT.PRIVACY_STATUS.PUBLIC,
+    // },
+    description: { type: String, required: true },
+    // shortDescription: { type: String },
     isPostLater: { type: Boolean },
+    postedAt: { type: String, trim: true },
     imageUrl: { type: String },
     createdAt: { type: Number },
     updatedAt: { type: Number }
@@ -52,13 +62,13 @@ const unicrornSchema = new Schema({
     timestamps: true
 });
 
-unicrornSchema.set("toObject", {
+inspirationSchema.set("toObject", {
     virtuals: true
 });
 
 
 
-unicrornSchema.methods.toJSON = function () {
+inspirationSchema.methods.toJSON = function () {
     const object = appUtils.clean(this.toObject());
     return object;
 };
@@ -70,4 +80,4 @@ unicrornSchema.methods.toJSON = function () {
 // userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
 
 // Export user
-export const unicorn: Model<Iunicorn> = mongoose.model<Iunicorn>(config.CONSTANT.DB_MODEL_REF.UNICORN, unicrornSchema);
+export const inspiration: Model<Inspiration> = mongoose.model<Inspiration>(config.CONSTANT.DB_MODEL_REF.INSPIRATION, inspirationSchema);

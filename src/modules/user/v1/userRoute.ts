@@ -658,7 +658,7 @@ export const
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const payload = request.payload
 				try {
-					const result = await userController.updateProfile({ ...payload, ...tokenData });
+					const result = {}//await userController.updateProfile({ ...payload, ...tokenData });
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);

@@ -10,7 +10,7 @@ import * as config from "@config/index";
 // const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
 // autoIncrement.initialize(connection);
 
-export interface Inspiration extends Document {
+export interface Advice extends Document {
 
     // categoryId: string,
     likeCount: number,
@@ -24,11 +24,11 @@ export interface Inspiration extends Document {
     imageUrl: string;
     createdAt: number,
     updatedAt: number
-
+    postedAt: string;
 }
 
 
-const inspirationSchema = new Schema({
+const adviceSchema = new Schema({
     // categoryId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Schema.Types.Number, default: 0 },
     totalComments: { type: Schema.Types.Number, default: 0 },
@@ -53,6 +53,7 @@ const inspirationSchema = new Schema({
     description: { type: String, required: true },
     // shortDescription: { type: String },
     isPostLater: { type: Boolean },
+    postedAt: { type: String, trim: true },
     imageUrl: { type: String },
     createdAt: { type: Number },
     updatedAt: { type: Number }
@@ -61,13 +62,13 @@ const inspirationSchema = new Schema({
     timestamps: true
 });
 
-inspirationSchema.set("toObject", {
+adviceSchema.set("toObject", {
     virtuals: true
 });
 
 
 
-inspirationSchema.methods.toJSON = function () {
+adviceSchema.methods.toJSON = function () {
     const object = appUtils.clean(this.toObject());
     return object;
 };
@@ -79,4 +80,4 @@ inspirationSchema.methods.toJSON = function () {
 // userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
 
 // Export user
-export const inspiration: Model<Inspiration> = mongoose.model<Inspiration>(config.CONSTANT.DB_MODEL_REF.INSPIRATION, inspirationSchema);
+export const advice: Model<Advice> = mongoose.model<Advice>(config.CONSTANT.DB_MODEL_REF.ADVICE, adviceSchema);

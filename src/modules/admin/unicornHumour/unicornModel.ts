@@ -10,7 +10,7 @@ import * as config from "@config/index";
 // const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
 // autoIncrement.initialize(connection);
 
-export interface Advice extends Document {
+export interface Iunicorn extends Document {
 
     // categoryId: string,
     likeCount: number,
@@ -20,15 +20,16 @@ export interface Advice extends Document {
     privacy: string
     description: string;
     // shortDescription: string;
+    postedAt?: string;
     isPostLater: boolean;
     imageUrl: string;
     createdAt: number,
     updatedAt: number
-    postedAt: number;
+
 }
 
 
-const adviceSchema = new Schema({
+const unicrornSchema = new Schema({
     // categoryId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Schema.Types.Number, default: 0 },
     totalComments: { type: Schema.Types.Number, default: 0 },
@@ -42,18 +43,9 @@ const adviceSchema = new Schema({
         ],
         default: config.CONSTANT.STATUS.ACTIVE
     },
-    // privacy: {
-    //     type: String, enum: [
-    //         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-    //         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-    //         config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-    //     ],
-    //     default: config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-    // },
-    description: { type: String, required: true },
-    // shortDescription: { type: String },
+    shortDescription: { type: String },
     isPostLater: { type: Boolean },
-    postedAt: { type: Number },
+    postedAt: { type: String, trim: true },
     imageUrl: { type: String },
     createdAt: { type: Number },
     updatedAt: { type: Number }
@@ -62,13 +54,13 @@ const adviceSchema = new Schema({
     timestamps: true
 });
 
-adviceSchema.set("toObject", {
+unicrornSchema.set("toObject", {
     virtuals: true
 });
 
 
 
-adviceSchema.methods.toJSON = function () {
+unicrornSchema.methods.toJSON = function () {
     const object = appUtils.clean(this.toObject());
     return object;
 };
@@ -80,4 +72,4 @@ adviceSchema.methods.toJSON = function () {
 // userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
 
 // Export user
-export const advice: Model<Advice> = mongoose.model<Advice>(config.CONSTANT.DB_MODEL_REF.ADVICE, adviceSchema);
+export const unicorn: Model<Iunicorn> = mongoose.model<Iunicorn>(config.CONSTANT.DB_MODEL_REF.UNICORN, unicrornSchema);

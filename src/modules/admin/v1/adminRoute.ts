@@ -1,7 +1,7 @@
 "use strict";
 
-import { ServerRoute, Request, ResponseToolkit } from "hapi";
-import * as Joi from "joi";
+import { ServerRoute, Request, ResponseToolkit }  from "hapi";
+import * as Joi  from "joi";
 
 import { adminController } from "@modules/admin/v1/AdminController";
 import * as appUtils from "@utils/appUtils";

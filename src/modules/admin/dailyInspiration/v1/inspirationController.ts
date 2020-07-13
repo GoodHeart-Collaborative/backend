@@ -5,8 +5,8 @@ import fs = require("fs");
 import * as promise from "bluebird";
 
 import * as config from "@config/index";
-import * as inspirationConstant from "@modules/dailyInspiration/inspirationConstant";
-import { inspirationDao } from "@modules/dailyInspiration/v1/inspirationDao";
+import * as inspirationConstant from "@modules/admin/dailyInspiration/inspirationConstant";
+import { inspirationDao } from "@modules/admin/dailyInspiration/v1/inspirationDao";
 
 
 class InspirationController {
