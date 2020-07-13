@@ -55,7 +55,7 @@ class UnicornController {
             const match: any = {};
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
-                match["$and"] = [{ status: status }, { "$ne": config.CONSTANT.STATUS.DELETED }];
+                match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
