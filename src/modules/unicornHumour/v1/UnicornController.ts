@@ -49,7 +49,7 @@ class UnicornController {
     async getPosts(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { sortBy, sortOrder, limit, page, searchTerm, status } = params;
+            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
             const aggPipe = [];
 
             const match: any = {};
@@ -66,6 +66,9 @@ class UnicornController {
             }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
             aggPipe.push({ "$match": match });
 
             console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);

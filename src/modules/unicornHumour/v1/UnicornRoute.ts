@@ -116,7 +116,9 @@ export const unicornRoute: ServerRoute[] = [
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.DELETED,
-                    ])
+                    ]),
+                    fromDate: Joi.number(),
+                    toDate: Joi.number(),
                 },
                 failAction: appUtils.failActionFunction
             },

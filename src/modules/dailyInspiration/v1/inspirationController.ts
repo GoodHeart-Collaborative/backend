@@ -51,7 +51,7 @@ class InspirationController {
     async getPosts(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page, searchTerm } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
             console.log('statusstatusstatusstatus', status);
 
             const aggPipe = [];
@@ -70,12 +70,18 @@ class InspirationController {
             }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
-            aggPipe.push({ "$match": match });
 
             console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
 
             // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
             // aggPipe.push({ "$project": project });
+
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+            console.log('matchmatchmatchmatch', match);
+
+            aggPipe.push({ "$match": match });
 
             let sort = {};
             if (sortBy && sortOrder) {
@@ -88,6 +94,7 @@ class InspirationController {
                 sort = { "created": -1 };
             }
             aggPipe.push({ "$sort": sort });
+
 
             console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
