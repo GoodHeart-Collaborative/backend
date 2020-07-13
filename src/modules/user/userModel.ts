@@ -35,7 +35,7 @@ export interface IUser extends Document {
 	hash: string;
 	forgotToken: string;
 	gender: string;
-	dob: number;
+	dob: string;
 	profilePicUrl: [string];
 	address: Address;
 	status: string;
@@ -89,7 +89,7 @@ const userSchema = new Schema({
 			// config.CONSTANT.GENDER.,
 		]
 	},
-	dob: { type: Number },
+	dob: { type: String },
 	// profilePicUrl: { type: String },
 	profilePicUrl: [Schema.Types.String],
 	address: geoSchema,
