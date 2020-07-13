@@ -3,45 +3,37 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { inspirationController } from "@modules/dailyInspiration/v1/inspirationController";
+import { unicornController } from "@modules/admin/unicornHumour/v1/UnicornController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 
-export const inspirationRoute: ServerRoute[] = [
+export const unicornRoute: ServerRoute[] = [
     {
         method: "POST",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.addInspiration(payload);
+                const result = await unicornController.addPost(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "Add inspiration post",
+            tags: ["api", "unicorn"],
+            description: "Add post",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 payload: {
-                    // categoryId: Joi.string(),
-                    // subCategoryId: Joi.string().required(),
-                    title: Joi.string().required(),
-                    // privacy: Joi.string().valid([
-                    //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-                    //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                    //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
-                    // ]),
-                    description: Joi.string().required(),
+                    title: Joi.string(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
@@ -59,30 +51,28 @@ export const inspirationRoute: ServerRoute[] = [
     },
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.getPostById(payload);
-                // console.log('resultresultresultresultresult', result);
-
+                const result = await unicornController.getPostById(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration by id",
+            tags: ["api", "unicorn"],
+            description: "Add unicorn",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 params: {
-                    Id: Joi.string().required(), // 
+                    Id: Joi.string().optional(), // 
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -98,21 +88,21 @@ export const inspirationRoute: ServerRoute[] = [
 
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.getPosts(payload);
+                const result = await unicornController.getPosts(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration list",
+            tags: ["api", "unicorn"],
+            description: "Add post",
             auth: {
                 strategies: ["AdminAuth"]
             },
@@ -121,6 +111,7 @@ export const inspirationRoute: ServerRoute[] = [
                 query: {
                     limit: Joi.number(),
                     page: Joi.number(),
+                    searchTerm: Joi.string(),
                     status: Joi.string().valid([
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.BLOCKED,
@@ -128,7 +119,6 @@ export const inspirationRoute: ServerRoute[] = [
                     ]),
                     fromDate: Joi.number(),
                     toDate: Joi.number(),
-                    searchTerm: Joi.string(),
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -141,35 +131,31 @@ export const inspirationRoute: ServerRoute[] = [
         }
     },
 
+
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}/status`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
-                ...request.payload,
-                ...request.params
-            };
+            const payload = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.updatePost(payload);
+                const result = await unicornController.updateStatus(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration list",
+            tags: ["api", "unicorn"],
+            description: "get unicorn list",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 params: {
-                    Id: Joi.string().required()
-                },
-                payload: {
+                    Id: Joi.string().required(),
                     status: Joi.string().valid([
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.DELETED,
@@ -189,7 +175,7 @@ export const inspirationRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = {
@@ -198,15 +184,15 @@ export const inspirationRoute: ServerRoute[] = [
             };
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.updatePost(payload);
+                const result = await unicornController.updatePost(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration list",
+            tags: ["api", "unicorn"],
+            description: "get unicorn list",
             auth: {
                 strategies: ["AdminAuth"]
             },
@@ -227,7 +213,7 @@ export const inspirationRoute: ServerRoute[] = [
                     //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
                     //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
                     // ]),
-                    description: Joi.string().required(),
+                    description: Joi.string(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),

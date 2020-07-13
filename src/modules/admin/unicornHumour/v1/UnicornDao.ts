@@ -4,6 +4,7 @@ import * as promise from "bluebird";
 
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
+import * as moment from 'moment';
 
 export class UnicornDao extends BaseDao {
 
@@ -19,6 +20,22 @@ export class UnicornDao extends BaseDao {
             const options = { lean: true };
 
             return await this.findOne("contents", query, {}, options, {});
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getUnicornHomeData(params, userId) {
+        try {
+           let query:any = {}
+           query["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
+            let result =  await this.find("unicorn", query, {}, {}, {}, {pageNo: 1, limit:2}, {});
+            if(result && result.length == 0) {
+                query = {}
+                result =  await this.findOneWithSort("unicorn", query, {}, {}, {}, {"createdAt": -1});
+                result = [result]
+            }
+            return result
         } catch (error) {
             throw error;
         }

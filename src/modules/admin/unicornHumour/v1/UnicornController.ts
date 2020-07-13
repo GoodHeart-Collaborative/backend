@@ -4,25 +4,28 @@ import * as _ from "lodash";
 import fs = require("fs");
 import * as promise from "bluebird";
 
+import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import * as inspirationConstant from "@modules/dailyInspiration/inspirationConstant";
-import { inspirationDao } from "@modules/dailyInspiration/v1/inspirationDao";
+// import * as sns from "@lib/pushNotification/sns";
+import * as UnicornConstant from "@modules/admin/unicornHumour/UnicornConstant";
+import { unicornDao } from "@modules/admin/unicornHumour/index";
 
 
-class InspirationController {
+class UnicornController {
 
 	/**
 	 * @function signup
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async addInspiration(params) {
+    async addPost(params) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
-            const data = await inspirationDao.insert("advice", params, {});
+
+            const data = await unicornDao.insert("unicorn", params, {});
             console.log('dataaaaaaaaaaaaa', data);
-            return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;
@@ -35,14 +38,9 @@ class InspirationController {
                 _id: params.Id,
             };
 
-            const data = await inspirationDao.findOne('inspiration', criteria, {}, {})
-            if (!data) {
-                return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
-            }
+            const data = await unicornDao.findOne('unicorn', criteria, {}, {})
             console.log('datadatadatadata', data);
-            return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-
-            // return data;
+            return data;
         } catch (error) {
             throw error;
         }
@@ -51,9 +49,7 @@ class InspirationController {
     async getPosts(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
-            console.log('statusstatusstatusstatus', status);
-
+            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
             const aggPipe = [];
 
             const match: any = {};
@@ -70,18 +66,15 @@ class InspirationController {
             }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+            aggPipe.push({ "$match": match });
 
             console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
 
             // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
             // aggPipe.push({ "$project": project });
-
-            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
-            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
-            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
-            console.log('matchmatchmatchmatch', match);
-
-            aggPipe.push({ "$match": match });
 
             let sort = {};
             if (sortBy && sortOrder) {
@@ -95,12 +88,31 @@ class InspirationController {
             }
             aggPipe.push({ "$sort": sort });
 
-
             console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
-            const data = await inspirationDao.paginate('inspiration', aggPipe, limit, page, {}, true);
+
+            const data = await unicornDao.paginate('unicorn', aggPipe, limit, page, {}, true);
             console.log('datadatadata', data);
             return data;
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async updateStatus(params) {
+        try {
+            const criteria = {
+                _id: params.Id
+            }
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
+            console.log('dataToUpdatedataToUpdate', data);
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+
+
         } catch (error) {
             return Promise.reject(error);
         }
@@ -110,17 +122,19 @@ class InspirationController {
         try {
             const criteria = {
                 _id: params.Id
-            };
-            const datatoUpdate = {
+            }
+            const dataToUpdate = {
                 ...params
-            };
-            const data = await inspirationDao.updateOne('inspiration', criteria, datatoUpdate, {})
-            console.log('datadatadatadatadata', data);
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+            }
+            const data = await unicornDao.updateOne('unicorn', criteria, dataToUpdate, {});
+            console.log('dataToUpdatedataToUpdate', data);
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
 
         } catch (error) {
-            throw error;
+            return Promise.reject(error);
         }
     }
 }
-export const inspirationController = new InspirationController();
+
+
+export const unicornController = new UnicornController();

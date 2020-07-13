@@ -4,8 +4,8 @@ import * as _ from "lodash";
 import fs = require("fs");
 
 import * as config from "@config/index";
-import * as inspirationConstant from "@modules/dailyAdvice/AdviceConstant";
-import { adviceDao } from "@modules/dailyAdvice/v1/AdviceDao";
+import * as inspirationConstant from "@modules/admin/dailyAdvice/AdviceConstant";
+import { adviceDao } from "@modules/admin/dailyAdvice/v1/AdviceDao";
 
 
 class AdviceController {
