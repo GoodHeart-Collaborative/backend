@@ -655,10 +655,10 @@ export const
 			method: "PATCH",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
 			handler: async (request: Request, h: ResponseToolkit) => {
-				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const payload = request.payload
 				try {
-					const result = await userController.updateProfile({ ...payload, ...tokenData });
+					const result = await userController.updateProfile(payload, userData);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);

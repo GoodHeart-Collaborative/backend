@@ -649,10 +649,10 @@ export class UserController {
 		}
 	}
 
-	async updateProfile(params) {
+	async updateProfile(params, userData) {
 		try {
 			const updateCriteria = {
-				_id: params.userId
+				_id: userData.userId
 			};
 			const dataToUpdate = {
 				...params
