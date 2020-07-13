@@ -65,7 +65,7 @@ export const
 							.optional(),
 						password: Joi.string()
 							.trim()
-							.regex(config.CONSTANT.REGEX.PASSWORD)
+							// .regex(config.CONSTANT.REGEX.PASSWORD)
 							.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 							.default(config.CONSTANT.DEFAULT_PASSWORD)
@@ -526,7 +526,7 @@ export const
 						token: Joi.string(),
 						password: Joi.string()
 							.trim()
-							.regex(config.CONSTANT.REGEX.PASSWORD)
+							// .regex(config.CONSTANT.REGEX.PASSWORD)
 							.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
 							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 							.default(config.CONSTANT.DEFAULT_PASSWORD)
@@ -673,7 +673,9 @@ export const
 				},
 				validate: {
 					payload: {
+						dob: Joi.string(),
 						profession: Joi.string(),
+						userName: Joi.string(),
 						industryType: Joi.string().valid([
 							config.INDUSTRIES.AGRI_FOREST_FISH.value,
 							config.INDUSTRIES.ADVERTISING.value,

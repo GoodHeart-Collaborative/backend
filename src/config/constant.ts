@@ -246,7 +246,7 @@ const MESSAGES = {
 		},
 		EMAIL_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
-			"message": "Please verify your email address.",
+			"message": "Your email is not verified. Please check your email for email verification instruction.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_ALREADY_VERIFIED: {
@@ -415,7 +415,7 @@ const REGEX = {
 	SSN: /^(?!219-09-9999|078-05-1120)(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$/, // US SSN
 	ZIP_CODE: /^[0-9]{5}(?:-[0-9]{4})?$/,
 	// PASSWORD: /(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=[^0-9]*[0-9]).{8,}/, // Minimum 6 characters, At least 1 lowercase alphabetical character, At least 1 uppercase alphabetical character, At least 1 numeric character, At least one special character
-	PASSWORD: /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/,
+	// PASSWORD: /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/,
 	COUNTRY_CODE: /^\d{1,4}$/,
 	MOBILE_NUMBER: /^\d{6,16}$/,
 	STRING_REPLACE: /[-+ ()*_$#@!{}|\/^%`~=?,.<>:;'"]/g,
