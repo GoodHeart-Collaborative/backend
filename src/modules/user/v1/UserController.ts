@@ -334,8 +334,23 @@ export class UserController {
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 				}
+				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {
+					console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLlll');
+					const tokenData = _.extend(params, {
+						"userId": step1._id,
+						"firstName": step1.firstName,
+						"lastName": step1.lastName,
+						"countryCode": step1.countryCode,
+						"mobileNo": step1.mobileNo,
+						"email": step1.email,
+						// "salt": salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+					const userObject = appUtils.buildToken(tokenData);
 
-				else if (!step1.dob && !step1.industryType) {
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
+					console.log('accessTokenaccessTokenaccessToken', accessToken);
+
 					return userConstant.MESSAGES.ERROR.REGISTER_BDAY({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, accessToken: accessToken });
 
 					// return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
