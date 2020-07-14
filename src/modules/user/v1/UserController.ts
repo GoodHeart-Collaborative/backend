@@ -160,6 +160,17 @@ export class UserController {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
+					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+					if (
+						// (config.SERVER.ENVIRONMENT !== "production") ?
+						// (
+						// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+						// 	step1.hash !== params.hash
+						// ) :
+						step1.hash !== params.hash
+					) {
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
+					}
 					// if (!step1.hash) {
 					// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					// }
