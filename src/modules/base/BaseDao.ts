@@ -65,7 +65,7 @@ export class BaseDao {
 			return Promise.reject(error);
 		}
 	}
-	async findOneWithSort(model: ModelNames, query: any, projection: any, options: any, populateQuery?: any, sort?:any) {
+	async findOneWithSort(model: ModelNames, query: any, projection: any, options: any, populateQuery?: any, sort?: any) {
 		try {
 			const ModelName: any = models[model];
 			if (!_.isEmpty(populateQuery)) { // populate
@@ -174,8 +174,8 @@ export class BaseDao {
 
 	async insert(model: ModelNames, data, options: QueryFindOneAndUpdateOptions) {
 		try {
-			(data && data['createdAt']) ? data['createdAt'] : Date.now();
-			data['updatedAt'] = Date.now();
+			// data['createdAt'] = Date.now();
+			// data['updatedAt'] = Date.now();
 
 			const ModelName: any = models[model];
 			console.log('ModelNameModelName', ModelName, data);

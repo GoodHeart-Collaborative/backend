@@ -24,7 +24,7 @@ export interface Advice extends Document {
     imageUrl: string;
     createdAt: number,
     updatedAt: number
-    postedAt: string;
+    postedAt: Date;
 }
 
 
@@ -53,7 +53,7 @@ const adviceSchema = new Schema({
     description: { type: String, required: true },
     // shortDescription: { type: String },
     isPostLater: { type: Boolean },
-    postedAt: { type: String, trim: true },
+    postedAt: { type: Date, trim: true },
     imageUrl: { type: String },
     createdAt: { type: Number },
     updatedAt: { type: Number }

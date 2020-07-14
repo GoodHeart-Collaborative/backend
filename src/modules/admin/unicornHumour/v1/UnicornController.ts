@@ -78,13 +78,13 @@ class UnicornController {
 
             let sort = {};
             if (sortBy && sortOrder) {
-                if (sortBy === "name") {
-                    sort = { "name": sortOrder };
+                if (sortBy === "title") {
+                    sort = { "title": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "createdAt": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "createdAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 

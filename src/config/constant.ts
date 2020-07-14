@@ -10,6 +10,10 @@ const SWAGGER_DEFAULT_RESPONSE_MESSAGES = [
 	{ code: 500, message: "Internal Server Error" }
 ];
 
+const ENUM = {
+	SORT_TYPE: [1, -1],
+};
+
 const HTTP_STATUS_CODE = {
 	OK: 200,
 	CREATED: 201,
@@ -612,4 +616,5 @@ export const CONSTANT = Object.freeze({
 	WEBSITE_URL,
 	PAGINATION,
 	PRIVACY_STATUS,
+	ENUM
 });

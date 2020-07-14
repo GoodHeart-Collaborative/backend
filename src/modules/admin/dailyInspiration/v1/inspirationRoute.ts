@@ -15,7 +15,7 @@ export const inspirationRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.payload;
+            const payload: InspirationRequest.InspirationAdd = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await inspirationController.addInspiration(payload);
@@ -44,7 +44,7 @@ export const inspirationRoute: ServerRoute[] = [
                     description: Joi.string().required(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
-                    postedAt: Joi.number(),
+                    postedAt: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
                     createdAt: Joi.number()
                 },
@@ -102,7 +102,7 @@ export const inspirationRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: InspirationRequest.IGetInspirations = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await inspirationController.getPosts(payload);
@@ -126,6 +126,10 @@ export const inspirationRoute: ServerRoute[] = [
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.DELETED,
+                    ]),
+                    sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
+                    sortBy: Joi.string().valid([
+                        'createdAt', 'title'
                     ]),
                     fromDate: Joi.number(),
                     toDate: Joi.number(),

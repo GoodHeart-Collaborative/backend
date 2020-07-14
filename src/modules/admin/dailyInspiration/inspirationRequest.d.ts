@@ -1,12 +1,26 @@
 declare namespace InspirationRequest {
 
-    export interface InspirationAdd extends Device {
-        userId: string,
-        categoryId: string,
-        likeCount: number,
-        totalComments: number,
-        title: string,
-        status: string
-        privacy: string
+    export interface InspirationAdd {
+        title: string;
+        description: string;
+        // shortDescription: string;
+        imageUrl: string;
+        postedAt: string;
+        isPostLater: boolean;
+    }
+
+    export interface IGetInspirationById {
+        Id: string;
+    }
+
+    export interface IGetInspirations {
+        limit: number;
+        page: number;
+        status: string;
+        sortOrder: number;
+        sortBy: string;
+        fromDate: number;
+        toDate: number;
+        searchTerm: string;
     }
 }

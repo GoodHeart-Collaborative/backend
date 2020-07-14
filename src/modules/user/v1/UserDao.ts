@@ -68,7 +68,6 @@ export class UserDao extends BaseDao {
 	async findForGotVerifiedEmailOrMobile(params: ForgotPasswordRequest) {
 		try {
 			let query: any = {};
-
 			console.log('kkkkkkkkkkkkk', params);
 
 			if (params.email && params.mobileNo && params.countryCode) {
@@ -138,7 +137,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.createdAt = Date.now();
+			// params.createdAt = Date.now();
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;
@@ -399,67 +398,121 @@ export class UserDao extends BaseDao {
 
 	async getUsers(params) {
 		try {
-			let { page, limit, sortBy, sortType } = params;
-			const { searchTerm, userId, type, status, fromDate, toDate, isByAdmin } = params;
-			if (!limit) { limit = config.CONSTANT.PAGINATION.limit }
-			if (!page) { page = 1; }
-			let sortingType = {};
-			sortType = !sortType ? -1 : sortType;
-			const matchObject: any = { $match: {} };
-			let searchCriteria = {};
-			sortingType = {
-				createdAt: sortType,
-			};
-			if (searchTerm) {
-				// for filtration
-				searchCriteria = {
-					$match: {
-						$or: [
-							{ email: new RegExp('.*' + searchTerm + '.*', 'i') },
-							{ firstName: new RegExp('.*' + searchTerm + '.*', 'i') },
-							{ lastName: new RegExp('.*' + searchTerm + '.*', 'i') },
-						],
-					},
-				};
-			}
-			else {
-				searchCriteria = {
-					$match: {
-					},
-				};
-			}
+			// let { page, limit, sortBy, sortType } = params;
+			// const { searchTerm, userId, type, status, fromDate, toDate, isByAdmin } = params;
+			// if (!limit) { limit = config.CONSTANT.PAGINATION.limit }
+			// if (!page) { page = 1; }
+			// let sortingType = {};
+			// sortType = !sortType ? -1 : sortType;
+			// const matchObject: any = { $match: {} };
+			// let searchCriteria = {};
 
-			if (!status) {
-				matchObject.$match = {
-					$or: [{
-						status: config.CONSTANT.STATUS.ACTIVE,
-					}, {
-						status: config.CONSTANT.STATUS.BLOCKED,
-					},
-					],
-				};
-			}
 
-			// if (userId) { matchObject.$match._id = Types.ObjectId(userId); }
-			// if (isByAdmin) {
-			//     matchObject.$match['type'] = { $ne: Constant.DATABASE.USER_TYPE.TENANT.TYPE };
+			// sortingType = {
+			// 	createdAt: sortType,
+			// };
+			// if (searchTerm) {
+			// 	// for filtration
+			// 	searchCriteria = {
+			// 		$match: {
+			// 			$or: [
+			// 				{ email: new RegExp('.*' + searchTerm + '.*', 'i') },
+			// 				{ firstName: new RegExp('.*' + searchTerm + '.*', 'i') },
+			// 				{ lastName: new RegExp('.*' + searchTerm + '.*', 'i') },
+			// 			],
+			// 		},
+			// 	};
 			// }
-			if (status) { matchObject.$match['status'] = status; }
+			// else {
+			// 	searchCriteria = {
+			// 		$match: {
+			// 		},
+			// 	};
+			// }
 
-			// Date filters
-			if (fromDate && toDate) { matchObject.$match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
-			if (fromDate && !toDate) { matchObject.$match['createdAt'] = { $gte: fromDate }; }
-			if (!fromDate && toDate) { matchObject.$match['createdAt'] = { $lte: toDate }; }
+			// if (!status) {
+			// 	matchObject.$match = {
+			// 		$or: [{
+			// 			status: config.CONSTANT.STATUS.ACTIVE,
+			// 		}, {
+			// 			status: config.CONSTANT.STATUS.BLOCKED,
+			// 		},
+			// 		],
+			// 	};
+			// }
 
-			const query = [
-				matchObject,
-				searchCriteria,
-				{
-					$sort: sortingType,
-				},
-			];
-			const data = await this.paginate('users', query, limit, page, {}, true);
-			console.log('datadatadatadata', data);
+			// // if (userId) { matchObject.$match._id = Types.ObjectId(userId); }
+			// // if (isByAdmin) {
+			// //     matchObject.$match['type'] = { $ne: Constant.DATABASE.USER_TYPE.TENANT.TYPE };
+			// // }
+			// if (status) { matchObject.$match['status'] = status; }
+
+			// // Date filters
+			// if (fromDate && toDate) { matchObject.$match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+			// if (fromDate && !toDate) { matchObject.$match['createdAt'] = { $gte: fromDate }; }
+			// if (!fromDate && toDate) { matchObject.$match['createdAt'] = { $lte: toDate }; }
+
+			// const query = [
+			// 	matchObject,
+			// 	searchCriteria,
+			// 	{
+			// 		$sort: sortingType,
+			// 	},
+			// ];
+			// const data = await this.paginate('users', query, limit, page, {}, true);
+			// console.log('datadatadatadata', data);
+			// return data;
+
+			console.log('paramsparamsparamsparams', params);
+			const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
+			const aggPipe = [];
+
+
+			const match: any = {};
+			match['dob'] = { $exists: true };
+			match['experience'] = { $exists: true };
+			match['profession'] = { $exists: true };
+
+			// match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
+			if (status) {
+				match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
+			} else {
+				match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			}
+			if (searchTerm) {
+				match["$or"] = [
+					{ "title": { "$regex": searchTerm, "$options": "-i" } },
+				];
+			}
+			console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
+
+			if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+			if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+			if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+			aggPipe.push({ "$match": match });
+
+			console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
+
+			// const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
+			// aggPipe.push({ "$project": project });
+
+			let sort = {};
+			if (sortBy && sortOrder) {
+				if (sortBy === "name") {
+					sort = { "name": sortOrder };
+				} else {
+					sort = { "created": sortOrder };
+				}
+			} else {
+				sort = { "created": -1 };
+			}
+			aggPipe.push({ "$sort": sort });
+
+			console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
+
+
+			const data = await userDao.paginate('users', aggPipe, limit, page, {}, true);
+			console.log('datadatadata', data);
 			return data;
 
 		} catch (error) {

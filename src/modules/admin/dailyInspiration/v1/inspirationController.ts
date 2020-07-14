@@ -1,8 +1,7 @@
 "use strict";
 
 import * as _ from "lodash";
-import fs = require("fs");
-import * as promise from "bluebird";
+import * as moment from 'moment';
 
 import * as config from "@config/index";
 import * as inspirationConstant from "@modules/admin/dailyInspiration/inspirationConstant";
@@ -16,11 +15,14 @@ class InspirationController {
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async addInspiration(params) {
+    async addInspiration(params: InspirationRequest.InspirationAdd) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
-            const data = await inspirationDao.insert("advice", params, {});
+
+            // params["postedAt"] = moment(para).format('YYYY-MM-DD')
+
+            const data = await inspirationDao.insert("inspiration", params, {});
             console.log('dataaaaaaaaaaaaa', data);
             return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -48,15 +50,21 @@ class InspirationController {
         }
     }
 
-    async getPosts(params) {
+    async getPosts(params: InspirationRequest.IGetInspirations) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
             console.log('statusstatusstatusstatus', status);
 
             const aggPipe = [];
 
             const match: any = {};
+
+            // const paginateOptions = {
+            //     page: page || 1,
+            //     limit: limit || Constant.SERVER.LIMIT,
+            // };
+
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
@@ -85,13 +93,13 @@ class InspirationController {
 
             let sort = {};
             if (sortBy && sortOrder) {
-                if (sortBy === "name") {
-                    sort = { "name": sortOrder };
+                if (sortBy === "title") {
+                    sort = { "title": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "createdAt": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "createdAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 

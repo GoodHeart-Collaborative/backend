@@ -79,9 +79,9 @@ const userSchema = new Schema({
 	isGoogleLogin: { type: Boolean, default: false },
 	firstName: { type: String, trim: true, index: true, required: true },
 	lastName: { type: String, trim: true, index: true },
-	email: { type: String, trim: true, index: true, lowercase: true, default: "" },
-	countryCode: { type: String, trim: true, index: true, default: "" },
-	mobileNo: { type: String, trim: true, index: true, default: "" },
+	email: { type: String, trim: true, index: true, lowercase: true },
+	countryCode: { type: String, trim: true, index: true, },
+	mobileNo: { type: String, trim: true, index: true },
 	fullMobileNo: { type: String, trim: true, index: true, default: "" },
 	salt: { type: String, required: false },
 	hash: { type: String, required: false },
@@ -117,7 +117,7 @@ const userSchema = new Schema({
 			config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
 			config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
 			config.INDUSTRIES.Wellness_Coaches,
-		]
+		],
 	},
 	isAdminVerified: { type: Boolean, default: false },
 	isAdminRejected: { type: Boolean, default: false },
@@ -139,8 +139,8 @@ const userSchema = new Schema({
 	},
 	likeCount: { type: Number, default: 0 },
 	totalComments: { type: Number, default: 0 },
-	createdAt: { type: Number },
-	updatedAt: { type: Number }
+	// createdAt: { type: Date },
+	// updatedAt: { type: Date }
 }, {
 	versionKey: false,
 	timestamps: true

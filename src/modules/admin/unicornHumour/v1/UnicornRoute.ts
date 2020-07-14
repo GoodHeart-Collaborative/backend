@@ -37,6 +37,7 @@ export const unicornRoute: ServerRoute[] = [
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
+                    postedAt: Joi.string(),
                     createdAt: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
@@ -116,6 +117,10 @@ export const unicornRoute: ServerRoute[] = [
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.DELETED,
+                    ]),
+                    sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
+                    sortBy: Joi.string().valid([
+                        'createdAt', 'title'
                     ]),
                     fromDate: Joi.number(),
                     toDate: Joi.number(),

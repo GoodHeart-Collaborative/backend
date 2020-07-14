@@ -175,15 +175,15 @@ export class UserController {
 						console.log('22222222222222222222222');
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
-					else if (step2.isAdminRejected) {
-						return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
-					}
 					else if (step2 && !step2.dob || !step2.dob == null) {
 						console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLlll');
 						return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
 					}
 					else if (!step2.isAdminVerified) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+					}
+					else if (step2.isAdminRejected) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 					}
 					// EMAIL_NOT_VERIFIED: 411,
 					// MOBILE_NO_NOT_VERIFY: 412,
@@ -304,14 +304,15 @@ export class UserController {
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 				}
-				else if (step1.isAdminRejected) {
-					return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
-				}
+
 				else if (!step1.dob) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
 				}
 				else if (!step1.isAdminVerified) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+				}
+				else if (step1.isAdminRejected) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 				}
 				else {
 					const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);

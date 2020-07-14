@@ -23,8 +23,8 @@ export interface Iunicorn extends Document {
     postedAt?: string;
     isPostLater: boolean;
     imageUrl: string;
-    createdAt: number,
-    updatedAt: number
+    createdAt: Date;
+    updatedAt: Date;
 
 }
 
@@ -47,8 +47,9 @@ const unicrornSchema = new Schema({
     isPostLater: { type: Boolean },
     postedAt: { type: String, trim: true },
     imageUrl: { type: String },
-    createdAt: { type: Number },
-    updatedAt: { type: Number }
+
+    createdAt: { type: Date },
+    updatedAt: { type: Date }
 }, {
     versionKey: false,
     timestamps: true
