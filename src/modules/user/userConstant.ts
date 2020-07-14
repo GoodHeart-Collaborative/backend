@@ -191,6 +191,7 @@ export const MESSAGES = {
 			}
 		},
 		USER_ACCOUNT_SCREENING: (data) => {
+			data["message"] = "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!"
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 				"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
