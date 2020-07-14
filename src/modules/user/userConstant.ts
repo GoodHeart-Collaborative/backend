@@ -120,6 +120,13 @@ export const MESSAGES = {
 			"message": "Password successfully changed",
 			"type": "DEFAULT"
 		},
+		BLOCKED: (data) => {
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+				"message": "Your account have been blocked by admin.",
+				"type": "USER_BLOCKED"
+			}
+		},
 		DEFAULT_WITH_DATA: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,

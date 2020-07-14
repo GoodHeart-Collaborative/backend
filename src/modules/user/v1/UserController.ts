@@ -237,10 +237,9 @@ export class UserController {
 					) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 					}
-
 					else if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
-						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
+						return userConstant.MESSAGES.SUCCESS.BLOCKED({ status: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ status: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
@@ -253,7 +252,6 @@ export class UserController {
 					else if (!step2.isAdminVerified) {
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					}
-
 					// EMAIL_NOT_VERIFIED: 411,
 					// MOBILE_NO_NOT_VERIFY: 412,
 					// REGISTER_BDAY: 413,
