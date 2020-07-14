@@ -504,7 +504,7 @@ export class UserDao extends BaseDao {
 					sort = { "createdAt": sortOrder };
 				}
 			} else {
-				sort = { "createdAt": sortOrder };
+				sort = { "createdAt": -1 };
 			}
 			aggPipe.push({ "$sort": sort });
 

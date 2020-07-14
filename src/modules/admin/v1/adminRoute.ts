@@ -803,7 +803,7 @@ export const adminRoute: ServerRoute[] = [
 					toDate: Joi.number(),
 					page: Joi.number(),
 					limit: Joi.number(),
-					sortType: Joi.string().valid('name', 'createdeAt').default('createdAt'),
+					sortType: Joi.string().valid('name', 'createdAt').default('createdAt'),
 					sortOrder: Joi.number(),
 					searchTerm: Joi.string(),
 					status: Joi.string().valid([
