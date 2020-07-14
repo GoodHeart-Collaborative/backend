@@ -211,12 +211,12 @@ export class UserController {
 						// const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
 						// const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
 						const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
-						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
+						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ status: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
 						console.log('55555555555555555555555555555555555555555');
 						// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED)
-						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: '' })
+						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ status: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: '' })
 					}
 					if (step2 && step2.hash == null && !step2.hash) {
 						console.log('>>>>>111111111111111111');
@@ -243,15 +243,15 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
-						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ status: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 					}
 
 					else if (step2.isAdminRejected) {
-						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
+						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
 						// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 					}
 					else if (!step2.isAdminVerified) {
-						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: accessToken });
+						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: accessToken });
 					}
 
 					// EMAIL_NOT_VERIFIED: 411,
@@ -261,7 +261,7 @@ export class UserController {
 
 					if (!step1.isAdminVerified) {
 						console.log('3333333333333333333');
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
 						// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					}
 					else {
@@ -328,7 +328,7 @@ export class UserController {
 							step6 = redisClient.createJobs(jobPayload);
 						}
 						const step7 = await promise.join(step4, step5, step6);
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken });
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken });
 					}
 				}
 			}
