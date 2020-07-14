@@ -608,7 +608,7 @@ class AdminController {
 					isAdminRejected: params.isAdminRejected
 				}
 			}
-			else {
+			else if (params.isAdminVerified) {
 				dataToUpdate = {
 					isAdminRejected: false,
 					isAdminVerified: params.isAdminVerified
