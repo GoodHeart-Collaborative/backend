@@ -137,6 +137,7 @@ export const MESSAGES = {
 			};
 		},
 		ADMIN_REJECTED_USER_ACCOUNT: (data) => {
+			data['message'] = "Unfortunately, your profile doesn't meet our qualification criteria. Please come back again!"
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT,
 				"message": "Unfortunately, your profile doesn't meet our qualification criteria. Please come back again!",
@@ -145,17 +146,21 @@ export const MESSAGES = {
 			}
 		},
 		EMAIL_NOT_VERIFIED: (data) => {
+			data['message'] = 'Your email is not verified. Please check your email for email verification instruction.'
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
 				"message": "Your email is not verified. Please check your email for email verification instruction.",
-				"type": "EMAIL_NOT_REGISTERED"
+				"type": "EMAIL_NOT_REGISTERED",
+				data: data
 			}
 		},
 		MOBILE_NOT_VERIFIED: (data) => {
+			data['message'] = 'Please verify your mobile number'
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
 				"message": "Please verify your mobile number",
-				"type": "MOBILE_NO_NOT_VERIFY"
+				"type": "MOBILE_NO_NOT_VERIFY",
+				data: data
 			}
 		},
 		OTP_VERIFIED_SUCCESSFULLY: (data) => {
@@ -166,12 +171,18 @@ export const MESSAGES = {
 				"data": data
 			}
 		},
+		// EMAIL_NOT_VERIFIED: {
+		// 	"statusCode": HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
+		// 	"message": "Your email is not verified. Please check your email for email verification instruction.",
+		// 	"type": "EMAIL_NOT_REGISTERED"
+		// },
 		// USER_ACCOUNT_SCREENING: {
 		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING,
 		// 	"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
 		// 	"type": "BLOCKED_USER"
 		// },
 		REGISTER_BDAY: (data) => {
+			data["message"] = "please setup your profile"
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY,
 				"message": "please setup your profile",

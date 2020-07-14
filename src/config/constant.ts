@@ -258,7 +258,16 @@ const MESSAGES = {
 				"type": "REFRESH_TOKEN",
 				"data": data
 			};
-		}
+		},
+		MOBILE_NOT_VERIFIED: (data) => {
+			data['message'] = "Please verify your mobile number"
+			return {
+				"statusCode": HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
+				"message": "Please verify your mobile number",
+				"type": "MOBILE_NO_NOT_VERIFY",
+				data: data,
+			}
+		},
 	}
 };
 
