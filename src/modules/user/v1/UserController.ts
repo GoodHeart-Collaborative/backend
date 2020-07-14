@@ -159,18 +159,10 @@ export class UserController {
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
 					console.log('step2step2step2', step2);
 
-					if (!step2 && params.email) {
-						// if user is not verified us user ki userid and user ki email 
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
-					}
-					else if (!step2 && params.mobileNo) {
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED);
-					}
 					if (step2 && step2.hash == null) {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
-
 					params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
 					if (
 						// (config.SERVER.ENVIRONMENT !== "production") ?
@@ -182,6 +174,16 @@ export class UserController {
 					) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 					}
+
+
+					if (!step2 && params.email) {
+						// if user is not verified us user ki userid and user ki email 
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
+					}
+					else if (!step2 && params.mobileNo) {
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED);
+					}
+
 
 					else if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
