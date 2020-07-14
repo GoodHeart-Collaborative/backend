@@ -175,6 +175,9 @@ export class UserController {
 						console.log('22222222222222222222222');
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
+					else if (step2.isAdminRejected) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+					}
 					else if (step2 && !step2.dob || !step2.dob == null) {
 						console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLlll');
 						return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
@@ -188,7 +191,6 @@ export class UserController {
 					// ADMIN_ACCOUNT_SCREENING: 414
 					if (params.email && !step2) {
 						console.log('44444444444444444444444444');
-
 						const tokenData = _.extend(params, {
 							"userId": step1._id,
 							"name": step1.name,
@@ -301,6 +303,9 @@ export class UserController {
 			} else {
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
+				}
+				else if (step1.isAdminRejected) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 				}
 				else if (!step1.dob) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);

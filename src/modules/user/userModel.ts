@@ -51,6 +51,8 @@ export interface IUser extends Document {
 	memberCreatedAt: number;
 	likeCount: number,
 	totalComments: number,
+	isAdminRejected: boolean;
+
 }
 
 const geoSchema = new Schema({
@@ -118,6 +120,7 @@ const userSchema = new Schema({
 		]
 	},
 	isAdminVerified: { type: Boolean, default: false },
+	isAdminRejected: { type: Boolean, default: false },
 	experience: {
 		type: String, enum: [
 			'Junior', 'Mid', 'Senior',

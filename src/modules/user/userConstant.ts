@@ -29,6 +29,11 @@ export const MESSAGES = {
 			"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
 			"type": "BLOCKED_USER"
 		},
+		ADMIN_REJECTED_USER_ACCOUNT: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT,
+			"message": "Your account is rejected by admin .please contact to administrator .",
+			"type": "BLOCKED_USER"
+		},
 		EMAIL_NOT_VERIFIED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Email is not verified.",
