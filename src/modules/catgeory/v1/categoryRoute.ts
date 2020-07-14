@@ -80,6 +80,8 @@ export const categoryRoute: ServerRoute[] = [
                     ]),
                     sortBy: Joi.string().valid('title', 'createdAt').default('createdAt'),
                     searchTerm: Joi.string(),
+                    fromDate: Joi.date(),
+                    toDate: Joi.date()
                 },
                 failAction: appUtils.failActionFunction
             },

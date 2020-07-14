@@ -12,8 +12,8 @@ export interface ICategory extends Document {
     title: string;
     name: string;
     imageUrl: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const categorySchema = new Schema({
@@ -29,13 +29,12 @@ const categorySchema = new Schema({
         ], default: config.CONSTANT.STATUS.ACTIVE,
     },
     imageUrl: { type: String },
-    updatedAt: { type: Number },
-
-    createdAt: { type: Number }
+    updatedAt: { type: Date },
+    createdAt: { type: Date }
 }, {
     versionKey: false,
     // collection: config.CONSTANT.DB_MODEL_REF.CATEGORY,
-    // timestamps: true,
+    timestamps: true,
 });
 
 categorySchema.set("toObject", {

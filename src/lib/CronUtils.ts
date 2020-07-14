@@ -35,7 +35,7 @@ export class CronUtils {
 			];
 			const dataToUpdate = {
 				countMember: a,
-				memberCreatedAt: Date.now()
+				memberCreatedAt: new Date()
 			};
 			console.log('criteriacriteriacriteria', criteria);
 

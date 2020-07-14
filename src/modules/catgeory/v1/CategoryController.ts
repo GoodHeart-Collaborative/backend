@@ -38,7 +38,7 @@ class CategoryController {
     async getCategory(params) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page, searchTerm } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
             const aggPipe = [];
 
             const match: any = {};
@@ -74,8 +74,11 @@ class CategoryController {
             }
             aggPipe.push({ "$sort": sort });
 
-            console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
+            console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
             const data = await categoryDao.paginate('categories', aggPipe, limit, page, {}, true);
             console.log('datadatadata', data);

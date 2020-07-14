@@ -49,6 +49,16 @@ const HTTP_STATUS_CODE = {
 	LOGIN_STATUS_HOME_SCREEN: 416,
 };
 
+const MEMBER_TYPE = {
+	FREE: 'Free',
+	PREMIUM: 'Premium'
+}
+
+const USER_ADMIN_STATUS = {
+	PENDING: 'pending',
+	VERIFIED: 'verified',
+	REJECTED: ''
+}
 const ACCOUNT_LEVEL = {
 	ADMIN: "admin",
 	USER: "user"
@@ -627,5 +637,7 @@ export const CONSTANT = Object.freeze({
 	WEBSITE_URL,
 	PAGINATION,
 	PRIVACY_STATUS,
-	ENUM
+	ENUM,
+	MEMBER_TYPE,
+	USER_ADMIN_STATUS
 });

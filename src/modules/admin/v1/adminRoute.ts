@@ -799,8 +799,8 @@ export const adminRoute: ServerRoute[] = [
 			validate: {
 				headers: validator.adminAuthorizationHeaderObj,
 				query: {
-					fromDate: Joi.number(),
-					toDate: Joi.number(),
+					fromDate: Joi.date(),
+					toDate: Joi.date(),
 					page: Joi.number(),
 					limit: Joi.number(),
 					sortBy: Joi.string().valid('name', 'createdAt').default('createdAt'),
@@ -894,6 +894,11 @@ export const adminRoute: ServerRoute[] = [
 						config.CONSTANT.STATUS.ACTIVE,
 						config.CONSTANT.STATUS.DELETED
 					]),
+					// adminStatus: Joi.string().valid([
+					// 	config.CONSTANT.USER_ADMIN_STATUS.PENDING,
+					// 	config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
+					// 	config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+					// ])
 					isAdminVerified: Joi.boolean(),
 					isAdminRejected: Joi.boolean()
 				},

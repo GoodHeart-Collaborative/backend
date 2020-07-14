@@ -119,8 +119,8 @@ export const adviceROute: ServerRoute[] = [
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.DELETED,
                     ]),
-                    fromDate: Joi.number(),
-                    toDate: Joi.number(),
+                    fromDate: Joi.date(),
+                    toDate: Joi.date(),
                     searchTerm: Joi.string(),
                 },
                 failAction: appUtils.failActionFunction

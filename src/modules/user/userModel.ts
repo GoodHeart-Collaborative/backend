@@ -48,7 +48,7 @@ export interface IUser extends Document {
 	loginToken: string;
 	createdAt: number;
 	countMember: number;
-	memberCreatedAt: number;
+	memberCreatedAt: Date;
 	likeCount: number,
 	totalComments: number,
 	isAdminRejected: boolean;
@@ -108,6 +108,13 @@ const userSchema = new Schema({
 		],
 		default: config.CONSTANT.STATUS.ACTIVE
 	},
+	memberType: {
+		type: String, default: config.CONSTANT.MEMBER_TYPE.FREE, enum: [
+			config.CONSTANT.MEMBER_TYPE.FREE,
+			config.CONSTANT.MEMBER_TYPE.PREMIUM,
+		]
+	}, // Free(Default rakho)
+	memberShipStatus: { type: String },
 	emailOtp: { type: Number },
 	preference: { type: String },
 	industryType: {
@@ -127,7 +134,7 @@ const userSchema = new Schema({
 		]
 	},
 	countMember: { type: Number, default: 0 },
-	memberCreatedAt: { type: Number },
+	memberCreatedAt: { type: Date },
 	about: { type: String },
 	userPrivacy: {
 
@@ -139,11 +146,11 @@ const userSchema = new Schema({
 	},
 	likeCount: { type: Number, default: 0 },
 	totalComments: { type: Number, default: 0 },
-	// createdAt: { type: Date },
-	// updatedAt: { type: Date }
+	createdAt: { type: Number },
+	updatedAt: { type: Number }
 }, {
 	versionKey: false,
-	timestamps: true
+	// timestamps: true
 });
 
 userSchema.set("toObject", {
