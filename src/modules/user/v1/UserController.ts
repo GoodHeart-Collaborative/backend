@@ -159,7 +159,7 @@ export class UserController {
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
 					console.log('step2step2step2', step2);
 
-					if (step2 && step2.hash == null) {
+					if (step2 && step2.hash == null || !step2.hash) {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
