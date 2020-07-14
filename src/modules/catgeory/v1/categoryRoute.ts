@@ -75,7 +75,11 @@ export const categoryRoute: ServerRoute[] = [
                 query: {
                     limit: Joi.number(),
                     page: Joi.number(),
-                    searchTerm: Joi.string()
+                    sortOrder: Joi.number().valid([
+                        config.CONSTANT.ENUM.SORT_TYPE
+                    ]),
+                    sortBy: Joi.string().valid('title', 'createdAt').default('createdAt'),
+                    searchTerm: Joi.string(),
                 },
                 failAction: appUtils.failActionFunction
             },

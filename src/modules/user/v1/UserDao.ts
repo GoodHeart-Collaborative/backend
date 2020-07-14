@@ -499,7 +499,7 @@ export class UserDao extends BaseDao {
 			let sort = {};
 			if (sortBy && sortOrder) {
 				if (sortBy === "name") {
-					sort = { "name": sortOrder };
+					sort = { "firstName": sortOrder };
 				} else {
 					sort = { "createdAt": sortOrder };
 				}
