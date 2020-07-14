@@ -16,6 +16,7 @@ import * as userConstant from "@modules/user/userConstant";
 import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
+import { Config } from "aws-sdk";
 export class UserController {
 
 	/**
@@ -159,6 +160,22 @@ export class UserController {
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
 					console.log('step2step2step2', step2);
 
+					const tokenData = _.extend(params, {
+						"userId": step2._id,
+						"firstName": step2.firstName,
+						"lastName": step2.lastName,
+						"countryCode": step2.countryCode,
+						"mobileNo": step2.mobileNo,
+						"email": step2.email,
+						// "salt": salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+					const userObject = appUtils.buildToken(tokenData);
+
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
+					console.log('accessTokenaccessTokenaccessToken', accessToken);
+
+
 					if (step2 && step2.hash == null || !step2.hash) {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
@@ -174,48 +191,29 @@ export class UserController {
 					) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 					}
-
-
 					if (!step2 && params.email) {
 						// if user is not verified us user ki userid and user ki email 
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
+						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: accessToken })
+						// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
 					}
 					else if (!step2 && params.mobileNo) {
+						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: accessToken })
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED);
 					}
-
-
 					else if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
-						console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLlll');
-						const tokenData = _.extend(params, {
-							"userId": step2._id,
-							"firstName": step2.firstName,
-							"lastName": step2.lastName,
-							"countryCode": step2.countryCode,
-							"mobileNo": step2.mobileNo,
-							"email": step2.email,
-							// "salt": salt,
-							"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-						});
-
-						const userObject = appUtils.buildToken(tokenData);
-
-						const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
-						console.log('accessTokenaccessTokenaccessToken', accessToken);
-
-						return userConstant.MESSAGES.ERROR.REGISTER_BDAY({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, accessToken: accessToken });
+						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 					}
 					else if (!step2.isAdminVerified) {
-						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: accessToken });
 					}
 					else if (step2.isAdminRejected) {
-						return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
+						// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 					}
-
 
 					// EMAIL_NOT_VERIFIED: 411,
 					// MOBILE_NO_NOT_VERIFY: 412,
@@ -245,6 +243,7 @@ export class UserController {
 					}
 					if (!step1.isAdminVerified) {
 						console.log('3333333333333333333');
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
 						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					}
 					else {
@@ -311,7 +310,7 @@ export class UserController {
 							step6 = redisClient.createJobs(jobPayload);
 						}
 						const step7 = await promise.join(step4, step5, step6);
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken, "refreshToken": refreshToken });
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken });
 					}
 				}
 			}
