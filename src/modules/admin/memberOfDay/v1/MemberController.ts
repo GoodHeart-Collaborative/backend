@@ -16,11 +16,11 @@ class MemberController {
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async addInspiration(params) {
+    async saveMembers(params) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
-            const data = await inspirationDao.insert("advice", params, {});
+            const data = await inspirationDao.insert("users", params, {});
             console.log('dataaaaaaaaaaaaa', data);
             return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -29,13 +29,13 @@ class MemberController {
         }
     }
 
-    async getPostById(params) {
+    async getMemberstById(params) {
         try {
             const criteria = {
                 _id: params.Id,
             };
 
-            const data = await inspirationDao.findOne('inspiration', criteria, {}, {})
+            const data = await inspirationDao.findOne('users', criteria, {}, {})
             if (!data) {
                 return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
@@ -48,7 +48,7 @@ class MemberController {
         }
     }
 
-    async getPosts(params) {
+    async getMembers(params) {
         try {
             console.log('paramsparamsparamsparams', params);
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
@@ -57,6 +57,7 @@ class MemberController {
             const aggPipe = [];
 
             const match: any = {};
+            match.memberCreatedAt = { $exists: true };
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
@@ -91,14 +92,14 @@ class MemberController {
                     sort = { "created": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "memberCreatedAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 
 
             console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
-            const data = await inspirationDao.paginate('inspiration', aggPipe, limit, page, {}, true);
+            const data = await inspirationDao.paginate('users', aggPipe, limit, page, {}, true);
             console.log('datadatadata', data);
             return data;
         } catch (error) {

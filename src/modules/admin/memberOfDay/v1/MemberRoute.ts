@@ -8,6 +8,7 @@ import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
+import { memberController } from "./MemberController";
 
 export const memberRoute: ServerRoute[] = [
     {
@@ -18,7 +19,7 @@ export const memberRoute: ServerRoute[] = [
             const payload = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.getPostById(payload);
+                const result = await memberController.getMemberstById(payload);
                 // console.log('resultresultresultresultresult', result);
 
                 return responseHandler.sendSuccess(h, result);
@@ -27,8 +28,8 @@ export const memberRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "inspiration"],
-            description: "get inspiration by id",
+            tags: ["api", "members"],
+            description: "get mmbers by id",
             auth: {
                 strategies: ["AdminAuth"]
             },
@@ -48,7 +49,6 @@ export const memberRoute: ServerRoute[] = [
         }
     },
 
-
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/members`,
@@ -57,14 +57,14 @@ export const memberRoute: ServerRoute[] = [
             const payload = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.getPosts(payload);
+                const result = await memberController.getMembers(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
+            tags: ["api", "members"],
             description: "get inspiration list",
             auth: {
                 strategies: ["AdminAuth"]

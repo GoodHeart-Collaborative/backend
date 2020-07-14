@@ -7,6 +7,7 @@ import { CronUtils } from "@lib/CronUtils";
 import { Database } from "@utils/Database";
 import { elasticSearch, rabbitMQ, redisClient, redisStorage } from "@lib/index";
 import * as socket from "@lib/socketManager";
+import { userDao } from "@modules/user";
 
 export class BootStrap {
 
@@ -16,6 +17,7 @@ export class BootStrap {
 
 		await this.dataBaseService.connectToDb();
 		await this.bootstrapSeedData();
+		await this.generateMemberOfDay()
 		// rabbitMQ.init();
 
 		// If elastic search engine is enabled
@@ -93,6 +95,46 @@ export class BootStrap {
 
 	async generateMemberOfDay() {
 		try {
+			console.log('OPPPPPPPPPPPPPPPPP');
+
+			let a = 0;
+			// if (globalVariable = 1) {
+			// 	countMember: a
+			// }
+			const criteria = [
+				{
+					$match: {
+						status: config.CONSTANT.STATUS.ACTIVE,
+						isAdminVerified: true,
+						countMember: 0,
+					}
+				},
+				{ $sample: { size: 1 } } // You want to get 5 docs
+			];
+			const dataToUpdate = {
+				countMember: a,
+				memberCreatedAt: Date.now()
+			};
+			console.log('criteriacriteriacriteria', criteria);
+
+			const getUsers = await userDao.aggregate('users', criteria, {});
+			console.log('getUsersgetUsersppppppppppppp', getUsers);
+
+			// const GetUser = await memberDao.findOne
+
+			if (getUsers && getUsers[0]) {
+				const criteria = {
+					_id: getUsers[0]._id
+				};
+				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
+				console.log('datadatadatadata', data);
+			}
+
+			if (!getUsers && !getUsers[0]) {
+				++a;
+
+			}
+			// CronUtils.init();
 
 		} catch (error) {
 			return Promise.resolve();

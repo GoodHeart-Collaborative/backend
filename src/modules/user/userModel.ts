@@ -47,8 +47,10 @@ export interface IUser extends Document {
 	userPrivacy: string;
 	loginToken: string;
 	createdAt: number;
-	// memberDate: number;
-	// countMemberDay: number;
+	countMember: number;
+	memberCreatedAt: number;
+	likeCount: number,
+	totalComments: number,
 }
 
 const geoSchema = new Schema({
@@ -121,16 +123,19 @@ const userSchema = new Schema({
 			'Junior', 'Mid', 'Senior',
 		]
 	},
-	// countMember: { type: Number, default: 0 },
-	// memberCreatedAt: { type: Number },
+	countMember: { type: Number, default: 0 },
+	memberCreatedAt: { type: Number },
 	about: { type: String },
 	userPrivacy: {
+
 		type: String, enum: [
 			config.CONSTANT.PRIVACY_STATUS.PRIVATE,
 			config.CONSTANT.PRIVACY_STATUS.PROTECTED,
 			config.CONSTANT.PRIVACY_STATUS.PUBLIC,
 		]
 	},
+	likeCount: { type: Number, default: 0 },
+	totalComments: { type: Number, default: 0 },
 	createdAt: { type: Number },
 	updatedAt: { type: Number }
 }, {
