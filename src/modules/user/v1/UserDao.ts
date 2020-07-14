@@ -57,7 +57,7 @@ export class UserDao extends BaseDao {
 			console.log('queryqueryquery', query);
 
 			const data = await this.findOne("users", query, {}, options, {});
-			console.log('datadata', data);
+			// console.log('datadata', data);
 			return data;
 
 		} catch (error) {

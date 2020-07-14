@@ -33,7 +33,7 @@ export class UserController {
 			} else {
 				const step1 = await userDao.findVerifiedEmailOrMobile(params)
 				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
-				console.log('step1step1step1step1step1', step1);
+				console.log('step1step1step1step1step1>>>>>>>>LLLLLLLLLL', step1);
 				if (step1) {
 					console.log('q>>>>>>>>>>>>>>>');
 					if (step1.mobileNo === params.mobileNo && step1.email === params.email && step1.isEmailVerified && step1.isMobileVerified) {
@@ -159,7 +159,10 @@ export class UserController {
 					console.log('2222222222');
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
 					console.log('step2step2step2', step2);
-
+					if (step2 && step2.hash == null || !step2.hash) {
+						console.log('>>>>>111111111111111111');
+						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
+					}
 					const tokenData = _.extend(params, {
 						"userId": step2._id,
 						"firstName": step2.firstName,
@@ -167,19 +170,15 @@ export class UserController {
 						"countryCode": step2.countryCode,
 						"mobileNo": step2.mobileNo,
 						"email": step2.email,
-						// "salt": salt,
+						"salt": step2.salt,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
 					const userObject = appUtils.buildToken(tokenData);
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step2.salt });
 
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
+					// const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
 					console.log('accessTokenaccessTokenaccessToken', accessToken);
 
-
-					if (step2 && step2.hash == null || !step2.hash) {
-						console.log('>>>>>111111111111111111');
-						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
-					}
 					params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
 					if (
 						// (config.SERVER.ENVIRONMENT !== "production") ?
@@ -220,18 +219,18 @@ export class UserController {
 					// REGISTER_BDAY: 413,
 					// ADMIN_ACCOUNT_SCREENING: 414
 					if (params.email && !step2) {
-						console.log('44444444444444444444444444');
-						const tokenData = _.extend(params, {
-							"userId": step1._id,
-							"name": step1.name,
-							"email": step1.email,
-							"countryCode": step1.countryCode,
-							"mobileNo": step1.mobileNo,
-							"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-						});
-						const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
-						const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
-						const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
+						// console.log('44444444444444444444444444');
+						// const tokenData = _.extend(params, {
+						// 	"userId": step1._id,
+						// 	"name": step1.name,
+						// 	"email": step1.email,
+						// 	"countryCode": step1.countryCode,
+						// 	"mobileNo": step1.mobileNo,
+						// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+						// });
+						// const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
+						// const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
+						// const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
 						const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
@@ -244,7 +243,7 @@ export class UserController {
 					if (!step1.isAdminVerified) {
 						console.log('3333333333333333333');
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
-						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+						// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					}
 					else {
 						let salt, accessToken;
