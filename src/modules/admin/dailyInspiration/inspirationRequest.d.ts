@@ -19,8 +19,8 @@ declare namespace InspirationRequest {
         status: string;
         sortOrder: number;
         sortBy: string;
-        fromDate: number;
-        toDate: number;
+        fromDate: string;
+        toDate: string;
         searchTerm: string;
     }
 }

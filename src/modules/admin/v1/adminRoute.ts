@@ -803,8 +803,8 @@ export const adminRoute: ServerRoute[] = [
 					toDate: Joi.number(),
 					page: Joi.number(),
 					limit: Joi.number(),
-					sortBy: Joi.number(),
-					sortType: Joi.number(),
+					sortType: Joi.string().valid('name', 'createdeAt').default('createdAt'),
+					sortOrder: Joi.number(),
 					searchTerm: Joi.string(),
 					status: Joi.string().valid([
 						config.CONSTANT.STATUS.BLOCKED,

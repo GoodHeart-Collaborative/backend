@@ -469,9 +469,9 @@ export class UserDao extends BaseDao {
 
 
 			const match: any = {};
-			match['dob'] = { $exists: true };
-			match['experience'] = { $exists: true };
-			match['profession'] = { $exists: true };
+			// match['dob'] = { $exists: true };
+			// match['experience'] = { $exists: true };
+			// match['profession'] = { $exists: true };
 
 			// match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
 			if (status) {
@@ -501,10 +501,10 @@ export class UserDao extends BaseDao {
 				if (sortBy === "name") {
 					sort = { "name": sortOrder };
 				} else {
-					sort = { "created": sortOrder };
+					sort = { "createdAt": sortOrder };
 				}
 			} else {
-				sort = { "created": -1 };
+				sort = { "createdAt": sortOrder };
 			}
 			aggPipe.push({ "$sort": sort });
 

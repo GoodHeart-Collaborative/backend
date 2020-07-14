@@ -131,8 +131,8 @@ export const inspirationRoute: ServerRoute[] = [
                     sortBy: Joi.string().valid([
                         'createdAt', 'title'
                     ]),
-                    fromDate: Joi.number(),
-                    toDate: Joi.number(),
+                    fromDate: Joi.string(),
+                    toDate: Joi.string(),
                     searchTerm: Joi.string(),
                 },
                 failAction: appUtils.failActionFunction
