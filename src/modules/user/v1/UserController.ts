@@ -170,6 +170,19 @@ export class UserController {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
+
+					params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
+					if (
+						// (config.SERVER.ENVIRONMENT !== "production") ?
+						// (
+						// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+						// 	step1.hash !== params.hash
+						// ) :
+						step2.hash !== params.hash
+					) {
+						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
+					}
+
 					else if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED);
@@ -296,7 +309,7 @@ export class UserController {
 							step6 = redisClient.createJobs(jobPayload);
 						}
 						const step7 = await promise.join(step4, step5, step6);
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken, "refreshToken": refreshToken });
 					}
 				}
 			}
@@ -322,8 +335,10 @@ export class UserController {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 				}
 
-				else if (!step1.dob) {
-					return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
+				else if (!step1.dob && !step1.industryType) {
+					return userConstant.MESSAGES.ERROR.REGISTER_BDAY({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, accessToken: accessToken });
+
+					// return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
 				}
 				else if (!step1.isAdminVerified) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
