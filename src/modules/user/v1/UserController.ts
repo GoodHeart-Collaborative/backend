@@ -142,6 +142,9 @@ export class UserController {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			}
 			else {
+				const reqParams = params;
+				console.log('paramsparams', params);
+
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1>>>>>>>>>>>>', step1);
 				if (!step1) {
@@ -153,6 +156,10 @@ export class UserController {
 						console.log('222222222222222')
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
+					if (step1 && step1.hash == null && !step1.hash) {
+						console.log('>>>>>111111111111111111');
+						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
+					}
 					// if (!step1.hash) {
 					// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					// }
@@ -160,7 +167,9 @@ export class UserController {
 					console.log('step2step2step2', step2);
 					console.log('2222222222', step1._id);
 					// console.log(23333333333333333, step2._id);
-					const tokenData = _.extend(params, {
+					console.log('paramsparamsparamsparamsparamsparams', params);
+
+					const tokenData1 = {
 						"userId": step1._id,
 						"firstName": step1.firstName,
 						"lastName": step1.lastName,
@@ -169,9 +178,14 @@ export class UserController {
 						"email": step1.email,
 						"salt": step1.salt,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					});
+					}
+					const tokenData = { ...reqParams, ...tokenData1 };
+					console.log('tokenDatatokenData', tokenData);
+
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+					// console.log('paramsparamsparams', params);
+
 					if (params.email && !step2) {
 						// console.log('44444444444444444444444444');
 						// const tokenData = _.extend(params, {
