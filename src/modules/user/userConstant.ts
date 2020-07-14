@@ -31,7 +31,7 @@ export const MESSAGES = {
 		},
 		ADMIN_REJECTED_USER_ACCOUNT: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT,
-			"message": "Your account is rejected by admin .please contact to administrator .",
+			"message": "Unfortunately, your profile doesn't meet our qualification criteria. Please come back again!",
 			"type": "BLOCKED_USER"
 		},
 		EMAIL_NOT_VERIFIED: {
