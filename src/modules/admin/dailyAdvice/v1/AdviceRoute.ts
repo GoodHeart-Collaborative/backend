@@ -38,7 +38,7 @@ export const adviceROute: ServerRoute[] = [
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    postedAt: Joi.number()
+                    postedAt: Joi.string()
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -215,7 +215,7 @@ export const adviceROute: ServerRoute[] = [
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    postedAt: Joi.number()
+                    postedAt: Joi.string()
                 },
                 failAction: appUtils.failActionFunction
             },

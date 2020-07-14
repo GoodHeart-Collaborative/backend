@@ -38,11 +38,11 @@ export class UserController {
 					if (step1.mobileNo === params.mobileNo && step1.email === params.email && step1.isEmailVerified && step1.isMobileVerified) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ALREADY_EXIST);
 					}
-					if (step1.email === params.email && step1.isEmailVerified) {
+					if (step1.email === params.email) {
 						console.log('LLLLLLLLLLL');
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					}
-					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified) {
+					if (step1.mobileNo === params.mobileNo) {
 						console.log('KKKKKKKKKKKKKKKKK');
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
@@ -164,7 +164,6 @@ export class UserController {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_NOT_VERIFIED);
 					}
 					else if (!step2 && params.mobileNo) {
-
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED);
 					}
 					if (step2 && step2.hash == null) {

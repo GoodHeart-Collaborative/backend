@@ -22,8 +22,8 @@ export interface Inspiration extends Document {
     // shortDescription: string;
     isPostLater: boolean;
     imageUrl: string;
-    createdAt: number,
-    updatedAt: number
+    createdAt: Date,
+    updatedAt: Date
     postedAt: Date;
 }
 
@@ -55,8 +55,8 @@ const inspirationSchema = new Schema({
     isPostLater: { type: Boolean },
     postedAt: { type: Date, trim: true, required: true },
     imageUrl: { type: String },
-    createdAt: { type: Number },
-    updatedAt: { type: Number }
+    createdAt: { type: Date },
+    updatedAt: { type: Date }
 }, {
     versionKey: false,
     timestamps: true
