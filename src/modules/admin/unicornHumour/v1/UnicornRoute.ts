@@ -37,7 +37,7 @@ export const unicornRoute: ServerRoute[] = [
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    postedAt: Joi.string(),
+                    postedAt: Joi.date(),
                     // createdAt: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
@@ -222,7 +222,7 @@ export const unicornRoute: ServerRoute[] = [
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    postedAt: Joi.string(),
+                    postedAt: Joi.date(),
                     // createdAt: Joi.number()
                 },
                 failAction: appUtils.failActionFunction

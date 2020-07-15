@@ -44,7 +44,7 @@ export const inspirationRoute: ServerRoute[] = [
                     description: Joi.string().required(),
                     // shortDescription: string;
                     imageUrl: Joi.string(),
-                    postedAt: Joi.string(),
+                    postedAt: Joi.date(),
                     isPostLater: Joi.boolean().default(false),
                     // createdAt: Joi.number()
                 },
@@ -236,7 +236,7 @@ export const inspirationRoute: ServerRoute[] = [
                     // shortDescription: string;
                     imageUrl: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    postedAt: Joi.string(),
+                    postedAt: Joi.date(),
                     // createdAt: Joi.number()
                 },
                 failAction: appUtils.failActionFunction

@@ -21,8 +21,8 @@ export interface IPost extends Document {
     description: string;
     // shortDescription: string;
     imageUrl: string;
-    createdAt: number,
-    updatedAt: number
+    createdAt: Date,
+    updatedAt: Date
 
 }
 
@@ -53,8 +53,8 @@ const postSchema = new Schema({
     description: { type: String },
     // shortDescription: { type: String },
     imageUrl: { type: String },
-    createdAt: { type: Number },
-    updatedAt: { type: Number }
+    createdAt: { type: Date },
+    updatedAt: { type: Date }
 }, {
     versionKey: false,
     timestamps: true

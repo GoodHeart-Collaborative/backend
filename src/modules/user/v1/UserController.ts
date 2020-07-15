@@ -17,6 +17,7 @@ import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
+var ObjectID = require('mongodb').ObjectID;
 export class UserController {
 
 	/**
@@ -31,7 +32,7 @@ export class UserController {
 			if (!params.email && (!params.countryCode || !params.mobileNo)) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
-				const step1 = await userDao.findUserByEmailOrMobileNo(params)
+				const step1 = await userDao.findVerifiedEmailOrMobile(params)
 				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1>>>>>>>>LLLLLLLLLL', step1);
 				if (step1) {
@@ -257,11 +258,11 @@ export class UserController {
 					// REGISTER_BDAY: 413,
 					// ADMIN_ACCOUNT_SCREENING: 414
 
-					if (!step1.isAdminVerified) {
-						console.log('3333333333333333333');
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
-						// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
-					}
+					// if (!step1.isAdminVerified) {
+					// 	console.log('3333333333333333333');
+					// 	return userConstant.MESSAGES.SUCCESS.LOGIN({ status: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
+					// 	// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+					// }
 					else {
 						let salt, accessToken;
 						// if (!step1.hash) {
@@ -344,42 +345,79 @@ export class UserController {
 		try {
 			const step1 = await userDao.checkSocialId(params);
 			console.log('step1step1step1', step1);
-
 			if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
+				// let salt;
+				// if (!step1.salt) {
+				// 	salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+				// }
+				// console.log('saltsalt', salt);
+
+				// const tokenData1 = {
+				// 	"userId": step1._id,
+				// 	"firstName": step1.firstName,
+				// 	"lastName": step1.lastName,
+				// 	"countryCode": step1.countryCode,
+				// 	"mobileNo": step1.mobileNo,
+				// 	"email": step1.email,
+				// 	// "salt": step1.salt,
+				// 	"accountLevel": 'common',//config.CONSTANT.ACCOUNT_LEVEL.USER
+				// }
+				// const tokenData = { ...params, ...tokenData1 };
+				// console.log('tokenDatatokenData', tokenData);
+
+				const tokenData = _.extend(params, {
+					"userId": step1._id,
+					"firstName": step1.firstName,
+					"lastName": step1.lastName,
+					"email": step1.email,
+					"countryCode": step1.countryCode,
+					"mobileNo": step1.mobileNo,
+					"salt": step1.salt,
+					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+				});
+				console.log('tokenDatatokenDatatokenData', tokenData);
+
+				const userObject = appUtils.buildToken(tokenData);
+				console.log('userObjectuserObject', userObject);
+
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+
+				console.log('accessTokenaccessTokenaccessToken', accessToken);
+
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
-					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
-				}
-				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {
-					console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLlll');
-					const tokenData = _.extend(params, {
-						"userId": step1._id,
-						"firstName": step1.firstName,
-						"lastName": step1.lastName,
-						"countryCode": step1.countryCode,
-						"mobileNo": step1.mobileNo,
-						"email": step1.email,
-						// "salt": salt,
-						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					});
-					const userObject = appUtils.buildToken(tokenData);
-
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
-					console.log('accessTokenaccessTokenaccessToken', accessToken);
-
-					return userConstant.MESSAGES.ERROR.REGISTER_BDAY({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, accessToken: accessToken });
-
-					// return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
-				}
-				else if (!step1.isAdminVerified) {
-					return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+					console.log('22222222222222222222222');
+					return userConstant.MESSAGES.SUCCESS.BLOCKED({ status: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 				}
 				else if (step1.isAdminRejected) {
-					return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
+					// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+				}
+
+				// const tokenData = _.extend(params, {
+				// 	"userId": step1._id,
+				// 	"firstName": step1.firstName,
+				// 	"lastName": step1.lastName,
+				// 	"email": step1.email,
+				// 	"countryCode": step1.countryCode,
+				// 	"mobileNo": step1.mobileNo,
+				// 	// "salt": step1.salt,
+				// 	"accountLevel": 'common'
+				// });
+
+				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {
+					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ status: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+				}
+				else if (step1.isAdminRejected) {
+					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+					// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+				}
+				else if (!step1.isAdminVerified) {
+					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
-					const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+					// const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
 						"firstName": step1.firstName,
@@ -387,11 +425,11 @@ export class UserController {
 						"email": step1.email,
 						"countryCode": step1.countryCode,
 						"mobileNo": step1.mobileNo,
-						"salt": salt,
+						"salt": step1.salt,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
 					const userObject = appUtils.buildToken(tokenData);
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 					let arn;
 					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 						// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -409,14 +447,14 @@ export class UserController {
 						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
 					}
-					params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": step3 });
+					params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken, "lastLogin": step3 });
 					const step4 = loginHistoryDao.createUserLoginHistory(params);
 					let step5, step6;
 					if (config.SERVER.IS_REDIS_ENABLE) {
 						if (!config.SERVER.IN_ACTIVITY_SESSION)
-							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
 						else
-							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
 						const jobPayload = {
 							jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
 							time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
@@ -425,7 +463,9 @@ export class UserController {
 						step6 = redisClient.createJobs(jobPayload);
 					}
 					const step7 = await promise.join(step4, step5, step6);
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken, "refreshToken": refreshToken });
+					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken });
+
 				}
 			}
 		} catch (error) {
@@ -452,36 +492,45 @@ export class UserController {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				if (step1 && !step1.isGoogleLogin && !step1.isFacebookLogin) {
 					if (step1.email === params.email) {
+
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+						// const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
+
 					}
 					else {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
-					// if (step1) {
-					// 	if (params.mobileNo && params.countryCode) {
-					// 		const step2 = await userDao.findUserByEmailOrMobileNo(params);
+				}
 
-					// 	} else if (params.email) {
+				// if (step1) {
+				// 	if (params.mobileNo && params.countryCode) {
+				// 		// const step2 = await userDao.findUserByEmailOrMobileNo(params);
 
-					// 	} else if (params.email && params.mobileNo && params.countryCode) {
+				// 	} else if (params.email) {
 
-					// 	}
-					// 	const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				// 	} else if (params.email && params.mobileNo && params.countryCode) {
 
-					// 	const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
-					// }
+				// 	}
+				// 	const step1 = await userDao.findUserByEmailOrMobileNo(params);
 
-					// if (step1 && !step1.isGoogleLogin && !step1.isFacebookLogin) {
+				// 	const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
+
+				// }
+
+				else {
 
 					// 	if (step1.email === params.email) {
 					// 		return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					// 	}
 					// 	else {
 					// 		return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
-					// 	}
-				} else {
+					// 	}	
+					const newObjectId = new ObjectID();
+					params['_id'] = newObjectId;
+					console.log('paramsparams', params['_id']);
+					const salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					params['salt'] = salt;
 					const step2 = await userDao.socialSignup(params);
-					const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
 					const tokenData = _.extend(params, {
 						"userId": step2._id,
 						"firstName": step2.firstName,
