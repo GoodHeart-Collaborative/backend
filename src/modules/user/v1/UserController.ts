@@ -17,6 +17,7 @@ import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
+import { users } from "../userModel";
 export class UserController {
 
 	/**
@@ -31,7 +32,7 @@ export class UserController {
 			if (!params.email && (!params.countryCode || !params.mobileNo)) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
-				const step1 = await userDao.findUserByEmailOrMobileNo(params)
+				const step1 = await userDao.findVerifiedEmailOrMobile(params)
 				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1>>>>>>>>LLLLLLLLLL', step1);
 				if (step1) {
@@ -257,11 +258,11 @@ export class UserController {
 					// REGISTER_BDAY: 413,
 					// ADMIN_ACCOUNT_SCREENING: 414
 
-					if (!step1.isAdminVerified) {
-						console.log('3333333333333333333');
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
-						// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
-					}
+					// if (!step1.isAdminVerified) {
+					// 	console.log('3333333333333333333');
+					// 	return userConstant.MESSAGES.SUCCESS.LOGIN({ status: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
+					// 	// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+					// }
 					else {
 						let salt, accessToken;
 						// if (!step1.hash) {
@@ -348,35 +349,53 @@ export class UserController {
 			if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
+				const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+
+				const tokenData1 = {
+					"userId": step1._id,
+					"firstName": step1.firstName,
+					"lastName": step1.lastName,
+					"countryCode": step1.countryCode,
+					"mobileNo": step1.mobileNo,
+					"email": step1.email,
+					// "salt": step1.salt,
+					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+				}
+				const tokenData = { ...params, ...tokenData1 };
+				console.log('tokenDatatokenData', tokenData);
+
+				const userObject = appUtils.buildToken(tokenData);
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
-					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
-				}
-				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {
-					console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLlll');
-					const tokenData = _.extend(params, {
-						"userId": step1._id,
-						"firstName": step1.firstName,
-						"lastName": step1.lastName,
-						"countryCode": step1.countryCode,
-						"mobileNo": step1.mobileNo,
-						"email": step1.email,
-						// "salt": salt,
-						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					});
-					const userObject = appUtils.buildToken(tokenData);
-
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
-					console.log('accessTokenaccessTokenaccessToken', accessToken);
-
-					return userConstant.MESSAGES.ERROR.REGISTER_BDAY({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, accessToken: accessToken });
-
-					// return Promise.reject(userConstant.MESSAGES.ERROR.REGISTER_BDAY);
-				}
-				else if (!step1.isAdminVerified) {
-					return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
+					console.log('22222222222222222222222');
+					return userConstant.MESSAGES.SUCCESS.BLOCKED({ status: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 				}
 				else if (step1.isAdminRejected) {
-					return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
+					// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+				}
+
+				// const tokenData = _.extend(params, {
+				// 	"userId": step1._id,
+				// 	"firstName": step1.firstName,
+				// 	"lastName": step1.lastName,
+				// 	"email": step1.email,
+				// 	"countryCode": step1.countryCode,
+				// 	"mobileNo": step1.mobileNo,
+				// 	// "salt": step1.salt,
+				// 	"accountLevel": 'common'
+				// });
+
+				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {
+					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ status: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+				}
+				else if (step1.isAdminRejected) {
+					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+					// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+				}
+				else if (!step1.isAdminVerified) {
+					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
 					const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
@@ -387,8 +406,8 @@ export class UserController {
 						"email": step1.email,
 						"countryCode": step1.countryCode,
 						"mobileNo": step1.mobileNo,
-						"salt": salt,
-						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+						// "salt": step1.salt,
+						"accountLevel": 'common'
 					});
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
@@ -425,7 +444,9 @@ export class UserController {
 						step6 = redisClient.createJobs(jobPayload);
 					}
 					const step7 = await promise.join(step4, step5, step6);
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ statusCode: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken, "refreshToken": refreshToken });
+					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken });
+
 				}
 			}
 		} catch (error) {
