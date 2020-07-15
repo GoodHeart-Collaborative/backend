@@ -492,35 +492,39 @@ export class UserController {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				if (step1 && !step1.isGoogleLogin && !step1.isFacebookLogin) {
 					if (step1.email === params.email) {
+
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+						// const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
+
 					}
 					else {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
+				}
 
-					// if (step1) {
-					// 	if (params.mobileNo && params.countryCode) {
-					// 		const step2 = await userDao.findUserByEmailOrMobileNo(params);
+				// if (step1) {
+				// 	if (params.mobileNo && params.countryCode) {
+				// 		// const step2 = await userDao.findUserByEmailOrMobileNo(params);
 
-					// 	} else if (params.email) {
+				// 	} else if (params.email) {
 
-					// 	} else if (params.email && params.mobileNo && params.countryCode) {
+				// 	} else if (params.email && params.mobileNo && params.countryCode) {
 
-					// 	}
-					// 	const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				// 	}
+				// 	const step1 = await userDao.findUserByEmailOrMobileNo(params);
 
-					// 	const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
-					// }
+				// 	const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
 
-					// if (step1 && !step1.isGoogleLogin && !step1.isFacebookLogin) {
+				// }
+
+				else {
 
 					// 	if (step1.email === params.email) {
 					// 		return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					// 	}
 					// 	else {
 					// 		return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
-					// 	}
-				} else {
+					// 	}	
 					const newObjectId = new ObjectID();
 					params['_id'] = newObjectId;
 					console.log('paramsparams', params['_id']);
