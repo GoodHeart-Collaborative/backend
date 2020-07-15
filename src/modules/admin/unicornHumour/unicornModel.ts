@@ -46,10 +46,9 @@ const unicrornSchema = new Schema({
     shortDescription: { type: String },
     isPostLater: { type: Boolean },
     postedAt: { type: String, trim: true },
-    imageUrl: { type: String },
-
-    createdAt: { type: Date },
-    updatedAt: { type: Date }
+    imageUrl: { type: String }
+    // createdAt: { type: Date },
+    // updatedAt: { type: Date }
 }, {
     versionKey: false,
     timestamps: true
