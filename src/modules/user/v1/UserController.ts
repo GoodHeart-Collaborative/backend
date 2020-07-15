@@ -17,7 +17,7 @@ import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
-import { users } from "../userModel";
+var ObjectID = require('mongodb').ObjectID;
 export class UserController {
 
 	/**
@@ -345,27 +345,46 @@ export class UserController {
 		try {
 			const step1 = await userDao.checkSocialId(params);
 			console.log('step1step1step1', step1);
-
 			if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
-				const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+				// let salt;
+				// if (!step1.salt) {
+				// 	salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+				// }
+				// console.log('saltsalt', salt);
 
-				const tokenData1 = {
+				// const tokenData1 = {
+				// 	"userId": step1._id,
+				// 	"firstName": step1.firstName,
+				// 	"lastName": step1.lastName,
+				// 	"countryCode": step1.countryCode,
+				// 	"mobileNo": step1.mobileNo,
+				// 	"email": step1.email,
+				// 	// "salt": step1.salt,
+				// 	"accountLevel": 'common',//config.CONSTANT.ACCOUNT_LEVEL.USER
+				// }
+				// const tokenData = { ...params, ...tokenData1 };
+				// console.log('tokenDatatokenData', tokenData);
+
+				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"firstName": step1.firstName,
 					"lastName": step1.lastName,
+					"email": step1.email,
 					"countryCode": step1.countryCode,
 					"mobileNo": step1.mobileNo,
-					"email": step1.email,
-					// "salt": step1.salt,
+					"salt": step1.salt,
 					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-				}
-				const tokenData = { ...params, ...tokenData1 };
-				console.log('tokenDatatokenData', tokenData);
+				});
+				console.log('tokenDatatokenDatatokenData', tokenData);
 
 				const userObject = appUtils.buildToken(tokenData);
-				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+				console.log('userObjectuserObject', userObject);
+
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+
+				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					console.log('22222222222222222222222');
@@ -398,7 +417,7 @@ export class UserController {
 					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
-					const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+					// const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
 						"firstName": step1.firstName,
@@ -406,11 +425,11 @@ export class UserController {
 						"email": step1.email,
 						"countryCode": step1.countryCode,
 						"mobileNo": step1.mobileNo,
-						"salt": salt,
-						"accountLevel": 'common'
+						"salt": step1.salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
 					const userObject = appUtils.buildToken(tokenData);
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 					let arn;
 					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 						// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -428,14 +447,14 @@ export class UserController {
 						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
 					}
-					params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": step3 });
+					params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken, "lastLogin": step3 });
 					const step4 = loginHistoryDao.createUserLoginHistory(params);
 					let step5, step6;
 					if (config.SERVER.IS_REDIS_ENABLE) {
 						if (!config.SERVER.IN_ACTIVITY_SESSION)
-							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
 						else
-							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
 						const jobPayload = {
 							jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
 							time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
@@ -478,6 +497,7 @@ export class UserController {
 					else {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
+
 					// if (step1) {
 					// 	if (params.mobileNo && params.countryCode) {
 					// 		const step2 = await userDao.findUserByEmailOrMobileNo(params);
@@ -501,8 +521,12 @@ export class UserController {
 					// 		return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					// 	}
 				} else {
+					const newObjectId = new ObjectID();
+					params['_id'] = newObjectId;
+					console.log('paramsparams', params['_id']);
+					const salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					params['salt'] = salt;
 					const step2 = await userDao.socialSignup(params);
-					const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
 					const tokenData = _.extend(params, {
 						"userId": step2._id,
 						"firstName": step2.firstName,
