@@ -406,7 +406,7 @@ export class UserController {
 						"email": step1.email,
 						"countryCode": step1.countryCode,
 						"mobileNo": step1.mobileNo,
-						// "salt": step1.salt,
+						"salt": salt,
 						"accountLevel": 'common'
 					});
 					const userObject = appUtils.buildToken(tokenData);
