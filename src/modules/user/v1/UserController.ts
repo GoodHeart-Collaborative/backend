@@ -489,6 +489,7 @@ export class UserController {
 					return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_ALREADY_EXIST);
 				}
 				let step1 = await userDao.findUserByEmailOrMobileNo(params);
+
 				console.log('step1step1>>>>>>>>>>', step1);
 
 				if ((step1 && !step1.isGoogleLogin) || (step1 && !step1.isFacebookLogin) || (step1 && !step1.isAppleLogin)) {
