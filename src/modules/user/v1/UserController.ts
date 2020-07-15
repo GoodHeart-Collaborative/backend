@@ -157,6 +157,8 @@ export class UserController {
 						console.log('222222222222222')
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
+					console.log('dddddddddddddddddddd', step1);
+
 					if (step1 && step1.hash == null && !step1.hash) {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
@@ -196,6 +198,8 @@ export class UserController {
 
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+
 					// console.log('paramsparamsparams', params);
 
 					if (params.email && !step2) {
@@ -264,7 +268,7 @@ export class UserController {
 					// 	// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					// }
 					else {
-						let salt, accessToken;
+						// let salt, accessToken;
 						// if (!step1.hash) {
 						// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 						// } else {
@@ -279,19 +283,19 @@ export class UserController {
 						) {
 							return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 						} else {
-							salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-							const tokenData = _.extend(params, {
-								"userId": step1._id,
-								"firstName": step1.firstName,
-								"lastName": step1.lastName,
-								"email": step1.email,
-								"countryCode": step1.countryCode,
-								"mobileNo": step1.mobileNo,
-								"salt": salt,
-								"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-							});
-							const userObject = appUtils.buildToken(tokenData);
-							accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+							// salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+							// const tokenData = _.extend(params, {
+							// 	"userId": step1._id,
+							// 	"firstName": step1.firstName,
+							// 	"lastName": step1.lastName,
+							// 	"email": step1.email,
+							// 	"countryCode": step1.countryCode,
+							// 	"mobileNo": step1.mobileNo,
+							// 	"salt": salt,
+							// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+							// });
+							// const userObject = appUtils.buildToken(tokenData);
+							// accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
 						}
 						// }
 						let arn;
@@ -311,14 +315,14 @@ export class UserController {
 							const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
 							step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
 						}
-						params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": step3 });
-						const step4 = loginHistoryDao.createUserLoginHistory(params);
+						params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken, "lastLogin": step3 });
+						// const step4 = loginHistoryDao.createUserLoginHistory(params);
 						let step5, step6;
 						if (config.SERVER.IS_REDIS_ENABLE) {
 							if (!config.SERVER.IN_ACTIVITY_SESSION)
-								step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+								step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
 							else
-								step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+								step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
 							const jobPayload = {
 								jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
 								time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
