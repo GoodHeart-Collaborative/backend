@@ -146,15 +146,15 @@ const userSchema = new Schema({
 	},
 	likeCount: { type: Number, default: 0 },
 	totalComments: { type: Number, default: 0 },
-	createdAt: { type: Number },
-	updatedAt: { type: Number }
+	createdAt: { type: Date },
+	updatedAt: { type: Date }
 }, {
 	versionKey: false,
-	// timestamps: true
+	timestamps: true
 });
 
 userSchema.set("toObject", {
-	virtuals: true
+	virtuals: true,
 });
 
 // Load password virtually
