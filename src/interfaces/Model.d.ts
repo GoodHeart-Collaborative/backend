@@ -106,6 +106,8 @@ declare type ModelNames =
 	"admin_notifications" |
 	"contacts" |
 	"contents" |
+	"likes"	|
+	"comments"	|
 	"login_histories" |
 	"notifications" |
 	"users" |

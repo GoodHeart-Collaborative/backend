@@ -3,59 +3,56 @@
 import * as _ from "lodash";
 import fs = require("fs");
 
-import * as homeConstants from "./HomeConstant";
-import { adviceDao } from "@modules/admin/dailyAdvice/v1/AdviceDao";
-import { inspirationDao } from "@modules/admin/dailyInspiration/v1/inspirationDao";
-import { unicornDao } from "@modules/admin/unicornHumour/v1/UnicornDao";
+import * as likeConstants from "./LikeConstant";
+import { likeDao } from "./LikeDao";
 import * as config from "@config/index";
 
 
-class HomeController {
+class LikeController {
 
 /**
  * @function signup
  * @description if IS_REDIS_ENABLE set to true,
  * than redisClient.storeList() function saves value in redis.
  */
-async getHomeData(params, userId) {
-    try {
-        let responseData:any = {}
-        let getDailyUnicorn:any = {}
-        let getGeneralGratitude:any = {}
-        let getmemberOfTheGay:any = {}
-        let getInspiringHistory:any = {}
-        let getDailyAdvice:any = {}
-        params.pageNo = 1
-        params.limit = 10
-        if(params.type === config.CONSTANT.HOME_TYPE.UNICRON) {
-            getDailyUnicorn = await unicornDao.getUnicornHomeData(params, userId.tokendata)
-            responseData = {getDailyUnicorn}
-        }
-        if(params.type === config.CONSTANT.HOME_TYPE.INSPIRATION) {
-            getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
-            responseData = {getInspiringHistory}
-        }
-        if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
-            getGeneralGratitude = {}
-            responseData = {getGeneralGratitude}
-        }
-        if(params.type === config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
-            getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
-            responseData = {getDailyAdvice}
-        }
-        if(!params.type) {
-            getmemberOfTheGay = {}
-            getDailyUnicorn = await unicornDao.getUnicornHomeData(params, userId.tokendata)
-            getGeneralGratitude = {}
-            getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
-            getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
-            responseData = {getmemberOfTheGay, getGeneralGratitude, getDailyUnicorn, getInspiringHistory, getDailyAdvice}
-        }
-       return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
-    } catch (error) {
-        throw error;
-    }
-}
+// async getHomeData(params, userId) {
+//     try {
+//         let responseData:any = {}
+//         let getDailyUnicorn:any = {}
+//         let getGeneralGratitude:any = {}
+//         let getmemberOfTheGay:any = {}
+//         let getInspiringHistory:any = {}
+//         let getDailyAdvice:any = {}
+//         params.pageNo = 1
+//         if(params.type === config.CONSTANT.HOME_TYPE.UNICRON) {
+//             getDailyUnicorn = await unicornDao.getUnicornHomeData(params, userId.tokendata)
+//             responseData = {getDailyUnicorn}
+//         }
+//         if(params.type === config.CONSTANT.HOME_TYPE.INSPIRATION) {
+//             getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
+//             responseData = {getInspiringHistory}
+//         }
+//         if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+//             getGeneralGratitude = {}
+//             responseData = {getGeneralGratitude}
+//         }
+//         if(params.type === config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+//             getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
+//             responseData = {getDailyAdvice}
+//         }
+//         if(!params.type) {
+//             getmemberOfTheGay = {}
+//             getDailyUnicorn = await unicornDao.getUnicornHomeData(params, userId.tokendata)
+//             getGeneralGratitude = {}
+//             getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
+//             getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
+//             responseData = {getmemberOfTheGay, getGeneralGratitude, getDailyUnicorn, getInspiringHistory, getDailyAdvice}
+//         }
+//        return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
+//     } catch (error) {
+//         throw error;
+//     }
+// }
 
 //     async getPostById(params) {
 //         try {
@@ -143,5 +140,18 @@ async getHomeData(params, userId) {
 //             throw error;
 //         }
 //     }
+async addLike(params) {
+    try {
+        const getLike = await likeDao.checkLike(params)
+        if(getLike) {
+            return likeConstants.MESSAGES.ERROR.ALREADY_LIKE;
+        } else {
+            const data = await likeDao.addLike(params)
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+        }
+    } catch (error) {
+        throw error;
+    }
 }
-export const homeController = new HomeController();
+}
+export const likeController = new LikeController();

@@ -28,15 +28,25 @@ export class AdviceDao extends BaseDao {
 
     async getAdviceHomeData(params, userId) {
         try {
-            let query:any = {}
-            query["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
-             let result =  await this.find("advice", query, {}, {}, {}, {pageNo: 1, limit:2}, {});
-             if(result && result.length == 0) {
-                 query = {}
-                 result =  await this.findOneWithSort("advice", query, {}, {}, {}, {"createdAt": -1});
-                 result = [result]
-             }
-             return result
+            let {pageNo, limit, endDate } = params
+            let match: any = {};
+            let aggPipe = [];
+            let result:any = {}
+            match["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
+            match["status"] = config.CONSTANT.STATUS.ACTIVE
+            aggPipe.push({ "$sort": { "createdAt": -1 } });
+            if(endDate) {
+                match["createdAt"] = { $lte: new Date(endDate) };
+            }
+            aggPipe.push({ "$match": match });
+            result = await this.aggregateWithPagination("advice", aggPipe, limit, pageNo, true);
+            if(result && result.data && result.data.length == 0) {
+                delete match.postedAt
+                aggPipe.pop()
+                result = await this.aggregateWithPagination("advice", aggPipe, limit, pageNo, true);
+                result = result
+            }
+            return result
         } catch (error) {
             throw error;
         }

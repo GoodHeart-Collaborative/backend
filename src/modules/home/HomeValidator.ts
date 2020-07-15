@@ -4,13 +4,14 @@ import * as config from "@config/index";
 
 
 let validateUserHome = Joi.object({
-    limit: Joi.number(),
-    page: Joi.number(),
-    status: Joi.string().valid([
-        config.CONSTANT.STATUS.ACTIVE,
-        config.CONSTANT.STATUS.BLOCKED,
-        config.CONSTANT.STATUS.DELETED,
-    ])
+    // limit: Joi.number(),
+    endDate: Joi.string().allow("").optional(),
+    type: Joi.number().valid([
+        config.CONSTANT.HOME_TYPE.UNICRON,
+        config.CONSTANT.HOME_TYPE.INSPIRATION,
+        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
+        config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE
+    ]).description("1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude").optional()
 }).unknown()
 
 export {

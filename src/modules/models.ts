@@ -14,3 +14,5 @@ export { posts } from './post/postModel'
 export { inspiration } from './admin/dailyInspiration/inspirationModel';
 export { unicorn } from './admin/unicornHumour/unicornModel';
 export { advice } from './admin/dailyAdvice/adviceModel'
+export { comments } from "./comment/commentModel"
+export { likes } from './like/likeModel'
