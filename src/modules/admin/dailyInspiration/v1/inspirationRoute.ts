@@ -46,7 +46,7 @@ export const inspirationRoute: ServerRoute[] = [
                     imageUrl: Joi.string(),
                     postedAt: Joi.string(),
                     isPostLater: Joi.boolean().default(false),
-                    createdAt: Joi.number()
+                    // createdAt: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
             },
