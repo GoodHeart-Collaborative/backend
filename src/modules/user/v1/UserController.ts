@@ -524,9 +524,12 @@ export class UserController {
 					"salt": step1.salt || salt,
 					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 				});
+				console.log('tokenDatatokenDatatokenData', tokenData);
 
 				const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
-				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+				console.log('userObjectuserObjectuserObjectuserObject', userObject);
+
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt || salt });
 				let arn;
 				if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 					// arn = await sns.registerAndroidUser(params.deviceToken);
