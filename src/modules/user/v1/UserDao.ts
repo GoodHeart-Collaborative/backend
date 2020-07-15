@@ -198,11 +198,49 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = Date.now();
+			params.created = new Date();
 			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
 
 			// const data= await this.da
 			return await this.save("users", params);
+			// return await this.fin
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async checkSocialAccount(step1, params: UserRequest.SocialSignup) {
+		try {
+			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
+				params.facebookId = params.socialId;
+				params.isFacebookLogin = true;
+			} else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE) {
+				params.appleId = params.socialId;
+				params.isAppleLogin = true;
+			}
+			else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE) {
+				params.googleId = params.socialId;
+				params.isGoogleLogin = true;
+			}
+			if (params.countryCode && params.mobileNo) {
+				params.fullMobileNo = params.countryCode + params.mobileNo;
+			}
+			// params.created = new Date();
+			if (step1.email === params.email) {
+				console.log('4444444444444444444444444444444444444444');
+				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
+				// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+			}
+			else {
+				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
+				// return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+			}
+			return params;
+			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+			// const data= await this.da
+			// return await this.save("users", params);
+
 			// return await this.fin
 		} catch (error) {
 			throw error;

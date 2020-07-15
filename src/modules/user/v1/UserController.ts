@@ -488,89 +488,67 @@ export class UserController {
 				if (step) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_ALREADY_EXIST);
 				}
+				let step1 = await userDao.findUserByEmailOrMobileNo(params);
+				console.log('step1step1>>>>>>>>>>', step1);
 
-				const step1 = await userDao.findUserByEmailOrMobileNo(params);
-				if (step1 && !step1.isGoogleLogin && !step1.isFacebookLogin) {
-					if (step1.email === params.email) {
+				if ((step1 && !step1.isGoogleLogin) || (step1 && !step1.isFacebookLogin) || (step1 && !step1.isAppleLogin)) {
+					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 
-						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
-						// const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
-
-					}
-					else {
-						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
-					}
+					const mergeUser = await userDao.checkSocialAccount(step1, params);
+					console.log('mergeUsermergeUsermergeUser', mergeUser);
 				}
-
-				// if (step1) {
-				// 	if (params.mobileNo && params.countryCode) {
-				// 		// const step2 = await userDao.findUserByEmailOrMobileNo(params);
-
-				// 	} else if (params.email) {
-
-				// 	} else if (params.email && params.mobileNo && params.countryCode) {
-
-				// 	}
-				// 	const step1 = await userDao.findUserByEmailOrMobileNo(params);
-
-				// 	const updateUser = await userDao.update('users', { _id: step1._id }, params, {});
-
-				// }
-
-				else {
-
-					// 	if (step1.email === params.email) {
-					// 		return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
-					// 	}
-					// 	else {
-					// 		return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
-					// 	}	
+				// else {
+				console.log('step11111111111', step1);
+				let salt;
+				if (!step1) {
 					const newObjectId = new ObjectID();
 					params['_id'] = newObjectId;
 					console.log('paramsparams', params['_id']);
-					const salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
 					params['salt'] = salt;
-					const step2 = await userDao.socialSignup(params);
-					const tokenData = _.extend(params, {
-						"userId": step2._id,
-						"firstName": step2.firstName,
-						"middleName": step2.middleName,
-						"lastName": step2.lastName,
-						"email": step2.email,
-						"countryCode": step2.countryCode,
-						"mobileNo": step2.mobileNo,
-						"salt": salt,
-						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					});
-					const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
-					let arn;
-					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
-						// arn = await sns.registerAndroidUser(params.deviceToken);
-						arn = "";
-					} else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
-						// arn = await sns.registerIOSUser(params.deviceToken);
-						arn = "";
-					}
-					const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-					params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
-					const step3 = loginHistoryDao.createUserLoginHistory(params);
-					let step4, step5;
-					if (config.SERVER.IS_REDIS_ENABLE) {
-						if (!config.SERVER.IN_ACTIVITY_SESSION)
-							step4 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step2._id }));
-						else
-							step4 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step2._id }));
-						const jobPayload = {
-							jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-							time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-							params: { "userId": step2._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-						};
-						step5 = redisClient.createJobs(jobPayload);
-					}
-					const step6 = await promise.join(step3, step4, step5);
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step2.countryCode, "mobileNo": step2.mobileNo });
+					step1 = await userDao.socialSignup(params);
 				}
+				const tokenData = _.extend(params, {
+					"userId": step1._id,
+					"firstName": step1.firstName,
+					"middleName": step1.middleName,
+					"lastName": step1.lastName,
+					"email": step1.email,
+					"countryCode": step1.countryCode,
+					"mobileNo": step1.mobileNo,
+					"salt": step1.salt || salt,
+					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+				});
+
+				const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+				let arn;
+				if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
+					// arn = await sns.registerAndroidUser(params.deviceToken);
+					arn = "";
+				} else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
+					// arn = await sns.registerIOSUser(params.deviceToken);
+					arn = "";
+				}
+				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
+				params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
+				const step3 = loginHistoryDao.createUserLoginHistory(params);
+				let step4, step5;
+				if (config.SERVER.IS_REDIS_ENABLE) {
+					if (!config.SERVER.IN_ACTIVITY_SESSION)
+						step4 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+					else
+						step4 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
+					const jobPayload = {
+						jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
+						time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
+						params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
+					};
+					step5 = redisClient.createJobs(jobPayload);
+				}
+				const step6 = await promise.join(step3, step4, step5);
+				return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
+				// }
 			}
 		} catch (error) {
 			throw error;
