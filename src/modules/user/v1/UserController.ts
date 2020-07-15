@@ -31,7 +31,7 @@ export class UserController {
 			if (!params.email && (!params.countryCode || !params.mobileNo)) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
-				const step1 = await userDao.findVerifiedEmailOrMobile(params)
+				const step1 = await userDao.findUserByEmailOrMobileNo(params)
 				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1>>>>>>>>LLLLLLLLLL', step1);
 				if (step1) {
