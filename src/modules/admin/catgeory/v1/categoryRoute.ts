@@ -3,7 +3,7 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { categoryController } from "@modules/catgeory/v1/CategoryController";
+import { categoryController } from "@modules/admin/catgeory/v1/CategoryController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";

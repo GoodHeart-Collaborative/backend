@@ -14,10 +14,10 @@ export const commentRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/commnet`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload:CommentRequest.AddCommentRequest = request.payload;
-            const query:CommentRequest.AddCommentRequest = request.query;
+            const payload: CommentRequest.AddCommentRequest = request.payload;
+            const query: CommentRequest.AddCommentRequest = request.query;
             try {
-                const result = await commentController.addComment({...payload, ...query, ...{userId: tokenData.userId}});
+                const result = await commentController.addComment({ ...payload, ...query, ...{ userId: tokenData.userId } });
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

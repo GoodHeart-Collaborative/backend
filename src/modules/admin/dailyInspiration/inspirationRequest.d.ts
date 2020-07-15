@@ -23,4 +23,20 @@ declare namespace InspirationRequest {
         toDate: string;
         searchTerm: string;
     }
+
+    export interface IUpdateStatus {
+        status: string;
+        Id: string;
+    }
+
+    export interface IUpdateInpiration {
+        Id: string;
+        status: string;
+        title: string;
+        description: string,
+        // shortDescription: string;
+        imageUrl: string
+        isPostLater: boolean
+        postedAt: Date,
+    }
 }

@@ -63,7 +63,7 @@ export const inspirationRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: InspirationRequest.IGetInspirationById = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await inspirationController.getPostById(payload);
@@ -151,13 +151,13 @@ export const inspirationRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}/status`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: InspirationRequest.IUpdateStatus = {
                 ...request.payload,
                 ...request.params
             };
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await inspirationController.updatePost(payload);
+                const result = await inspirationController.updateStatus(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -197,7 +197,7 @@ export const inspirationRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: InspirationRequest.IUpdateInpiration = {
                 ...request.payload,
                 ...request.params
             };

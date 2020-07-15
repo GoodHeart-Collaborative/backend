@@ -18,7 +18,7 @@ export const homeRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const query = request.query;
             try {
-                const result = await homeController.getHomeData({...query}, { tokenData });
+                const result = await homeController.getHomeData({ ...query }, { tokenData });
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

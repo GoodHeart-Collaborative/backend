@@ -17,15 +17,33 @@
       "./src/interfaces/index.d.ts"
     ],
     "paths": {
-      "@utils/*": ["./src/utils/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@base-dao/*": ["./src/baseDao/*"],
-      "@config/*": ["./src/config/*"],
-      "@exceptions/*": ["./src/exceptions/*"],
-      "@interfaces/*": ["./src/interfaces/*"],
-      "@plugins/*": ["./src/plugins/*"],
-      "@routes/*": ["./src/routes/*"],
-      "@modules/*": ["./src/modules/*"]
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@base-dao/*": [
+        "./src/baseDao/*"
+      ],
+      "@config/*": [
+        "./src/config/*"
+      ],
+      "@exceptions/*": [
+        "./src/exceptions/*"
+      ],
+      "@interfaces/*": [
+        "./src/interfaces/*"
+      ],
+      "@plugins/*": [
+        "./src/plugins/*"
+      ],
+      "@routes/*": [
+        "./src/routes/*"
+      ],
+      "@modules/*": [
+        "./src/modules/*"
+      ]
     }
   },
   "filesGlob": [

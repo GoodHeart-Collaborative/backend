@@ -3,7 +3,7 @@
 import * as _ from "lodash";
 import { categoryDao } from "./CategoryDao";
 import * as config from '@config/constant';
-import * as  CategoryConstant from '@modules/catgeory/CategoryConstant';
+import * as  CategoryConstant from '@modules/admin/catgeory/CategoryConstant';
 class CategoryController {
 
 	/**

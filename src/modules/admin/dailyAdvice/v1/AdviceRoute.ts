@@ -15,7 +15,7 @@ export const adviceROute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/advice`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.payload;
+            const payload: AdviceRequest.IAdviceAdd = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await adviceController.addAdvice(payload);
@@ -55,7 +55,7 @@ export const adviceROute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/advice/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: AdviceRequest.IAdviceGetById = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await adviceController.getPostById(payload);
@@ -94,7 +94,7 @@ export const adviceROute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/advice`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: AdviceRequest.IGetAdvices = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await adviceController.getPosts(payload);
@@ -139,11 +139,11 @@ export const adviceROute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/advice/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params
+            const payload: AdviceRequest.IUpdateAdviceStatus = request.params
 
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await adviceController.updatePost(payload);
+                const result = await adviceController.UpdateStatus(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -181,7 +181,7 @@ export const adviceROute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/advice/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: AdviceRequest.IUpdateAdvice = {
                 ...request.payload,
                 ...request.params
             };

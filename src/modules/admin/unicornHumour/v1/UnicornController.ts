@@ -18,7 +18,7 @@ class UnicornController {
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async addPost(params) {
+    async addPost(params: UnicornRequest.IUnicornAdd) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
@@ -32,7 +32,7 @@ class UnicornController {
         }
     }
 
-    async getPostById(params) {
+    async getPostById(params: UnicornRequest.IUnicornById) {
         try {
             const criteria = {
                 _id: params.Id,
@@ -46,7 +46,7 @@ class UnicornController {
         }
     }
 
-    async getPosts(params) {
+    async getPosts(params: UnicornRequest.IGetUnicorn) {
         try {
             console.log('paramsparamsparamsparams', params);
             const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
@@ -100,7 +100,7 @@ class UnicornController {
         }
     }
 
-    async updateStatus(params) {
+    async updateStatus(params: UnicornRequest.IUpdateUnicornStatus) {
         try {
             const criteria = {
                 _id: params.Id
@@ -118,7 +118,7 @@ class UnicornController {
         }
     }
 
-    async updatePost(params) {
+    async updatePost(params: UnicornRequest.IUpdateUnicorn) {
         try {
             const criteria = {
                 _id: params.Id

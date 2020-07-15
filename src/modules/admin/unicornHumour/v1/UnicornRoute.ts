@@ -15,7 +15,7 @@ export const unicornRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.payload;
+            const payload: UnicornRequest.IUnicornAdd = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await unicornController.addPost(payload);
@@ -55,7 +55,7 @@ export const unicornRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: UnicornRequest.IUnicornById = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await unicornController.getPostById(payload);
@@ -86,13 +86,12 @@ export const unicornRoute: ServerRoute[] = [
         }
     },
 
-
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: UnicornRequest.IGetUnicorn = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await unicornController.getPosts(payload);
@@ -142,7 +141,7 @@ export const unicornRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: UnicornRequest.IUpdateUnicornStatus = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await unicornController.updateStatus(payload);
@@ -183,7 +182,7 @@ export const unicornRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: UnicornRequest.IUpdateUnicorn = {
                 ...request.payload,
                 ...request.params
             };

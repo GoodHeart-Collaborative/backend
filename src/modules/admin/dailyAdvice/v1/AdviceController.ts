@@ -15,7 +15,7 @@ class AdviceController {
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async addAdvice(params) {
+    async addAdvice(params: AdviceRequest.IAdviceAdd) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
@@ -47,7 +47,7 @@ class AdviceController {
         }
     }
 
-    async getPosts(params) {
+    async getPosts(params: AdviceRequest.IGetAdvices) {
         try {
             console.log('paramsparamsparamsparams', params);
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
@@ -102,7 +102,24 @@ class AdviceController {
         }
     }
 
-    async updatePost(params) {
+    async UpdateStatus(params: AdviceRequest.IUpdateAdviceStatus) {
+        try {
+            const criteria = {
+                _id: params.Id
+            };
+            const datatoUpdate = {
+                ...params
+            };
+            const data = await adviceDao.updateOne('advice', criteria, datatoUpdate, {})
+            console.log('datadatadatadatadata', data);
+            return data;
+
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async updatePost(params: AdviceRequest.IUpdateAdvice) {
         try {
             const criteria = {
                 _id: params.Id

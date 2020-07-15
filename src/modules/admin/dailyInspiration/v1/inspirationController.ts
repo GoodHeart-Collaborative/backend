@@ -31,7 +31,7 @@ class InspirationController {
         }
     }
 
-    async getPostById(params) {
+    async getPostById(params: InspirationRequest.IGetInspirationById) {
         try {
             const criteria = {
                 _id: params.Id,
@@ -54,8 +54,6 @@ class InspirationController {
         try {
             console.log('paramsparamsparamsparams', params);
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
-            console.log('statusstatusstatusstatus', status);
-
             const aggPipe = [];
 
             const match: any = {};
@@ -114,7 +112,25 @@ class InspirationController {
         }
     }
 
-    async updatePost(params) {
+    async updateStatus(params: InspirationRequest.IUpdateStatus) {
+        try {
+            const criteria = {
+                _id: params.Id
+            };
+
+            const datatoUpdate = {
+                ...params
+            };
+            const data = await inspirationDao.updateOne('inspiration', criteria, datatoUpdate, {})
+            console.log('datadatadatadatadata', data);
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async updatePost(params: InspirationRequest.IUpdateInpiration) {
         try {
             const criteria = {
                 _id: params.Id

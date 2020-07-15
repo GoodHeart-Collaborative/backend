@@ -23,7 +23,7 @@ import { homeRoute as HomeRoute } from "@modules/home/HomeRoute";
 // version routes
 import { versionRoute as versionRouteV1 } from "@modules/version/v1/versionRoute";
 
-import { categoryRoute as categoryRouteV1 } from '@modules/catgeory/v1/categoryRoute';
+import { categoryRoute as categoryRouteV1 } from '@modules/admin/catgeory/v1/categoryRoute';
 import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
 import { inspirationRoute as inspirationRouteV1 } from "@modules/admin/dailyInspiration/v1/inspirationRoute";
 
@@ -35,6 +35,7 @@ import { memberRoute as memberRouteV1 } from '@modules/admin/memberOfDay/v1/Memb
 import { likeRoute as likeRouteV1 } from '@modules/like/LikeRoute';
 import { commentRoute as commentRouteV1 } from '@modules/comment/CommentRoute';
 
+import { adminUser as adminUserV1 } from '@modules/admin/users/AdminUserRoute'
 // simple routing
 const baseRoute = [
 	{
@@ -63,5 +64,6 @@ export const routes: ServerRoute[] = [
 	...unicornRouteV1,
 	...adviceROuteV1,
 	...memberRouteV1,
+	...adminUserV1
 	// ...versionRouteV1
 ];
