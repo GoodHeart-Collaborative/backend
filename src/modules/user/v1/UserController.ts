@@ -158,7 +158,6 @@ export class UserController {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
 					console.log('dddddddddddddddddddd', step1);
-
 					if (step1 && step1.hash == null && !step1.hash) {
 						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
@@ -223,26 +222,26 @@ export class UserController {
 						// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED)
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ status: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: '' })
 					}
-					if (step2 && step2.hash == null && !step2.hash) {
-						console.log('>>>>>111111111111111111');
-						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
-					}
+					// if (step2 && step2.hash == null && !step2.hash) {
+					// 	console.log('>>>>>111111111111111111');
+					// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
+					// }
 
 					// const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
 					console.log('accessTokenaccessTokenaccessToken', accessToken);
 
-					params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
-					if (
-						// (config.SERVER.ENVIRONMENT !== "production") ?
-						// (
-						// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-						// 	step1.hash !== params.hash
-						// ) :
-						step2.hash !== params.hash
-					) {
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-					}
-					else if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
+					// params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
+					// if (
+					// 	// (config.SERVER.ENVIRONMENT !== "production") ?
+					// 	// (
+					// 	// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+					// 	// 	step1.hash !== params.hash
+					// 	// ) :
+					// 	step2.hash !== params.hash
+					// ) {
+					// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
+					// }
+					if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						console.log('22222222222222222222222');
 						return userConstant.MESSAGES.SUCCESS.BLOCKED({ status: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 					}
@@ -268,35 +267,35 @@ export class UserController {
 					// 	// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
 					// }
 					else {
-						// let salt, accessToken;
-						// if (!step1.hash) {
+						// // let salt, accessToken;
+						// // if (!step1.hash) {
+						// // 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
+						// // } else {
+						// params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
+						// if (
+						// 	// (config.SERVER.ENVIRONMENT !== "production") ?
+						// 	// (
+						// 	// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+						// 	// 	step1.hash !== params.hash
+						// 	// ) :
+						// 	step2.hash !== params.hash
+						// ) {
 						// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 						// } else {
-						params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
-						if (
-							// (config.SERVER.ENVIRONMENT !== "production") ?
-							// (
-							// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-							// 	step1.hash !== params.hash
-							// ) :
-							step2.hash !== params.hash
-						) {
-							return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-						} else {
-							// salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-							// const tokenData = _.extend(params, {
-							// 	"userId": step1._id,
-							// 	"firstName": step1.firstName,
-							// 	"lastName": step1.lastName,
-							// 	"email": step1.email,
-							// 	"countryCode": step1.countryCode,
-							// 	"mobileNo": step1.mobileNo,
-							// 	"salt": salt,
-							// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-							// });
-							// const userObject = appUtils.buildToken(tokenData);
-							// accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
-						}
+						// salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
+						// const tokenData = _.extend(params, {
+						// 	"userId": step1._id,
+						// 	"firstName": step1.firstName,
+						// 	"lastName": step1.lastName,
+						// 	"email": step1.email,
+						// 	"countryCode": step1.countryCode,
+						// 	"mobileNo": step1.mobileNo,
+						// 	"salt": salt,
+						// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+						// });
+						// const userObject = appUtils.buildToken(tokenData);
+						// accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
+						// }
 						// }
 						let arn;
 						if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
@@ -331,7 +330,7 @@ export class UserController {
 							step6 = redisClient.createJobs(jobPayload);
 						}
 						const step7 = await promise.join(step4, step5, step6);
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken });
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, userData: step1 });
 					}
 				}
 			}
@@ -352,6 +351,10 @@ export class UserController {
 			if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
+
+				//  if email unverifiec false hai to 411 de dena hai
+
+
 				// let salt;
 				// if (!step1.salt) {
 				// 	salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
@@ -397,6 +400,22 @@ export class UserController {
 				else if (step1.isAdminRejected) {
 					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
 					// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
+				}
+				if (!step1.isEmailVerified) {
+					// console.log('44444444444444444444444444');
+					// const tokenData = _.extend(params, {
+					// 	"userId": step1._id,
+					// 	"name": step1.name,
+					// 	"email": step1.email,
+					// 	"countryCode": step1.countryCode,
+					// 	"mobileNo": step1.mobileNo,
+					// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					// });
+					// const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
+					// const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
+					// const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
+					const step3 = mailManager.forgotPasswordEmailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
+					return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ status: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: accessToken })
 				}
 
 				// const tokenData = _.extend(params, {
@@ -468,7 +487,7 @@ export class UserController {
 					}
 					const step7 = await promise.join(step4, step5, step6);
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken });
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, userData: step1 });
 
 				}
 			}

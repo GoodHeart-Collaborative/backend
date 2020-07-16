@@ -28,7 +28,7 @@ export class UserDao extends BaseDao {
 
 			const options = { lean: true };
 
-			return await this.findOne("users", query, {}, options, {});
+			return await this.findOne("users", query, { hash: 0, salt: 0, mobileOtp: 0 }, options, {});
 		} catch (error) {
 			throw error;
 		}
@@ -56,7 +56,7 @@ export class UserDao extends BaseDao {
 			let options = { lean: true };
 			console.log('queryqueryquery', query);
 
-			const data = await this.findOne("users", query, {}, options, {});
+			const data = await this.findOne("users", query, { hash: 0, salt: 0, mobileOtp: 0 }, options, {});
 			// console.log('datadata', data);
 			return data;
 

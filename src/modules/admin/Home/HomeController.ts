@@ -10,14 +10,13 @@ import * as config from "@config/index";
 import * as UnicornConstant from "@modules/admin/unicornHumour/UnicornConstant";
 import { homeDao } from "@modules/home/HomeDao";
 
+class AdminHomeController {
+    /**
+     * @function signup
+     * @description if IS_REDIS_ENABLE set to true,
+     * than redisClient.storeList() function saves value in redis. 
+     */
 
-class UnicornController {
-
-	/**
-	 * @function signup
-	 * @description if IS_REDIS_ENABLE set to true,
-	 * than redisClient.storeList() function saves value in redis.
-	 */
     async addPost(params: UnicornRequest.IUnicornAdd) {
         try {
             console.log('paramsparamsparamsparams', params);
@@ -32,7 +31,7 @@ class UnicornController {
         }
     }
 
-    async getPostById(params: UnicornRequest.IUnicornById) {
+    async getPostById(params: HomeRequest.IHomeById) {
         try {
             const criteria = {
                 _id: params.Id,
@@ -46,7 +45,7 @@ class UnicornController {
         }
     }
 
-    async getPosts(params: UnicornRequest.IGetUnicorn) {
+    async getPosts(params: HomeRequest.IgetHome) {
         try {
             console.log('paramsparamsparamsparams', params);
             const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
@@ -118,7 +117,7 @@ class UnicornController {
         }
     }
 
-    async updatePost(params: UnicornRequest.IUpdateUnicorn) {
+    async updatePost(params: HomeRequest.updateHome) {
         try {
             const criteria = {
                 _id: params.Id
@@ -137,4 +136,5 @@ class UnicornController {
 }
 
 
-export const unicornController = new UnicornController();
+
+export const adminHomeController = new AdminHomeController();

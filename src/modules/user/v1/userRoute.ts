@@ -11,7 +11,7 @@ import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import { userController } from "@modules/user/v1/UserController";
 import { join } from "path";
-
+import * as validateUser from '../userValidator';
 export const
 	userRoute: ServerRoute = [
 		{
@@ -36,53 +36,9 @@ export const
 					strategies: ["BasicAuth"]
 				},
 				validate: {
-					headers: validator.headerObject["required"],
-					payload: {
-						firstName: Joi.string()
-							.trim()
-							.min(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MAX_LENGTH)
-							.required(),
-						lastName: Joi.string()
-							.trim()
-							.min(config.CONSTANT.VALIDATION_CRITERIA.LAST_NAME_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.LAST_NAME_MAX_LENGTH)
-							.optional(),
-						email: Joi.string()
-							.trim()
-							.lowercase()
-							.email()
-							.optional(),
-						countryCode: Joi.string()
-							.trim()
-							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.optional(),
-						mobileNo: Joi.string()
-							.trim()
-							.regex(config.CONSTANT.REGEX.MOBILE_NUMBER)
-							.optional(),
-						password: Joi.string()
-							.trim()
-							// .regex(config.CONSTANT.REGEX.PASSWORD)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
-							.default(config.CONSTANT.DEFAULT_PASSWORD)
-							.required(),
-						// type: Joi.string().allow('mobile', 'email').default('mobile'),
-						deviceId: Joi.string().trim().required(),
-						deviceToken: Joi.string().trim().required(),
-						profilePicUrl: Joi.array().items(Joi.string()),
-						gender: Joi.string()
-							.trim()
-							.optional()
-							.valid([
-								config.CONSTANT.GENDER.FEMALE,
-								config.CONSTANT.GENDER.MALE,
-							]),
-					},
-					failAction: appUtils.failActionFunction
+					headers: validator.userAuthorizationHeaderObj,
+					payload: validateUser.signUp,
+					failAction: appUtils.failActionFunction,
 				},
 				plugins: {
 					"hapi-swagger": {
@@ -115,23 +71,7 @@ export const
 				auth: 'BasicAuth',
 				validate: {
 					headers: validator.headerObject["required"],
-					payload: {
-						email: Joi.string().trim().lowercase().email().optional(),
-						countryCode: Joi.string().trim()
-							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.optional(),
-						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
-						password: Joi.string().trim()
-							// .regex(config.CONSTANT.REGEX.PASSWORD)
-							// .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
-							// .default(config.CONSTANT.DEFAULT_PASSWORD)
-							.required(),
-						deviceId: Joi.string().trim().required(),
-						deviceToken: Joi.string().trim().required()
-					},
+					payload: validateUser.login,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
@@ -166,15 +106,7 @@ export const
 					strategies: ["BasicAuth"]
 				},
 				validate: {
-					payload: {
-						countryCode: Joi.string().trim()
-							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.required(),
-						mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).required(),
-						// email: Joi.string().lowercase().trim(),
-					},
+					payload: validateUser.resendOTP,
 					headers: validator.headerObject["optional"],
 					failAction: appUtils.failActionFunction
 				},
@@ -216,14 +148,7 @@ export const
 				validate: {
 					headers: validator.userAuthorizationHeaderObj,
 					payload: {
-						// countryCode: Joi.string().trim()
-						// 	.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-						// 	.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-						// 	.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-						// 	.optional(),
-						// mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
 						otp: Joi.number().min(1000).max(9999).required(),
-						// email: Joi.string().lowercase().trim().optional(),
 						type: Joi.string().valid('email', 'mobile').default('mobile'),
 					},
 					failAction: appUtils.failActionFunction
@@ -259,19 +184,7 @@ export const
 				auth: 'BasicAuth',
 				validate: {
 					headers: validator.headerObject["required"],
-					payload: {
-						mobileNo: Joi.string(),
-						countryCode: Joi.string().trim()
-							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.optional(),
-						// mobileNo: Joi.string().trim().regex(config.CONSTANT.REGEX.MOBILE_NUMBER).optional(),
-						otp: Joi.number().min(1000).max(9999).required(),
-						deviceId: Joi.string()
-						// email: Joi.string().lowercase().trim().optional(),
-						// type: Joi.string().valid('email', 'mobile').default('mobile'),
-					},
+					payload: validateUser.verifyForGotOtp,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
@@ -306,20 +219,7 @@ export const
 				},
 				validate: {
 					headers: validator.headerObject["required"],
-					payload: {
-						socialLoginType: Joi.string()
-							.trim()
-							.lowercase()
-							.required()
-							.valid([
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK,
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE,
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE,
-							]),
-						socialId: Joi.string().trim().required(),
-						deviceId: Joi.string().trim().required(),
-						deviceToken: Joi.string().trim().required()
-					},
+					payload: validateUser.socialLogin,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
@@ -353,56 +253,7 @@ export const
 				},
 				validate: {
 					headers: validator.headerObject["required"],
-					payload: {
-						socialLoginType: Joi.string()
-							.trim()
-							.lowercase()
-							.required()
-							.valid([
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK,
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE,
-								config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE,
-							]),
-						socialId: Joi.string().trim().required(),
-						firstName: Joi.string()
-							.trim()
-							.min(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MAX_LENGTH)
-							.required(),
-						lastName: Joi.string()
-							.trim()
-							.min(config.CONSTANT.VALIDATION_CRITERIA.LAST_NAME_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.LAST_NAME_MAX_LENGTH)
-							.optional(),
-						email: Joi.string()
-							.trim()
-							.lowercase({ force: true })
-							.email({ minDomainAtoms: 2 })
-							.regex(config.CONSTANT.REGEX.EMAIL)
-							.optional(),
-						countryCode: Joi.string()
-							.trim()
-							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.optional(),
-						mobileNo: Joi.string()
-							.trim()
-							.regex(config.CONSTANT.REGEX.MOBILE_NUMBER)
-							.optional(),
-						// dob: Joi.number().optional(),
-						gender: Joi.string()
-							.trim()
-							.optional()
-							.valid([
-								config.CONSTANT.GENDER.FEMALE,
-								config.CONSTANT.GENDER.MALE,
-							]),
-						isEmailVerified: Joi.boolean().default(true),
-						profilePicUrl: Joi.array().items(Joi.string()),
-						deviceId: Joi.string().trim().required(),
-						deviceToken: Joi.string().trim().required()
-					},
+					payload: validateUser.socialSignUp,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
