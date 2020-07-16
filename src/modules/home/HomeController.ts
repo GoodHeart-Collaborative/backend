@@ -49,7 +49,7 @@ class HomeController {
                     "_id": "5f0ff217fd8bfe1c64e69f56",
                     // "type": 4,
                     "likeCount": 0,
-                    "totalComments": 0,
+                    "commentCount": 0,
                     "status": "active",
                     "title": "testststs",
                     "description": "dajdnjsadas",
