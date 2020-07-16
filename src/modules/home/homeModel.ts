@@ -38,7 +38,7 @@ const homeSchema = new Schema({
         default: config.CONSTANT.STATUS.ACTIVE
     },
     type: {
-        type: Number, 
+        type: Number,
         enum: [
             config.CONSTANT.HOME_TYPE.UNICRON,
             config.CONSTANT.HOME_TYPE.INSPIRATION,
@@ -46,11 +46,11 @@ const homeSchema = new Schema({
         ],
         default: config.CONSTANT.HOME_TYPE.UNICRON
     },
-    description: { type: String, required: true },
+    description: { type: String },
     isPostLater: { type: Boolean },
     postedAt: { type: Date, trim: true, required: true },
     mediaType: {
-        type: Number, 
+        type: Number,
         enum: [
             config.CONSTANT.MEDIA_TYPE.IMAGE,
             config.CONSTANT.MEDIA_TYPE.VIDEO
