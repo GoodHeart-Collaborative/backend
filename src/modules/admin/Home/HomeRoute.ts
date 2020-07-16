@@ -151,7 +151,7 @@ export const unicornRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}/status/{status}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/home/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload: HomeRequest.updateStatus = request.params;
@@ -192,7 +192,7 @@ export const unicornRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/unicorn/{Id}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/home/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload: HomeRequest.updateHome = {
