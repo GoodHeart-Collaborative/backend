@@ -168,6 +168,7 @@ export class UserController {
 						// (
 						// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
 						// 	step1.hash !== params.hash
+
 						// ) :
 						step1.hash !== params.hash
 					) {
@@ -392,6 +393,7 @@ export class UserController {
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 
 				console.log('accessTokenaccessTokenaccessToken', accessToken);
+				const step4 = loginHistoryDao.createUserLoginHistory(params);
 
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					console.log('22222222222222222222222');
@@ -441,18 +443,18 @@ export class UserController {
 				}
 				else {
 					// const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-					const tokenData = _.extend(params, {
-						"userId": step1._id,
-						"firstName": step1.firstName,
-						"lastName": step1.lastName,
-						"email": step1.email,
-						"countryCode": step1.countryCode,
-						"mobileNo": step1.mobileNo,
-						"salt": step1.salt,
-						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					});
-					const userObject = appUtils.buildToken(tokenData);
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+					// const tokenData = _.extend(params, {
+					// 	"userId": step1._id,
+					// 	"firstName": step1.firstName,
+					// 	"lastName": step1.lastName,
+					// 	"email": step1.email,
+					// 	"countryCode": step1.countryCode,
+					// 	"mobileNo": step1.mobileNo,
+					// 	"salt": step1.salt,
+					// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					// });
+					// const userObject = appUtils.buildToken(tokenData);
+					// const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 					let arn;
 					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 						// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -471,7 +473,6 @@ export class UserController {
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
 					}
 					params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken, "lastLogin": step3 });
-					const step4 = loginHistoryDao.createUserLoginHistory(params);
 					let step5, step6;
 					if (config.SERVER.IS_REDIS_ENABLE) {
 						if (!config.SERVER.IN_ACTIVITY_SESSION)
