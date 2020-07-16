@@ -52,6 +52,8 @@ class AdminHomeController {
             const aggPipe = [];
 
             const match: any = {};
+            match['type'] = params.type
+
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];

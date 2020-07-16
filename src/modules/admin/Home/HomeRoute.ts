@@ -133,7 +133,11 @@ export const adminHomeRoute: ServerRoute[] = [
                     sortBy: Joi.string().valid([
                         'createdAt', 'title'
                     ]),
-
+                    type: Joi.number().valid([
+                        config.CONSTANT.HOME_TYPE.UNICRON,
+                        config.CONSTANT.HOME_TYPE.INSPIRATION,
+                        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
+                    ]).default(config.CONSTANT.HOME_TYPE.UNICRON).required(),
                     fromDate: Joi.number(),
                     toDate: Joi.number(),
                 },
