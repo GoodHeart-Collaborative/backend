@@ -36,7 +36,7 @@ export const
 					strategies: ["BasicAuth"]
 				},
 				validate: {
-					headers: validator.userAuthorizationHeaderObj,
+					headers: validator.headerObject["required"],
 					payload: validateUser.signUp,
 					failAction: appUtils.failActionFunction,
 				},
