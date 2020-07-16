@@ -50,7 +50,7 @@ export interface IUser extends Document {
 	countMember: number;
 	memberCreatedAt: Date;
 	likeCount: number,
-	totalComments: number,
+	commentCount: number,
 	isAdminRejected: boolean;
 
 }
@@ -145,7 +145,7 @@ const userSchema = new Schema({
 		]
 	},
 	likeCount: { type: Number, default: 0 },
-	totalComments: { type: Number, default: 0 },
+	commentCount: { type: Number, default: 0 },
 	createdAt: { type: Date },
 	updatedAt: { type: Date }
 }, {

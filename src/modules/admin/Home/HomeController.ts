@@ -8,7 +8,7 @@ import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 // import * as sns from "@lib/pushNotification/sns";
 import * as UnicornConstant from "@modules/admin/unicornHumour/UnicornConstant";
-import { homeDao } from "@modules/home/HomeDao";
+import { homeDao } from "@modules/admin/Home/adminHomeDao";
 
 class AdminHomeController {
     /**
