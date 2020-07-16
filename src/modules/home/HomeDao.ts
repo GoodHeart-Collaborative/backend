@@ -18,7 +18,7 @@ export class HomeDao extends BaseDao {
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if(endDate) {
-                match["createdAt"] = { $lte: new Date(endDate) };
+                match["createdAt"] = { $lt: new Date(endDate) };
             }
             aggPipe.push({ "$match": match });
             result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
