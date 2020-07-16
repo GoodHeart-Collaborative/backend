@@ -28,7 +28,7 @@ export class UserDao extends BaseDao {
 
 			const options = { lean: true };
 
-			return await this.findOne("users", query, { hash: 0, salt: 0, mobileOtp: 0 }, options, {});
+			return await this.findOne("users", query, { mobileOtp: 0 }, options, {});
 		} catch (error) {
 			throw error;
 		}
