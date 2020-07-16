@@ -7,11 +7,13 @@ let validateUserHome = Joi.object({
     // limit: Joi.number(),
     endDate: Joi.string().allow("").optional(),
     type: Joi.number().valid([
-        config.CONSTANT.HOME_TYPE.UNICRON,
-        config.CONSTANT.HOME_TYPE.INSPIRATION,
-        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
+        // config.CONSTANT.HOME_TYPE.UNICRON,
+        // config.CONSTANT.HOME_TYPE.INSPIRATION,
+        // config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
         config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE
-    ]).description("1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude").optional()
+    ]).description("4-general gratitude").optional()
+// ]).description("1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude").optional()
+
 }).unknown()
 
 export {

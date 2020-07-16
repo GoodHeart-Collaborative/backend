@@ -67,12 +67,12 @@ export class BaseDao {
 				data = result[0].slice(0, limit);
 			}
 			return {
-				data: data,
+				list: data,
 				// total: total,
 				// page: page,
 				// total_page: total_page,
 				next_hit: next_hit,
-				limit: limit
+				// limit: limit
 			};
 		} catch (err) {
 			console.error(err);

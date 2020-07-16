@@ -8,6 +8,7 @@ import { adviceDao } from "@modules/admin/dailyAdvice/v1/AdviceDao";
 import { inspirationDao } from "@modules/admin/dailyInspiration/v1/inspirationDao";
 import { unicornDao } from "@modules/admin/unicornHumour/v1/UnicornDao";
 import * as config from "@config/index";
+import { homeDao } from "./HomeDao";
 
 
 class HomeController {
@@ -21,35 +22,93 @@ class HomeController {
         try {
             let responseData: any = {}
             let getDailyUnicorn: any = {}
-            let getGeneralGratitude: any = {}
-            let getmemberOfTheGay: any = {}
+            let getGeneralGratitude: any = {
+                next_hit: 1,
+                list:[{
+                "_id": "5f0ff204fd8bfe1c64e69f51",
+                "type": 4,
+                "likeCount": 0,
+                "totalComments": 0,
+                "status": "active",
+                "title": "testststs",
+                "description": "dajdnjsadas",
+                "mediaType": 1,
+                "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
+                "postedAt": "2020-07-14T11:33:09.000Z",
+                "isPostLater": true,
+                "createdAt": "2020-07-10T10:34:43.840Z",
+                "updatedAt": "2020-07-11T11:34:43.840Z"
+              },
+              {
+                "_id": "5f0ff217fd8bfe1c64e69f56",
+                "type": 4,
+                "likeCount": 0,
+                "totalComments": 0,
+                "status": "active",
+                "title": "testststs",
+                "description": "dajdnjsadas",
+                "mediaType": 1,
+                "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
+                "postedAt": "2020-07-14T11:33:09.000Z",
+                "isPostLater": true,
+                "createdAt": "2020-07-10T10:34:43.840Z",
+                "updatedAt": "2020-07-11T11:34:43.840Z"
+              }]
+            }
+            let getmemberOfTheDay: any = {
+                "_id": "5f0ff217fd8bfe1c64e69f56",
+                // "type": 4,
+                "likeCount": 0,
+                "totalComments": 0,
+                "status": "active",
+                "title": "testststs",
+                "description": "dajdnjsadas",
+                "mediaType": 1,
+                "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
+                "postedAt": "2020-07-14T11:33:09.000Z",
+                "isPostLater": true,
+                "createdAt": "2020-07-10T10:34:43.840Z",
+                "updatedAt": "2020-07-11T11:34:43.840Z"
+              }
             let getInspiringHistory: any = {}
             let getDailyAdvice: any = {}
+            let getHomeData:any = {}
             params.pageNo = 1
             params.limit = 10
-            if (params.type === config.CONSTANT.HOME_TYPE.UNICRON) {
-                getDailyUnicorn = await unicornDao.getUnicornHomeData(params, userId.tokendata)
-                responseData = { getDailyUnicorn }
-            }
-            if (params.type === config.CONSTANT.HOME_TYPE.INSPIRATION) {
-                getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
-                responseData = { getInspiringHistory }
-            }
-            if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
-                getGeneralGratitude = {}
-                responseData = { getGeneralGratitude }
-            }
-            if (params.type === config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
-                getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
-                responseData = { getDailyAdvice }
-            }
+            // if (params.type === config.CONSTANT.HOME_TYPE.UNICRON) {
+            //     getDailyUnicorn = await unicornDao.getUnicornHomeData(params, userId.tokendata)
+            //     responseData = { getDailyUnicorn }
+            // }
+            // if (params.type === config.CONSTANT.HOME_TYPE.INSPIRATION) {
+            //     getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
+            //     responseData = { getInspiringHistory }
+            // }
+            // if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+            //     getGeneralGratitude = {}
+            //     responseData = { getGeneralGratitude }
+            // }
+            // if (params.type === config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+            //     getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
+            //     responseData = { getDailyAdvice }
+            // }
             if (!params.type) {
-                getmemberOfTheGay = {}
-                getDailyUnicorn = await unicornDao.getUnicornHomeData(params, userId.tokendata)
-                getGeneralGratitude = {}
-                getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
-                getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
-                responseData = { getmemberOfTheGay, getGeneralGratitude, getDailyUnicorn, getInspiringHistory, getDailyAdvice }
+                // getmemberOfTheDay = {}
+                getHomeData = await homeDao.getHomeData(params, userId.tokendata)
+                responseData = getHomeData
+                // responseData["getmemberOfTheDay"] = getmemberOfTheDay
+                // responseData["data"] = getHomeData
+
+                // getDailyUnicorn = //await unicornDao.getUnicornHomeData(params, userId.tokendata)
+                // getGeneralGratitude = {}
+                // getInspiringHistory = await inspirationDao.getInspirationHomeData(params, userId.tokendata)
+                // getDailyAdvice = await adviceDao.getAdviceHomeData(params, userId.tokendata)
+                // responseData = { getmemberOfTheGay, getGeneralGratitude, getDailyUnicorn, getInspiringHistory, getDailyAdvice }
+                // return homeConstants.MESSAGES.SUCCESS.HOME_DATA(getHomeData)
+                responseData["getmemberOfTheDay"] = getmemberOfTheDay
+                responseData.list.push(getGeneralGratitude)
+            } else {
+                // getGeneralGratitude = {}
+                responseData = getGeneralGratitude
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
         } catch (error) {

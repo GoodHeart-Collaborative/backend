@@ -78,6 +78,7 @@ const DB_MODEL_REF = {
 	POST: "posts",
 	CATEGORY: "categories",
 	INSPIRATION: 'inspiration',
+	HOME: 'home',
 	UNICORN: 'unicorn',
 	COMMENT: "comment",
 	LIKE: "like",
@@ -144,6 +145,11 @@ const HOME_TYPE = {
 	INSPIRATION: 2,
 	DAILY_ADVICE: 3,
 	GENERAL_GRATITUDE: 4
+};
+
+const MEDIA_TYPE = {
+	IMAGE: 1,
+	VIDEO: 2
 };
 
 const PRIVACY_STATUS = {
@@ -662,5 +668,6 @@ export const CONSTANT = Object.freeze({
 	MEMBER_TYPE,
 	USER_ADMIN_STATUS,
 	COMMENT_CATEGORY: COMMENT_CATEGORY,
-	COMMENT_TYPE: COMMENT_TYPE
+	COMMENT_TYPE: COMMENT_TYPE,
+	MEDIA_TYPE:MEDIA_TYPE
 });

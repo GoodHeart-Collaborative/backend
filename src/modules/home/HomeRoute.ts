@@ -26,7 +26,7 @@ export const homeRoute: ServerRoute[] = [
         },
         config: {
             tags: ["api", "home"],
-            description: "get advice list",
+            description: "get home list",
             auth: {
                 strategies: ["UserAuth"]
             },
