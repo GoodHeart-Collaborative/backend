@@ -14,7 +14,7 @@ export interface Ihome extends Document {
     title: string,
     description: string,
     isPostLater: boolean,
-    imageUrl: string,
+    thumbnailUrl: string,
     createdAt: Date,
     updatedAt: Date
     postedAt: Date,
@@ -58,7 +58,7 @@ const homeSchema = new Schema({
         default: config.CONSTANT.MEDIA_TYPE.IMAGE
     },
     mediaUrl: { type: String },
-    imageUrl: { type: String },
+    thumbnailUrl: { type: String },
     // // createdAt: { type: Date },
     // updatedAt: { type: Date }
 }, {

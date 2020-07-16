@@ -32,8 +32,8 @@ export class UserController {
 			if (!params.email && (!params.countryCode || !params.mobileNo)) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
-				const step1 = await userDao.findVerifiedEmailOrMobile(params)
-				// const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				// const step1 = await userDao.findVerifiedEmailOrMobile(params)
+				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1>>>>>>>>LLLLLLLLLL', step1);
 				if (step1) {
 					console.log('q>>>>>>>>>>>>>>>');
@@ -48,17 +48,6 @@ export class UserController {
 						console.log('KKKKKKKKKKKKKKKKK');
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
-					// else {
-					// 	if (step1.mobileNo === params.mobileNo && step1.email === params.email) {
-					// 		return Promise.reject(userConstant.MESSAGES.ERROR.USER_ALREADY_EXIST);
-					// 	}
-					// if (step1.mobileNo === params.mobileNo) {
-					// 	return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
-					// }
-					// if (step1.email === params.email) {
-					// 	return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
-					// }
-					// }
 				}
 				const generateOtp = await appUtils.generateOtp();
 
@@ -126,7 +115,6 @@ export class UserController {
 				// let userResponse = appUtils.formatUserData(updateUserQr);
 				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken, mobileNo: step2.mobileNo, countryCode: step2.countryCode });
 			}
-			// }
 		} catch (error) {
 			throw error;
 		}
@@ -143,23 +131,15 @@ export class UserController {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			}
 			else {
-				const reqParams = params;
-				console.log('paramsparams', params);
-
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
-				console.log('step1step1step1step1step1>>>>>>>>>>>>', step1);
 				if (!step1) {
 					if (params.email) {
-						console.log('1111111111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
 					}
 					if (params.mobileNo)
-						console.log('222222222222222')
-					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
+						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
-					console.log('dddddddddddddddddddd', step1);
 					if (step1 && step1.hash == null && !step1.hash) {
-						console.log('>>>>>111111111111111111');
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
 					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
@@ -168,20 +148,13 @@ export class UserController {
 						// (
 						// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
 						// 	step1.hash !== params.hash
-
 						// ) :
 						step1.hash !== params.hash
 					) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 					}
-					// if (!step1.hash) {
-					// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
-					// }
+
 					const step2 = await userDao.findVerifiedEmailOrMobile(params);
-					console.log('step2step2step2', step2);
-					console.log('2222222222', step1._id);
-					// console.log(23333333333333333, step2._id);
-					console.log('paramsparamsparamsparamsparamsparams', params);
 
 					const tokenData1 = {
 						"userId": step1._id,
@@ -193,57 +166,26 @@ export class UserController {
 						"salt": step1.salt,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					}
-					const tokenData = { ...reqParams, ...tokenData1 };
+					const tokenData = { ...params, ...tokenData1 };
 					console.log('tokenDatatokenData', tokenData);
 
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 
-					// console.log('paramsparamsparams', params);
 
 					if (params.email && !step2) {
-						// console.log('44444444444444444444444444');
-						// const tokenData = _.extend(params, {
-						// 	"userId": step1._id,
-						// 	"name": step1.name,
-						// 	"email": step1.email,
-						// 	"countryCode": step1.countryCode,
-						// 	"mobileNo": step1.mobileNo,
-						// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-						// });
-						// const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
-						// const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
-						// const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
-						const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
+						const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ status: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
-						console.log('55555555555555555555555555555555555555555');
-						// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.MOBILE_NOT_VERIFIED)
+						console.log('SEND_MESSAGE_HERE');
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ status: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: '' })
 					}
-					// if (step2 && step2.hash == null && !step2.hash) {
-					// 	console.log('>>>>>111111111111111111');
-					// 	return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
-					// }
 
-					// const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject });
 					console.log('accessTokenaccessTokenaccessToken', accessToken);
 
-					// params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
-					// if (
-					// 	// (config.SERVER.ENVIRONMENT !== "production") ?
-					// 	// (
-					// 	// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-					// 	// 	step1.hash !== params.hash
-					// 	// ) :
-					// 	step2.hash !== params.hash
-					// ) {
-					// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-					// }
 					if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
-						console.log('22222222222222222222222');
 						return userConstant.MESSAGES.SUCCESS.BLOCKED({ status: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
@@ -252,52 +194,12 @@ export class UserController {
 
 					else if (step2.isAdminRejected) {
 						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
-						// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 					}
 					else if (!step2.isAdminVerified) {
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					}
-					// EMAIL_NOT_VERIFIED: 411,
-					// MOBILE_NO_NOT_VERIFY: 412,
-					// REGISTER_BDAY: 413,
-					// ADMIN_ACCOUNT_SCREENING: 414
-
-					// if (!step1.isAdminVerified) {
-					// 	console.log('3333333333333333333');
-					// 	return userConstant.MESSAGES.SUCCESS.LOGIN({ status: userConstant.MESSAGES.ERROR.REGISTER_BDAY, "accessToken": accessToken });
-					// 	// return Promise.reject(userConstant.MESSAGES.ERROR.USER_ACCOUNT_SCREENING);
-					// }
 					else {
-						// // let salt, accessToken;
-						// // if (!step1.hash) {
-						// // 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-						// // } else {
-						// params.hash = appUtils.encryptHashPassword(params.password, step2.salt);
-						// if (
-						// 	// (config.SERVER.ENVIRONMENT !== "production") ?
-						// 	// (
-						// 	// 	params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-						// 	// 	step1.hash !== params.hash
-						// 	// ) :
-						// 	step2.hash !== params.hash
-						// ) {
-						// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-						// } else {
-						// salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-						// const tokenData = _.extend(params, {
-						// 	"userId": step1._id,
-						// 	"firstName": step1.firstName,
-						// 	"lastName": step1.lastName,
-						// 	"email": step1.email,
-						// 	"countryCode": step1.countryCode,
-						// 	"mobileNo": step1.mobileNo,
-						// 	"salt": salt,
-						// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-						// });
-						// const userObject = appUtils.buildToken(tokenData);
-						// accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": salt });
-						// }
-						// }
+
 						let arn;
 						if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 							// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -355,26 +257,6 @@ export class UserController {
 
 				//  if email unverifiec false hai to 411 de dena hai
 
-
-				// let salt;
-				// if (!step1.salt) {
-				// 	salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-				// }
-				// console.log('saltsalt', salt);
-
-				// const tokenData1 = {
-				// 	"userId": step1._id,
-				// 	"firstName": step1.firstName,
-				// 	"lastName": step1.lastName,
-				// 	"countryCode": step1.countryCode,
-				// 	"mobileNo": step1.mobileNo,
-				// 	"email": step1.email,
-				// 	// "salt": step1.salt,
-				// 	"accountLevel": 'common',//config.CONSTANT.ACCOUNT_LEVEL.USER
-				// }
-				// const tokenData = { ...params, ...tokenData1 };
-				// console.log('tokenDatatokenData', tokenData);
-
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"firstName": step1.firstName,
@@ -385,7 +267,6 @@ export class UserController {
 					"salt": step1.salt,
 					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 				});
-				console.log('tokenDatatokenDatatokenData', tokenData);
 
 				const userObject = appUtils.buildToken(tokenData);
 				console.log('userObjectuserObject', userObject);
@@ -396,7 +277,6 @@ export class UserController {
 				const step4 = loginHistoryDao.createUserLoginHistory(params);
 
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
-					console.log('22222222222222222222222');
 					return userConstant.MESSAGES.SUCCESS.BLOCKED({ status: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 				}
 				else if (step1.isAdminRejected) {
@@ -404,59 +284,21 @@ export class UserController {
 					// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 				}
 				if (!step1.isEmailVerified) {
-					// console.log('44444444444444444444444444');
-					// const tokenData = _.extend(params, {
-					// 	"userId": step1._id,
-					// 	"name": step1.name,
-					// 	"email": step1.email,
-					// 	"countryCode": step1.countryCode,
-					// 	"mobileNo": step1.mobileNo,
-					// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					// });
-					// const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
-					// const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
-					// const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
-					// const step3 = mailManager.forgotPasswordEmailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 					const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
-
 					return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ status: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: accessToken })
 				}
-
-				// const tokenData = _.extend(params, {
-				// 	"userId": step1._id,
-				// 	"firstName": step1.firstName,
-				// 	"lastName": step1.lastName,
-				// 	"email": step1.email,
-				// 	"countryCode": step1.countryCode,
-				// 	"mobileNo": step1.mobileNo,
-				// 	// "salt": step1.salt,
-				// 	"accountLevel": 'common'
-				// });
 
 				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {
 					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ status: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 				}
 				else if (step1.isAdminRejected) {
 					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
-					// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
 				}
 				else if (!step1.isAdminVerified) {
 					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ status: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
-					// const salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-					// const tokenData = _.extend(params, {
-					// 	"userId": step1._id,
-					// 	"firstName": step1.firstName,
-					// 	"lastName": step1.lastName,
-					// 	"email": step1.email,
-					// 	"countryCode": step1.countryCode,
-					// 	"mobileNo": step1.mobileNo,
-					// 	"salt": step1.salt,
-					// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					// });
-					// const userObject = appUtils.buildToken(tokenData);
-					// const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+
 					let arn;
 					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 						// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -516,16 +358,11 @@ export class UserController {
 				}
 				let step1 = await userDao.findUserByEmailOrMobileNo(params);
 
-				console.log('step1step1>>>>>>>>>>', step1);
-
 				if ((step1 && !step1.isGoogleLogin) || (step1 && !step1.isFacebookLogin) || (step1 && !step1.isAppleLogin)) {
 					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
-
-					const mergeUser = await userDao.checkSocialAccount(step1, params);
-					console.log('mergeUsermergeUsermergeUser', mergeUser);
+					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
+					// console.log('mergeUsermergeUsermergeUser', mergeUser);
 				}
-				// else {
-				console.log('step11111111111', step1);
 				let salt;
 				if (!step1) {
 					const newObjectId = new ObjectID();
@@ -578,7 +415,6 @@ export class UserController {
 				}
 				const step6 = await promise.join(step3, step4, step5);
 				return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
-				// }
 			}
 		} catch (error) {
 			throw error;
@@ -590,8 +426,6 @@ export class UserController {
 	 */
 	async forgotPassword(params: ForgotPasswordRequest) {
 		try {
-			console.log('paramsparamsparamsparamsparamsooopppppppppppo', params);
-
 			if (!params.email && (!params.countryCode || !params.mobileNo)) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
@@ -629,19 +463,16 @@ export class UserController {
 					const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
 					const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
 					if (params.email) {
-						console.log('paramsparamsparamsLOOPPPPPPPPPPPP', params);
-
 						console.log('LLLLLLLLLLLLLLLLLLparams.emailparams.email');
 
 						const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
 						const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
 					} else {
-						console.log('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', params);
+						console.log('FOR_MOBILE_MESSAGE_OTP',);
 						const step2 = smsManager.sendForgotPasswordLink(params.countryCode, params.mobileNo, accessToken);
 						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_PHONE({});
 					}
-					// }
 				}
 			}
 		} catch (error) {
@@ -746,25 +577,6 @@ export class UserController {
 	}
 
 	/**
-	 * @function userDetails
-	 */
-	// async userDetails(params: UserId, tokenData: TokenData) {
-	// 	try {
-	// 		if (
-	// 			tokenData.adminType === config.CONSTANT.ADMIN_TYPE.SUPER_ADMIN ||
-	// 			tokenData.permission.indexOf("view_user") !== -1
-	// 		) {
-	// 			const step1 = await userDao.findUserById(params);
-	// 			return userConstant.MESSAGES.SUCCESS.USER_DETAILS(step1);
-	// 		} else {
-	// 			return Promise.reject(config.CONSTANT.MESSAGES.ERROR.UNAUTHORIZED_ACCESS);
-	// 		}
-	// 	} catch (error) {
-	// 		throw error;
-	// 	}
-	// }
-
-	/**
 	 * @function profile
 	 */
 	async profile(tokenData: TokenData) {
@@ -827,7 +639,6 @@ export class UserController {
 			// 	}
 			// }
 			const data = await userDao.checkOTP(params, userData);
-
 			if (config.SERVER.ENVIRONMENT !== "production") {
 				console.log('111111111');
 				if (params.otp === config.CONSTANT.BYPASS_OTP) {
@@ -873,11 +684,6 @@ export class UserController {
 					};
 				}
 				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
-
-				// if (data.mobileOtp === params.otp) {
-				// 	return userConstant.MESSAGES.SUCCESS.DEFAULT
-				// }
-
 			}
 
 		} catch (error) {

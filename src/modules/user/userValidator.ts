@@ -158,11 +158,71 @@ let socialSignUp = Joi.object({
     deviceToken: Joi.string().trim().required()
 })
 
+let verifyOtp = Joi.object({
+    otp: Joi.number().min(1000).max(9999).required(),
+    type: Joi.string().valid('email', 'mobile').default('mobile'),
+})
+
+
+let forGotPassword = Joi.object({
+    email: Joi.string()
+        .trim()
+        .lowercase()
+        .email()
+        .optional(),
+    countryCode: Joi.string()
+        .trim()
+        .regex(config.CONSTANT.REGEX.COUNTRY_CODE)
+        .min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
+        .max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
+        .optional(),
+    mobileNo: Joi.string()
+        .trim()
+        .regex(config.CONSTANT.REGEX.MOBILE_NUMBER)
+        .optional(),
+})
+
+let resetPassword = Joi.object({
+    token: Joi.string().required(),
+    password: Joi.string()
+        .trim()
+        // .regex(config.CONSTANT.REGEX.PASSWORD)
+        .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+        .max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
+        .default(config.CONSTANT.DEFAULT_PASSWORD)
+        .required(),
+    // countryCode: Joi.string(),
+    // mobileNo: Joi.string(),
+    type: Joi.string().valid(['mobile', 'email']).required()
+    // deviceId: Joi.string(),
+    // deviceToken: Joi.string()
+})
+
+let updateProfile = Joi.object({
+    dob: Joi.string(),
+    profession: Joi.string().allow(''),
+    // userName: Joi.string(),
+    industryType: Joi.string().valid([
+        config.INDUSTRIES.Compassion_Fatigue,
+        config.INDUSTRIES.Experts_in_Executive_Burnout,
+        config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
+        config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
+        config.INDUSTRIES.Wellness_Coaches,
+    ]).allow(''),
+    experience: Joi.string().valid([
+        'Junior', 'Mid', 'Senior',
+    ]),
+    about: Joi.string().allow('')
+})
 export {
     signUp,
     login,
     resendOTP,
     verifyForGotOtp,
     socialLogin,
-    socialSignUp
+    socialSignUp,
+    verifyOtp,
+    forGotPassword,
+    resetPassword,
+    updateProfile,
 };

@@ -64,10 +64,7 @@ const geoSchema = new Schema({
 });
 
 const userSchema = new Schema({
-	// sno: { type: String, required: true },
-	// _id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
 	mobileOtp: { type: Number },
-
 	// social data
 	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },

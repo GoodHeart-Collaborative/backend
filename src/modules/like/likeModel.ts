@@ -13,28 +13,28 @@ export interface Ilike extends Document {
 }
 
 const likeSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'users' },
-  postId: { type: Schema.Types.ObjectId, trim: true, required: true },
-  commentId: { type: Schema.Types.ObjectId, trim: true},
-  category: {
-    type: Number,
-    enum: [
-        config.CONSTANT.COMMENT_CATEGORY.POST,
-        config.CONSTANT.COMMENT_CATEGORY.COMMENT
-    ],
-    default: config.CONSTANT.COMMENT_CATEGORY.POST
-},
-type: {
-  type: Number,
-  enum: [
-      config.CONSTANT.COMMENT_TYPE.MEMBER_OF_DAY,
-      config.CONSTANT.COMMENT_TYPE.UNICORN,
-      config.CONSTANT.COMMENT_TYPE.INSPIRATION,
-      config.CONSTANT.COMMENT_TYPE.DAILY_ADVICE,
-      config.CONSTANT.COMMENT_TYPE.GENERAL_GRATITUDE
-  ],
-  default: config.CONSTANT.COMMENT_TYPE.MEMBER_OF_DAY
-}
+    userId: { type: Schema.Types.ObjectId, ref: 'users' },
+    postId: { type: Schema.Types.ObjectId, trim: true, required: true },
+    commentId: { type: Schema.Types.ObjectId, trim: true },
+    category: {
+        type: Number,
+        enum: [
+            config.CONSTANT.COMMENT_CATEGORY.POST,
+            config.CONSTANT.COMMENT_CATEGORY.COMMENT
+        ],
+        default: config.CONSTANT.COMMENT_CATEGORY.POST
+    },
+    type: {
+        type: Number,
+        enum: [
+            config.CONSTANT.COMMENT_TYPE.MEMBER_OF_DAY,
+            config.CONSTANT.COMMENT_TYPE.UNICORN,
+            config.CONSTANT.COMMENT_TYPE.INSPIRATION,
+            config.CONSTANT.COMMENT_TYPE.DAILY_ADVICE,
+            config.CONSTANT.COMMENT_TYPE.GENERAL_GRATITUDE
+        ],
+        default: config.CONSTANT.COMMENT_TYPE.MEMBER_OF_DAY
+    }
 }, {
     versionKey: false,
     timestamps: true

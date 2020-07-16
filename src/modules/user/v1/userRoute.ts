@@ -31,7 +31,6 @@ export const
 			options: {
 				tags: ["api", "user"],
 				description: "User signup via (email | mobile) and password",
-				// notes: "",
 				auth: {
 					strategies: ["BasicAuth"]
 				},
@@ -42,7 +41,6 @@ export const
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -76,7 +74,6 @@ export const
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -100,8 +97,6 @@ export const
 			options: {
 				tags: ["api", "user"],
 				description: "User signup via (email | mobile) and password",
-				// notes: "",
-				// auth: {
 				auth: {
 					strategies: ["BasicAuth"]
 				},
@@ -112,7 +107,6 @@ export const
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -147,15 +141,11 @@ export const
 				},
 				validate: {
 					headers: validator.userAuthorizationHeaderObj,
-					payload: {
-						otp: Joi.number().min(1000).max(9999).required(),
-						type: Joi.string().valid('email', 'mobile').default('mobile'),
-					},
+					payload: validateUser.verifyOtp,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -195,7 +185,6 @@ export const
 				}
 			}
 		},
-
 		{
 			method: "POST",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/social-login`,
@@ -224,7 +213,7 @@ export const
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
+
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -258,7 +247,6 @@ export const
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -286,28 +274,11 @@ export const
 				},
 				validate: {
 					headers: validator.headerObject["optional"],
-					payload: {
-						email: Joi.string()
-							.trim()
-							.lowercase()
-							.email()
-							.optional(),
-						countryCode: Joi.string()
-							.trim()
-							.regex(config.CONSTANT.REGEX.COUNTRY_CODE)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
-							.optional(),
-						mobileNo: Joi.string()
-							.trim()
-							.regex(config.CONSTANT.REGEX.MOBILE_NUMBER)
-							.optional(),
-					},
+					payload: validateUser.forGotPassword,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -339,7 +310,6 @@ export const
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -373,104 +343,16 @@ export const
 				},
 				validate: {
 					headers: validator.headerObject["required"],
-					payload: {
-						token: Joi.string().required(),
-						password: Joi.string()
-							.trim()
-							// .regex(config.CONSTANT.REGEX.PASSWORD)
-							.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
-							.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
-							.default(config.CONSTANT.DEFAULT_PASSWORD)
-							.required(),
-						// countryCode: Joi.string(),
-						// mobileNo: Joi.string(),
-						type: Joi.string().valid(['mobile', 'email']).required()
-						// deviceId: Joi.string(),
-						// deviceToken: Joi.string()
-					},
+					payload: validateUser.resetPassword,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
 			}
 		},
-
-		// {
-		// 	method: "DELETE",
-		// 	path: `${config.SERVER.API_BASE_URL}/v1/user/{userId}`,
-		// 	handler: async (request: Request, h: ResponseToolkit) => {
-		// 		const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-		// 		const params: UserId = request.params;
-		// 		try {
-		// 			const result = await userController.deleteUser(params, tokenData);
-		// 			return responseHandler.sendSuccess(h, result);
-		// 		} catch (error) {
-		// 			return responseHandler.sendError(error);
-		// 		}
-		// 	},
-		// 	options: {
-		// 		tags: ["api", "user"],
-		// 		description: "Delete User",
-		// 		// notes: "",
-		// 		auth: {
-		// 			strategies: ["AdminAuth"]
-		// 		},
-		// 		validate: {
-		// 			headers: validator.adminAuthorizationHeaderObj,
-		// 			params: {
-		// 				userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
-		// 			},
-		// 			failAction: appUtils.failActionFunction
-		// 		},
-		// 		plugins: {
-		// 			"hapi-swagger": {
-		// 				// payloadType: 'form',
-		// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-		// 			}
-		// 		}
-		// 	}
-		// },
-
-
-		// {
-		// 	method: "GET",
-		// 	path: `${config.SERVER.API_BASE_URL}/v1/user/details`,
-		// 	handler: async (request: Request, h: ResponseToolkit) => {
-		// 		const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-		// 		const query: UserId = request.query;
-		// 		try {
-		// 			const result = await userController.userDetails(query, tokenData);
-		// 			return responseHandler.sendSuccess(h, result);
-		// 		} catch (error) {
-		// 			return responseHandler.sendError(error);
-		// 		}
-		// 	},
-		// 	options: {
-		// 		tags: ["api", "user"],
-		// 		description: "User Details",
-		// 		// notes: "",
-		// 		auth: {
-		// 			strategies: ["AdminAuth"]
-		// 		},
-		// 		validate: {
-		// 			headers: validator.adminAuthorizationHeaderObj,
-		// 			query: {
-		// 				userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
-		// 			},
-		// 			failAction: appUtils.failActionFunction
-		// 		},
-		// 		plugins: {
-		// 			"hapi-swagger": {
-		// 				// payloadType: 'form',
-		// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-		// 			}
-		// 		}
-		// 	}
-		// },
 		{
 			method: "GET",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
@@ -496,7 +378,6 @@ export const
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
@@ -523,32 +404,15 @@ export const
 					strategies: ["UserAuth"]
 				},
 				validate: {
-					payload: {
-						dob: Joi.string(),
-						profession: Joi.string().allow(''),
-						// userName: Joi.string(),
-						industryType: Joi.string().valid([
-							config.INDUSTRIES.Compassion_Fatigue,
-							config.INDUSTRIES.Experts_in_Executive_Burnout,
-							config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-							config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-							config.INDUSTRIES.Wellness_Coaches,
-						]).allow(''),
-						experience: Joi.string().valid([
-							'Junior', 'Mid', 'Senior',
-						]),
-						about: Joi.string().allow('')
-					},
+					payload: validateUser.updateProfile,
 					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction
 				},
 				plugins: {
 					"hapi-swagger": {
-						// payloadType: 'form',
 						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
 					}
 				}
 			}
 		},
-
 	];

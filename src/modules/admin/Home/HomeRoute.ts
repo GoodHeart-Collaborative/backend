@@ -3,20 +3,19 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { unicornController } from "@modules/admin/unicornHumour/v1/UnicornController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import { adminHomeController } from "@modules/admin/Home/HomeController";
-
+import * as adminHomeValidator from './HomeValidator'
 export const adminHomeRoute: ServerRoute[] = [
     {
         method: "POST",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/home`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: UnicornRequest.IUnicornAdd = request.payload;
+            const payload: any = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await adminHomeController.addPost(payload);
@@ -33,24 +32,7 @@ export const adminHomeRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                payload: {
-                    title: Joi.string(),
-                    description: Joi.string(),
-                    isPostLater: Joi.boolean(),
-                    // imageUrl: Joi.string(),
-                    postedAt: Joi.date(),
-                    type: Joi.number().valid([
-                        config.CONSTANT.HOME_TYPE.UNICRON,
-                        config.CONSTANT.HOME_TYPE.INSPIRATION,
-                        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-                    ]).default(config.CONSTANT.HOME_TYPE.UNICRON),
-                    mediaType: Joi.number().valid([
-                        config.CONSTANT.MEDIA_TYPE.IMAGE,
-                        config.CONSTANT.MEDIA_TYPE.VIDEO,
-                    ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
-                    mediaUrl: Joi.string(),
-                    imageUrl: Joi.string(),
-                },
+                payload: adminHomeValidator.AddHome,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -83,9 +65,7 @@ export const adminHomeRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    Id: Joi.string().optional(), // 
-                },
+                params: adminHomeValidator.getById,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -113,34 +93,13 @@ export const adminHomeRoute: ServerRoute[] = [
         },
         config: {
             tags: ["api", "admin", "home"],
-            description: "Add post",
+            description: "Home List by Type",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: {
-
-                    limit: Joi.number(),
-                    page: Joi.number(),
-                    searchTerm: Joi.string(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.BLOCKED,
-                        config.CONSTANT.STATUS.DELETED,
-                    ]),
-                    sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
-                    sortBy: Joi.string().valid([
-                        'createdAt', 'title'
-                    ]),
-                    type: Joi.number().valid([
-                        config.CONSTANT.HOME_TYPE.UNICRON,
-                        config.CONSTANT.HOME_TYPE.INSPIRATION,
-                        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-                    ]).default(config.CONSTANT.HOME_TYPE.UNICRON).required(),
-                    fromDate: Joi.number(),
-                    toDate: Joi.number(),
-                },
+                query: adminHomeValidator.GetList,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -151,7 +110,6 @@ export const adminHomeRoute: ServerRoute[] = [
             }
         }
     },
-
 
     {
         method: "PATCH",
@@ -169,20 +127,13 @@ export const adminHomeRoute: ServerRoute[] = [
         },
         config: {
             tags: ["api", "admin", "home"],
-            description: "get unicorn list",
+            description: "update Home status",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    Id: Joi.string().required(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.DELETED,
-                        config.CONSTANT.STATUS.BLOCKED
-                    ])
-                },
+                params: adminHomeValidator.updateStatus,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -201,7 +152,7 @@ export const adminHomeRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload: HomeRequest.updateHome = {
                 ...request.payload,
-                ...request.params
+                ...request.params,
             };
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
@@ -213,51 +164,14 @@ export const adminHomeRoute: ServerRoute[] = [
         },
         config: {
             tags: ["api", "admin", "home"],
-            description: "get unicorn list",
+            description: "update Home",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    Id: Joi.string().required()
-                },
-                payload: {
-                    // status: Joi.string().valid([
-                    //     config.CONSTANT.STATUS.ACTIVE,
-                    //     config.CONSTANT.STATUS.DELETED,
-                    //     // config.CONSTANT.STATUS.BLOCKED
-                    // ]),
-                    // title: Joi.string().required(),
-                    // // privacy: Joi.string().valid([
-                    // //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-                    // //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                    // //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
-                    // // ]),
-                    // description: Joi.string(),
-                    // // shortDescription: string;
-                    // imageUrl: Joi.string(),
-                    // isPostLater: Joi.boolean().default(false),
-                    // postedAt: Joi.date(),
-                    // createdAt: Joi.number()
-                    title: Joi.string(),
-                    description: Joi.string(),
-                    isPostLater: Joi.boolean(),
-                    // imageUrl: Joi.string(),
-                    postedAt: Joi.date(),
-                    // type: Joi.number().valid([
-                    //     config.CONSTANT.HOME_TYPE.UNICRON,
-                    //     config.CONSTANT.HOME_TYPE.INSPIRATION,
-                    //     config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-                    // ]).default(config.CONSTANT.HOME_TYPE.UNICRON),
-                    mediaType: Joi.number().valid([
-                        config.CONSTANT.MEDIA_TYPE.IMAGE,
-                        config.CONSTANT.MEDIA_TYPE.VIDEO,
-                    ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
-                    mediaUrl: Joi.string().allow(''),
-                    imageUrl: Joi.string().allow(''),
-
-                },
+                params: adminHomeValidator.updateHomeId,
+                payload: adminHomeValidator.updateHome,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
