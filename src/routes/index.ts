@@ -36,6 +36,8 @@ import { likeRoute as likeRouteV1 } from '@modules/like/LikeRoute';
 import { commentRoute as commentRouteV1 } from '@modules/comment/CommentRoute';
 
 import { adminUser as adminUserV1 } from '@modules/admin/users/AdminUserRoute'
+
+import { adminHomeRoute as adminHomeRoutev1 } from '@modules/admin/Home/HomeRoute'
 // simple routing
 const baseRoute = [
 	{
@@ -64,6 +66,7 @@ export const routes: ServerRoute[] = [
 	...unicornRouteV1,
 	...adviceROuteV1,
 	...memberRouteV1,
-	...adminUserV1
+	...adminUserV1,
+	...adminHomeRoutev1
 	// ...versionRouteV1
 ];

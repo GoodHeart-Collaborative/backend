@@ -10,7 +10,7 @@ import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import { adminHomeController } from "@modules/admin/Home/HomeController";
 
-export const unicornRoute: ServerRoute[] = [
+export const adminHomeRoute: ServerRoute[] = [
     {
         method: "POST",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/home`,
