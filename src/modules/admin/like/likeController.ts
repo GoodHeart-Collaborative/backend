@@ -51,7 +51,7 @@ class AdminLikeController {
                         }
                     }
                 });
-            result = await likeDao.aggregateWithPagination("likes", aggPipe, limit, pageNo, true);
+            result = await likeDao.aggreagtionWithPaginateTotal("likes", aggPipe, limit, pageNo, true);
             console.log('resultresultresultresult', result);
 
             return result
