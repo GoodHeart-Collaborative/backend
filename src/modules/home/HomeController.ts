@@ -29,7 +29,7 @@ class HomeController {
                 "_id": "5f0ff204fd8bfe1c64e69f51",
                 // "type": 4,
                 "likeCount": 0,
-                "totalComments": 0,
+                "commentCount": 0,
                 "status": "active",
                 "title": "testststs",
                 "description": "dajdnjsadas",
@@ -42,6 +42,7 @@ class HomeController {
                 "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
                 "postedAt": "2020-07-14T11:33:09.000Z",
                 "isPostLater": true,
+                "isLike": false,
                 "createdAt": "2020-07-10T10:34:43.840Z",
                 "updatedAt": "2020-07-11T11:34:43.840Z"
               },
@@ -49,11 +50,12 @@ class HomeController {
                 "_id": "5f0ff217fd8bfe1c64e69f56",
                 // "type": 4,
                 "likeCount": 0,
-                "totalComments": 0,
+                "commentCount": 0,
                 "status": "active",
                 "title": "testststs",
                 "description": "dajdnjsadas",
                 "mediaType": 1,
+                "isLike": false,
                 "user": {
                     profilePicUrl: "https://shorturl.at/ktAQX",
                     name: "rahul",
@@ -70,7 +72,7 @@ class HomeController {
                 "_id": "5f0ff217fd8bfe1c64e69f56",
                 // "type": 4,
                 "likeCount": 0,
-                "totalComments": 0,
+                "commentCount": 0,
                 "status": "active",
                 "title": "testststs",
                 "user": {
@@ -78,6 +80,7 @@ class HomeController {
                     name: "rahul",
                     desc: "doctor"
                 },
+                "isLike": false,
                 "description": "dajdnjsadas",
                 "mediaType": 1,
                 "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
@@ -109,7 +112,7 @@ class HomeController {
             // }
             if (!params.type) {
                 // getmemberOfTheDay = {}
-                getHomeData = await homeDao.getHomeData(params, userId.tokendata)
+                getHomeData = await homeDao.getHomeData(params, userId.tokenData)
                 responseData = getHomeData
                 // responseData["getmemberOfTheDay"] = getmemberOfTheDay
                 // responseData["data"] = getHomeData

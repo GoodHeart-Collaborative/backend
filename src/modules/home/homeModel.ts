@@ -10,7 +10,7 @@ import * as config from "@config/index";
 
 export interface Ihome extends Document {
     likeCount: number,
-    totalComments: number,
+    commentCount: number,
     title: string,
     description: string,
     isPostLater: boolean,
@@ -26,7 +26,7 @@ export interface Ihome extends Document {
 
 const homeSchema = new Schema({
     likeCount: { type: Schema.Types.Number, default: 0 },
-    totalComments: { type: Schema.Types.Number, default: 0 },
+    commentCount: { type: Schema.Types.Number, default: 0 },
     title: { type: Schema.Types.String, required: true },
     status: {
         type: String,
@@ -40,11 +40,11 @@ const homeSchema = new Schema({
     type: {
         type: Number, 
         enum: [
-            config.CONSTANT.HOME_TYPE.UNICRON,
+            config.CONSTANT.HOME_TYPE.UNICORN,
             config.CONSTANT.HOME_TYPE.INSPIRATION,
             config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
         ],
-        default: config.CONSTANT.HOME_TYPE.UNICRON
+        default: config.CONSTANT.HOME_TYPE.UNICORN
     },
     description: { type: String, required: true },
     isPostLater: { type: Boolean },

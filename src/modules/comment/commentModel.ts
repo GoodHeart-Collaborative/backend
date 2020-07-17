@@ -34,13 +34,13 @@ const commentSchema = new Schema({
 type: {
   type: Number,
   enum: [
-      config.CONSTANT.COMMENT_TYPE.MEMBER_OF_DAY,
-      config.CONSTANT.COMMENT_TYPE.UNICORN,
-      config.CONSTANT.COMMENT_TYPE.INSPIRATION,
-      config.CONSTANT.COMMENT_TYPE.DAILY_ADVICE,
-      config.CONSTANT.COMMENT_TYPE.GENERAL_GRATITUDE
+      config.CONSTANT.HOME_TYPE.UNICORN,
+      config.CONSTANT.HOME_TYPE.INSPIRATION,
+      config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
+      config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
+      config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
   ],
-  default: config.CONSTANT.COMMENT_TYPE.MEMBER_OF_DAY
+  default: config.CONSTANT.HOME_TYPE.UNICORN
 }
 }, {
     versionKey: false,

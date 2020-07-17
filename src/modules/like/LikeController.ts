@@ -6,7 +6,10 @@ import fs = require("fs");
 import * as likeConstants from "./LikeConstant";
 import { likeDao } from "./LikeDao";
 import * as config from "@config/index";
-
+import { homeDao } from "../home/HomeDao";
+import * as appUtils from '../../utils/appUtils'
+import * as homeConstants from "../home/HomeConstant";
+import { commentDao } from "../comment/CommentDao";
 
 class LikeController {
 
@@ -140,15 +143,59 @@ class LikeController {
     //             throw error;
     //         }
     //     }
-    async addLike(params) {
+    async addLike(params: LikeRequest.AddLikeRequest) {
         try {
-            const getLike = await likeDao.checkLike(params)
-            if (getLike) {
-                return likeConstants.MESSAGES.ERROR.ALREADY_LIKE;
+            let getPost: any = {}
+            let query: any = {}
+            let getComment: any = {}
+            let incOrDec:number = 1
+            query = { _id: await appUtils.toObjectId(params.postId) }
+            if (params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
+                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+            } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
             } else {
-                const data = await likeDao.addLike(params)
-                return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+                getPost = await homeDao.checkHomePost(query)
             }
+            if (getPost) {
+                if (getPost.status === config.CONSTANT.STATUS.DELETED) {
+                    return homeConstants.MESSAGES.ERROR.POST_DELETED;
+                } else if (getPost.status === config.CONSTANT.STATUS.BLOCKED) {
+                    return homeConstants.MESSAGES.ERROR.POST_BLOCK;
+                }
+            } else {
+                return homeConstants.MESSAGES.ERROR.POST_NOT_FOUND;
+            }
+            if (params && params.commentId) {
+                params["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
+            }
+            let getLike = await likeDao.checkLike(params) 
+            if (getLike) {
+                incOrDec = -1
+                await likeDao.removeLike(params)
+            } else {
+                await likeDao.addLike(params)
+            }
+            if (params && params.commentId) {
+                query = { _id: await appUtils.toObjectId(params.commentId) }
+                getComment = await commentDao.checkComment(query)
+                if (!getComment) {
+                    return homeConstants.MESSAGES.ERROR.COMMENT_NOT_FOUND;
+                } else {
+                    await commentDao.updateComment(query, { $inc: { likeCount: incOrDec }})
+                } 
+            } else {
+                await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec }})
+            }
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getLikeList(params: LikeRequest.AddLikeRequest) {
+        try {
+            let list = await likeDao.getLikeList(params)
+            return likeConstants.MESSAGES.SUCCESS.LIKE_LIST(list)
         } catch (error) {
             throw error;
         }

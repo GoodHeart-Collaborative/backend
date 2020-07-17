@@ -37,7 +37,37 @@ export const commentRoute: ServerRoute[] = [
             },
             plugins: {
                 "hapi-swagger": {
-                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/comment`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            const query: CommentRequest.AddCommentRequest = request.query;
+            try {
+                const result = await commentController.getCommentList({ ...query, ...{ userId: tokenData.userId } });
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "comment"],
+            description: "get comment list",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                query: commentValidator.validateUserCommentList,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
                     responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
                 }
             }

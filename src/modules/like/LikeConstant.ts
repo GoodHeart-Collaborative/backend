@@ -7,7 +7,7 @@ export const MESSAGES = {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
             "message": "Already like.",
             "type": "ALREADY_LIKE"
-        },
+        }
     },
     SUCCESS: {
         // DEFAULT: {
@@ -19,6 +19,24 @@ export const MESSAGES = {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
             "message": "successfully added",
             "type": "DEFAULT"
+        },
+        POST_LIKE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Post unlike successfully.",
+            "type": "POST_LIKE"
+        },
+        COMMENT_LIKE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Comment unlike successfully.",
+            "type": "COMMENT_LIKE"
+        },
+        LIKE_LIST:(data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "like data are.",
+                "type": "LIKE_LIST",
+                "data": data
+            }
         },
         // SUCCESS_WITH_NO_DATA: {
         //     "statusCode": config.CONSTANT.HTTP_STATUS_CODE.NO_CONTENT,

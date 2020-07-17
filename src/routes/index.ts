@@ -49,8 +49,8 @@ const baseRoute = [
 
 export const routes: ServerRoute[] = [
 	// ...baseRoute,
-	// ...likeRouteV1,
-	// ...commentRouteV1,
+	...likeRouteV1,
+	...commentRouteV1,
 	...HomeRoute,
 	...adminRouteV1,
 	// ...adminNotificationRouteV1,

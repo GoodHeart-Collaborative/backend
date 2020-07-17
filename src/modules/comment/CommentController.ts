@@ -4,7 +4,10 @@ import * as _ from "lodash";
 import fs = require("fs");
 
 import * as commentConstants from "./CommentConstant";
+import * as homeConstants from "../home/HomeConstant";
+
 import { commentDao } from "./CommentDao";
+import { homeDao } from "../home/HomeDao";
 import * as config from "@config/index";
 import { CONSTANT } from "@config/index";
 import * as appUtils from '../../utils/appUtils'
@@ -148,37 +151,53 @@ class CommentController {
             let query: any = {}
             let getComment: any = {}
             query = { _id: await appUtils.toObjectId(params.postId) }
-            if (params.type === CONSTANT.COMMENT_TYPE.DAILY_ADVICE) {
-                getPost = await commentDao.checkPost(query, "advice")
-            } else if (params.type === CONSTANT.COMMENT_TYPE.UNICORN) {
-                getPost = await commentDao.checkPost(query, "unicorn")
-            } else if (params.type === CONSTANT.COMMENT_TYPE.INSPIRATION) {
-                getPost = await commentDao.checkPost(query, "inspiration")
-            } else if (params.type === CONSTANT.COMMENT_TYPE.MEMBER_OF_DAY) {
-                return commentConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+            // if (params.type === CONSTANT.COMMENT_TYPE.DAILY_ADVICE) {
+                // getPost = await commentDao.checkPost(query, "advice")
+            // } else if (params.type === CONSTANT.COMMENT_TYPE.UNICORN) {
+            //     getPost = await commentDao.checkPost(query, "unicorn")
+            // } else if (params.type === CONSTANT.COMMENT_TYPE.INSPIRATION) {
+            //     getPost = await commentDao.checkPost(query, "inspiration")
+            // } 
+            if (params.type === CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
+                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
                 // getPost = await commentDao.checkPost(query, '')
-            } else if (params.type === CONSTANT.COMMENT_TYPE.GENERAL_GRATITUDE) {
+            } else if (params.type === CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                 // getPost = await commentDao.checkPost(query, '')
-                return commentConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+            } else {
+                getPost = await homeDao.checkHomePost(query)
             }
             if (getPost) {
                 if (getPost.status === config.CONSTANT.STATUS.DELETED) {
-                    return commentConstants.MESSAGES.ERROR.POST_DELETED;
+                    return homeConstants.MESSAGES.ERROR.POST_DELETED;
                 } else if (getPost.status === config.CONSTANT.STATUS.BLOCKED) {
-                    return commentConstants.MESSAGES.ERROR.POST_BLOCK;
+                    return homeConstants.MESSAGES.ERROR.POST_BLOCK;
                 }
             } else {
-                return commentConstants.MESSAGES.ERROR.POST_NOT_FOUND;
+                return homeConstants.MESSAGES.ERROR.POST_NOT_FOUND;
             }
             if (params && params.commentId) {
                 query = { _id: await appUtils.toObjectId(params.commentId) }
                 getComment = await commentDao.checkComment(query)
                 if (!getComment) {
-                    return commentConstants.MESSAGES.ERROR.COMMENT_NOT_FOUND;
+                    return homeConstants.MESSAGES.ERROR.COMMENT_NOT_FOUND;
+                } else {
+                    params["category"] = CONSTANT.COMMENT_CATEGORY.COMMENT
+                    await commentDao.updateComment(query, { $inc: { commentCount: 1 }})
                 }
+            } else {
+                await homeDao.updateHomePost(query, { $inc: { commentCount: 1 }})
             }
-            let data = await commentDao.addComments(params)
+            await commentDao.addComments(params)
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getCommentList(params: CommentRequest.AddCommentRequest) {
+        try {
+            let list = await commentDao.getCommentList(params)
+            return commentConstants.MESSAGES.SUCCESS.COMMENT_LIST(list)
         } catch (error) {
             throw error;
         }

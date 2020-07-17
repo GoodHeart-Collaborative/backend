@@ -1,12 +1,9 @@
 declare namespace LikeRequest {
-
-    // export interface AdviceRequestAdd extends Device {
-    //     userId: string,
-    //     categoryId: string,
-    //     likeCount: number,
-    //     totalComments: number,
-    //     title: string,
-    //     status: string
-    //     privacy: string
-    // }
+    export interface LikeTypeRequest extends Device {
+        type:number
+    }
+    export interface AddLikeRequest extends LikeTypeRequest {
+        postId: string,
+        commentId?: string
+    }
 }
