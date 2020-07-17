@@ -27,9 +27,10 @@ class AdminLikeController {
             if (commentId) {
                 match["commentId"] = appUtils.toObjectId(commentId)
                 match["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
-            } else {
-                match["category"] = config.CONSTANT.COMMENT_CATEGORY.POST
             }
+            // else {
+            //     match["category"] = config.CONSTANT.COMMENT_CATEGORY.POST
+            // }
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             aggPipe.push({
