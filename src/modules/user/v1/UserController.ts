@@ -132,6 +132,8 @@ export class UserController {
 			}
 			else {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				console.log('step1step1step1', step1);
+
 				if (!step1) {
 					if (params.email) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
@@ -232,8 +234,21 @@ export class UserController {
 							};
 							step6 = redisClient.createJobs(jobPayload);
 						}
+
 						const step7 = await promise.join(step4, step5, step6);
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, userData: step1 });
+						// const userData = { ...step1.isAppleLogin, ...step1.isMobileVerified, ...step1.isEmailVerified, ...step1.isFacebookLogin, ...step1.isGoogleLogin, ...step1.firstName, ...step1.lastName, ...step1.countryCode, ...step1.}
+						delete step1['salt'];
+						delete step1['hash'];
+						delete step1['mobileOtp'];
+						delete step1['forgotToken'];
+						delete step1['isAdminRejected'];
+						delete step1['isAdminVerified'];
+						delete step1['forgotToken'];
+						delete step1['fullMobileNo']
+						delete step1['googleId'];
+						delete step1['facebookId'];
+
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
 					}
 				}
 			}
@@ -332,7 +347,17 @@ export class UserController {
 					}
 					const step7 = await promise.join(step4, step5, step6);
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, userData: step1 });
+					delete step1['salt'];
+					delete step1['hash'];
+					delete step1['mobileOtp'];
+					delete step1['forgotToken'];
+					delete step1['isAdminRejected'];
+					delete step1['isAdminVerified'];
+					delete step1['forgotToken'];
+					delete step1['fullMobileNo']
+					delete step1['googleId'];
+					delete step1['facebookId'];
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ status: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
 
 				}
 			}
