@@ -41,6 +41,7 @@ import { adminHomeRoute as adminHomeRoutev1 } from '@modules/admin/Home/HomeRout
 // simple routing
 import { adminLikeRoute as adminLikeRouteV1 } from '@modules/admin/like/likeRoute';
 
+import { adminCommentRoute as adminCommentRouteV1 } from '@modules/admin/comment/commentRoute';
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -69,6 +70,7 @@ export const routes: ServerRoute[] = [
 	...memberRouteV1,
 	...adminUserV1,
 	...adminHomeRoutev1,
-	...adminLikeRouteV1
-	// ...versionRouteV1
+	...adminLikeRouteV1,
+	// ...versionRouteV1,
+	...adminCommentRouteV1
 ];
