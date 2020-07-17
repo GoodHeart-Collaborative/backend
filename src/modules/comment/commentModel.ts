@@ -41,7 +41,8 @@ type: {
       config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
   ],
   default: config.CONSTANT.HOME_TYPE.UNICORN
-}
+},
+created: { type: Number, default: new Date() }
 }, {
     versionKey: false,
     timestamps: true

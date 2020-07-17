@@ -59,6 +59,7 @@ const homeSchema = new Schema({
     },
     mediaUrl: { type: String },
     thumbnailUrl: { type: String },
+    created: { type: Number, default: new Date() }
     // // createdAt: { type: Date },
     // updatedAt: { type: Date }
 }, {

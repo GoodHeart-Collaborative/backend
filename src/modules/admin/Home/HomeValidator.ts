@@ -11,10 +11,10 @@ let AddHome = Joi.object({
     // imageUrl: Joi.string(),
     postedAt: Joi.date(),
     type: Joi.number().valid([
-        config.CONSTANT.HOME_TYPE.UNICRON,
+        config.CONSTANT.HOME_TYPE.UNICORN,
         config.CONSTANT.HOME_TYPE.INSPIRATION,
         config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-    ]).default(config.CONSTANT.HOME_TYPE.UNICRON),
+    ]).default(config.CONSTANT.HOME_TYPE.UNICORN),
     mediaType: Joi.number().valid([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
         config.CONSTANT.MEDIA_TYPE.VIDEO,
@@ -42,10 +42,10 @@ let GetList = Joi.object({
         'createdAt', 'title'
     ]),
     type: Joi.number().valid([
-        config.CONSTANT.HOME_TYPE.UNICRON,
+        config.CONSTANT.HOME_TYPE.UNICORN,
         config.CONSTANT.HOME_TYPE.INSPIRATION,
         config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-    ]).default(config.CONSTANT.HOME_TYPE.UNICRON).required(),
+    ]).default(config.CONSTANT.HOME_TYPE.UNICORN).required(),
     fromDate: Joi.number(),
     toDate: Joi.number(),
 })

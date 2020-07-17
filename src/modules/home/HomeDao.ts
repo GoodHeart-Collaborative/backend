@@ -62,6 +62,7 @@ export class HomeDao extends BaseDao {
                     title: 1,
                     isPostLater: 1,
                     description: 1,
+                    created: 1,
                     postedAt: 1,
                     createdAt: 1,
                     isLike: 
