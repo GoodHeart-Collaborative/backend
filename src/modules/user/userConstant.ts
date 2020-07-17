@@ -207,6 +207,7 @@ export const MESSAGES = {
 			}
 		},
 		LOGIN: (data) => {
+			data['message'] = 'Logged-In successfully.'
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 				"message": "Logged-In successfully.",

@@ -4,7 +4,7 @@ declare namespace InspirationRequest {
         userId: string,
         categoryId: string,
         likeCount: number,
-        totalComments: number,
+        // totalComments: number,
         title: string,
         status: string
         privacy: string
