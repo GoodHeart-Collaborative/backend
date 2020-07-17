@@ -179,7 +179,7 @@ export class MailManager {
 	async sendRegisterMailToUser(params) {
 		console.log('params.token', params);
 
-		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
+		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "verifyEmail.html"))
 			.compileFile({
 				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
 					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +

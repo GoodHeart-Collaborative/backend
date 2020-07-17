@@ -2,21 +2,17 @@
 
 import * as _ from "lodash";
 import fs = require("fs");
-import * as promise from "bluebird";
-
-import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 // import * as sns from "@lib/pushNotification/sns";
-import { homeDao } from "@modules/home/HomeDao";
+import { homeDao } from "@modules/admin/Home/adminHomeDao";
 
+class AdminHomeController {
+    /**
+     * @function signup
+     * @description if IS_REDIS_ENABLE set to true,
+     * than redisClient.storeList() function saves value in redis. 
+     */
 
-class UnicornController {
-
-	/**
-	 * @function signup
-	 * @description if IS_REDIS_ENABLE set to true,
-	 * than redisClient.storeList() function saves value in redis.
-	 */
     async addPost(params: UnicornRequest.IUnicornAdd) {
         try {
             console.log('paramsparamsparamsparams', params);
@@ -31,7 +27,7 @@ class UnicornController {
         }
     }
 
-    async getPostById(params: UnicornRequest.IUnicornById) {
+    async getPostById(params: HomeRequest.IHomeById) {
         try {
             const criteria = {
                 _id: params.Id,
@@ -45,13 +41,15 @@ class UnicornController {
         }
     }
 
-    async getPosts(params: UnicornRequest.IGetUnicorn) {
+    async getPosts(params: HomeRequest.IgetHome) {
         try {
             console.log('paramsparamsparamsparams', params);
             const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
             const aggPipe = [];
 
             const match: any = {};
+            match['type'] = params.type
+
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
@@ -117,7 +115,7 @@ class UnicornController {
         }
     }
 
-    async updatePost(params: UnicornRequest.IUpdateUnicorn) {
+    async updatePost(params: HomeRequest.updateHome) {
         try {
             const criteria = {
                 _id: params.Id
@@ -136,4 +134,5 @@ class UnicornController {
 }
 
 
-export const unicornController = new UnicornController();
+
+export const adminHomeController = new AdminHomeController();

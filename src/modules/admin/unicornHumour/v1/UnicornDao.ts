@@ -27,20 +27,20 @@ export class UnicornDao extends BaseDao {
 
     async getUnicornHomeData(params, userId) {
         try {
-            let {pageNo, limit, endDate } = params
+            let { pageNo, limit, endDate } = params
             pageNo = 1
             let match: any = {};
             let aggPipe = [];
-            let result:any = {}
+            let result: any = {}
             match["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
-            if(endDate) {
+            if (endDate) {
                 match["createdAt"] = { $lte: new Date(endDate) };
             }
             aggPipe.push({ "$match": match });
             result = await this.aggregateWithPagination("unicorn", aggPipe, limit, pageNo, true);
-            if(result && result.data && result.data.length == 0) {
+            if (result && result.data && result.data.length == 0) {
                 delete match.postedAt
                 aggPipe.pop()
                 result = await this.aggregateWithPagination("unicorn", aggPipe, limit, pageNo, true);

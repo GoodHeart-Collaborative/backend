@@ -50,7 +50,7 @@ export interface IUser extends Document {
 	countMember: number;
 	memberCreatedAt: Date;
 	likeCount: number,
-	totalComments: number,
+	commentCount: number,
 	isAdminRejected: boolean;
 
 }
@@ -64,10 +64,7 @@ const geoSchema = new Schema({
 });
 
 const userSchema = new Schema({
-	// sno: { type: String, required: true },
-	// _id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
 	mobileOtp: { type: Number },
-
 	// social data
 	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },
@@ -145,7 +142,7 @@ const userSchema = new Schema({
 		]
 	},
 	likeCount: { type: Number, default: 0 },
-	totalComments: { type: Number, default: 0 },
+	commentCount: { type: Number, default: 0 },
 	createdAt: { type: Date },
 	updatedAt: { type: Date }
 }, {

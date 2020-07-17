@@ -66,7 +66,28 @@ class HomeController {
                 "isPostLater": true,
                 "createdAt": "2020-07-10T10:34:43.840Z",
                 "updatedAt": "2020-07-11T11:34:43.840Z"
-              }]
+                },
+                {
+                    "_id": "5f0ff217fd8bfe1c64e69f56",
+                    // "type": 4,
+                    "likeCount": 0,
+                    "commentCount": 0,
+                    "status": "active",
+                    "title": "testststs",
+                    "isLike": false,
+                    "description": "dajdnjsadas",
+                    "mediaType": 1,
+                    "user": {
+                        profilePicUrl: "https://shorturl.at/ktAQX",
+                        name: "rahul",
+                        desc: "doctor"
+                    },
+                    "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
+                    "postedAt": "2020-07-14T11:33:09.000Z",
+                    "isPostLater": true,
+                    "createdAt": "2020-07-10T10:34:43.840Z",
+                    "updatedAt": "2020-07-11T11:34:43.840Z"
+                }]
             }
             let getmemberOfTheDay: any = {
                 "_id": "5f0ff217fd8bfe1c64e69f56",
@@ -88,10 +109,10 @@ class HomeController {
                 "isPostLater": true,
                 "createdAt": "2020-07-10T10:34:43.840Z",
                 "updatedAt": "2020-07-11T11:34:43.840Z"
-              }
+            }
             let getInspiringHistory: any = {}
             let getDailyAdvice: any = {}
-            let getHomeData:any = {}
+            let getHomeData: any = {}
             params.pageNo = 1
             params.limit = 10
             // if (params.type === config.CONSTANT.HOME_TYPE.UNICRON) {
@@ -223,3 +244,21 @@ class HomeController {
     //     }
 }
 export const homeController = new HomeController();
+
+
+
+
+
+
+
+// 1. totalComment ki jagah commentCount
+// 2. _id chaiye 
+// 3. title
+// 4. description 
+// 5. lickeCount,
+// 6. commentCount
+// 7. userData par 3 keys {desc , name , profilePicUrl} ,
+// 8. 
+
+
+// List

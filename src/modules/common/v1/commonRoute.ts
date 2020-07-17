@@ -9,7 +9,6 @@ import * as appUtils from "@utils/appUtils";
 import { commonController } from "@modules/common/v1/commonController";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
-import { imageUtil } from "@lib/ImageUtil";
 import { responseHandler } from "@utils/ResponseHandler";
 import { userController } from "@modules/user/v1/UserController";
 import * as tokenManager from "@lib/tokenManager";

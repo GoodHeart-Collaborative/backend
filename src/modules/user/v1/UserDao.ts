@@ -17,18 +17,18 @@ export class UserDao extends BaseDao {
 		try {
 			let { mobileNo, countryCode, email } = params
 			let query: any = {};
-			if (countryCode && mobileNo) {
-				query = { "countryCode": countryCode, "mobileNo": mobileNo }
-			} else {
-				query = { "email": email }
-			}
-			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
-			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			// if (countryCode && mobileNo) {
+			// 	query = { "countryCode": countryCode, "mobileNo": mobileNo }
+			// } else {
+			// 	query = { "email": email }
+			// }
+			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
+			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
 
-			return await this.findOne("users", query, {}, options, {});
+			return await this.findOne("users", query, { mobileOtp: 0 }, options, {});
 		} catch (error) {
 			throw error;
 		}
@@ -56,7 +56,7 @@ export class UserDao extends BaseDao {
 			let options = { lean: true };
 			console.log('queryqueryquery', query);
 
-			const data = await this.findOne("users", query, {}, options, {});
+			const data = await this.findOne("users", query, { hash: 0, salt: 0, mobileOtp: 0 }, options, {});
 			// console.log('datadata', data);
 			return data;
 
@@ -209,7 +209,7 @@ export class UserDao extends BaseDao {
 		}
 	}
 
-	async checkSocialAccount(step1, params: UserRequest.SocialSignup) {
+	async mergeAccountAndCheck(step1, params: UserRequest.SocialSignup) {
 		try {
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				params.facebookId = params.socialId;

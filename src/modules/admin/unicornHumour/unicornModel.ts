@@ -14,7 +14,7 @@ export interface Iunicorn extends Document {
 
     // categoryId: string,
     likeCount: number,
-    totalComments: number,
+    commentCount: number,
     title: string,
     status: string
     privacy: string
@@ -32,7 +32,7 @@ export interface Iunicorn extends Document {
 const unicrornSchema = new Schema({
     // categoryId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Schema.Types.Number, default: 0 },
-    totalComments: { type: Schema.Types.Number, default: 0 },
+    commentCount: { type: Schema.Types.Number, default: 0 },
     title: { type: Schema.Types.String, required: true },
     status: {
         type: String,

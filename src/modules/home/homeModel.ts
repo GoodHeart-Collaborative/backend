@@ -14,7 +14,7 @@ export interface Ihome extends Document {
     title: string,
     description: string,
     isPostLater: boolean,
-    imageUrl: string,
+    thumbnailUrl: string,
     createdAt: Date,
     updatedAt: Date
     postedAt: Date,
@@ -38,7 +38,7 @@ const homeSchema = new Schema({
         default: config.CONSTANT.STATUS.ACTIVE
     },
     type: {
-        type: Number, 
+        type: Number,
         enum: [
             config.CONSTANT.HOME_TYPE.UNICORN,
             config.CONSTANT.HOME_TYPE.INSPIRATION,
@@ -46,11 +46,11 @@ const homeSchema = new Schema({
         ],
         default: config.CONSTANT.HOME_TYPE.UNICORN
     },
-    description: { type: String, required: true },
+    description: { type: String },
     isPostLater: { type: Boolean },
-    postedAt: { type: Date, trim: true, required: true },
+    postedAt: { type: Date, trim: true, },
     mediaType: {
-        type: Number, 
+        type: Number,
         enum: [
             config.CONSTANT.MEDIA_TYPE.IMAGE,
             config.CONSTANT.MEDIA_TYPE.VIDEO
@@ -58,7 +58,7 @@ const homeSchema = new Schema({
         default: config.CONSTANT.MEDIA_TYPE.IMAGE
     },
     mediaUrl: { type: String },
-    imageUrl: { type: String },
+    thumbnailUrl: { type: String },
     // // createdAt: { type: Date },
     // updatedAt: { type: Date }
 }, {
