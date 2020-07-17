@@ -88,7 +88,7 @@ class CommentController {
             //         }
             // });
 
-            result = await commentDao.aggregateWithPagination("comments", aggPipe, limit, pageNo, true)
+            result = await commentDao.aggreagtionWithPaginateTotal("comments", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
             throw error;
