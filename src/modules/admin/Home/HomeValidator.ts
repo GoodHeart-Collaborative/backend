@@ -3,6 +3,10 @@ import * as Joi from "joi";
 import * as config from "@config/index";
 import { join } from "path";
 
+// when mediaType =1 then in mediaUrl key you will give image url
+
+// when mediaType =2 then in mediaUrl you will give video url and in thumbnailUrl you will give video thumbnail image url
+
 
 let AddHome = Joi.object({
     title: Joi.string(),
@@ -21,6 +25,7 @@ let AddHome = Joi.object({
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
     mediaUrl: Joi.string(),
     thumbnailUrl: Joi.string(),
+    // imageUrl: Joi.string()
 }).unknown()
 
 
@@ -71,6 +76,7 @@ let updateHome = Joi.object({
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
     mediaUrl: Joi.string().allow(''),
     thumbnailUrl: Joi.string().allow(''),
+    // imageUrl: Joi.string()
 })
 let updateHomeId = Joi.object({
     Id: Joi.string().required()

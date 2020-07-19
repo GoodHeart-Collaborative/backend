@@ -118,7 +118,8 @@ export const MESSAGES = {
 		PASSWORD_SUCCESSFULLY_CHANGED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "Password successfully changed",
-			"type": "DEFAULT"
+			"type": "DEFAULT",
+			data: {}
 		},
 		BLOCKED: (data) => {
 			return {

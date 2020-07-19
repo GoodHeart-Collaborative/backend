@@ -184,8 +184,7 @@ export class MailManager {
 				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
 					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
 					`&type=verifyEmail&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}` +
-					`&userId=${params.userId}`
-				,
+					`&userId=${params.userId}`,
 				"name": params.firstName + " " + params.lastName,
 				"year": new Date().getFullYear(),
 				"userId": params.userId

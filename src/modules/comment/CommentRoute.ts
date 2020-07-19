@@ -11,7 +11,7 @@ import { responseHandler } from "@utils/ResponseHandler";
 export const commentRoute: ServerRoute[] = [
     {
         method: "POST",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/commnet`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/comment`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: CommentRequest.AddCommentRequest = request.payload;

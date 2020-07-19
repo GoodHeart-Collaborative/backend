@@ -26,8 +26,8 @@ export const adminCommentRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "admin", "likes"],
-            description: "get likes",
+            tags: ["api", "admin", "comment"],
+            description: "get comments",
             auth: {
                 strategies: ["AdminAuth"]
             },

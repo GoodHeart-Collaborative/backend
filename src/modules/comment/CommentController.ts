@@ -31,14 +31,38 @@ class CommentController {
             }
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "createdAt": -1 } });
-            // aggPipe.push({
-            //     $lookup: {
-            //         "from": "users",
-            //         "localField": "userId",
-            //         "foreignField": "_id",
-            //         "as": "users"
-            //     }
-            // })
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { uId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$uId'],
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            email: 1,
+                            firstName: 1,
+                            lastName: 1,
+                            status: 1,
+                            profilePicUrl: 1
+                        },
+                    },
+                    ],
+                    as: 'users',
+                },
+            },
+                {
+                    $unwind: {
+                        path: '$users',
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+            )
+
             // aggPipe.push({
             //     $lookup: {
             //         from: "likes",
