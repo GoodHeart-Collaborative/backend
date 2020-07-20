@@ -57,7 +57,7 @@ const MEMBER_TYPE = {
 const USER_ADMIN_STATUS = {
 	PENDING: 'pending',
 	VERIFIED: 'verified',
-	REJECTED: ''
+	REJECTED: 'rejected',
 }
 const ACCOUNT_LEVEL = {
 	ADMIN: "admin",

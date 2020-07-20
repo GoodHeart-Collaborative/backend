@@ -6,7 +6,7 @@ import { ServerRoute } from "hapi";
  * v1 routes
  */
 // admin routes
-import { adminRoute as adminRouteV1 } from "@modules/admin/v1/adminRoute";
+import { adminRoute as adminRouteV1 } from "@modules/admin/adminRoute";
 
 // admin notification routes
 import { adminNotificationRoute as adminNotificationRouteV1 } from "@modules/adminNotification/v1/adminNotificationRoute";

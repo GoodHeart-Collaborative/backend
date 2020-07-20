@@ -3,7 +3,7 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { adminController } from "@modules/admin/v1/AdminController";
+import { adminController } from "@modules/admin/users/AdminController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
@@ -127,13 +127,14 @@ export const adminUser: ServerRoute[] = [
                         config.CONSTANT.STATUS.ACTIVE,
                         config.CONSTANT.STATUS.DELETED
                     ]),
-                    // adminStatus: Joi.string().valid([
-                    // 	config.CONSTANT.USER_ADMIN_STATUS.PENDING,
-                    // 	config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
-                    // 	config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
-                    // ])
+                    adminStatus: Joi.string().valid([
+                        config.CONSTANT.USER_ADMIN_STATUS.PENDING,
+                        config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
+                        config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+                    ]),
                     isAdminVerified: Joi.boolean(),
                     isAdminRejected: Joi.boolean()
+
                 },
                 failAction: appUtils.failActionFunction
 

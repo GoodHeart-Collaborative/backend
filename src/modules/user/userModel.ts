@@ -18,7 +18,7 @@ export interface IUser extends Document {
 	// sno: string;
 	appleId: string;
 	isAppleLogin: boolean;
-	// isAppleVerified: boolean;
+	isAppleVerified: boolean;
 	isMobileVerified: boolean;
 	isEmailVerified: boolean;
 	facebookId: string;
@@ -52,7 +52,7 @@ export interface IUser extends Document {
 	likeCount: number,
 	commentCount: number,
 	isAdminRejected: boolean;
-
+	isAdminVerified: boolean;
 }
 
 const geoSchema = new Schema({
@@ -125,6 +125,14 @@ const userSchema = new Schema({
 	},
 	isAdminVerified: { type: Boolean, default: false },
 	isAdminRejected: { type: Boolean, default: false },
+	adminStatus: {
+		type: String, enum: [
+			config.CONSTANT.USER_ADMIN_STATUS.PENDING,
+			config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
+			config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+		],
+		default: config.CONSTANT.USER_ADMIN_STATUS.PENDING,
+	},
 	experience: {
 		type: String, enum: [
 			'Junior', 'Mid', 'Senior',

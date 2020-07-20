@@ -228,6 +228,10 @@ export class BaseDao {
 
 	async update(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
 		try {
+			if (!options) {
+				options['new'] = true;
+				options['lean'] = true;
+			}
 			const ModelName: any = models[model];
 			return await ModelName.update(query, update, options);
 		} catch (error) {

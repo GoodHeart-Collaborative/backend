@@ -3,8 +3,8 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { adminController } from "@modules/admin/v1/AdminController";
-import { adminDao } from "@modules/admin/v1/AdminDao";
+import { adminController } from "@modules/admin/users/AdminController";
+import { adminDao } from "@modules/admin/users/AdminDao";
 import * as appUtils from "@utils/appUtils";
 import { commonController } from "@modules/common/v1/commonController";
 import * as validator from "@utils/validator";

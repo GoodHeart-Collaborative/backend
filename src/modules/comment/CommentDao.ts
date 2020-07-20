@@ -31,9 +31,9 @@ export class CommentDao extends BaseDao {
             throw error;
         }
     }
-    async updateComment(query, update) {
+    async updateComment(query, update, options?) {
         try {
-            return await this.update('comments', query, update, { new: true });
+            return await this.update('comments', query, update, options);
         } catch (error) {
             throw error;
         }
