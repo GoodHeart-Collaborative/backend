@@ -38,6 +38,8 @@ import { commentRoute as commentRouteV1 } from '@modules/comment/CommentRoute';
 import { adminUser as adminUserV1 } from '@modules/admin/users/AdminUserRoute'
 
 import { adminHomeRoute as adminHomeRoutev1 } from '@modules/admin/Home/HomeRoute'
+import { gratitudeJournalRoute as gratitudeJournalRoutev1 } from '@modules/gratitudeJournal/GratitudeJournalRoute'
+
 // simple routing
 const baseRoute = [
 	{
@@ -55,6 +57,7 @@ export const routes: ServerRoute[] = [
 	...commentRouteV1,
 	...HomeRoute,
 	...adminRouteV1,
+	...gratitudeJournalRoutev1,
 	// ...adminNotificationRouteV1,
 	...commonRouteV1,
 	...contentRouteV1,

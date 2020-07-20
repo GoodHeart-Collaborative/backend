@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import fs = require("fs");
 
 import * as homeConstants from "./HomeConstant";
-import { adviceDao } from "@modules/admin/dailyAdvice/v1/AdviceDao";
+import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
 import { inspirationDao } from "@modules/admin/dailyInspiration/v1/inspirationDao";
 import { unicornDao } from "@modules/admin/unicornHumour/v1/UnicornDao";
 import * as config from "@config/index";
@@ -22,76 +22,76 @@ class HomeController {
         try {
             let responseData: any = {}
             let getDailyUnicorn: any = {}
-            let getGeneralGratitude: any = {
-                next_hit: 1,
-                type: 4,
-                list:[{
-                "_id": "5f0ff204fd8bfe1c64e69f51",
-                // "type": 4,
-                "likeCount": 0,
-                "commentCount": 0,
-                "status": "active",
-                "title": "testststs",
-                "description": "dajdnjsadas",
-                "mediaType": 1,
-                "user": {
-                    profilePicUrl: "https://shorturl.at/ktAQX",
-                    name: "rahul",
-                    desc: "doctor"
-                },
-                "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-                "postedAt": "2020-07-14T11:33:09.000Z",
-                "isPostLater": true,
-                "isLike": false,
-                "created" : 1594974814280,
-                "createdAt": "2020-07-10T10:34:43.840Z",
-                "updatedAt": "2020-07-11T11:34:43.840Z"
-              },
-              {
-                "_id": "5f0ff217fd8bfe1c64e69f56",
-                // "type": 4,
-                "likeCount": 0,
-                "commentCount": 0,
-                "status": "active",
-                "title": "testststs",
-                "description": "dajdnjsadas",
-                "mediaType": 1,
-                "isLike": false,
-                "user": {
-                    profilePicUrl: "https://shorturl.at/ktAQX",
-                    name: "rahul",
-                    desc: "doctor"
-                },
-                "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-                "postedAt": "2020-07-14T11:33:09.000Z",
-                "isPostLater": true,
-                "created" : 1594974814280,
-                "createdAt": "2020-07-10T10:34:43.840Z",
-                "updatedAt": "2020-07-11T11:34:43.840Z"
-                },
-                {
-                    "_id": "5f0ff217fd8bfe1c64e69f56",
-                    // "type": 4,
-                    "likeCount": 0,
-                    "commentCount": 0,
-                    "status": "active",
-                    "title": "testststs",
-                    "isLike": false,
-                    "description": "dajdnjsadas",
-                    "mediaType": 1,
-                    "user": {
-                        profilePicUrl: "https://shorturl.at/ktAQX",
-                        name: "rahul",
-                        desc: "doctor"
-                    },
-                    "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-                    "postedAt": "2020-07-14T11:33:09.000Z",
-                    "isPostLater": true,
-                    "created" : 1594974814280,
-                    "createdAt": "2020-07-10T10:34:43.840Z",
-                    "updatedAt": "2020-07-11T11:34:43.840Z"
-                }]
-            }
+            let getGeneralGratitude: any = {}
+            //     next_hit: 1,
+            //     type: 4,
+            //     list:[{
+            //     "_id": "5f0ff204fd8bfe1c64e69f51",
+            //     // "type": 4,
+            //     "likeCount": 0,
+            //     "commentCount": 0,
+            //     "status": "active",
+            //     "title": "testststs",
+            //     "description": "dajdnjsadas",
+            //     "mediaType": 1,
+            //     "user": {
+            //         profilePicUrl: "https://shorturl.at/ktAQX",
+            //         name: "rahul",
+            //         desc: "doctor"
+            //     },
+            //     "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
+            //     "postedAt": "2020-07-14T11:33:09.000Z",
+            //     "isPostLater": true,
+            //     "isLike": false,
+            //     "created" : 1594974814280,
+            //     "createdAt": "2020-07-10T10:34:43.840Z",
+            //     "updatedAt": "2020-07-11T11:34:43.840Z"
+            //   },
+            //   {
+            //     "_id": "5f0ff217fd8bfe1c64e69f56",
+            //     // "type": 4,
+            //     "likeCount": 0,
+            //     "commentCount": 0,
+            //     "status": "active",
+            //     "title": "testststs",
+            //     "description": "dajdnjsadas",
+            //     "mediaType": 1,
+            //     "isLike": false,
+            //     "user": {
+            //         profilePicUrl: "https://shorturl.at/ktAQX",
+            //         name: "rahul",
+            //         desc: "doctor"
+            //     },
+            //     "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
+            //     "postedAt": "2020-07-14T11:33:09.000Z",
+            //     "isPostLater": true,
+            //     "created" : 1594974814280,
+            //     "createdAt": "2020-07-10T10:34:43.840Z",
+            //     "updatedAt": "2020-07-11T11:34:43.840Z"
+            //     },
+            //     {
+            //         "_id": "5f0ff217fd8bfe1c64e69f56",
+            //         // "type": 4,
+            //         "likeCount": 0,
+            //         "commentCount": 0,
+            //         "status": "active",
+            //         "title": "testststs",
+            //         "isLike": false,
+            //         "description": "dajdnjsadas",
+            //         "mediaType": 1,
+            //         "user": {
+            //             profilePicUrl: "https://shorturl.at/ktAQX",
+            //             name: "rahul",
+            //             desc: "doctor"
+            //         },
+            //         "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
+            //         "postedAt": "2020-07-14T11:33:09.000Z",
+            //         "isPostLater": true,
+            //         "created" : 1594974814280,
+            //         "createdAt": "2020-07-10T10:34:43.840Z",
+            //         "updatedAt": "2020-07-11T11:34:43.840Z"
+            //     }]
+            // }
             let getmemberOfTheDay: any = {
                 "_id": "5f0ff217fd8bfe1c64e69f56",
                 // "type": 4,
@@ -139,6 +139,7 @@ class HomeController {
                 // getmemberOfTheDay = {}
                 getHomeData = await homeDao.getHomeData(params, userId.tokenData)
                 responseData = getHomeData
+                getGeneralGratitude = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
                 // responseData["getmemberOfTheDay"] = getmemberOfTheDay
                 // responseData["data"] = getHomeData
 

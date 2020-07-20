@@ -73,6 +73,7 @@ const DB_MODEL_REF = {
 	LOG: "log",
 	NOTIFICATION: "notification",
 	USER: "user",
+	GRATITUDE_JOURNAL: "gratitude_journal",
 	LOGIN_HISTORY: "login_history",
 	VERSION: "version",
 	POST: "posts",

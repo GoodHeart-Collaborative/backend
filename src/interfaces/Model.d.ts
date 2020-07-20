@@ -1,5 +1,6 @@
 declare interface UserId {
 	userId?: string;
+	Id?:string;
 }
 
 declare interface Device extends UserId {
@@ -117,4 +118,5 @@ declare type ModelNames =
 	"home"	|
 	"inspiration" |
 	"unicorn" |
+	"gratitude_journals"	|
 	'advice';
