@@ -119,6 +119,7 @@ export const memberRoute: ServerRoute[] = [
                 headers: validator.adminAuthorizationHeaderObj,
                 payload: {
                     userId: Joi.string(),
+                    memberCreatedAt: Joi.date()
                 },
                 failAction: appUtils.failActionFunction
             },

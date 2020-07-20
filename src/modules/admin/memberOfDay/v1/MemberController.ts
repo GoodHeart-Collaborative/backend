@@ -23,7 +23,9 @@ class MemberController {
             // const dataToInsert =
             // const data = await inspirationDao.insert("users", params, {});
             // console.log('dataaaaaaaaaaaaa', data);
-            params['memberCreatedAt'] = new Date();
+            if (!params['memberCreatedAt']) {
+                params['memberCreatedAt'] = new Date();
+            }
             const criteria = {
                 _id: params.userId
             }
