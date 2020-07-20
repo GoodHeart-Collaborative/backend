@@ -190,12 +190,12 @@ class LikeController {
                 if (!getComment) {
                     return homeConstants.MESSAGES.ERROR.COMMENT_NOT_FOUND;
                 } else {
-                    data = await commentDao.updateComment(query, { $inc: { likeCount: incOrDec } }, { new: true })
+                    data = await commentDao.updateComment(query, { $inc: { likeCount: incOrDec } })
                     console.log('datadatadatadatadatadatadata555555555555555555', data);
 
                 }
             } else {
-                data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } }, {})
+                data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })
                 console.log('dataaaaaaaaaaaaaaaa', data);
             }
             return {
