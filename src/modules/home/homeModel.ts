@@ -28,7 +28,7 @@ export interface Ihome extends Document {
 const homeSchema = new Schema({
     likeCount: { type: Schema.Types.Number, default: 0 },
     commentCount: { type: Schema.Types.Number, default: 0 },
-    title: { type: Schema.Types.String, required: true },
+    title: { type: Schema.Types.String },
     status: {
         type: String,
         enum: [
