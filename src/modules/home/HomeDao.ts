@@ -11,6 +11,8 @@ export class HomeDao extends BaseDao {
 
     async getHomeData(params, userId) {
         try {
+            console.log('userId.userIduserId.userIduserId.userId', userId.userId);
+
             let { pageNo, limit, endDate } = params
             let match: any = {};
             let aggPipe = [];
@@ -47,7 +49,36 @@ export class HomeDao extends BaseDao {
                     as: "likeData"
                 }
             })
+            console.log('>>>>>>>>>>>>>>>>>>>>');
+
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+            console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLOPPPPPPPPPPP');
+
+            aggPipe.push({
+                $lookup: {
+                    from: "comments",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$postId", "$$post"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    },
+                                    {
+                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.COMMENT]
+                                    }
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "commentData",
+                }
+            })
 
             aggPipe.push({
                 $project:
@@ -68,6 +99,9 @@ export class HomeDao extends BaseDao {
                     isLike:
                     {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
+                    },
+                    isComment: {
+                        $cond: { if: { "$eq": ["$commentData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
                     }
                 }
             });
