@@ -7,6 +7,7 @@ import * as promise from "bluebird";
 import * as config from "@config/index";
 import * as inspirationConstant from "@modules/admin/dailyInspiration/inspirationConstant";
 import { inspirationDao } from "@modules/admin/dailyInspiration/v1/inspirationDao";
+import { userDao } from "@modules/user";
 
 
 class MemberController {
@@ -20,9 +21,15 @@ class MemberController {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
-            const data = await inspirationDao.insert("users", params, {});
-            console.log('dataaaaaaaaaaaaa', data);
-            return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            // const data = await inspirationDao.insert("users", params, {});
+            // console.log('dataaaaaaaaaaaaa', data);
+            params['memberCreatedAt'] = new Date();
+            const criteria = {
+                _id: params.userId
+            }
+            const data = await userDao.updateOne('users', criteria, params, {})
+            return data;
+            // return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;
