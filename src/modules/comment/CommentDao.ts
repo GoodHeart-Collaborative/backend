@@ -33,7 +33,7 @@ export class CommentDao extends BaseDao {
     }
     async updateComment(query, update, options?) {
         try {
-            return await this.update('comments', query, update, options);
+            return await this.update('comments', query, update, {});
         } catch (error) {
             throw error;
         }
