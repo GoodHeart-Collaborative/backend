@@ -9,14 +9,14 @@ import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import { likeController } from "@modules/admin/like/likeController";
 import * as commentValidator from './commentValidator';
-import { commentController } from "@modules/comment";
+import { commentController } from "@modules/admin/comment/commentController";
 export const adminCommentRoute: ServerRoute[] = [
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/comment`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = request.query;
+            const payload: CommentRequest.getComments = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await commentController.getComments(payload);
@@ -33,12 +33,8 @@ export const adminCommentRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: {
-                    pageNo: Joi.number().required(),
-                    limit: Joi.number().required(),
-                    postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
-                    commentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).optional(),
-                },  // likeValidator.getLikes,
+                query: commentValidator.getComments,
+                // likeValidator.getLikes,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

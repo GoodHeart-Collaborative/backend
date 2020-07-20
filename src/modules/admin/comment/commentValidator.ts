@@ -4,22 +4,10 @@ import * as config from "@config/index";
 
 
 let getComments = Joi.object({
-    title: Joi.string(),
-    description: Joi.string(),
-    isPostLater: Joi.boolean(),
-    // imageUrl: Joi.string(),
-    postedAt: Joi.date(),
-    type: Joi.number().valid([
-        config.CONSTANT.HOME_TYPE.UNICORN,
-        config.CONSTANT.HOME_TYPE.INSPIRATION,
-        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-    ]).default(config.CONSTANT.HOME_TYPE.UNICORN),
-    mediaType: Joi.number().valid([
-        config.CONSTANT.MEDIA_TYPE.IMAGE,
-        config.CONSTANT.MEDIA_TYPE.VIDEO,
-    ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
-    mediaUrl: Joi.string(),
-    thumbnailUrl: Joi.string(),
+    pageNo: Joi.number().required(),
+    limit: Joi.number().required(),
+    postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
+    commentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).optional(),
 }).unknown()
 
 export {

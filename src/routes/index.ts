@@ -23,7 +23,7 @@ import { homeRoute as HomeRoute } from "@modules/home/HomeRoute";
 // version routes
 import { versionRoute as versionRouteV1 } from "@modules/version/v1/versionRoute";
 
-import { categoryRoute as categoryRouteV1 } from '@modules/admin/catgeory/v1/categoryRoute';
+import { categoryRoute as categoryRouteV1 } from '@modules/admin/catgeory/categoryRoute';
 import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
 // import { inspirationRoute as inspirationRouteV1 } from "@modules/admin/dailyInspiration/v1/inspirationRoute";
 
