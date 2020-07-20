@@ -80,6 +80,11 @@ export const categoryRoute: ServerRoute[] = [
                     ]),
                     sortBy: Joi.string().valid('title', 'createdAt').default('createdAt'),
                     searchTerm: Joi.string(),
+                    status: Joi.string().valid([
+                        config.CONSTANT.STATUS.ACTIVE,
+                        config.CONSTANT.STATUS.BLOCKED,
+                        config.CONSTANT.STATUS.DELETED
+                    ]),
                     fromDate: Joi.date(),
                     toDate: Joi.date()
                 },
