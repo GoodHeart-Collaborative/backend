@@ -27,6 +27,7 @@ class HomeController {
                 type: 4,
                 list: [{
                     "_id": "5f0ff204fd8bfe1c64e69f51",
+                    'isComment': true,
                     // "type": 4,
                     "likeCount": 0,
                     "commentCount": 0,
