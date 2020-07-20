@@ -147,8 +147,10 @@ class LikeController {
         try {
             let getPost: any = {}
             let query: any = {}
+            let data: any = {};
             let getComment: any = {}
-            let incOrDec:number = 1
+
+            let incOrDec: number = 1
             query = { _id: await appUtils.toObjectId(params.postId) }
             if (params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
                 return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
@@ -169,25 +171,37 @@ class LikeController {
             if (params && params.commentId) {
                 params["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
             }
-            let getLike = await likeDao.checkLike(params) 
+            let getLike = await likeDao.checkLike(params);
+            console.log('getLikegetLike', getLike);
+
             if (getLike) {
                 incOrDec = -1
-                await likeDao.removeLike(params)
+                data = await likeDao.removeLike(params)
+                console.log('data1111111111111111111', data);
+
             } else {
-                await likeDao.addLike(params)
+                data = await likeDao.addLike(params);
+                console.log('data22222222222222222222', data);
             }
             if (params && params.commentId) {
                 query = { _id: await appUtils.toObjectId(params.commentId) }
-                getComment = await commentDao.checkComment(query)
+                getComment = await commentDao.checkComment(query);
+                console.log('getCommentgetCommentgetCommentgetComment', getComment);
                 if (!getComment) {
                     return homeConstants.MESSAGES.ERROR.COMMENT_NOT_FOUND;
                 } else {
-                    await commentDao.updateComment(query, { $inc: { likeCount: incOrDec }})
-                } 
+                    data = await commentDao.updateComment(query, { $inc: { likeCount: incOrDec } }, { new: true })
+                    console.log('datadatadatadatadatadatadata555555555555555555', data);
+
+                }
             } else {
-                await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec }})
+                data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } }, {})
+                console.log('dataaaaaaaaaaaaaaaa', data);
             }
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            return {
+                postId: params.postId,
+                commentId: params.commentId ? params.commentId : ''
+            }
         } catch (error) {
             throw error;
         }
