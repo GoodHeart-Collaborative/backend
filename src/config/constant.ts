@@ -57,7 +57,7 @@ const MEMBER_TYPE = {
 const USER_ADMIN_STATUS = {
 	PENDING: 'pending',
 	VERIFIED: 'verified',
-	REJECTED: ''
+	REJECTED: 'rejected',
 }
 const ACCOUNT_LEVEL = {
 	ADMIN: "admin",
@@ -679,5 +679,5 @@ export const CONSTANT = Object.freeze({
 	USER_ADMIN_STATUS,
 	COMMENT_CATEGORY: COMMENT_CATEGORY,
 	// COMMENT_TYPE: COMMENT_TYPE,
-	MEDIA_TYPE:MEDIA_TYPE
+	MEDIA_TYPE: MEDIA_TYPE
 });

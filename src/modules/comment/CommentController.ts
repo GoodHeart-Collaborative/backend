@@ -152,7 +152,7 @@ class CommentController {
             let getComment: any = {}
             query = { _id: await appUtils.toObjectId(params.postId) }
             // if (params.type === CONSTANT.COMMENT_TYPE.DAILY_ADVICE) {
-                // getPost = await commentDao.checkPost(query, "advice")
+            // getPost = await commentDao.checkPost(query, "advice")
             // } else if (params.type === CONSTANT.COMMENT_TYPE.UNICORN) {
             //     getPost = await commentDao.checkPost(query, "unicorn")
             // } else if (params.type === CONSTANT.COMMENT_TYPE.INSPIRATION) {
@@ -183,10 +183,10 @@ class CommentController {
                     return homeConstants.MESSAGES.ERROR.COMMENT_NOT_FOUND;
                 } else {
                     params["category"] = CONSTANT.COMMENT_CATEGORY.COMMENT
-                    await commentDao.updateComment(query, { $inc: { commentCount: 1 }})
+                    await commentDao.updateComment(query, { $inc: { commentCount: 1 } })
                 }
             } else {
-                await homeDao.updateHomePost(query, { $inc: { commentCount: 1 }})
+                await homeDao.updateHomePost(query, { $inc: { commentCount: 1 } })
             }
             await commentDao.addComments(params)
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;

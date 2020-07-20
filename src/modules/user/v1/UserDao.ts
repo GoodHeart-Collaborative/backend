@@ -518,10 +518,13 @@ export class UserDao extends BaseDao {
 				match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 			}
 			if (searchTerm) {
-				match["$or"] = [
-					{ "title": { "$regex": searchTerm, "$options": "-i" } },
-				];
+				match['$or'] = [
+					{ email: new RegExp('.*' + searchTerm + '.*', 'i') },
+					{ firstName: new RegExp('.*' + searchTerm + '.*', 'i') },
+					{ lastName: new RegExp('.*' + searchTerm + '.*', 'i') },
+				]
 			}
+
 			console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
 			if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }

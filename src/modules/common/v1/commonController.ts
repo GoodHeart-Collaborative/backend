@@ -2,7 +2,7 @@
 
 import * as asyncFunction from "async";
 
-import { adminDao } from "@modules/admin/v1/AdminDao";
+import { adminDao } from "@modules/admin/users/AdminDao";
 import * as appUtils from "@utils/appUtils";
 import { baseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";

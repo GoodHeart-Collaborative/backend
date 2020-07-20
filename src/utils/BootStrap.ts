@@ -1,6 +1,6 @@
 "use strict";
 
-import { adminDao } from "@modules/admin/v1/AdminDao";
+import { adminDao } from "@modules/admin/users/AdminDao";
 import { contentDao } from "@modules/content/v1/ContentDao";
 import * as config from "@config/index";
 import { CronUtils } from "@lib/CronUtils";

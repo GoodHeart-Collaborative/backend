@@ -195,7 +195,7 @@ export class UserController {
 					}
 
 					else if (step2.isAdminRejected) {
-						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
+						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					}
 					else if (!step2.isAdminVerified) {
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
@@ -300,7 +300,7 @@ export class UserController {
 				}
 				if (!step1.isEmailVerified) {
 					const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
-					return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: accessToken })
+					return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 				}
 
 				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {

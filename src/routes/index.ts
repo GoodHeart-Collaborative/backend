@@ -6,7 +6,7 @@ import { ServerRoute } from "hapi";
  * v1 routes
  */
 // admin routes
-import { adminRoute as adminRouteV1 } from "@modules/admin/v1/adminRoute";
+import { adminRoute as adminRouteV1 } from "@modules/admin/adminRoute";
 
 // admin notification routes
 import { adminNotificationRoute as adminNotificationRouteV1 } from "@modules/adminNotification/v1/adminNotificationRoute";
@@ -23,7 +23,7 @@ import { homeRoute as HomeRoute } from "@modules/home/HomeRoute";
 // version routes
 import { versionRoute as versionRouteV1 } from "@modules/version/v1/versionRoute";
 
-import { categoryRoute as categoryRouteV1 } from '@modules/admin/catgeory/v1/categoryRoute';
+import { categoryRoute as categoryRouteV1 } from '@modules/admin/catgeory/categoryRoute';
 import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
 // import { inspirationRoute as inspirationRouteV1 } from "@modules/admin/dailyInspiration/v1/inspirationRoute";
 
@@ -41,6 +41,9 @@ import { adminHomeRoute as adminHomeRoutev1 } from '@modules/admin/Home/HomeRout
 import { gratitudeJournalRoute as gratitudeJournalRoutev1 } from '@modules/gratitudeJournal/GratitudeJournalRoute'
 
 // simple routing
+import { adminLikeRoute as adminLikeRouteV1 } from '@modules/admin/like/likeRoute';
+
+import { adminCommentRoute as adminCommentRouteV1 } from '@modules/admin/comment/commentRoute';
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -69,6 +72,8 @@ export const routes: ServerRoute[] = [
 	// ...adviceROuteV1,
 	...memberRouteV1,
 	...adminUserV1,
-	...adminHomeRoutev1
-	// ...versionRouteV1
+	...adminHomeRoutev1,
+	...adminLikeRouteV1,
+	// ...versionRouteV1,
+	...adminCommentRouteV1
 ];

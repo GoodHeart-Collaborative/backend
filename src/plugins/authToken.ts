@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import * as AuthBearer from "hapi-auth-bearer-token";
 import { Request, ResponseToolkit } from "hapi";
 
-import { adminDao } from "@modules/admin/v1/AdminDao";
+import { adminDao } from "@modules/admin/users/AdminDao";
 import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { redisClient } from "@lib/redis/RedisClient";

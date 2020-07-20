@@ -29,7 +29,7 @@
 	"dependencies": {
 		"@types/chai-http": "^3.0.5",
 		"@types/mocha": "^5.2.7",
-		"@types/mongoose": "^5.5.22",
+		"@types/mongoose": "^5.7.32",
 		"@types/node": "^10.14.22",
 		"amqplib": "^0.5.5",
 		"atob": "^2.1.2",
@@ -67,7 +67,7 @@
 		"md5": "^2.2.1",
 		"module-alias": "^2.2.2",
 		"moment": "^2.24.0",
-		"mongoose": "^5.7.5",
+		"mongoose": "^5.9.25",
 		"mongoose-auto-increment": "^5.0.1",
 		"node-cron": "^2.0.3",
 		"node-typescript": "^0.1.3",

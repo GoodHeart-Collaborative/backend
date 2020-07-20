@@ -20,14 +20,15 @@ export interface Ihome extends Document {
     postedAt: Date,
     type: number;
     mediaType: number,
-    mediaUrl: number
+    mediaUrl: number,
+    // imageUrl: string;
 }
 
 
 const homeSchema = new Schema({
     likeCount: { type: Schema.Types.Number, default: 0 },
     commentCount: { type: Schema.Types.Number, default: 0 },
-    title: { type: Schema.Types.String, required: true },
+    title: { type: Schema.Types.String },
     status: {
         type: String,
         enum: [
@@ -59,6 +60,7 @@ const homeSchema = new Schema({
     },
     mediaUrl: { type: String },
     thumbnailUrl: { type: String },
+    // imageUrl: { type: String },
     created: { type: Number, default: new Date() }
     // // createdAt: { type: Date },
     // updatedAt: { type: Date }

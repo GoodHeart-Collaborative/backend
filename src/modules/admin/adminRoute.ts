@@ -3,7 +3,7 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { adminController } from "@modules/admin/v1/AdminController";
+import { adminController } from "@modules/admin/AdminController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";

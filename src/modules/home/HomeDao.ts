@@ -11,47 +11,47 @@ export class HomeDao extends BaseDao {
 
     async getHomeData(params, userId) {
         try {
-            let {pageNo, limit, endDate } = params
+            let { pageNo, limit, endDate } = params
             let match: any = {};
             let aggPipe = [];
-            let result:any = {}
+            let result: any = {}
             match["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
-            if(endDate) {
+            if (endDate) {
                 match["createdAt"] = { $lt: new Date(endDate) };
             }
             aggPipe.push({
-				$lookup: {
-					from: "likes",
-					let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
-					pipeline: [
-						{
-							$match: {
-								$expr: {
-									$and: [
-                                    {
-										$eq: ["$postId", "$$post"]
-                                    },
-                                    {
-										$eq: ["$userId", "$$user"]
-                                    }, 
-                                    {
-										$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
-                                    }
-                                ]
-								}
-							}
-						}
-					],
-					as: "likeData"
-				}
+                $lookup: {
+                    from: "likes",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$postId", "$$post"]
+                                        },
+                                        {
+                                            $eq: ["$userId", "$$user"]
+                                        },
+                                        {
+                                            $eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "likeData"
+                }
             })
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project:
-                  {
+                {
                     _id: 1,
                     likeCount: 1,
                     commentCount: 1,
@@ -65,15 +65,15 @@ export class HomeDao extends BaseDao {
                     created: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    isLike: 
-                      {
+                    isLike:
+                    {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
-                      }
-                  }
-             })
+                    }
+                }
+            })
             aggPipe.push({ "$match": match });
             result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
-            if(result && result.list && result.list.length == 0) {
+            if (result && result.list && result.list.length == 0) {
                 delete match.postedAt
                 aggPipe.pop()
                 result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
@@ -90,9 +90,12 @@ export class HomeDao extends BaseDao {
             throw error;
         }
     }
-    async updateHomePost(query, update) {
+    async updateHomePost(query, update, options?: any) {
         try {
-            return await this.update('home', query, update, {});
+            options['new'] = true;
+            options['lean'] = true;
+
+            return await this.updateOne('home', query, update, options);
         } catch (error) {
             throw error;
         }
