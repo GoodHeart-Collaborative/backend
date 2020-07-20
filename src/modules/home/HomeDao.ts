@@ -70,7 +70,8 @@ export class HomeDao extends BaseDao {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
                     }
                 }
-            })
+            });
+
             aggPipe.push({ "$match": match });
             result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
             if (result && result.list && result.list.length == 0) {
@@ -92,10 +93,10 @@ export class HomeDao extends BaseDao {
     }
     async updateHomePost(query, update, options?: any) {
         try {
-            options['new'] = true;
-            options['lean'] = true;
+            // options['new'] = true;
+            // options['lean'] = true;
 
-            return await this.updateOne('home', query, update, options);
+            return await this.updateOne('home', query, update, {});
         } catch (error) {
             throw error;
         }
