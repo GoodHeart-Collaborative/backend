@@ -120,33 +120,36 @@ export class GratitudeJournalDao extends BaseDao {
 			// 		profilePicture:  { $ifNull: [ "$users.profilePicture", "" ] }
 			// 	}
 			// } });
-            // aggPipe.push({
-			// 	$lookup: {
-			// 		from: "likes",
-			// 		let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
-			// 		pipeline: [
-			// 			{
-			// 				$match: {
-			// 					$expr: {
-			// 						$and: [
-            //                         {
-			// 							$eq: ["$postId", "$$post"]
-            //                         },
-            //                         {
-			// 							$eq: ["$userId", "$$user"]
-            //                         }, 
-            //                         {
-			// 							$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
-            //                         }
-            //                     ]
-			// 					}
-			// 				}
-			// 			}
-			// 		],
-			// 		as: "likeData"
-			// 	}
-            // })
-            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+				$lookup: {
+					from: "likes",
+					let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$and: [
+                                    {
+										$eq: ["$postId", "$$post"]
+                                    },
+                                    {
+										$eq: ["$userId", "$$user"]
+                                    }, 
+                                    {
+										$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+                                    },
+                                    {
+										$eq: ["$type", config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                    }
+                                ]
+								}
+							}
+						}
+					],
+					as: "likeData"
+				}
+            })
+            aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project:
@@ -165,11 +168,11 @@ export class GratitudeJournalDao extends BaseDao {
                     users : {
                         name: { $ifNull:["$user.firstName", ""]}, 
                         profilePicture:  { $ifNull: [ "$user.profilePicture", "" ] }
-                    }
-                    // isLike: 
-                    //   {
-                    //     $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
-                    //   }
+                    },
+                    isLike: 
+                      {
+                        $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
+                      }
                   }
              })
             result = await this.aggregateWithPagination("gratitude_journals", aggPipe, limit, pageNo, true)
@@ -196,6 +199,13 @@ export class GratitudeJournalDao extends BaseDao {
     async addGratitudeJournal(payload) {
         try {
             return await this.save('gratitude_journals', payload);
+        } catch (error) {
+            throw error;
+        }
+    }
+    async updateLikeAndCommentCount(query, update) {
+        try {
+            return await this.updateOne('gratitude_journals', query, update, {});
         } catch (error) {
             throw error;
         }

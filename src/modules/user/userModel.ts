@@ -49,6 +49,7 @@ export interface IUser extends Document {
 	createdAt: number;
 	countMember: number;
 	memberCreatedAt: Date;
+	isMemberOfDay: boolean;
 	likeCount: number,
 	commentCount: number,
 	isAdminRejected: boolean;
@@ -140,6 +141,7 @@ const userSchema = new Schema({
 	},
 	countMember: { type: Number, default: 0 },
 	memberCreatedAt: { type: Date },
+	isMemberOfDay: { type: Boolean, default: false },
 	about: { type: String },
 	userPrivacy: {
 

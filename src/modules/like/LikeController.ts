@@ -7,6 +7,8 @@ import * as likeConstants from "./LikeConstant";
 import { likeDao } from "./LikeDao";
 import * as config from "@config/index";
 import { homeDao } from "../home/HomeDao";
+import { gratitudeJournalDao } from "../gratitudeJournal/GratitudeJournalDao";
+import { userDao } from "../user/v1/UserDao";
 import * as appUtils from '../../utils/appUtils'
 import * as homeConstants from "../home/HomeConstant";
 import { commentDao } from "../comment/CommentDao";
@@ -153,9 +155,11 @@ class LikeController {
             let incOrDec: number = 1
             query = { _id: await appUtils.toObjectId(params.postId) }
             if (params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
-                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+                // return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+                getPost = await userDao.checkUser(query)
             } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
-                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+                // return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+                getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
             } else {
                 getPost = await homeDao.checkHomePost(query)
             }
@@ -172,31 +176,30 @@ class LikeController {
                 params["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
             }
             let getLike = await likeDao.checkLike(params);
-            console.log('getLikegetLike', getLike);
 
             if (getLike) {
                 incOrDec = -1
                 data = await likeDao.removeLike(params)
-                console.log('data1111111111111111111', data);
 
             } else {
                 data = await likeDao.addLike(params);
-                console.log('data22222222222222222222', data);
             }
             if (params && params.commentId) {
                 query = { _id: await appUtils.toObjectId(params.commentId) }
                 getComment = await commentDao.checkComment(query);
-                console.log('getCommentgetCommentgetCommentgetComment', getComment);
                 if (!getComment) {
                     return homeConstants.MESSAGES.ERROR.COMMENT_NOT_FOUND;
                 } else {
                     data = await commentDao.updateComment(query, { $inc: { likeCount: incOrDec } })
-                    console.log('datadatadatadatadatadatadata555555555555555555', data);
-
                 }
             } else {
-                data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })
-                console.log('dataaaaaaaaaaaaaaaa', data);
+                if(params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
+                    data = await userDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
+                } else if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                    data = await gratitudeJournalDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
+                } else {
+                    data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })
+                }
             }
             return {
                 postId: params.postId,
