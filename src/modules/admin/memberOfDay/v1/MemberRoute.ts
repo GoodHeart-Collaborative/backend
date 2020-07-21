@@ -94,6 +94,44 @@ export const memberRoute: ServerRoute[] = [
         }
     },
 
+
+    {
+        method: "POST",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/members`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload = request.payload;
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await memberController.saveMembers(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "members"],
+            description: "get member add",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                payload: {
+                    userId: Joi.string(),
+                    memberCreatedAt: Joi.date()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
     // {
     //     method: "PATCH",
     //     path: `${config.SERVER.API_BASE_URL}/v1/admin/inspiration/{Id}/status`,

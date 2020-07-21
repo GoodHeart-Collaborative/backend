@@ -165,9 +165,9 @@ class LikeController {
             }
             if (getPost) {
                 if (getPost.status === config.CONSTANT.STATUS.DELETED) {
-                    return homeConstants.MESSAGES.ERROR.POST_DELETED;
+                    return Promise.reject(homeConstants.MESSAGES.ERROR.POST_DELETED);
                 } else if (getPost.status === config.CONSTANT.STATUS.BLOCKED) {
-                    return homeConstants.MESSAGES.ERROR.POST_BLOCK;
+                    return Promise.reject(homeConstants.MESSAGES.ERROR.POST_BLOCK);
                 }
             } else {
                 return homeConstants.MESSAGES.ERROR.POST_NOT_FOUND;
@@ -206,7 +206,7 @@ class LikeController {
                 commentId: params.commentId ? params.commentId : ''
             }
         } catch (error) {
-            throw error;
+            return Promise.reject(error);
         }
     }
     async getLikeList(params: LikeRequest.AddLikeRequest) {
