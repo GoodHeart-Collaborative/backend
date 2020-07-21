@@ -85,7 +85,7 @@ let verifyForGotOtp = Joi.object({
         .min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
         .max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
         .optional(),
-    otp: Joi.number().min(1000).max(9999).required(),
+    otp: Joi.string(),
     deviceId: Joi.string()
     // email: Joi.string().lowercase().trim().optional(),
     // type: Joi.string().valid('email', 'mobile').default('mobile'),

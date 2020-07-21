@@ -65,7 +65,8 @@ export const MESSAGES = {
 		OTP_NOT_MATCH: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Incorrect Otp",
-			"type": "Verify otp not match"
+			"type": "Verify otp not match",
+			data: {}
 		},
 		EMAIL_OR_PHONE_REQUIRED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
@@ -209,7 +210,7 @@ export const MESSAGES = {
 		USER_ACCOUNT_SCREENING: (data) => {
 			data["message"] = "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!"
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 				"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
 				"type": "BLOCKED_USER",
 				data: data
