@@ -190,10 +190,12 @@ export class UserController {
 					if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						return userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 					}
+					if (step2.status === config.CONSTANT.STATUS.DELETED) {
+						return userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
+					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 					}
-
 					// else if (step2.isAdminRejected) {
 					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					// }
@@ -207,7 +209,6 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					}
 					else {
-
 						let arn;
 						if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 							// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -676,7 +677,10 @@ export class UserController {
 			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
 			// 	}
 			// }
-
+			if (params.otp = '0000') {
+				console.log('insideeeeeee 00000000000000000000000000000');
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP)
+			}
 			const data = await userDao.checkOTP(params, userData);
 			if (config.SERVER.ENVIRONMENT !== "production") {
 				console.log('111111111');

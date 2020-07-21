@@ -141,8 +141,8 @@ export const SERVER = Object.freeze({
 			// PASSWORD: "Appin123!@#"
 			HOST: "smtp.gmail.com",
 			PORT: "587",
-			USER: "avtopiaaog@gmail.com",
-			PASSWORD: "Avtopia@4321"
+			USER: "womencommunite@gmail.com",
+			PASSWORD: "12345@women"
 		}
 	},
 	TWILIO: {

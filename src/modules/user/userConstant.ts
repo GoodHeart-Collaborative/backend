@@ -122,10 +122,21 @@ export const MESSAGES = {
 			data: {}
 		},
 		BLOCKED: (data) => {
+			data["message"] = "Your account have been blocked by admin."
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 				"message": "Your account have been blocked by admin.",
-				"type": "USER_BLOCKED"
+				"type": "USER_BLOCKED",
+				data: data,
+			}
+		},
+		DELETED: (data) => {
+			data["message"] = "Your account have been deleted by admin."
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+				"message": "Your account have been deleted by admin.",
+				"type": "USER_DELETED",
+				data: data,
 			}
 		},
 		DEFAULT_WITH_DATA: (data) => {

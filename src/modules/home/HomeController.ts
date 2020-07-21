@@ -5,7 +5,7 @@ import fs = require("fs");
 
 import * as homeConstants from "./HomeConstant";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
-import { userDao } from "@modules/user/v1/UserDao";
+import { userDao } from "@modules/user/UserDao";
 import { adviceDao } from "@modules/admin/dailyAdvice/AdviceDao";
 import { inspirationDao } from "@modules/admin/dailyInspiration/inspirationDao";
 import { unicornDao } from "@modules/admin/unicornHumour/v1/UnicornDao";

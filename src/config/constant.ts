@@ -240,7 +240,7 @@ const MESSAGES = {
 		},
 		DELETED: {
 			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Your account have been blocked by admin.",
+			"message": "Your account have been deleted by admin.",
 			type: "DELETED"
 		},
 		INCORRECT_PASSWORD: {
@@ -275,7 +275,7 @@ const MESSAGES = {
 		},
 		INVALID_OTP: {
 			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "please type the valid otp",
+			"message": "otp must be a safe number",
 			"type": "INVALID_OTP"
 		},
 		FIELD_REQUIRED: (value) => {

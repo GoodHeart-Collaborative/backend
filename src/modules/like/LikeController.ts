@@ -8,7 +8,7 @@ import { likeDao } from "./LikeDao";
 import * as config from "@config/index";
 import { homeDao } from "../home/HomeDao";
 import { gratitudeJournalDao } from "../gratitudeJournal/GratitudeJournalDao";
-import { userDao } from "../user/v1/UserDao";
+import { userDao } from "../user/UserDao";
 import * as appUtils from '../../utils/appUtils'
 import * as homeConstants from "../home/HomeConstant";
 import { commentDao } from "../comment/CommentDao";
@@ -193,9 +193,9 @@ class LikeController {
                     data = await commentDao.updateComment(query, { $inc: { likeCount: incOrDec } })
                 }
             } else {
-                if(params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
+                if (params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
                     data = await userDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
-                } else if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                     data = await gratitudeJournalDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
                 } else {
                     data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })
