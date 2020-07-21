@@ -11,17 +11,17 @@ import { adminRoute as adminRouteV1 } from "@modules/admin/adminRoute";
 // admin notification routes
 import { adminNotificationRoute as adminNotificationRouteV1 } from "@modules/adminNotification/v1/adminNotificationRoute";
 // user routes
-import { commonRoute as commonRouteV1 } from "@modules/common/v1/commonRoute";
+import { commonRoute as commonRouteV1 } from "@modules/common/commonRoute";
 // content routes
 import { contentRoute as contentRouteV1 } from "@modules/content/v1/contentRoute";
 // notification routes
 // import { notificationRoute as notificationRouteV1 } from "@modules/notification/v1/notificationRoute";
 // user routes
-import { userRoute as userRouteV1 } from "@modules/user/v1/userRoute";
+import { userRoute as userRouteV1 } from "@modules/user/userRoute";
 import { homeRoute as HomeRoute } from "@modules/home/HomeRoute";
 
 // version routes
-import { versionRoute as versionRouteV1 } from "@modules/version/v1/versionRoute";
+import { versionRoute as versionRouteV1 } from "@modules/version/versionRoute";
 
 import { categoryRoute as categoryRouteV1 } from '@modules/admin/catgeory/categoryRoute';
 import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
@@ -30,7 +30,7 @@ import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
 // import { unicornRoute as unicornRouteV1 } from "@modules/admin/unicornHumour/v1/UnicornRoute";
 
 // import { adviceROute as adviceROuteV1 } from '@modules/admin/dailyAdvice/v1/AdviceRoute';
-import { memberRoute as memberRouteV1 } from '@modules/admin/memberOfDay/v1/MemberRoute';
+import { memberRoute as memberRouteV1 } from '@modules/admin/memberOfDay/MemberRoute';
 
 import { likeRoute as likeRouteV1 } from '@modules/like/LikeRoute';
 import { commentRoute as commentRouteV1 } from '@modules/comment/CommentRoute';

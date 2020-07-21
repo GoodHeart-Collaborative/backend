@@ -1,14 +1,16 @@
 declare namespace HomeRequest {
 
-    export interface AdviceRequestAdd extends Device {
+    export interface HomeRequestAdd extends Device {
         title: string,
         description: string,
         isPostLater: boolean,
-        imageUrl: string,
+        // imageUrl: string,
         postedAt: Date,
         type: number;
         mediaType: number,
-        mediaUrl: number
+        mediaUrl: string;
+        thumbnailUrl: string;
+
     }
 
     export interface IHomeById {

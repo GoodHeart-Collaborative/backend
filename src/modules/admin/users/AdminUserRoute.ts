@@ -132,8 +132,8 @@ export const adminUser: ServerRoute[] = [
                         config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
                         config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
                     ]),
-                    isAdminVerified: Joi.boolean(),
-                    isAdminRejected: Joi.boolean()
+                    // isAdminVerified: Joi.boolean(),
+                    // isAdminRejected: Joi.boolean()
 
                 },
                 failAction: appUtils.failActionFunction

@@ -2,8 +2,8 @@
 
 import * as config from "@config/constant";
 import * as contactConstant from "@modules/contact/contactConstant";
-import { contactController } from "@modules/contact/v1/ContactController";
-import { contactDao } from "@modules/contact/v1/ContactDao";
+import { contactController } from "@modules/contact/ContactController";
+import { contactDao } from "@modules/contact/ContactDao";
 
 export const contactSyncListeners = async function (socket) {
 	/**

@@ -27,7 +27,8 @@ export class CronUtils {
 				{
 					$match: {
 						status: config.CONSTANT.STATUS.ACTIVE,
-						isAdminVerified: true,
+						// isAdminVerified: true,
+						adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
 						countMember: 0,
 					}
 				},

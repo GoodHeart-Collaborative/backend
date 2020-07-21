@@ -10,7 +10,7 @@ import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { redisClient } from "@lib/redis/RedisClient";
 import { responseHandler } from "@utils/ResponseHandler";
 import * as tokenManager from "@lib/tokenManager";
-import { userDao } from "@modules/user/v1/UserDao";
+import { userDao } from "@modules/user/UserDao";
 
 // Register Authorization Plugin
 export const plugin = {

@@ -69,7 +69,7 @@ declare namespace UserRequest {
 	export interface verifyOTP {
 		countryCode: string;
 		mobileNo: string;
-		otp: number;
+		otp: string;
 		type: string;
 		deviceId: string;
 		verificationFor: string;

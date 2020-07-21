@@ -15,7 +15,7 @@ export const adminHomeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/home`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = request.payload;
+            const payload: HomeRequest.HomeRequestAdd = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await adminHomeController.addPost(payload);
