@@ -6,7 +6,7 @@ import * as Joi from "joi";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
-import { versionController } from "@modules/version/v1/VersionController";
+import { versionController } from "@modules/version/VersionController";
 import { responseHandler } from "@utils/ResponseHandler";
 
 export const versionRoute: ServerRoute = [

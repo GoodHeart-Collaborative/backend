@@ -49,10 +49,8 @@ export class HomeDao extends BaseDao {
                     as: "likeData"
                 }
             })
-            console.log('>>>>>>>>>>>>>>>>>>>>');
 
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
-            console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLOPPPPPPPPPPP');
 
             aggPipe.push({
                 $lookup: {

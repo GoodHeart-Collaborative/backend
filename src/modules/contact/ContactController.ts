@@ -4,8 +4,8 @@ import * as _ from "lodash";
 import * as promise from "bluebird";
 
 import * as contactConstant from "@modules/contact/contactConstant";
-import { contactDao } from "@modules/contact/v1/ContactDao";
-import { userDao } from "@modules/user/v1/UserDao";
+import { contactDao } from "@modules/contact/ContactDao";
+import { userDao } from "@modules/user/UserDao";
 
 class ContactController {
 

@@ -13,7 +13,7 @@ class AdminHomeController {
      * than redisClient.storeList() function saves value in redis. 
      */
 
-    async addPost(params: UnicornRequest.IUnicornAdd) {
+    async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =

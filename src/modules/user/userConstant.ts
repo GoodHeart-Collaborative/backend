@@ -54,12 +54,12 @@ export const MESSAGES = {
 		},
 		MOBILE_NO_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NOT_REGISTER,
-			"message": "Mobile No. is not registred with us.",
+			"message": "Mobile No. is not registered with us.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_REGISTER,
-			"message": "Email is not registred with us.",
+			"message": "Email is not registered with us.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		OTP_NOT_MATCH: {
@@ -125,7 +125,15 @@ export const MESSAGES = {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 				"message": "Your account have been blocked by admin.",
-				"type": "USER_BLOCKED"
+				"type": "USER_BLOCKED",
+			}
+		},
+		DELETED: (data) => {
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+				"message": "Your account have been deleted by admin.",
+				"type": "USER_DELETED",
+				data: data,
 			}
 		},
 		DEFAULT_WITH_DATA: (data) => {

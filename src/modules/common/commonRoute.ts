@@ -6,13 +6,13 @@ import * as Joi from "joi";
 import { adminController } from "@modules/admin/users/AdminController";
 import { adminDao } from "@modules/admin/users/AdminDao";
 import * as appUtils from "@utils/appUtils";
-import { commonController } from "@modules/common/v1/commonController";
+import { commonController } from "@modules/common/commonController";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
-import { userController } from "@modules/user/v1/UserController";
+import { userController } from "@modules/user/UserController";
 import * as tokenManager from "@lib/tokenManager";
-import { userDao } from "@modules/user/v1/UserDao";
+import { userDao } from "@modules/user/UserDao";
 
 export const commonRoute: ServerRoute = [
 	{

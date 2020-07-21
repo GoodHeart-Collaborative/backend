@@ -10,7 +10,7 @@ import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager } from "@lib/MailManager";
 import * as tokenManager from "@lib/tokenManager";
-import { userDao } from "@modules/user/v1/UserDao";
+import { userDao } from "@modules/user/UserDao";
 import { TemplateUtil } from "@utils/TemplateUtil";
 
 class AdminController {
@@ -602,16 +602,21 @@ class AdminController {
 					status: params.status
 				}
 			}
-			else if (params.isAdminRejected) {
+			// else if (params.isAdminRejected) {
+			// 	dataToUpdate = {
+			// 		isAdminVerified: false,
+			// 		isAdminRejected: params.isAdminRejected
+			// 	}
+			// }
+			// else if (params.isAdminVerified) {
+			// 	dataToUpdate = {
+			// 		isAdminRejected: false,
+			// 		isAdminVerified: params.isAdminVerified
+			// 	}
+			// }
+			else {
 				dataToUpdate = {
-					isAdminVerified: false,
-					isAdminRejected: params.isAdminRejected
-				}
-			}
-			else if (params.isAdminVerified) {
-				dataToUpdate = {
-					isAdminRejected: false,
-					isAdminVerified: params.isAdminVerified
+					adminStatus: params.adminStatus
 				}
 			}
 

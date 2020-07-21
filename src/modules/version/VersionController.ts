@@ -2,7 +2,7 @@
 
 import * as config from "@config/constant";
 import * as versionConstant from "@modules/version/versionConstant";
-import { versionDao } from "@modules/version/v1/VersionDao";
+import { versionDao } from "@modules/version/VersionDao";
 
 export class VersionController {
 

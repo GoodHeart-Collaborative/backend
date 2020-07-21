@@ -9,9 +9,9 @@ import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
-import { userController } from "@modules/user/v1/UserController";
+import { userController } from "@modules/user/UserController";
 import { join } from "path";
-import * as validateUser from '../userValidator';
+import * as validateUser from './userValidator';
 export const
 	userRoute: ServerRoute = [
 		{
@@ -121,7 +121,6 @@ export const
 
 				const headers: Device = request.headers;
 				console.log('headersheadersheaders', headers);
-
 
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {

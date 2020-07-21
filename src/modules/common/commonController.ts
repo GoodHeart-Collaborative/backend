@@ -9,7 +9,7 @@ import * as config from "@config/index";
 import { imageCropUtil } from "@lib/ImageCropUtil";
 import { TemplateUtil } from "@utils/TemplateUtil";
 import * as tokenManager from "@lib/tokenManager";
-import { userDao } from "@modules/user/v1/UserDao";
+import { userDao } from "@modules/user/UserDao";
 
 export class CommonController {
 

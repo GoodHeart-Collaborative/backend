@@ -1,40 +1,43 @@
 "use strict";
 
 import * as _ from "lodash";
-import fs = require("fs");
+import * as moment from 'moment';
 
 import * as config from "@config/index";
-import * as inspirationConstant from "@modules/admin/dailyAdvice/AdviceConstant";
-import { adviceDao } from "@modules/admin/dailyAdvice/v1/AdviceDao";
+import * as inspirationConstant from "@modules/admin/dailyInspiration/inspirationConstant";
+import { inspirationDao } from "@modules/admin/dailyInspiration/inspirationDao";
 
 
-class AdviceController {
+class InspirationController {
 
 	/**
 	 * @function signup
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async addAdvice(params: AdviceRequest.IAdviceAdd) {
+    async addInspiration(params: InspirationRequest.InspirationAdd) {
         try {
             console.log('paramsparamsparamsparams', params);
             // const dataToInsert =
-            const data = await adviceDao.insert("advice", params, {});
+
+            // params["postedAt"] = moment(para).format('YYYY-MM-DD')
+
+            const data = await inspirationDao.insert("inspiration", params, {});
             console.log('dataaaaaaaaaaaaa', data);
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;
         }
     }
 
-    async getPostById(params) {
+    async getPostById(params: InspirationRequest.IGetInspirationById) {
         try {
             const criteria = {
                 _id: params.Id,
             };
 
-            const data = await adviceDao.findOne('advice', criteria, {}, {})
+            const data = await inspirationDao.findOne('inspiration', criteria, {}, {})
             if (!data) {
                 return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
@@ -47,15 +50,19 @@ class AdviceController {
         }
     }
 
-    async getPosts(params: AdviceRequest.IGetAdvices) {
+    async getPosts(params: InspirationRequest.IGetInspirations) {
         try {
             console.log('paramsparamsparamsparams', params);
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
-            console.log('statusstatusstatusstatus', status);
-
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
             const aggPipe = [];
 
             const match: any = {};
+
+            // const paginateOptions = {
+            //     page: page || 1,
+            //     limit: limit || Constant.SERVER.LIMIT,
+            // };
+
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
@@ -69,32 +76,35 @@ class AdviceController {
             }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
-            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
-            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
-            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
-
-            aggPipe.push({ "$match": match });
 
             console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
 
             // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
             // aggPipe.push({ "$project": project });
 
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+            console.log('matchmatchmatchmatch', match);
+
+            aggPipe.push({ "$match": match });
+
             let sort = {};
             if (sortBy && sortOrder) {
-                if (sortBy === "name") {
-                    sort = { "name": sortOrder };
+                if (sortBy === "title") {
+                    sort = { "title": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "createdAt": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "createdAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 
+
             console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
-            const data = await adviceDao.paginate('advice', aggPipe, limit, page, {}, true);
+            const data = await inspirationDao.paginate('inspiration', aggPipe, limit, page, {}, true);
             console.log('datadatadata', data);
             return data;
         } catch (error) {
@@ -102,24 +112,25 @@ class AdviceController {
         }
     }
 
-    async UpdateStatus(params: AdviceRequest.IUpdateAdviceStatus) {
+    async updateStatus(params: InspirationRequest.IUpdateStatus) {
         try {
             const criteria = {
                 _id: params.Id
             };
+
             const datatoUpdate = {
                 ...params
             };
-            const data = await adviceDao.updateOne('advice', criteria, datatoUpdate, {})
+            const data = await inspirationDao.updateOne('inspiration', criteria, datatoUpdate, {})
             console.log('datadatadatadatadata', data);
-            return data;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
         } catch (error) {
             return Promise.reject(error)
         }
     }
 
-    async updatePost(params: AdviceRequest.IUpdateAdvice) {
+    async updatePost(params: InspirationRequest.IUpdateInpiration) {
         try {
             const criteria = {
                 _id: params.Id
@@ -127,13 +138,13 @@ class AdviceController {
             const datatoUpdate = {
                 ...params
             };
-            const data = await adviceDao.updateOne('advice', criteria, datatoUpdate, {})
+            const data = await inspirationDao.updateOne('inspiration', criteria, datatoUpdate, {})
             console.log('datadatadatadatadata', data);
-            return data;
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
         } catch (error) {
             throw error;
         }
     }
 }
-export const adviceController = new AdviceController();
+export const inspirationController = new InspirationController();

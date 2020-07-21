@@ -5,7 +5,7 @@ import * as Joi from "joi";
 
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
-import { contactController } from "@modules/contact/v1/ContactController";
+import { contactController } from "@modules/contact/ContactController";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 

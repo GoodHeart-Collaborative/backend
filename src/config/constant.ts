@@ -181,7 +181,7 @@ const VALIDATION_CRITERIA = {
 	PASSWORD_MAX_LENGTH: 30
 };
 
-const BYPASS_OTP = 4242;
+const BYPASS_OTP = '4242';
 
 const MESSAGES = {
 	ERROR: {
@@ -240,7 +240,7 @@ const MESSAGES = {
 		},
 		DELETED: {
 			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Your account have been blocked by admin.",
+			"message": "Your account have been deleted by admin.",
 			type: "DELETED"
 		},
 		INCORRECT_PASSWORD: {
@@ -272,6 +272,11 @@ const MESSAGES = {
 			"statusCode": HTTP_STATUS_CODE.SESSION_EXPIRED,
 			"message": "Your login session has been expired.",
 			"type": "SESSION_EXPIRED"
+		},
+		INVALID_OTP: {
+			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"message": "otp must be a safe number",
+			"type": "INVALID_OTP"
 		},
 		FIELD_REQUIRED: (value) => {
 			return {

@@ -52,8 +52,9 @@ export interface IUser extends Document {
 	isMemberOfDay: boolean;
 	likeCount: number,
 	commentCount: number,
-	isAdminRejected: boolean;
-	isAdminVerified: boolean;
+	adminStatus: string;
+	// isAdminRejected: boolean;
+	// isAdminVerified: boolean;
 }
 
 const geoSchema = new Schema({
@@ -124,8 +125,8 @@ const userSchema = new Schema({
 			config.INDUSTRIES.Wellness_Coaches,
 		],
 	},
-	isAdminVerified: { type: Boolean, default: false },
-	isAdminRejected: { type: Boolean, default: false },
+	// isAdminVerified: { type: Boolean, default: false },
+	// isAdminRejected: { type: Boolean, default: false },
 	adminStatus: {
 		type: String, enum: [
 			config.CONSTANT.USER_ADMIN_STATUS.PENDING,

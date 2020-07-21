@@ -159,7 +159,7 @@ let socialSignUp = Joi.object({
 })
 
 let verifyOtp = Joi.object({
-    otp: Joi.number().min(1000).max(9999).required(),
+    otp: Joi.string().required(),
     type: Joi.string().valid('email', 'mobile').default('mobile'),
 })
 

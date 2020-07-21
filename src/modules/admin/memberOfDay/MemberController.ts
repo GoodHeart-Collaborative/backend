@@ -6,7 +6,7 @@ import * as promise from "bluebird";
 
 import * as config from "@config/index";
 import * as inspirationConstant from "@modules/admin/dailyInspiration/inspirationConstant";
-import { inspirationDao } from "@modules/admin/dailyInspiration/v1/inspirationDao";
+import { inspirationDao } from "@modules/admin/dailyInspiration/inspirationDao";
 import { userDao } from "@modules/user";
 
 
@@ -101,7 +101,7 @@ class MemberController {
                     sort = { "created": sortOrder };
                 }
             } else {
-                sort = { "memberCreatedAt": -1 };
+                sort = { "created": -1 };
             }
             aggPipe.push({ "$sort": sort });
 

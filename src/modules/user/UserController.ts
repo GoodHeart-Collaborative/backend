@@ -6,7 +6,7 @@ import * as promise from "bluebird";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import { contactDao } from "@modules/contact/v1/ContactDao";
+import { contactDao } from "@modules/contact/ContactDao";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager, redisClient } from "@lib/index";
 import { smsManager } from "@lib/SMSManager";
@@ -190,18 +190,25 @@ export class UserController {
 					if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
 						return userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
 					}
+					if (step2.status === config.CONSTANT.STATUS.DELETED) {
+						return userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
+					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 					}
-
-					else if (step2.isAdminRejected) {
+					// else if (step2.isAdminRejected) {
+					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+					// }
+					else if (step2.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					}
-					else if (!step2.isAdminVerified) {
+					// else if (!step2.isAdminVerified) {
+					// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+					// }
+					else if (step2.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					}
 					else {
-
 						let arn;
 						if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 							// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -243,6 +250,7 @@ export class UserController {
 						delete step1['forgotToken'];
 						delete step1['isAdminRejected'];
 						delete step1['isAdminVerified'];
+						delete step1['adminStatus'];
 						delete step1['forgotToken'];
 						delete step1['fullMobileNo']
 						delete step1['googleId'];
@@ -306,10 +314,16 @@ export class UserController {
 				else if (step1 && !step1.dob || !step1.dob == null && step1.industryType) {
 					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 				}
-				else if (step1.isAdminRejected) {
+				// else if (step1.isAdminRejected) {
+				// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+				// }
+				else if (step1.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 				}
-				else if (!step1.isAdminVerified) {
+				// else if (!step1.isAdminVerified) {
+				// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+				// }
+				else if (step1.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
 					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
@@ -663,6 +677,10 @@ export class UserController {
 			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
 			// 	}
 			// }
+			if (params.otp = '0000') {
+				console.log('insideeeeeee 00000000000000000000000000000');
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP)
+			}
 			const data = await userDao.checkOTP(params, userData);
 			if (config.SERVER.ENVIRONMENT !== "production") {
 				console.log('111111111');
@@ -724,6 +742,12 @@ export class UserController {
 			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
 			// 	}
 			// }
+
+			if (params.otp === '0000') {
+				console.log('in 0000000000000000000000 condition');
+				return Promise.reject(Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP))
+			}
+
 			const data = await userDao.checkForgotOtp(params);
 			console.log('datadatadatadata', data);
 			if (!data) {

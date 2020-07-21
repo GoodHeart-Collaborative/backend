@@ -3,7 +3,7 @@
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
 import * as Joi from "joi";
 
-import { inspirationController } from "@modules/admin/dailyInspiration/v1/inspirationController";
+import { inspirationController } from "@modules/admin/dailyInspiration/inspirationController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";

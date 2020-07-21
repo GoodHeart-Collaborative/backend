@@ -14,7 +14,7 @@ export interface Advice extends Document {
 
     // categoryId: string,
     likeCount: number,
-    totalComments: number,
+    // totalComments: number,
     title: string,
     status: string
     privacy: string
@@ -31,7 +31,7 @@ export interface Advice extends Document {
 const adviceSchema = new Schema({
     // categoryId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Schema.Types.Number, default: 0 },
-    totalComments: { type: Schema.Types.Number, default: 0 },
+    // totalComments: { type: Schema.Types.Number, default: 0 },
     title: { type: Schema.Types.String, required: true },
     status: {
         type: String,
