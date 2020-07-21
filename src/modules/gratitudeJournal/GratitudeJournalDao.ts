@@ -165,9 +165,9 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    users : {
+                    user : {
                         name: { $ifNull:["$user.firstName", ""]}, 
-                        profilePicture:  { $ifNull: [ "$user.profilePicture", "" ] }
+                        profilePicUrl:  "$user.profilePicUrl"//{ $ifNull: [ "$user.profilePicture", "" ] }
                     },
                     isLike: 
                       {
