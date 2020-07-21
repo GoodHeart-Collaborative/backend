@@ -83,9 +83,10 @@ export class UserDao extends BaseDao {
                     commentCount: 1,
                     created: 1,
 					createdAt: 1,
-					users : {
-                        name: { $ifNull:["$firstName", ""]}, 
-                        profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
+					user : {
+						name: { $ifNull:["$firstName", ""]},
+						profilePicUrl: "$profilePicUrl"
+                        // profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
                     },
                     isLike:
                     {
