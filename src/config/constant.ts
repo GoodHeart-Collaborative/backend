@@ -73,6 +73,7 @@ const DB_MODEL_REF = {
 	LOG: "log",
 	NOTIFICATION: "notification",
 	USER: "user",
+	GRATITUDE_JOURNAL: "gratitude_journal",
 	LOGIN_HISTORY: "login_history",
 	VERSION: "version",
 	POST: "posts",
@@ -153,7 +154,6 @@ const HOME_TYPE = {
 	DAILY_ADVICE: 3,
 	GENERAL_GRATITUDE: 4,
 	MEMBER_OF_DAY: 5
-
 };
 
 const MEDIA_TYPE = {

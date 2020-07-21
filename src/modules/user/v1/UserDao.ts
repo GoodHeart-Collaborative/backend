@@ -5,6 +5,8 @@ import * as _ from "lodash";
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
 import { ElasticSearch } from "@lib/ElasticSearch";
+import * as appUtils from '@utils/appUtils'
+
 
 const elasticSearch = new ElasticSearch();
 
@@ -33,6 +35,86 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
+
+	async getMemberOfDays(userId) {
+        try {
+            let match: any = {};
+            let aggPipe = [];
+            let result: any = {}
+			match["status"] = config.CONSTANT.STATUS.ACTIVE
+			match["isMemberOfDay"] = true
+			aggPipe.push({ "$match": match });
+            aggPipe.push({
+                $lookup: {
+                    from: "likes",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$postId", "$$post"]
+                                        },
+                                        {
+                                            $eq: ["$userId", "$$user"]
+                                        },
+                                        {
+                                            $eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+										},
+										{
+											$eq: ["$type", config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY]
+										}
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "likeData"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+
+            aggPipe.push({
+                $project:
+                {
+                    _id: 1,
+                    likeCount: 1,
+                    commentCount: 1,
+                    created: 1,
+					createdAt: 1,
+					users : {
+                        name: { $ifNull:["$firstName", ""]}, 
+                        profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
+                    },
+                    isLike:
+                    {
+                        $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
+                    }
+                }
+            })
+				result = await this.aggregate("users", aggPipe, {})
+				result["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
+            return result
+        } catch (error) {
+            throw error;
+        }
+	}
+	
+	async checkUser(params) {
+        try {
+            return await this.findOne('users', params, {}, {});
+        } catch (error) {
+            throw error;
+        }
+	}
+	async updateLikeAndCommentCount(query, update) {
+        try {
+            return await this.updateOne('users', query, update, {});
+        } catch (error) {
+            throw error;
+        }
+    }
 
 	async findVerifiedEmailOrMobile(params: UserRequest.Login) {
 		try {
