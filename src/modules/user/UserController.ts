@@ -200,15 +200,19 @@ export class UserController {
 					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					// }
 					else if (step2.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
-						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+						return Promise.reject(userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' }));
 					}
 					// else if (!step2.isAdminVerified) {
 					// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					// }
 					else if (step2.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
-						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+						console.log('333333333333');
+
+						return Promise.reject(userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' }));
 					}
 					else {
+						console.log('iiiiiiiiiiiiu');
+
 						let arn;
 						if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 							// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -327,7 +331,7 @@ export class UserController {
 				// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				// }
 				else if (step1.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
-					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+					return Promise.reject(userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' }));
 				}
 				else {
 
@@ -680,6 +684,8 @@ export class UserController {
 			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
 			// 	}
 			// }
+			console.log('params.otpparams.otpparams.otp', params.otp);
+
 			if (params.otp = '0000') {
 				console.log('insideeeeeee 00000000000000000000000000000');
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP)
@@ -751,6 +757,7 @@ export class UserController {
 				return Promise.reject(Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP))
 			}
 
+
 			const data = await userDao.checkForgotOtp(params);
 			console.log('datadatadatadata', data);
 			if (!data) {
@@ -759,6 +766,8 @@ export class UserController {
 			if (!data.salt || !data.hash) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD);
 			}
+			console.log('params.otpppppppppppppppp', params.otp, typeof params.otp);
+
 			console.log('datadatadatadata', data);
 
 			if (config.SERVER.ENVIRONMENT !== "production") {
