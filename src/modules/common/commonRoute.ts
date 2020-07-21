@@ -207,7 +207,7 @@ export const commonRoute: ServerRoute = [
 				return await commonController.deepLink(query);
 			} catch (error) {
 				const message = "Your link has been expired. Please regenerate your link again.";
-				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png", });
+				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
 			}
 		},
 		options: {
