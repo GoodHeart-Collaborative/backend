@@ -75,6 +75,22 @@ const start = async () => {
 		}
 	});
 };
+
+routes.push(
+	{
+		method: 'GET',
+		path: '/src/uploads/images/'.toString() + `{path*}`, // ' /views/uploads/image/{path*}',
+		options: {
+			handler: {
+				directory: {
+					path: process.cwd() + '/src/uploads/images/'.toString(),
+					listing: false,
+				},
+			},
+		},
+	}
+)
+
 start();
 
 const init = async () => {
