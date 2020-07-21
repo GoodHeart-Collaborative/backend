@@ -155,10 +155,8 @@ class LikeController {
             let incOrDec: number = 1
             query = { _id: await appUtils.toObjectId(params.postId) }
             if (params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
-                // return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
                 getPost = await userDao.checkUser(query)
             } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
-                // return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
                 getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
             } else {
                 getPost = await homeDao.checkHomePost(query)

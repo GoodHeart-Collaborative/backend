@@ -94,7 +94,7 @@ export class UserDao extends BaseDao {
                 }
             })
 				result = await this.aggregate("users", aggPipe, {})
-				result["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
+				result[0]["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
             return result
         } catch (error) {
             throw error;

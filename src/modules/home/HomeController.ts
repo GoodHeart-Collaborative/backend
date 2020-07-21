@@ -6,8 +6,6 @@ import fs = require("fs");
 import * as homeConstants from "./HomeConstant";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
 import { userDao } from "@modules/user/v1/UserDao";
-import { unicornDao } from "@modules/admin/unicornHumour/v1/UnicornDao";
-import * as config from "@config/index";
 import { homeDao } from "./HomeDao";
 
 
@@ -22,102 +20,12 @@ class HomeController {
         try {
             let responseData: any = {}
             let getGeneralGratitude: any = {}
-            //     next_hit: 1,
-            //     type: 4,
-            //     list:[{
-            //     "_id": "5f0ff204fd8bfe1c64e69f51",
-            //     // "type": 4,
-            //     "likeCount": 0,
-            //     "commentCount": 0,
-            //     "status": "active",
-            //     "title": "testststs",
-            //     "description": "dajdnjsadas",
-            //     "mediaType": 1,
-            //     "user": {
-            //         profilePicUrl: "https://shorturl.at/ktAQX",
-            //         name: "rahul",
-            //         desc: "doctor"
-            //     },
-            //     "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-            //     "postedAt": "2020-07-14T11:33:09.000Z",
-            //     "isPostLater": true,
-            //     "isLike": false,
-            //     "created" : 1594974814280,
-            //     "createdAt": "2020-07-10T10:34:43.840Z",
-            //     "updatedAt": "2020-07-11T11:34:43.840Z"
-            //   },
-            //   {
-            //     "_id": "5f0ff217fd8bfe1c64e69f56",
-            //     // "type": 4,
-            //     "likeCount": 0,
-            //     "commentCount": 0,
-            //     "status": "active",
-            //     "title": "testststs",
-            //     "description": "dajdnjsadas",
-            //     "mediaType": 1,
-            //     "isLike": false,
-            //     "user": {
-            //         profilePicUrl: "https://shorturl.at/ktAQX",
-            //         name: "rahul",
-            //         desc: "doctor"
-            //     },
-            //     "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-            //     "postedAt": "2020-07-14T11:33:09.000Z",
-            //     "isPostLater": true,
-            //     "created" : 1594974814280,
-            //     "createdAt": "2020-07-10T10:34:43.840Z",
-            //     "updatedAt": "2020-07-11T11:34:43.840Z"
-            //     },
-            //     {
-            //         "_id": "5f0ff217fd8bfe1c64e69f56",
-            //         // "type": 4,
-            //         "likeCount": 0,
-            //         "commentCount": 0,
-            //         "status": "active",
-            //         "title": "testststs",
-            //         "isLike": false,
-            //         "description": "dajdnjsadas",
-            //         "mediaType": 1,
-            //         "user": {
-            //             profilePicUrl: "https://shorturl.at/ktAQX",
-            //             name: "rahul",
-            //             desc: "doctor"
-            //         },
-            //         "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-            //         "postedAt": "2020-07-14T11:33:09.000Z",
-            //         "isPostLater": true,
-            //         "created" : 1594974814280,
-            //         "createdAt": "2020-07-10T10:34:43.840Z",
-            //         "updatedAt": "2020-07-11T11:34:43.840Z"
-            //     }]
-            // }
-            let getmemberOfTheDay: any = await userDao.getMemberOfDays(userId.tokenData)
-            // {
-            //     "_id": "5f0ff217fd8bfe1c64e69f56",
-            //     // "type": 4,
-            //     "likeCount": 0,
-            //     "commentCount": 0,
-            //     "status": "active",
-            //     "title": "testststs",
-            //     "user": {
-            //         profilePicUrl: "https://shorturl.at/ktAQX",
-            //         name: "rahul",
-            //         desc: "doctor"
-            //     },
-            //     "isLike": false,
-            //     "description": "dajdnjsadas",
-            //     "mediaType": 1,
-            //     "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-            //     "postedAt": "2020-07-14T11:33:09.000Z",
-            //     "isPostLater": true,
-            //     "created" : 1594974814280,
-            //     "createdAt": "2020-07-10T10:34:43.840Z",
-            //     "updatedAt": "2020-07-11T11:34:43.840Z"
-            // }
+            let getmemberOfTheDay: any = {}
             let getHomeData: any = {}
             params.pageNo = 1
             params.limit = 10
             if (!params.type) {
+                getmemberOfTheDay = await userDao.getMemberOfDays(userId.tokenData)
                 getHomeData = await homeDao.getHomeData(params, userId.tokenData)
                 responseData = getHomeData
                 params.limit = 5

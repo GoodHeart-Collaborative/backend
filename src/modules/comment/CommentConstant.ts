@@ -50,10 +50,13 @@ export const MESSAGES = {
                 "data": data
             }
         },
-        SUCCESSFULLY_ADDED: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "successfully added",
-            "type": "DEFAULT"
+        SUCCESSFULLY_ADDED:(data)=> {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "successfully added",
+                "data": data,
+                "type": "DEFAULT"
+            }
         },
         // SUCCESS_WITH_NO_DATA: {
         //     "statusCode": config.CONSTANT.HTTP_STATUS_CODE.NO_CONTENT,

@@ -11,6 +11,8 @@ import { homeDao } from "../home/HomeDao";
 import * as config from "@config/index";
 import { CONSTANT } from "@config/index";
 import * as appUtils from '../../utils/appUtils'
+import { gratitudeJournalDao } from "../gratitudeJournal/GratitudeJournalDao";
+import { userDao } from "../user/v1/UserDao";
 
 
 class CommentController {
@@ -150,20 +152,13 @@ class CommentController {
             let getPost: any = {}
             let query: any = {}
             let getComment: any = {}
+            let data: any = {};
             query = { _id: await appUtils.toObjectId(params.postId) }
-            // if (params.type === CONSTANT.COMMENT_TYPE.DAILY_ADVICE) {
-            // getPost = await commentDao.checkPost(query, "advice")
-            // } else if (params.type === CONSTANT.COMMENT_TYPE.UNICORN) {
-            //     getPost = await commentDao.checkPost(query, "unicorn")
-            // } else if (params.type === CONSTANT.COMMENT_TYPE.INSPIRATION) {
-            //     getPost = await commentDao.checkPost(query, "inspiration")
-            // } 
             if (params.type === CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
-                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
-                // getPost = await commentDao.checkPost(query, '')
+                getPost = await userDao.checkUser(query)
             } else if (params.type === CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
-                // getPost = await commentDao.checkPost(query, '')
-                return homeConstants.MESSAGES.ERROR.FEATURE_NOT_ENABLE;
+                getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
+
             } else {
                 getPost = await homeDao.checkHomePost(query)
             }
@@ -186,10 +181,16 @@ class CommentController {
                     await commentDao.updateComment(query, { $inc: { commentCount: 1 } })
                 }
             } else {
-                await homeDao.updateHomePost(query, { $inc: { commentCount: 1 } })
+                if(params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
+                    data = await userDao.updateLikeAndCommentCount(query, { "$inc": { commentCount: 1 } })
+                } else if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                    data = await gratitudeJournalDao.updateLikeAndCommentCount(query, { "$inc": { commentCount: 1 } })
+                } else {
+                    data = await homeDao.updateHomePost(query, { $inc: { commentCount: 1 } })
+                }
             }
             await commentDao.addComments(params)
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            return commentConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(params);
         } catch (error) {
             throw error;
         }
