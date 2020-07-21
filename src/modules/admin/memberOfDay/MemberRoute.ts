@@ -81,7 +81,11 @@ export const memberRoute: ServerRoute[] = [
                     ]),
                     fromDate: Joi.number(),
                     toDate: Joi.number(),
-                    searchTerm: Joi.string(),
+                    searchTerm: Joi.string().trim(),
+                    sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
+                    sortBy: Joi.string().valid([
+                        'name', 'createdAt'
+                    ]),
                 },
                 failAction: appUtils.failActionFunction
             },
