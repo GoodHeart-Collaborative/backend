@@ -156,7 +156,7 @@ export const MESSAGES = {
 		ADMIN_REJECTED_USER_ACCOUNT: (data) => {
 			data['message'] = "Unfortunately, your profile doesn't meet our qualification criteria. Please come back again!"
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 				"message": "Unfortunately, your profile doesn't meet our qualification criteria. Please come back again!",
 				"type": "BLOCKED_USER",
 				data: data

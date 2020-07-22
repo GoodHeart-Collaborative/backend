@@ -40,6 +40,8 @@ import { adminUser as adminUserV1 } from '@modules/admin/users/AdminUserRoute'
 import { adminHomeRoute as adminHomeRoutev1 } from '@modules/admin/Home/HomeRoute'
 import { gratitudeJournalRoute as gratitudeJournalRoutev1 } from '@modules/gratitudeJournal/GratitudeJournalRoute'
 
+import { gratitudeRoute as gratitudeRouteV1 } from '@modules/admin/gratitudeJournal/gratitudeRoute';
+
 // simple routing
 import { adminLikeRoute as adminLikeRouteV1 } from '@modules/admin/like/likeRoute';
 
@@ -75,5 +77,6 @@ export const routes: ServerRoute[] = [
 	...adminHomeRoutev1,
 	...adminLikeRouteV1,
 	// ...versionRouteV1,
-	...adminCommentRouteV1
+	...adminCommentRouteV1,
+	...gratitudeRouteV1
 ];

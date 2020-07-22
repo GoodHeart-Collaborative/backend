@@ -74,7 +74,7 @@ export const SERVER = Object.freeze({
 	// BASE_PATH: process.cwd(),
 	TEMPLATE_PATH: process.cwd() + "/src/views/",
 	UPLOAD_DIR: process.cwd() + "/src/uploads/",
-	UPLOAD_IMAGE_DIR: process.cwd() + "/src/uploads/image",
+	UPLOAD_IMAGE_DIR: process.cwd() + "/src/uploads/images/",
 	// ONE_DAY_TIME_STAMP: 24 * 60 * 60 * 1000, // 1 day
 	// LOGIN_TOKEN_EXPIRATION_TIME: "180d", // 180 days
 	LOGIN_TOKEN_EXPIRATION_TIME: 180 * 24 * 60 * 60 * 1000, // 180 days
