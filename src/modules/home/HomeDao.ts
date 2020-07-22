@@ -65,7 +65,7 @@ export class HomeDao extends BaseDao {
                                         $eq: ["$userId", "$$user"]
                                     },
                                     {
-                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.COMMENT]
+                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
                                     }
                                 ]
                             }
@@ -97,7 +97,7 @@ export class HomeDao extends BaseDao {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
                     },
                     isComment: {
-                        $cond: { if: { "$eq": ["$commentData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
+                        $cond: { if: { "$eq": [{$size: "$commentData"}, 0] }, then: false, else: true }
                     }
                 }
             });

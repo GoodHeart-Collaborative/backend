@@ -73,7 +73,35 @@ export class UserDao extends BaseDao {
                     as: "likeData"
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+			aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+			aggPipe.push({
+                $lookup: {
+                    from: "comments",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$postId", "$$post"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    },
+                                    {
+                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+									},
+									{
+										$eq: ["$type", config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY]
+									}
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "commentData",
+                }
+            })
 
             aggPipe.push({
                 $project:
@@ -87,6 +115,9 @@ export class UserDao extends BaseDao {
 						name: { $ifNull:["$firstName", ""]},
 						profilePicUrl: "$profilePicUrl"
                         // profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
+					},
+					isComment: {
+                        $cond: { if: { "$eq": [{$size: "$commentData"}, 0] }, then: false, else: true }
                     },
                     isLike:
                     {

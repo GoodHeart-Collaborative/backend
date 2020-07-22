@@ -126,6 +126,35 @@ export class GratitudeJournalDao extends BaseDao {
 				}
             })
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                $lookup: {
+                    from: "comments",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$postId", "$$post"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    },
+                                    {
+                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+									},
+									{
+										$eq: ["$type", config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+									}
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "commentData",
+                }
+            })
+            // aggPipe.push({ '$unwind': { path: '$commentData', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project:
@@ -144,6 +173,9 @@ export class GratitudeJournalDao extends BaseDao {
                     user : {
                         name: { $ifNull:["$user.firstName", ""]}, 
                         profilePicUrl:  "$user.profilePicUrl"
+                    },
+                    isComment: {
+                        $cond: { if: { "$eq": [{$size: "$commentData"}, 0] }, then: false, else: true }
                     },
                     isLike:{
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
