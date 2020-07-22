@@ -40,19 +40,27 @@ export class CommentDao extends BaseDao {
     }
     async getCommentList(params) {
         try {
-            let { pageNo, limit, userId, commentId, postId } = params
+            let { pageNo, limit, userId, commentId, postId, _id } = params
             let match: any = {};
             let aggPipe = [];
+            let isPaginationEnable:boolean = true
             let result: any = {}
-            match["userId"] = appUtils.toObjectId(userId)
-            match["postId"] = appUtils.toObjectId(postId)
+            if(_id) {
+                match["_id"] = _id
+                pageNo=1
+                limit=1
+                isPaginationEnable = false
+            } else {
+                match["userId"] = appUtils.toObjectId(userId)
+                match["postId"] = appUtils.toObjectId(postId)
+                aggPipe.push({ "$sort": { "createdAt": -1 } });
+            }
             if (commentId) {
                 match["commentId"] = appUtils.toObjectId(commentId)
                 match["category"] = CONSTANT.COMMENT_CATEGORY.COMMENT
             } else {
                 match["category"] = CONSTANT.COMMENT_CATEGORY.POST
             }
-            aggPipe.push({ "$sort": { "createdAt": -1 } });
             aggPipe.push({ "$match": match });
             aggPipe.push({
                 $lookup: {
@@ -111,7 +119,7 @@ export class CommentDao extends BaseDao {
                     }
                 });
 
-            result = await this.aggregateWithPagination("comments", aggPipe, limit, pageNo, true)
+            result = await this.aggregateWithPagination("comments", aggPipe, limit, pageNo, isPaginationEnable)
             return result
         } catch (error) {
             throw error;

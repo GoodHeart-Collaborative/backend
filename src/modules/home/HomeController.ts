@@ -22,30 +22,32 @@ class HomeController {
             let responseData: any = {}
             let getGeneralGratitude: any = {}
             let getmemberOfTheDay: any = {}
-            let flag:boolean = true
+            // let flag:boolean = true
             params.pageNo = 1
             params.limit = 10
             if (!params.type) {
                 getmemberOfTheDay = await userDao.getMemberOfDays(userId.tokenData)
                 responseData = await homeDao.getHomeData(params, userId.tokenData)
+                // params.limit = 5
+                // if(responseData && responseData.list && responseData.list.length > 0) {
+                //     params["startDate"] = responseData.list[0].createdAt
+                //     params["endDate"] = responseData.list[responseData.list.length-1].createdAt
+                // }
                 params.limit = 5
-                if(responseData && responseData.list && responseData.list.length > 0) {
-                    params["startDate"] = responseData.list[0].createdAt
-                    params["endDate"] = responseData.list[responseData.list.length-1].createdAt
-                }
                 getGeneralGratitude = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
                 if(getGeneralGratitude && getGeneralGratitude.list && getGeneralGratitude.list.length > 0) {
-                    if(responseData && responseData.list && responseData.list.length > 9) {
-                        responseData.list.pop()
-                        if(responseData.next_hit === 0) {
-                            responseData.next_hit=1 
-                        }
-                    }
-                    responseData.list.push(getGeneralGratitude)
+                    responseData["getGratitudeJournal"] = getGeneralGratitude
+                //     if(responseData && responseData.list && responseData.list.length > 9) {
+                //         responseData.list.pop()
+                //         if(responseData.next_hit === 0) {
+                //             responseData.next_hit=1 
+                //         }
+                //     }
+                //     responseData.list.push(getGeneralGratitude)
                 }
                 responseData["getmemberOfTheDay"] = getmemberOfTheDay
             } else {
-                if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE && params.postAt) {
+                if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                     responseData = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
                 }
             }

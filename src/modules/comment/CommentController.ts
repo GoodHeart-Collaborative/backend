@@ -189,8 +189,10 @@ class CommentController {
                     data = await homeDao.updateHomePost(query, { $inc: { commentCount: 1 } })
                 }
             }
-            await commentDao.addComments(params)
-            return commentConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(params);
+            let addCcomment = await commentDao.addComments(params)
+            params["_id"] = addCcomment._id
+            let getComments:any = await commentDao.getCommentList(params)
+            return commentConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getComments.list[0]);
         } catch (error) {
             throw error;
         }
