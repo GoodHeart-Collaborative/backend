@@ -17,12 +17,8 @@ class AdviceController {
 	 */
     async addAdvice(params: AdviceRequest.IAdviceAdd) {
         try {
-            console.log('paramsparamsparamsparams', params);
-            // const dataToInsert =
             const data = await adviceDao.insert("advice", params, {});
-            console.log('dataaaaaaaaaaaaa', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
-
         } catch (error) {
             throw error;
         }
@@ -38,10 +34,8 @@ class AdviceController {
             if (!data) {
                 return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            console.log('datadatadatadata', data);
             return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
 
-            // return data;
         } catch (error) {
             throw error;
         }
@@ -49,12 +43,9 @@ class AdviceController {
 
     async getPosts(params: AdviceRequest.IGetAdvices) {
         try {
-            console.log('paramsparamsparamsparams', params);
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
-            console.log('statusstatusstatusstatus', status);
-
             const aggPipe = [];
-
+            let sort = {};
             const match: any = {};
             // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
@@ -67,7 +58,6 @@ class AdviceController {
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
-            console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
@@ -75,12 +65,6 @@ class AdviceController {
 
             aggPipe.push({ "$match": match });
 
-            console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
-
-            // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
-            // aggPipe.push({ "$project": project });
-
-            let sort = {};
             if (sortBy && sortOrder) {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
@@ -92,10 +76,8 @@ class AdviceController {
             }
             aggPipe.push({ "$sort": sort });
 
-            console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
             const data = await adviceDao.paginate('advice', aggPipe, limit, page, {}, true);
-            console.log('datadatadata', data);
             return data;
         } catch (error) {
             return Promise.reject(error);
@@ -111,7 +93,6 @@ class AdviceController {
                 ...params
             };
             const data = await adviceDao.updateOne('advice', criteria, datatoUpdate, {})
-            console.log('datadatadatadatadata', data);
             return data;
 
         } catch (error) {
@@ -128,7 +109,6 @@ class AdviceController {
                 ...params
             };
             const data = await adviceDao.updateOne('advice', criteria, datatoUpdate, {})
-            console.log('datadatadatadatadata', data);
             return data;
 
         } catch (error) {

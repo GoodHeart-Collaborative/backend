@@ -20,11 +20,7 @@ class PostController {
 	 */
     async addPost(params) {
         try {
-            console.log('paramsparamsparamsparams', params);
-            // const dataToInsert =
-
             const data = await postDao.insert("posts", params, {});
-            console.log('dataaaaaaaaaaaaa', data);
             return postConstant.MESSAGES.SUCCESS.DEFAULT;
 
         } catch (error) {

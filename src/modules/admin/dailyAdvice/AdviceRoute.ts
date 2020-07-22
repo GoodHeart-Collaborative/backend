@@ -59,8 +59,6 @@ export const adviceROute: ServerRoute[] = [
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await adviceController.getPostById(payload);
-                // console.log('resultresultresultresultresult', result);
-
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

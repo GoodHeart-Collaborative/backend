@@ -19,10 +19,7 @@ class MemberController {
 	 */
     async saveMembers(params) {
         try {
-            console.log('paramsparamsparamsparams', params);
-            // const dataToInsert =
-            // const data = await inspirationDao.insert("users", params, {});
-            // console.log('dataaaaaaaaaaaaa', data);
+
             if (!params['memberCreatedAt']) {
                 params['memberCreatedAt'] = new Date();
             }
@@ -59,15 +56,13 @@ class MemberController {
 
     async getMembers(params) {
         try {
-            console.log('paramsparamsparamsparams', params);
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
-            console.log('statusstatusstatusstatus', status);
 
             const aggPipe = [];
+            let sort = {};
 
             const match: any = {};
             match.memberCreatedAt = { $exists: true };
-            // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
             } else {
@@ -81,22 +76,13 @@ class MemberController {
 
                 ];
             }
-            console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
-
-
-            console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
-
-            // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
-            // aggPipe.push({ "$project": project });
 
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
-            console.log('matchmatchmatchmatch', match);
 
             aggPipe.push({ "$match": match });
 
-            let sort = {};
             if (sortBy && sortOrder) {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
@@ -109,10 +95,7 @@ class MemberController {
             aggPipe.push({ "$sort": sort });
 
 
-            console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
-
             const data = await inspirationDao.paginate('users', aggPipe, limit, page, {}, true);
-            console.log('datadatadata', data);
             return data;
         } catch (error) {
             return Promise.reject(error);

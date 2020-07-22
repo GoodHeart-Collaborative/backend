@@ -273,11 +273,8 @@ export class GratitudeJournalDao extends BaseDao {
                     }
                 }
             })
-            console.log('aggPipeaggPipeaggPipe', aggPipe);
-
 
             const myGratitude = await this.paginate('gratitude_journals', aggPipe, 10, 1, {}, true)
-            console.log('datadatadatadatadata', myGratitude);
             return myGratitude;
 
         } catch (error) {

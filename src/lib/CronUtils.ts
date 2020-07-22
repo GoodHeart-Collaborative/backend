@@ -20,9 +20,7 @@ export class CronUtils {
 			// request.get(baseUrl + "/common/appointment/pending");
 
 			let a = 0;
-			// if (globalVariable = 1) {
-			// 	countMember: a
-			// }
+
 			const criteria = [
 				{
 					$match: {
@@ -38,19 +36,13 @@ export class CronUtils {
 				countMember: a,
 				memberCreatedAt: new Date()
 			};
-			console.log('criteriacriteriacriteria', criteria);
-
 			const getUsers = await userDao.aggregate('users', criteria, {});
-			console.log('getUsersgetUsersppppppppppppp', getUsers);
-
-			// const GetUser = await memberDao.findOne
 
 			if (getUsers && getUsers[0]) {
 				const criteria = {
 					_id: getUsers[0]._id
 				};
 				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
-				console.log('datadatadatadata', data);
 			}
 
 		}, { scheduled: false });

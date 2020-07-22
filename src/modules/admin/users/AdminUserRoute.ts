@@ -100,8 +100,6 @@ export const adminUser: ServerRoute[] = [
                 ...request.payload,
                 ...request.params
             };
-            console.log('payloadpayload', payload);
-
             try {
                 const result = await adminController.updateStatus(payload);
                 return responseHandler.sendSuccess(h, result);

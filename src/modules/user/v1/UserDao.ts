@@ -37,122 +37,121 @@ export class UserDao extends BaseDao {
 	}
 
 	async getMemberOfDays(userId) {
-        try {
-            let match: any = {};
-            let aggPipe = [];
-            let result: any = {}
+		try {
+			let match: any = {};
+			let aggPipe = [];
+			let result: any = {}
 			match["status"] = config.CONSTANT.STATUS.ACTIVE
 			match["isMemberOfDay"] = true
 			aggPipe.push({ "$match": match });
-            aggPipe.push({
-                $lookup: {
-                    from: "likes",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ["$postId", "$$post"]
-                                        },
-                                        {
-                                            $eq: ["$userId", "$$user"]
-                                        },
-                                        {
-                                            $eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+			aggPipe.push({
+				$lookup: {
+					from: "likes",
+					let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$and: [
+										{
+											$eq: ["$postId", "$$post"]
+										},
+										{
+											$eq: ["$userId", "$$user"]
+										},
+										{
+											$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
 										},
 										{
 											$eq: ["$type", config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY]
 										}
-                                    ]
-                                }
-                            }
-                        }
-                    ],
-                    as: "likeData"
-                }
-            })
+									]
+								}
+							}
+						}
+					],
+					as: "likeData"
+				}
+			})
 			aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
 			aggPipe.push({
-                $lookup: {
-                    from: "comments",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
-                    pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    {
-                                        $eq: ["$postId", "$$post"]
-                                    },
-                                    {
-                                        $eq: ["$userId", "$$user"]
-                                    },
-                                    {
-                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+				$lookup: {
+					from: "comments",
+					let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+					pipeline: [{
+						$match: {
+							$expr: {
+								$and: [
+									{
+										$eq: ["$postId", "$$post"]
+									},
+									{
+										$eq: ["$userId", "$$user"]
+									},
+									{
+										$eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
 									},
 									{
 										$eq: ["$type", config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY]
 									}
-                                ]
-                            }
-                        }
+								]
+							}
+						}
 
-                    }],
-                    as: "commentData",
-                }
-            })
+					}],
+					as: "commentData",
+				}
+			})
 
-            aggPipe.push({
-                $project:
-                {
-                    _id: 1,
-                    likeCount: 1,
-                    commentCount: 1,
-                    created: 1,
+			aggPipe.push({
+				$project:
+				{
+					_id: 1,
+					likeCount: 1,
+					commentCount: 1,
+					created: 1,
 					createdAt: 1,
-					user : {
-						name: { $ifNull:["$firstName", ""]},
+					user: {
+						name: { $ifNull: ["$firstName", ""] },
 						profilePicUrl: "$profilePicUrl"
-                        // profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
+						// profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
 					},
 					isComment: {
-                        $cond: { if: { "$eq": [{$size: "$commentData"}, 0] }, then: false, else: true }
-                    },
-                    isLike:
-                    {
-                        $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
-                    }
-                }
-            })
-				result = await this.aggregate("users", aggPipe, {})
-				result[0]["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
-            return result[0]
-        } catch (error) {
-            throw error;
-        }
+						$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+					},
+					isLike:
+					{
+						$cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
+					}
+				}
+			})
+			result = await this.aggregate("users", aggPipe, {})
+			result[0]["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
+			return result[0]
+		} catch (error) {
+			throw error;
+		}
 	}
-	
+
 	async checkUser(params) {
-        try {
-            return await this.findOne('users', params, {}, {});
-        } catch (error) {
-            throw error;
-        }
+		try {
+			return await this.findOne('users', params, {}, {});
+		} catch (error) {
+			throw error;
+		}
 	}
 	async updateLikeAndCommentCount(query, update) {
-        try {
-            return await this.updateOne('users', query, update, {});
-        } catch (error) {
-            throw error;
-        }
-    }
+		try {
+			return await this.updateOne('users', query, update, {});
+		} catch (error) {
+			throw error;
+		}
+	}
 
 	async findVerifiedEmailOrMobile(params: UserRequest.Login) {
 		try {
 			let query: any = {};
 
-			console.log('kkkkkkkkkkkkk', params);
 
 			if (params.email && params.mobileNo && params.countryCode) {
 				query["$or"] = [{ "email": params.email, isEmailVerified: true }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
@@ -168,10 +167,8 @@ export class UserDao extends BaseDao {
 
 			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			let options = { lean: true };
-			console.log('queryqueryquery', query);
 
 			const data = await this.findOne("users", query, { hash: 0, salt: 0, mobileOtp: 0 }, options, {});
-			// console.log('datadata', data);
 			return data;
 
 		} catch (error) {
@@ -182,7 +179,6 @@ export class UserDao extends BaseDao {
 	async findForGotVerifiedEmailOrMobile(params: ForgotPasswordRequest) {
 		try {
 			let query: any = {};
-			console.log('kkkkkkkkkkkkk', params);
 
 			if (params.email && params.mobileNo && params.countryCode) {
 				query["$or"] = [{ "email": params.email, isEmailVerified: true }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
@@ -198,10 +194,8 @@ export class UserDao extends BaseDao {
 
 			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			let options = { lean: true };
-			console.log('queryqueryquery', query);
 
 			const data = await this.findOne("users", query, {}, options, {});
-			console.log('datadata', data);
 			return data;
 
 		} catch (error) {
@@ -236,13 +230,11 @@ export class UserDao extends BaseDao {
 			// if (userData) {
 			// 	if (userData.email === params.email && (!userData.isFacebookLogin || !userData.isGoogleLogin || !userData.isFacebookLogin || !userData.isEmailVerified)) {
 			// 		// remove the email from previous one
-			// 		console.log('LLLLLLLLLLLL');
 
 			// 		const data = userDao.updateOne('users', { _id: userData._id }, { $set: { email: "" } }, {})
 			// 	}
 			// 	if (userData.mobileNo === params.mobileNo && !userData.isMobileVerified) {
 			// 		// remove the email from previous one
-			// 		console.log('LLLLLLLLLLLL', userData.isMobileVerified);
 
 			// 		const data = userDao.updateOne('users', { _id: userData._id }, { $set: { mobileNo: "", fullMobileNo: "" } }, {})
 			// 	}
@@ -269,11 +261,8 @@ export class UserDao extends BaseDao {
 			// } else {
 			// 	query.googleId = params.socialId;
 			// }
-			console.log('params.socialLoginTypeparams.socialLoginTypeparams.socialLoginType', params.socialLoginType);
 
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
-				console.log('>>>>>>>>>>>>>>>>>>.');
-
 				query.facebookId = params.socialId;
 				// query.isFacebookLogin = true;
 			} else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE) {
@@ -315,9 +304,7 @@ export class UserDao extends BaseDao {
 			params.created = new Date();
 			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
 
-			// const data= await this.da
 			return await this.save("users", params);
-			// return await this.fin
 		} catch (error) {
 			throw error;
 		}
@@ -341,7 +328,6 @@ export class UserDao extends BaseDao {
 			}
 			// params.created = new Date();
 			if (step1.email === params.email) {
-				console.log('4444444444444444444444444444444444444444');
 				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
 				// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 			}
@@ -350,12 +336,6 @@ export class UserDao extends BaseDao {
 				// return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 			}
 			return params;
-			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
-
-			// const data= await this.da
-			// return await this.save("users", params);
-
-			// return await this.fin
 		} catch (error) {
 			throw error;
 		}
@@ -639,17 +619,10 @@ export class UserDao extends BaseDao {
 				]
 			}
 
-			console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
-
 			if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
 			if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
 			if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 			aggPipe.push({ "$match": match });
-
-			console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
-
-			// const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
-			// aggPipe.push({ "$project": project });
 
 			let sort = {};
 			if (sortBy && sortOrder) {
@@ -663,11 +636,7 @@ export class UserDao extends BaseDao {
 			}
 			aggPipe.push({ "$sort": sort });
 
-			console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
-
-
 			const data = await userDao.paginate('users', aggPipe, limit, page, {}, true);
-			console.log('datadatadata', data);
 			return data;
 
 		} catch (error) {

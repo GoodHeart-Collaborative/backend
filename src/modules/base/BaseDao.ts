@@ -312,7 +312,6 @@ export class BaseDao {
 			// data['updatedAt'] = Date.now();
 
 			const ModelName: any = models[model];
-			console.log('ModelNameModelName', ModelName, data);
 
 			const obj = new ModelName(data);
 			await obj.save();
@@ -480,7 +479,6 @@ export class BaseDao {
 			const ModelName: any = models[model];
 			const changeStream = await ModelName.watch({fullDocument: "updateLookup"});
 			changeStream.on("change", (error, data) => {
-				console.log(data);
 			});
 			console.log(changeStream);
 			return changeStream;

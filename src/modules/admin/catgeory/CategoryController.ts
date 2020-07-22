@@ -19,15 +19,9 @@ class CategoryController {
         try {
 
             const name = params.title.toLowerCase();
-            console.log('namenamename', name);
-
             var result = name.replace(/ /g, "_");
-            console.log('resultresultresult', result);
-
             params['name'] = result;
-            console.log('paramsparamsparamsparams', params);
             const data = await categoryDao.insert('categories', params, {});
-            console.log('datadatadatadata', data);
             return data;
 
         } catch (error) {
@@ -37,7 +31,6 @@ class CategoryController {
 
     async getCategory(params) {
         try {
-            console.log('paramsparamsparamsparams', params);
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
             const aggPipe = [];
 
@@ -53,15 +46,7 @@ class CategoryController {
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
-            console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
-
             aggPipe.push({ "$match": match });
-
-            console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
-
-            // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
-            // aggPipe.push({ "$project": project });
-
             let sort = {};
             if (sortBy && sortOrder) {
                 if (sortBy === "title") {
@@ -78,10 +63,7 @@ class CategoryController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-            console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
-
             const data = await categoryDao.paginate('categories', aggPipe, limit, page, {}, true);
-            console.log('datadatadata', data);
             return data;
         } catch (error) {
             return Promise.reject(error);
@@ -92,23 +74,19 @@ class CategoryController {
         try {
 
             const name = params.title.toLowerCase();
-            console.log('namenamename', name);
 
             var result = name.replace(/ /g, "_");
-            console.log('resultresultresult', result);
 
             const findData = await categoryDao.findOne('categories', { name: result }, {}, {});
             if (findData) {
                 return CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST
             } else {
                 params['name'] = result;
-                console.log('paramsparamsparamsparams', params);
                 const criteria = {
                     _id: params.categoryId
                 };
 
                 const data = await categoryDao.updateOne('categories', criteria, params, {});
-                console.log('datadatadatadata', data);
                 return data;
 
             }
@@ -124,7 +102,6 @@ class CategoryController {
             }
 
             const data = await categoryDao.findOne('categories', criteria, {}, {})
-            console.log('datadatadata', data);
             return data;
         } catch (error) {
             return Promise.reject(error);
@@ -141,9 +118,6 @@ class CategoryController {
                 status: params.status
             }
             const data = await categoryDao.updateOne('categories', criteria, dataToUpdate, {});
-            // if (data['nModified'] == 0){
-
-            // }
 
             return data;
         } catch (error) {

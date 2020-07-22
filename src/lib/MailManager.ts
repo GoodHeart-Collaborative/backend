@@ -69,8 +69,6 @@ export class MailManager {
 
 	async sendMailViaSmtp(params) {
 		try {
-			console.log('33444444444444444444444');
-
 			const mailOptions = {
 				from: `${config.SERVER.APP_NAME} <${this.fromEmail}>`,
 				to: params.email,
@@ -118,19 +116,13 @@ export class MailManager {
 
 	async sendMail(params) {
 		if (config.SERVER.MAIL_TYPE === config.CONSTANT.MAIL_SENDING_TYPE.SENDGRID) {
-			console.log('22222223333333333333333333333');
-
 			return await this.sendMailViaSendgrid(params);
 		} else {
-			console.log('qqqqqqqqqqqqqqqqqq');
-
 			return await this.sendMailViaSmtp(params);
 		}
 	}
 
 	// async forgotPasswordEmailToAdmin(params) {
-	// 	console.log('params.accessTokenparams.accessTokenparams.accessToken', params.accessToken);
-	// 	console.log('url>>>>>>>>>>>>>>>>>>', `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
 	// 		`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
 	// 		`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`);
 
@@ -147,9 +139,6 @@ export class MailManager {
 	// }
 
 	async forgotPasswordEmailToAdmin(params) {
-		console.log('params.accessTokenparams.accessTokenparams.accessToken', params.accessToken);
-		console.log('url>>>>>>>>>>>>>>>>>>', `${config.SERVER.API_BASE_URL}/v1/admin/verifyLink/${params.accessToken}`);
-
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
 				"url": `${config.SERVER.API_URL}/v1/admin/verifyLink/${params.accessToken}`,
@@ -161,8 +150,6 @@ export class MailManager {
 	}
 
 	async forgotPasswordEmailToUser(params) {
-		console.log('params.token', params.token);
-
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
 				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
