@@ -100,6 +100,35 @@ export class CommentDao extends BaseDao {
                 }
             })
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                $lookup: {
+                    from: "comments",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$postId", "$$post"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    },
+                                    {
+                                        $eq: ['$category', CONSTANT.COMMENT_CATEGORY.POST]
+                                    },
+                                    {
+                                        $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                    }
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "commentData",
+                }
+            })
+
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } },
                 {
                     "$project": {
@@ -114,8 +143,11 @@ export class CommentDao extends BaseDao {
                         "createdAt": 1,
                         "users": {
                             name: { $ifNull: ["$users.firstName", ""] },
-                            profilePicture: { $ifNull: ["$users.profilePicture", ""] }
-                        }
+                            profilePicUrl: { $ifNull: ["$users.profilePicture", ""] }
+                        },
+                        isComment: {
+                            $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                        },
                     }
                 });
 
