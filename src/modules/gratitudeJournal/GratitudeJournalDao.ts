@@ -74,11 +74,17 @@ export class GratitudeJournalDao extends BaseDao {
     }
     async getGratitudeJournalHomeData(params, userId) {
         try {
-            let { pageNo, limit } = params
+            let { pageNo, limit, postAt, startDate, endDate } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
             match["status"] = config.CONSTANT.STATUS.ACTIVE
+            if (postAt) {
+                match["postAt"] = postAt
+            }
+            if (startDate && endDate) {
+                match['createdAt'] = { $gte: endDate, $lte: startDate }
+            }
             match["privacy"] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             aggPipe.push({ "$match": match });
@@ -90,37 +96,7 @@ export class GratitudeJournalDao extends BaseDao {
                     "as": "user"
                 }
             })
-            // {
-            //     "_id": "5f0ff204fd8bfe1c64e69f51",
-            //     // "type": 4,
-            //     "likeCount": 0,
-            //     "commentCount": 0,
-            //     "status": "active",
-            //     "title": "testststs",
-            //     "description": "dajdnjsadas",
-            //     "mediaType": 1,
-            //     "user": {
-            //         profilePicUrl: "https://shorturl.at/ktAQX",
-            //         name: "rahul",
-            //         desc: "doctor"
-            //     },
-            //     "mediaUrl": "kjhkjhkjhkjs skkjhsk skhkjhskj",
-            //     "postedAt": "2020-07-14T11:33:09.000Z",
-            //     "isPostLater": true,
-            //     "isLike": false,
-            //     "created" : 1594974814280,
-            //     "createdAt": "2020-07-10T10:34:43.840Z",
-            //     "updatedAt": "2020-07-11T11:34:43.840Z"
-            //   }
             aggPipe.push({ '$unwind': { path: '$user', preserveNullAndEmptyArrays: true } })
-            // { "$project": { 
-            // 	"createdAt": 1, 
-            // 	"category": 1, 
-            // 	"users" : {
-            // 		name: { $ifNull:["$users.firstName", ""]}, 
-            // 		profilePicture:  { $ifNull: [ "$users.profilePicture", "" ] }
-            // 	}
-            // } });
             aggPipe.push({
                 $lookup: {
                     from: "likes",
@@ -151,6 +127,35 @@ export class GratitudeJournalDao extends BaseDao {
                 }
             })
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                $lookup: {
+                    from: "comments",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$postId", "$$post"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    },
+                                    {
+                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+                                    },
+                                    {
+                                        $eq: ["$type", config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                    }
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "commentData",
+                }
+            })
+            // aggPipe.push({ '$unwind': { path: '$commentData', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project:
@@ -168,10 +173,12 @@ export class GratitudeJournalDao extends BaseDao {
                     createdAt: 1,
                     user: {
                         name: { $ifNull: ["$user.firstName", ""] },
-                        profilePicUrl: "$user.profilePicUrl"//{ $ifNull: [ "$user.profilePicture", "" ] }
+                        profilePicUrl: "$user.profilePicUrl"
                     },
-                    isLike:
-                    {
+                    isComment: {
+                        $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                    },
+                    isLike: {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
                     }
                 }
