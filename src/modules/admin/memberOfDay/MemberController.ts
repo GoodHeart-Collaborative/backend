@@ -45,7 +45,6 @@ class MemberController {
             if (!data) {
                 return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            console.log('datadatadatadata', data);
             return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
 
             // return data;
@@ -111,7 +110,6 @@ class MemberController {
                 ...params
             };
             const data = await inspirationDao.updateOne('inspiration', criteria, datatoUpdate, {})
-            console.log('datadatadatadatadata', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
         } catch (error) {

@@ -149,8 +149,6 @@ export const categoryRoute: ServerRoute[] = [
                 ...request.params,
                 ...request.payload
             }
-            console.log('payloadpayloadpayloadpayload', payload);
-
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.getById(payload);

@@ -441,8 +441,6 @@ export class UserDao extends BaseDao {
 			promise.push(this.count("users", newUsers));
 
 			const [userCount, newUser,] = await Promise.all(promise);
-
-			console.log('datadatadatadatadata', userCount);
 			return {
 				totalUsers: userCount,
 				newUser
@@ -592,10 +590,8 @@ export class UserDao extends BaseDao {
 			// 	},
 			// ];
 			// const data = await this.paginate('users', query, limit, page, {}, true);
-			// console.log('datadatadatadata', data);
 			// return data;
 
-			console.log('paramsparamsparamsparams', params);
 			const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
 			const aggPipe = [];
 

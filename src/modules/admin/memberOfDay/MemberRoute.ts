@@ -20,7 +20,6 @@ export const memberRoute: ServerRoute[] = [
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await memberController.getMemberstById(payload);
-                // console.log('resultresultresultresultresult', result);
 
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
