@@ -141,7 +141,7 @@ export class CommentDao extends BaseDao {
                         },
                         "comment": 1,
                         "createdAt": 1,
-                        "users": {
+                        "user": {
                             name: { $ifNull: ["$users.firstName", ""] },
                             profilePicUrl: { $ifNull: ["$users.profilePicUrl", ""] }
                         },
