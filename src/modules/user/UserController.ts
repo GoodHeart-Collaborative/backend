@@ -17,6 +17,7 @@ import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
+import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
 var ObjectID = require('mongodb').ObjectID;
 export class UserController {
 
@@ -933,6 +934,15 @@ export class UserController {
 
 		} catch (error) {
 			throw error;
+		}
+	}
+
+	async getProfileHome(payload) {
+		try {
+			const data = await gratitudeJournalDao.userProfileHome(payload)
+			return data;
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 }

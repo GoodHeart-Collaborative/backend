@@ -16,7 +16,7 @@ export const gratitudeJournalRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/gratitude-journal`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload:GratitudeJournalRequest.AddGratitudeJournalRequest = request.payload;
+            const payload: GratitudeJournalRequest.AddGratitudeJournalRequest = request.payload;
             try {
                 payload["userId"] = tokenData.userId
                 const result = await gratitudeJournalController.addGratitudeJournalData(payload);
@@ -49,7 +49,7 @@ export const gratitudeJournalRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const Id: TokenData = request.params.Id;
-            const payload:GratitudeJournalRequest.EditGratitudeJournalRequest = request.payload;
+            const payload: GratitudeJournalRequest.EditGratitudeJournalRequest = request.payload;
             try {
                 payload["userId"] = tokenData.userId
                 const result = await gratitudeJournalController.editGratitudeJournalData(payload, Id);
@@ -67,8 +67,8 @@ export const gratitudeJournalRoute: ServerRoute[] = [
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
                 params: {
-					Id: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
-				},
+                    Id: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+                },
                 payload: gratitudeJournal.validateEditGratitudeJournal,
                 failAction: appUtils.failActionFunction
             },

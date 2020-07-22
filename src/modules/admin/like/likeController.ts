@@ -48,7 +48,10 @@ class AdminLikeController {
                         "category": 1,
                         "users": {
                             name: { $ifNull: ["$users.firstName", ""] },
-                            profilePicture: { $ifNull: ["$users.profilePicture", ""] }
+                            profilePicture: {
+                                $ifNull: ["$users.profilePicture", ""],
+                                status: '$users.status'
+                            }
                         }
                     }
                 });
