@@ -11,8 +11,6 @@ export class HomeDao extends BaseDao {
 
     async getHomeData(params, userId) {
         try {
-            console.log('userId.userIduserId.userIduserId.userId', userId.userId);
-
             let { pageNo, limit, endDate } = params
             let match: any = {};
             let aggPipe = [];
