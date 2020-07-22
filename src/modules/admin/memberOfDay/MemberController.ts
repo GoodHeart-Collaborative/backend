@@ -75,7 +75,10 @@ class MemberController {
             }
             if (searchTerm) {
                 match["$or"] = [
-                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "firstName": { "$regex": searchTerm, "$options": "-i" } },
+                    { "lastName": { "$regex": searchTerm, "$options": "-i" } },
+                    { "email": { "$regex": searchTerm, "$options": "-i" } },
+
                 ];
             }
             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
