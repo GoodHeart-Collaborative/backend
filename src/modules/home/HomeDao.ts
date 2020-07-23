@@ -85,6 +85,7 @@ export class HomeDao extends BaseDao {
                     status: 1,
                     type: 1,
                     mediaType: 1,
+                    mediaUrl: 1,
                     thumbnailUrl: 1,
                     title: 1,
                     isPostLater: 1,
@@ -97,13 +98,13 @@ export class HomeDao extends BaseDao {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
                     },
                     isComment: {
-                        $cond: { if: { "$eq": [{$size: "$commentData"}, 0] }, then: false, else: true }
+                        $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                     }
                 }
             });
 
             aggPipe.push({ "$match": match });
-            aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
             result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
             if (result && result.list && result.list.length == 0) {
                 delete match.postedAt
