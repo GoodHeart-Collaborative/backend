@@ -124,14 +124,14 @@ export const MESSAGES = {
 		},
 		BLOCKED: (data) => {
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 				"message": "Your account have been blocked by admin.",
 				"type": "USER_BLOCKED",
 			}
 		},
 		DELETED: (data) => {
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 				"message": "Your account have been deleted by admin.",
 				"type": "USER_DELETED",
 				data: data,
