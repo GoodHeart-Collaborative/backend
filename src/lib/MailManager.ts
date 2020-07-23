@@ -139,6 +139,7 @@ export class MailManager {
 	// }
 
 	async forgotPasswordEmailToAdmin(params) {
+		console.log('params.name', params.name);
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
 				"url": `${config.SERVER.API_URL}/v1/admin/verifyLink/${params.accessToken}`,

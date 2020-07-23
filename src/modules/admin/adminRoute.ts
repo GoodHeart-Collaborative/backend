@@ -315,7 +315,7 @@ export const adminRoute: ServerRoute[] = [
 			const payload = request.params;
 			try {
 				const result = await adminController.verifyLink({ payload });
-				return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.token);
+				return h.redirect(config.SERVER.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.token);
 			} catch (error) {
 				if (error.JsonWebTokenError) {
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
