@@ -47,6 +47,7 @@ class AdminLikeController {
                         "createdAt": 1,
                         "category": 1,
                         "user": {
+                            userId: '$users._id',
                             name: { $ifNull: ["$users.firstName", ""] },
                             profilePicUrl: {
                                 $ifNull: ["$users.profilePicUrl", ""],
