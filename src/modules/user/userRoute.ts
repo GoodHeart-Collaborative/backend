@@ -19,7 +19,6 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/register`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const headers: Device = request.headers;
-				console.log('headersheadersheadersheadersheadersheadersheaders', headers);
 				const payload: UserRequest.Signup = request.payload;
 				try {
 					const result = await userController.signup({ ...headers, ...payload });
@@ -51,8 +50,6 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/login`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const headers: Device = request.headers;
-				console.log('headersheadersheaders', headers);
-
 				const requestInfo: Device = request.info;
 				const payload: UserRequest.Login = request.payload;
 				try {
@@ -84,8 +81,6 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/resend-otp`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const headers: Device = request.headers;
-				console.log('headersheadersheadersheadersheadersheadersheaders', headers);
-
 				const payload: UserRequest.SendOtp = request.payload;
 				try {
 					const result = await userController.resendOtp({ ...headers, ...payload });
@@ -117,10 +112,8 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/verify-otp`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-				console.log('userDatauserDatauserDatauserDatauserData>>>>>>>>>', userData);
 
 				const headers: Device = request.headers;
-				console.log('headersheadersheaders', headers);
 
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {
@@ -156,8 +149,6 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/verify-forgotPassword`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const headers: Device = request.headers;
-				// const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {
 					const result = await userController.verifyForGotOTP({ ...headers, ...payload });
@@ -256,7 +247,6 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/forgot-password`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const payload: ForgotPasswordRequest = request.payload;
-				console.log('payloadpayloadpayloadpayloadpayloadpayloadpayloadpayload', payload);
 				try {
 					const result = await userController.forgotPassword(payload);
 					return responseHandler.sendSuccess(h, result);
@@ -322,14 +312,12 @@ export const
 				const headers: Device = request.headers;
 				// const requestInfo: Device = request.info;
 				const payload = request.payload;
-				console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
 				try {
 					const result = await userController.resetPassword({ ...payload, ...headers });
 
 					return responseHandler.sendSuccess(h, result);
 
 				} catch (error) {
-					console.log('errorerrorerror', error);
 					return responseHandler.sendError(error);
 				}
 			},
@@ -404,6 +392,46 @@ export const
 				},
 				validate: {
 					payload: validateUser.updateProfile,
+					headers: validator.userAuthorizationHeaderObj,
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+
+		{
+			method: "GET",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/profile/home`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const payload = request.query;
+				payload['userId'] = tokenData['userId'];
+				try {
+					const result = await userController.getProfileHome(payload);
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			options: {
+				tags: ["api", "user", "home"],
+				description: "User Profile home",
+				// notes: "",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					query: {
+						type: Joi.string().valid([
+							'gratitude', 'posts'
+						]),
+						page: Joi.number().default(1),
+						limit: Joi.number().default(10)
+					},
 					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction
 				},

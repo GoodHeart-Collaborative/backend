@@ -313,23 +313,13 @@ export const adminRoute: ServerRoute[] = [
 			// const headers: Device = request.headers;
 			// const requestInfo: Device = request.info;
 			const payload = request.params;
-			console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
-
 			try {
 				const result = await adminController.verifyLink({ payload });
-				console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link', config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link);
-
 				return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.token);
 			} catch (error) {
-				console.log('errorerrorerror', error);
-
 				if (error.JsonWebTokenError) {
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
 				} else if (error === 'LinkExpired') {
-					console.log('LLLLLLLLLLLLLLLLLLLLL');
-
-					console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL', config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
-
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
 				} else if (error === 'error') {
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
@@ -341,7 +331,6 @@ export const adminRoute: ServerRoute[] = [
 		config: {
 			tags: ["api", "admin"],
 			description: "Admin Login",
-			// notes: "",
 			// auth: {
 			// 	strategies: ["BasicAuth"]
 			// },
@@ -369,21 +358,15 @@ export const adminRoute: ServerRoute[] = [
 			const headers: Device = request.headers;
 			// const requestInfo: Device = request.info;
 			const payload = request.query;
-			console.log('payloadpayloadpayloadpayloadpayloadpayload', payload);
 			try {
 				const result = await adminController.resetPassword({ ...payload, ...headers });
-				console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.link', config.CONSTANT.WEBSITE_URL.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.token);
 				return responseHandler.sendSuccess(h, result);
 
 
 			} catch (error) {
-				console.log('errorerrorerror', error);
-
 				if (error.JsonWebTokenError) {
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
 				} else if (error === 'LinkExpired') {
-					console.log('LLLLLLLLLLLLLLLLLLLLL');
-					console.log('config.CONSTANT.WEBSITE_URL.ADMIN_URL', config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
 				} else if (error === 'error') {
 					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
@@ -554,7 +537,6 @@ export const adminRoute: ServerRoute[] = [
 		path: `${config.SERVER.API_BASE_URL}/v1/admin/details`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-			console.log('tokenDatatokenData', tokenData);
 
 			const query: UserId = request.query;
 			try {
@@ -594,11 +576,8 @@ export const adminRoute: ServerRoute[] = [
 		path: `${config.SERVER.API_BASE_URL}/v1/admin/details`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-			console.log('tokenDatatokenData', tokenData);
 
 			const payload = request.payload;
-			console.log('payloadpayloadpayload', payload);
-
 			try {
 				const result = await adminController.Profile(payload, tokenData);
 				return responseHandler.sendSuccess(h, result);

@@ -58,28 +58,28 @@ const adminSchema = new Schema({
 	},
 	created: { type: Number }
 }, {
-		versionKey: false,
-		collection: config.CONSTANT.DB_MODEL_REF.ADMIN,
-		timestamps: true,
-		// toObject: {
-		// 	virtuals: true
-		// },
-		// toJSON: {
-		// 	virtuals: true
-		// },
-		// toObject: {
-		// 	transform: function(doc, ret){
-		// 		// delete ret._id;
-		// 		console.log(doc, ret, "toObject");
-		// 	}
-		// },
-		// toJSON: {
-		// 	transform: function(doc, ret){
-		// 		console.log(doc, ret, "toJSON");
-		// 		// delete ret._id;
-		// 	}
-		// }
-	});
+	versionKey: false,
+	collection: config.CONSTANT.DB_MODEL_REF.ADMIN,
+	timestamps: true,
+	// toObject: {
+	// 	virtuals: true
+	// },
+	// toJSON: {
+	// 	virtuals: true
+	// },
+	// toObject: {
+	// 	transform: function(doc, ret){
+	// 		// delete ret._id;
+	// 		console.log(doc, ret, "toObject");
+	// 	}
+	// },
+	// toJSON: {
+	// 	transform: function(doc, ret){
+	// 		console.log(doc, ret, "toJSON");
+	// 		// delete ret._id;
+	// 	}
+	// }
+});
 
 // Ensure virtual fields are serialised.
 // adminSchema.set('toJSON', {
@@ -101,12 +101,6 @@ adminSchema.virtual("password")
 		this.hash = appUtils.encryptHashPassword(password, salt);
 	});
 
-// adminSchema.set('toObject', {
-// 	transform: function (doc, ret){
-// 		console.log(ret);
-// 	}
-// });
-// OR
 adminSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
 	return object;

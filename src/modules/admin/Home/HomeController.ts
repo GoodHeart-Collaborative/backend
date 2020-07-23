@@ -15,13 +15,8 @@ class AdminHomeController {
 
     async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
-            console.log('paramsparamsparamsparams', params);
-            // const dataToInsert =
-
             const data = await homeDao.insert("home", params, {});
-            console.log('dataaaaaaaaaaaaa', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
-
         } catch (error) {
             throw error;
         }
@@ -34,7 +29,6 @@ class AdminHomeController {
             };
 
             const data = await homeDao.findOne('home', criteria, {}, {})
-            console.log('datadatadatadata', data);
             return data;
         } catch (error) {
             throw error;
@@ -43,7 +37,6 @@ class AdminHomeController {
 
     async getPosts(params: HomeRequest.IgetHome) {
         try {
-            console.log('paramsparamsparamsparams', params);
             const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
             const aggPipe = [];
 
@@ -61,17 +54,11 @@ class AdminHomeController {
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
-            console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
             aggPipe.push({ "$match": match });
-
-            console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
-
-            // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
-            // aggPipe.push({ "$project": project });
 
             let sort = {};
             if (sortBy && sortOrder) {
@@ -85,11 +72,9 @@ class AdminHomeController {
             }
             aggPipe.push({ "$sort": sort });
 
-            console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
 
             const data = await homeDao.paginate('home', aggPipe, limit, page, {}, true);
-            console.log('datadatadata', data);
             return data;
         }
         catch (error) {
@@ -106,7 +91,6 @@ class AdminHomeController {
                 ...params
             }
             const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            console.log('dataToUpdatedataToUpdate', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
 
@@ -124,7 +108,6 @@ class AdminHomeController {
                 ...params
             }
             const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            console.log('dataToUpdatedataToUpdate', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
 
         } catch (error) {

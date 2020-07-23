@@ -28,9 +28,9 @@ class AdminLikeController {
                 match["commentId"] = appUtils.toObjectId(commentId)
                 match["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
             }
-            // else {
-            //     match["category"] = config.CONSTANT.COMMENT_CATEGORY.POST
-            // }
+            else {
+                match["category"] = config.CONSTANT.COMMENT_CATEGORY.POST
+            }
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             aggPipe.push({
@@ -55,7 +55,6 @@ class AdminLikeController {
                     }
                 });
             result = await likeDao.aggreagtionWithPaginateTotal("likes", aggPipe, limit, pageNo, true);
-            console.log('resultresultresultresult', result);
 
             return result
         } catch (error) {
@@ -73,7 +72,6 @@ class AdminLikeController {
                 ...params
             }
             const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            console.log('dataToUpdatedataToUpdate', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
 
@@ -91,7 +89,6 @@ class AdminLikeController {
                 ...params
             }
             const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            console.log('dataToUpdatedataToUpdate', data);
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
 
         } catch (error) {

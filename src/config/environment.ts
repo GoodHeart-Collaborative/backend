@@ -135,10 +135,6 @@ export const SERVER = Object.freeze({
 			API_KEY: "Rajat@123"
 		},
 		SMTP: {
-			// HOST: "mail.appinventive.com",
-			// PORT: "587",
-			// USER: "do-not-reply@mail.appinventive.com",
-			// PASSWORD: "Appin123!@#"
 			HOST: "smtp.gmail.com",
 			PORT: "587",
 			USER: "womencommunite@gmail.com",

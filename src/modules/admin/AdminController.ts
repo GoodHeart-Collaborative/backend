@@ -182,18 +182,14 @@ class AdminController {
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
 						"adminType": step1.adminType
 					});
-					console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
 
 					const adminObject = appUtils.buildToken(tokenData);
-					console.log('adminObjectadminObjectadminObject', adminObject);
 
 					const accessToken = await tokenManager.generateAdminToken({ "type": "FORGOT_PASSWORD", "object": adminObject });
-					console.log('accessTokenaccessTokenaccessTokenaccessToken', accessToken);
 
 					const step2 = adminDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
 
 					const step3 = mailManager.forgotPasswordEmailToAdmin({ "email": params.email, "name": step1.name, "accessToken": accessToken });
-					console.log('step3step3step3step3step3step3', step3);
 					return adminConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD;
 				}
 			}
@@ -243,8 +239,6 @@ class AdminController {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 				} else {
 					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-					console.log('params.hash ', params.hash);
-					console.log('1>>>>>>>>>>>>>', step1.hash);
 					if (
 						(config.SERVER.ENVIRONMENT !== "production") ?
 							(
@@ -303,11 +297,7 @@ class AdminController {
 	async changePassword(params: ChangePasswordRequest, tokenData: TokenData) {
 		try {
 			const step1 = await adminDao.findAdminById(tokenData);
-			console.log('step1', step1);
-			console.log('oldPasswordoldPasswordoldPasswordoldPassword', params.oldPassword);
-
 			const oldHash = await appUtils.encryptHashPassword(params.oldPassword, step1.salt);
-			console.log('oldHasholdHash', oldHash);
 
 			if (oldHash !== step1.hash) {
 				return Promise.reject(adminConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
@@ -315,7 +305,6 @@ class AdminController {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = adminDao.changePassword(params, tokenData);
 			}
-			console.log('>>>>>>>>>>>>>>');
 
 			return adminConstant.MESSAGES.SUCCESS.CHANGE_PASSWORD;
 		} catch (error) {
@@ -420,13 +409,9 @@ class AdminController {
 
 	async verifyLink(params) {
 		try {
-			console.log('verifyLink(params)verifyLink(params)verifyLink(params)', params.payload.token);
-
 			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.payload.token });
-			console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
 
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
-			console.log('isExpireisExpireisExpire', isExpire);
 			if (isExpire) {
 				let step2;
 				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
@@ -476,12 +461,8 @@ class AdminController {
 
 	async resetPassword(params) {
 		try {
-			console.log('paramsparamsparamsparamsparams', params);
-
 			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
-			console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
-			console.log('isExpireisExpireisExpire', isExpire);
 			if (isExpire) {
 				// 	let step2;
 				// 	// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
@@ -493,14 +474,12 @@ class AdminController {
 				// 	return Promise.reject('LinkExpired');
 			} else {
 				const step1 = await adminDao.findOne('admins', { _id: jwtPayload.payload.userId }, {}, {});
-				console.log('step1step1step1step1step1', step1);
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 
 				// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 				// } else {
 				let salt;
 				salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-				console.log('saltsaltsaltsalt', salt);
 
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
@@ -511,16 +490,12 @@ class AdminController {
 					"adminType": step1.adminType
 				});
 				const adminObject = appUtils.buildToken(tokenData);
-				console.log('adminObjectadminObjectadminObject', adminObject);
 
 				const accessToken = await tokenManager.generateAdminToken({ "type": "ADMIN_LOGIN", "object": adminObject });
-				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
 				const step3 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-				console.log('step3step3step3step3step3', step3);
 
 				const step4 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
-				console.log('step4step4step4step4', step4);
 
 				const loginObj = {
 					"userId": step1._id,
@@ -530,14 +505,11 @@ class AdminController {
 					"deviceToken": params.deviceToken,
 					"lastLogin": step4
 				};
-				console.log('loginObjloginObjloginObj', loginObj);
 
 				const step5 = loginHistoryDao.createUserLoginHistory(loginObj);
-				console.log('step5step5step5', step5);
 
 				delete step1.salt, delete step1.hash;
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-				console.log('refreshTokenrefreshTokenrefreshTokenrefreshToken', refreshToken);
 
 				// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
 				// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });

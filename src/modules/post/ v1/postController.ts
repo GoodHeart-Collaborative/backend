@@ -20,11 +20,7 @@ class PostController {
 	 */
     async addPost(params) {
         try {
-            console.log('paramsparamsparamsparams', params);
-            // const dataToInsert =
-
             const data = await postDao.insert("posts", params, {});
-            console.log('dataaaaaaaaaaaaa', data);
             return postConstant.MESSAGES.SUCCESS.DEFAULT;
 
         } catch (error) {
@@ -39,7 +35,6 @@ class PostController {
             };
 
             const data = await postDao.findOne('posts', criteria, {}, {})
-            console.log('datadatadatadata', data);
             return data;
         } catch (error) {
             throw error;
@@ -47,7 +42,6 @@ class PostController {
     }
 
     async getPosts(params) {
-        console.log('paramsparamsparamsparams', params);
         const { sortBy, sortOrder, limit, page, searchTerm } = params;
         const aggPipe = [];
 
@@ -63,14 +57,9 @@ class PostController {
                 { "title": { "$regex": searchTerm, "$options": "-i" } },
             ];
         }
-        console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
         aggPipe.push({ "$match": match });
 
-        console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
-
-        // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
-        // aggPipe.push({ "$project": project });
 
         let sort = {};
         if (sortBy && sortOrder) {
@@ -84,11 +73,7 @@ class PostController {
         }
         aggPipe.push({ "$sort": sort });
 
-        console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
-
-
         const data = await postDao.paginate('posts', aggPipe, limit, page, {}, true);
-        console.log('datadatadata', data);
         return data;
     } catch(error) {
         return Promise.reject(error);

@@ -1,5 +1,3 @@
-console.log('<<<<<<<<<<<<<<<<<<<<<222222222222');
-
 
 "use strict";
 
@@ -12,15 +10,11 @@ import { logger } from "@lib/logger";
 export class Database {
 
 	async connectToDb() {
-		console.log('><<<<<<<<<<<<<<<<');
-
 		return new Promise((resolve, reject) => {
 			try {
 				const dbName = config.SERVER.MONGO.DB_NAME;
 				let dbUrl = config.SERVER.MONGO.DB_URL;
 				const dbOptions = config.SERVER.MONGO.OPTIONS;
-				console.log('dbUrldbUrldbUrl', dbUrl);
-				console.log('dbOptionsdbOptionsdbOptions', dbOptions);
 
 				if (config.SERVER.ENVIRONMENT === "production") {
 					logger.info("Configuring db in " + config.SERVER.TAG + " mode");

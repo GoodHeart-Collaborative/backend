@@ -3,42 +3,43 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
+import { DataSync } from "aws-sdk";
 
 export class GratitudeJournalDao extends BaseDao {
 
     async getGratitudeJournalData(params, userId) {
         try {
-            let {pageNo, limit } = params
+            let { pageNo, limit } = params
             let match: any = {};
             let aggPipe = [];
-            let result:any = {}
+            let result: any = {}
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             // aggPipe.push({
-			// 	$lookup: {
-			// 		from: "likes",
-			// 		let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
-			// 		pipeline: [
-			// 			{
-			// 				$match: {
-			// 					$expr: {
-			// 						$and: [
+            // 	$lookup: {
+            // 		from: "likes",
+            // 		let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+            // 		pipeline: [
+            // 			{
+            // 				$match: {
+            // 					$expr: {
+            // 						$and: [
             //                         {
-			// 							$eq: ["$postId", "$$post"]
+            // 							$eq: ["$postId", "$$post"]
             //                         },
             //                         {
-			// 							$eq: ["$userId", "$$user"]
+            // 							$eq: ["$userId", "$$user"]
             //                         }, 
             //                         {
-			// 							$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+            // 							$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
             //                         }
             //                     ]
-			// 					}
-			// 				}
-			// 			}
-			// 		],
-			// 	 	as: "likeData"
-			// 	}
+            // 					}
+            // 				}
+            // 			}
+            // 		],
+            // 	 	as: "likeData"
+            // 	}
             // })
             // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
 
@@ -77,13 +78,13 @@ export class GratitudeJournalDao extends BaseDao {
             let { pageNo, limit, postAt, startDate, endDate } = params
             let match: any = {};
             let aggPipe = [];
-            let result:any = {}
+            let result: any = {}
             match["status"] = config.CONSTANT.STATUS.ACTIVE
-            if(postAt) {
-                match["postAt"] = postAt                
+            if (postAt) {
+                match["postAt"] = postAt
             }
-            if(startDate && endDate) {
-                match['createdAt'] = { $gte: endDate, $lte: startDate}
+            if (startDate && endDate) {
+                match['createdAt'] = { $gte: endDate, $lte: startDate }
             }
             match["privacy"] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
             aggPipe.push({ "$sort": { "createdAt": -1 } });
@@ -98,33 +99,33 @@ export class GratitudeJournalDao extends BaseDao {
             })
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
-				$lookup: {
-					from: "likes",
-					let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
-					pipeline: [
-						{
-							$match: {
-								$expr: {
-									$and: [
-                                    {
-										$eq: ["$postId", "$$post"]
-                                    },
-                                    {
-										$eq: ["$userId", "$$user"]
-                                    }, 
-                                    {
-										$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
-                                    },
-                                    {
-										$eq: ["$type", config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
-                                    }
-                                ]
-								}
-							}
-						}
-					],
-					as: "likeData"
-				}
+                $lookup: {
+                    from: "likes",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$postId", "$$post"]
+                                        },
+                                        {
+                                            $eq: ["$userId", "$$user"]
+                                        },
+                                        {
+                                            $eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+                                        },
+                                        {
+                                            $eq: ["$type", config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "likeData"
+                }
             })
             aggPipe.push({
                 $lookup: {
@@ -142,10 +143,10 @@ export class GratitudeJournalDao extends BaseDao {
                                     },
                                     {
                                         $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
-									},
-									{
-										$eq: ["$type", config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
-									}
+                                    },
+                                    {
+                                        $eq: ["$type", config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                    }
                                 ]
                             }
                         }
@@ -157,7 +158,7 @@ export class GratitudeJournalDao extends BaseDao {
 
             aggPipe.push({
                 $project:
-                  {
+                {
                     _id: 1,
                     likeCount: 1,
                     commentCount: 1,
@@ -176,7 +177,7 @@ export class GratitudeJournalDao extends BaseDao {
                         profession: { $ifNull:["$users.profession", ""]}
                     },
                     isComment: {
-                        $cond: { if: { "$eq": [{$size: "$commentData"}, 0] }, then: false, else: true }
+                        $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                     },
                     isLike:{
                         $cond: { if: { "$eq": [{$size: "$likeData"}, 0] }, then: false, else: true }
@@ -221,6 +222,68 @@ export class GratitudeJournalDao extends BaseDao {
         }
     }
 
+    async userProfileHome(params) {
+        try {
+            let match: any = {};
+            let aggPipe = [];
+            let result: any = {}
+            match['userId'] = appUtils.toObjectId(params['userId']);
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+            // aggPipe.push(match);
+            // aggPipe.push({ "$sort": { "createdAt": -1 } });
+            aggPipe.push({ "$match": match });
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'likes',
+                    let: { "pId": "$_id", "uId": await appUtils.toObjectId(params.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$postId', '$$pId']
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$uId"]
+                                    }]
+                            }
+                        }
+                    }],
+                    as: 'likeData'
+                }
+            })
+            aggPipe.push({
+                $project: {
+                    likeCount: 1,
+                    commentCount: 1,
+                    mediaType: 1,
+                    mediaUrl: 1,
+                    thumbnailUrl: 1,
+                    description: 1,
+                    created: 1,
+                    postAt: 1,
+                    postedAt: 1,
+                    createdAt: 1,
+                    isLike: {
+                        $cond: {
+                            if: {
+                                $eq: ["$likeData.userId", appUtils.toObjectId(params.userId)],
+                                then: true, else: false
+                            }
+                        }
+                    }
+                }
+            })
+
+            const myGratitude = await this.paginate('gratitude_journals', aggPipe, 10, 1, {}, true)
+            return myGratitude;
+
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }
 
 export const gratitudeJournalDao = new GratitudeJournalDao();

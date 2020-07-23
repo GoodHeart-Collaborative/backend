@@ -44,12 +44,12 @@ export class CommentDao extends BaseDao {
             let { pageNo, limit, userId, commentId, postId, _id } = params
             let match: any = {};
             let aggPipe = [];
-            let isPaginationEnable:boolean = true
+            let isPaginationEnable: boolean = true
             let result: any = {}
-            if(_id) {
+            if (_id) {
                 match["_id"] = _id
-                pageNo=1
-                limit=1
+                pageNo = 1
+                limit = 1
                 isPaginationEnable = false
             } else {
                 // match["userId"] = appUtils.toObjectId(userId)
@@ -101,6 +101,35 @@ export class CommentDao extends BaseDao {
                 }
             })
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                $lookup: {
+                    from: "comments",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$postId", "$$post"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    },
+                                    {
+                                        $eq: ['$category', CONSTANT.COMMENT_CATEGORY.POST]
+                                    },
+                                    {
+                                        $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                    }
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "commentData",
+                }
+            })
+
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } },
                 {
                     "$project": {
@@ -118,7 +147,10 @@ export class CommentDao extends BaseDao {
                             name: { $ifNull:["$users.firstName", ""]}, 
                             profilePicUrl:  "$users.profilePicUrl",
                             profession: { $ifNull:["$users.profession", ""]}
-                        }
+                        },
+                        isComment: {
+                            $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                        },
                     }
                 });
                 aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];

@@ -54,8 +54,6 @@ export const categoryRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.query;
-            console.log('payloadpayloadpayloadpayload', payload);
-
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.getCategory(payload);
@@ -108,8 +106,6 @@ export const categoryRoute: ServerRoute[] = [
                 ...request.params,
                 ...request.payload
             }
-            console.log('payloadpayloadpayloadpayload', payload);
-
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.updateCategory(payload);
@@ -153,8 +149,6 @@ export const categoryRoute: ServerRoute[] = [
                 ...request.params,
                 ...request.payload
             }
-            console.log('payloadpayloadpayloadpayload', payload);
-
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.getById(payload);

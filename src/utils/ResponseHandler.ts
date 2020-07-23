@@ -17,7 +17,6 @@ export class ResponseHandler {
 
 	sendError(error: any) {
 		if (!error.statusCode) {
-			// console.log("ERROR OCCURED=========>", error);
 			logger.error("Unhandled error=======>", error);
 		}
 		let errorToSend;

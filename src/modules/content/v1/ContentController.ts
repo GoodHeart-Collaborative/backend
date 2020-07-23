@@ -113,9 +113,6 @@ export class ContentController {
 	async viewContent(params: ContentRequest.View) {
 		try {
 			const step1 = await contentDao.isContentExists(params);
-			console.log('step1step1', step1);
-			console.log('contentConstant.MESSAGES.SUCCESS.CONTENT_DETAILS(step1);', contentConstant.MESSAGES.SUCCESS.CONTENT_DETAILS(step1));
-
 			if (!step1) {
 				return Promise.reject(contentConstant.MESSAGES.ERROR.CONTENT_NOT_FOUND);
 			} else {

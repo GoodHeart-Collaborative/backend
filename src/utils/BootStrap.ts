@@ -95,8 +95,6 @@ export class BootStrap {
 
 	async generateMemberOfDay() {
 		try {
-			console.log('OPPPPPPPPPPPPPPPPP');
-
 			let a = 0;
 			// if (globalVariable = 1) {
 			// 	countMember: a
@@ -115,19 +113,15 @@ export class BootStrap {
 				countMember: a,
 				memberCreatedAt: Date.now()
 			};
-			console.log('criteriacriteriacriteria', criteria);
 
 			const getUsers = await userDao.aggregate('users', criteria, {});
-			console.log('getUsersgetUsersppppppppppppp', getUsers);
 
-			// const GetUser = await memberDao.findOne
 
 			if (getUsers && getUsers[0]) {
 				const criteria = {
 					_id: getUsers[0]._id
 				};
 				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
-				console.log('datadatadatadata', data);
 			}
 
 			if (!getUsers && !getUsers[0]) {
