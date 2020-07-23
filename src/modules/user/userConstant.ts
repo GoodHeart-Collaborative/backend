@@ -156,7 +156,7 @@ export const MESSAGES = {
 		ADMIN_REJECTED_USER_ACCOUNT: (data) => {
 			data['message'] = "Unfortunately, your profile doesn't meet our qualification criteria. Please come back again!"
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 				"message": "Unfortunately, your profile doesn't meet our qualification criteria. Please come back again!",
 				"type": "BLOCKED_USER",
 				data: data
@@ -210,7 +210,7 @@ export const MESSAGES = {
 		USER_ACCOUNT_SCREENING: (data) => {
 			data["message"] = "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!"
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 				"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
 				"type": "BLOCKED_USER",
 				data: data
