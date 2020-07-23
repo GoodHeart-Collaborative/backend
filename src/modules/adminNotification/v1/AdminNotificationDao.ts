@@ -30,7 +30,7 @@ export class AdminNotificationDao extends BaseDao {
 	 */
 	async addNotification(params: AdminNotificationRequest.Add) {
 		try {
-			params.created = Date.now();
+            params["created"] = new Date().getTime()
 			return await this.save("admin_notifications", params);
 		} catch (error) {
 			throw error;

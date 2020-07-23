@@ -73,7 +73,6 @@ export class UserDao extends BaseDao {
 					as: "likeData"
 				}
 			})
-			aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
 			aggPipe.push({
 				$lookup: {
 					from: "comments",
@@ -111,17 +110,19 @@ export class UserDao extends BaseDao {
 					commentCount: 1,
 					created: 1,
 					createdAt: 1,
-					user: {
-						name: { $ifNull: ["$firstName", ""] },
-						profilePicUrl: "$profilePicUrl"
-						// profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
+					user : {
+						_id: "$_id",
+						name: { $ifNull:["$firstName", ""]},
+						profilePicUrl: "$profilePicUrl",
+						profession: "$profession",
 					},
 					isComment: {
 						$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
 					},
 					isLike:
 					{
-						$cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
+						$cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
+						// $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
 					}
 				}
 			})
@@ -244,6 +245,7 @@ export class UserDao extends BaseDao {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
 			// params.createdAt = Date.now();
+			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;
@@ -301,7 +303,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = new Date();
+			params.created = new Date().getTime();
 			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
 
 			return await this.save("users", params);
@@ -458,7 +460,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = Date.now();
+			params.created = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;

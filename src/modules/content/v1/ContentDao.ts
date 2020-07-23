@@ -29,7 +29,7 @@ export class ContentDao extends BaseDao {
 	 */
 	async addContent(params: ContentRequest.Add) {
 		try {
-			params.created = Date.now();
+            params["created"] = new Date().getTime()
 			return await this.save("contents", params);
 		} catch (error) {
 			throw error;
@@ -129,7 +129,7 @@ export class ContentDao extends BaseDao {
 	async addFaq(params: ContentRequest.AddFaq) {
 		try {
 			params.type = config.CONSTANT.CONTENT_TYPE.FAQ;
-			params.created = Date.now();
+			params["created"] = new Date().getTime()
 			return await this.save("contents", params);
 		} catch (error) {
 			throw error;

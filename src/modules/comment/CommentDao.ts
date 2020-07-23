@@ -12,6 +12,7 @@ export class CommentDao extends BaseDao {
     //  */
     async addComments(params) {
         try {
+            params["created"] = new Date().getTime()
             return await this.save("comments", params);
         } catch (error) {
             throw error;
@@ -141,16 +142,18 @@ export class CommentDao extends BaseDao {
                         },
                         "comment": 1,
                         "createdAt": 1,
-                        "user": {
-                            name: { $ifNull: ["$users.firstName", ""] },
-                            profilePicUrl: { $ifNull: ["$users.profilePicUrl", ""] }
+                        user : {
+                            _id: "$users._id",
+                            name: { $ifNull:["$users.firstName", ""]}, 
+                            profilePicUrl:  "$users.profilePicUrl",
+                            profession: { $ifNull:["$users.profession", ""]}
                         },
                         isComment: {
                             $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                         },
                     }
                 });
-
+                aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
             result = await this.aggregateWithPagination("comments", aggPipe, limit, pageNo, isPaginationEnable)
             return result
         } catch (error) {

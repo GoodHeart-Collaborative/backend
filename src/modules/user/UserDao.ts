@@ -207,6 +207,8 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
+			// params.createdAt = Date.now();
+			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;
@@ -257,7 +259,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = new Date();
+			params.created = new Date().getTime();
 			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
 			return await this.save("users", params);
 		} catch (error) {
@@ -413,7 +415,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = Date.now();
+			params.created = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;

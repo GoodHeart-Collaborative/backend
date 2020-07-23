@@ -8,7 +8,7 @@ export class NotificationDao extends BaseDao {
 	 * @function addNotification
 	 */
 	async addNotification(params: NotificationRequest.Add) {
-		params.created = Date.now();
+		params["created"] = new Date().getTime()
 		return await this.save("notifications", params);
 	}
 

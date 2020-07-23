@@ -54,7 +54,7 @@ export class AdminDao extends BaseDao {
 	 */
 	async createAdmin(params: SubAdminRequest.Create) {
 		try {
-			params.created = Date.now();
+            params["created"] = new Date().getTime()
 			return await this.save("admins", params);
 		} catch (error) {
 			throw error;

@@ -10,7 +10,7 @@ export class VersionDao extends BaseDao {
 	 */
 	async addVersion(params: VersionRequest.Add) {
 		try {
-			params.created = Date.now();
+			params.created = new Date().getTime()
 			return await this.save("versions", params);
 		} catch (error) {
 			throw error;

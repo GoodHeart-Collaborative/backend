@@ -10,6 +10,7 @@ export class AdminCommentDao extends BaseDao {
     //  */
     async addComments(params) {
         try {
+            params["created"] = new Date().getTime()
             return await this.save("comments", params);
         } catch (error) {
             throw error;

@@ -86,6 +86,7 @@ const userSchema = new Schema({
 	hash: { type: String, required: false },
 	forgotToken: { type: String },
 	loginToken: { type: String },
+	profession: { type: String},
 	gender: {
 		type: String,
 		enum: [

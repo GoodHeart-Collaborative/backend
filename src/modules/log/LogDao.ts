@@ -13,7 +13,7 @@ export class LogDao extends BaseDao {
 				"data": params,
 				"crudAction": "UPDATE",
 				"actionType": type,
-				"created": Date.now()
+				"created": new Date().getTime()
 			};
 			return await this.save("users", data);
 		} catch (error) {
@@ -29,7 +29,7 @@ export class LogDao extends BaseDao {
 				"data": params,
 				"crudAction": "DELETE",
 				"actionType": config.CONSTANT.LOG_HISTORY_TYPE.DELETE_USER,
-				"created": Date.now()
+				"created": new Date().getTime()
 			};
 			return await this.save("users", data);
 		} catch (error) {

@@ -14,6 +14,7 @@ export class LikeDao extends BaseDao {
 	 */
     async addLike(params) {
         try {
+            params["created"] = new Date().getTime()
             return await this.save("likes", params);
         } catch (error) {
             throw error;
@@ -60,12 +61,15 @@ export class LikeDao extends BaseDao {
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } },
             { "$project": { 
 				"createdAt": 1, 
-				"category": 1, 
-				"users" : {
-					name: { $ifNull:["$users.firstName", ""]}, 
-					profilePicture:  { $ifNull: [ "$users.profilePicture", "" ] }
-				}
-			} });
+                "category": 1, 
+                user : {
+                    _id: "$users._id",
+                    name: { $ifNull:["$users.firstName", ""]}, 
+                    profilePicUrl:  "$users.profilePicUrl",
+                    profession: { $ifNull:["$users.profession", ""]}
+                }
+            } });
+            aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
             result = await this.aggregateWithPagination("likes", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
