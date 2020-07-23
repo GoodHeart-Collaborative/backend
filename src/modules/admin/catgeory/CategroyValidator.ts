@@ -8,25 +8,42 @@ import { join } from "path";
 // when mediaType =2 then in mediaUrl you will give video url and in thumbnailUrl you will give video thumbnail image url
 
 
-let AddHome = Joi.object({
-    title: Joi.string(),
-    description: Joi.string(),
-    isPostLater: Joi.boolean(),
-    // imageUrl: Joi.string(),
-    postedAt: Joi.date(),
-    type: Joi.number().valid([
-        config.CONSTANT.HOME_TYPE.UNICORN,
-        config.CONSTANT.HOME_TYPE.INSPIRATION,
-        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-    ]).default(config.CONSTANT.HOME_TYPE.UNICORN),
-    mediaType: Joi.number().valid([
-        config.CONSTANT.MEDIA_TYPE.IMAGE,
-        config.CONSTANT.MEDIA_TYPE.VIDEO,
-    ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
-    mediaUrl: Joi.string(),
-    thumbnailUrl: Joi.string(),
-    // imageUrl: Joi.string()
-}).unknown()
+
+
+let AddCategory = Joi.object({
+
+    // name: Joi.string().lowercase().required(),
+    title: Joi.string().required(),
+    imageUrl: Joi.string()
+
+})
+
+
+let getCategory = Joi.object({
+    limit: Joi.number(),
+    page: Joi.number(),
+    sortOrder: Joi.number().valid([
+        config.CONSTANT.ENUM.SORT_TYPE
+    ]),
+    sortBy: Joi.string().valid('title', 'createdAt').default('createdAt'),
+    searchTerm: Joi.string(),
+    status: Joi.string().valid([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED
+    ]),
+    fromDate: Joi.date(),
+    toDate: Joi.date()
+})
+
+let GetCategoryId = Joi.object({
+    categoryId: Joi.string().required()
+})
+
+let UpdateCategory = Joi.object({
+    title: Joi.string().required(),
+    imageUrl: Joi.string()
+})
 
 
 let getById = Joi.object({
@@ -51,8 +68,8 @@ let GetList = Joi.object({
         config.CONSTANT.HOME_TYPE.INSPIRATION,
         config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
     ]).default(config.CONSTANT.HOME_TYPE.UNICORN).required(),
-    fromDate: Joi.date(),
-    toDate: Joi.date(),
+    fromDate: Joi.number(),
+    toDate: Joi.number(),
 })
 
 let updateStatus = Joi.object({
@@ -83,11 +100,17 @@ let updateHomeId = Joi.object({
 })
 
 export {
-    AddHome,
+    // AddHome,
     getById,
     GetList,
     updateStatus,
     updateHome,
     updateHomeId,
+
+
+    AddCategory,
+    getCategory,
+    GetCategoryId,
+    UpdateCategory
 
 };
