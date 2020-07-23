@@ -34,7 +34,7 @@ export class LoginHistoryDao extends BaseDao {
 	async createUserLoginHistory(params: any) { // LoginHistoryRequest
 		try {
 			params.isLogin = true;
-			params.created = Date.now();
+			params["created"] = new Date().getTime()
 			return await this.save("login_histories", params);
 		} catch (error) {
 			throw error;

@@ -103,6 +103,7 @@ export class HomeDao extends BaseDao {
             });
 
             aggPipe.push({ "$match": match });
+            aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
             result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
             if (result && result.list && result.list.length == 0) {
                 delete match.postedAt

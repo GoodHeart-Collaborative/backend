@@ -12,6 +12,7 @@ export class CommentDao extends BaseDao {
     //  */
     async addComments(params) {
         try {
+            params["created"] = new Date().getTime()
             return await this.save("comments", params);
         } catch (error) {
             throw error;
@@ -51,7 +52,7 @@ export class CommentDao extends BaseDao {
                 limit=1
                 isPaginationEnable = false
             } else {
-                match["userId"] = appUtils.toObjectId(userId)
+                // match["userId"] = appUtils.toObjectId(userId)
                 match["postId"] = appUtils.toObjectId(postId)
                 aggPipe.push({ "$sort": { "createdAt": -1 } });
             }
@@ -112,13 +113,15 @@ export class CommentDao extends BaseDao {
                         },
                         "comment": 1,
                         "createdAt": 1,
-                        "users": {
-                            name: { $ifNull: ["$users.firstName", ""] },
-                            profilePicture: { $ifNull: ["$users.profilePicture", ""] }
+                        user : {
+                            _id: "$users._id",
+                            name: { $ifNull:["$users.firstName", ""]}, 
+                            profilePicUrl:  "$users.profilePicUrl",
+                            profession: { $ifNull:["$users.profession", ""]}
                         }
                     }
                 });
-
+                aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
             result = await this.aggregateWithPagination("comments", aggPipe, limit, pageNo, isPaginationEnable)
             return result
         } catch (error) {

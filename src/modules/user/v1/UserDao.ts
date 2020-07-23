@@ -112,9 +112,10 @@ export class UserDao extends BaseDao {
                     created: 1,
 					createdAt: 1,
 					user : {
+						_id: "$_id",
 						name: { $ifNull:["$firstName", ""]},
-						profilePicUrl: "$profilePicUrl"
-                        // profilePicture:  { $ifNull: [ "$profilePicture", "" ] }
+						profilePicUrl: "$profilePicUrl",
+						profession: "$profession",
 					},
 					isComment: {
                         $cond: { if: { "$eq": [{$size: "$commentData"}, 0] }, then: false, else: true }
@@ -252,6 +253,7 @@ export class UserDao extends BaseDao {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
 			// params.createdAt = Date.now();
+			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;
@@ -312,7 +314,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = new Date();
+			params.created = new Date().getTime();
 			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
 
 			// const data= await this.da
@@ -480,7 +482,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = Date.now();
+			params.created = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;

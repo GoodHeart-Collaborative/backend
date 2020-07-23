@@ -43,7 +43,7 @@ declare namespace UserRequest {
 		socialId: string;
 		dob: number;
 		age: number;
-		created: Date;
+		created: number;
 		isAppleLogin: boolean;
 		isEmailVerified?: boolean;
 		gender: string;

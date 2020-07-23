@@ -46,9 +46,11 @@ class AdminLikeController {
                     "$project": {
                         "createdAt": 1,
                         "category": 1,
-                        "users": {
-                            name: { $ifNull: ["$users.firstName", ""] },
-                            profilePicture: { $ifNull: ["$users.profilePicture", ""] }
+                        user : {
+                            _id: "$users._id",
+                            name: { $ifNull:["$users.firstName", ""]}, 
+                            profilePicUrl:  "$users.profilePicUrl",
+                            profession: { $ifNull:["$users.profession", ""]}
                         }
                     }
                 });
