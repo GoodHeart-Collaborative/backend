@@ -8,6 +8,7 @@ import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
+import * as CategoryValidator from './CategroyValidator'
 
 export const categoryRoute: ServerRoute[] = [
     {
@@ -15,7 +16,7 @@ export const categoryRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/category`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: SubAdminRequest.Create = request.payload;
+            const payload: CategoryRequest.CategoryAdd = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.addCategory(payload);
@@ -32,11 +33,7 @@ export const categoryRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                payload: {
-                    // name: Joi.string().lowercase().required(),
-                    title: Joi.string().required(),
-                    imageUrl: Joi.string()
-                },
+                payload: CategoryValidator.AddCategory,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -53,7 +50,7 @@ export const categoryRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/category`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: CategoryRequest.IGetCategory = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.getCategory(payload);
@@ -70,22 +67,7 @@ export const categoryRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: {
-                    limit: Joi.number(),
-                    page: Joi.number(),
-                    sortOrder: Joi.number().valid([
-                        config.CONSTANT.ENUM.SORT_TYPE
-                    ]),
-                    sortBy: Joi.string().valid('title', 'createdAt').default('createdAt'),
-                    searchTerm: Joi.string(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.BLOCKED,
-                        config.CONSTANT.STATUS.DELETED
-                    ]),
-                    fromDate: Joi.date(),
-                    toDate: Joi.date()
-                },
+                query: CategoryValidator.getCategory,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -102,7 +84,7 @@ export const categoryRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/category/{categoryId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: CategoryRequest.IUpdateCategory = {
                 ...request.params,
                 ...request.payload
             }
@@ -122,13 +104,8 @@ export const categoryRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    categoryId: Joi.string().required()
-                },
-                payload: {
-                    title: Joi.string().required(),
-                    imageUrl: Joi.string()
-                },
+                params: CategoryValidator.GetCategoryId,
+                payload: CategoryValidator.UpdateCategory,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -165,9 +142,7 @@ export const categoryRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    categoryId: Joi.string().required()
-                },
+                params: CategoryValidator.GetCategoryId,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

@@ -16,8 +16,3 @@ export const MESSAGES = {
         },
     },
 };
-
-
-// export const CategoryConstant = {
-
-// }

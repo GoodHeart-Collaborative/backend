@@ -7,19 +7,21 @@ import * as  CategoryConstant from '@modules/admin/catgeory/CategoryConstant';
 class CategoryController {
 
 	/**
-	 * @function createAdmin
-	 * @description first checking is admin is created or not,
-	 * if not then create admin otherwise gives an error admin
-	 * already exist.
+	 * @function addCategory
+	 * @description admin add category name is unique
 	 * @param params { "platform": double, "name": string, "email": string, "password": string }
 	 * @returns object
 	 * @author Rajat Maheshwari
 	 */
-    async addCategory(params) {
+    async addCategory(params: CategoryRequest.CategoryAdd) {
         try {
 
             const name = params.title.toLowerCase();
             var result = name.replace(/ /g, "_");
+            const findCategory = await categoryDao.findOne('categories', { name: result }, {}, {});
+            if (findCategory) {
+                return Promise.reject(CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST);
+            }
             params['name'] = result;
             const data = await categoryDao.insert('categories', params, {});
             return data;
@@ -29,13 +31,17 @@ class CategoryController {
         }
     }
 
-    async getCategory(params) {
+    /**
+     * @function getCategory
+     * @description admin get category list
+     * @param { CategoryRequest.IGetCategory  } params
+     * @author Shubham
+    */
+    async getCategory(params: CategoryRequest.IGetCategory) {
         try {
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
             const aggPipe = [];
-
             const match: any = {};
-            // match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
             if (status) {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             } else {
@@ -70,9 +76,8 @@ class CategoryController {
         }
     }
 
-    async updateCategory(params) {
+    async updateCategory(params: CategoryRequest.IUpdateCategory) {
         try {
-
             const name = params.title.toLowerCase();
 
             var result = name.replace(/ /g, "_");
@@ -85,10 +90,8 @@ class CategoryController {
                 const criteria = {
                     _id: params.categoryId
                 };
-
                 const data = await categoryDao.updateOne('categories', criteria, params, {});
                 return data;
-
             }
         } catch (error) {
             return Promise.reject(error);
