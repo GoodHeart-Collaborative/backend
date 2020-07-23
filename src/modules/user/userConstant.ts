@@ -124,7 +124,7 @@ export const MESSAGES = {
 		},
 		BLOCKED: (data) => {
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER,
 				"message": "Your account have been blocked by admin.",
 				"type": "USER_BLOCKED",
 			}
