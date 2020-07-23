@@ -104,11 +104,14 @@ export class CommentDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "comments",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    let: { "comment": "$_id", "post": "$postId", "user": await appUtils.toObjectId(userId) },
                     pipeline: [{
                         $match: {
                             $expr: {
                                 $and: [
+                                    {
+                                        $eq: ["$commentId", "$$comment"]
+                                    },
                                     {
                                         $eq: ["$postId", "$$post"]
                                     },
@@ -116,7 +119,7 @@ export class CommentDao extends BaseDao {
                                         $eq: ["$userId", "$$user"]
                                     },
                                     {
-                                        $eq: ['$category', CONSTANT.COMMENT_CATEGORY.POST]
+                                        $eq: ['$category', CONSTANT.COMMENT_CATEGORY.COMMENT]
                                     },
                                     {
                                         $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
@@ -148,6 +151,7 @@ export class CommentDao extends BaseDao {
                             profilePicUrl:  "$users.profilePicUrl",
                             profession: { $ifNull:["$users.profession", ""]}
                         },
+                        // commentData:1
                         isComment: {
                             $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                         },
