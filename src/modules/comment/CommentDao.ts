@@ -104,7 +104,7 @@ export class CommentDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "comments",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    let: { "post": "$postId", "user": await appUtils.toObjectId(userId) },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -118,9 +118,9 @@ export class CommentDao extends BaseDao {
                                     {
                                         $eq: ['$category', CONSTANT.COMMENT_CATEGORY.POST]
                                     },
-                                    {
-                                        $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
-                                    }
+                                    // {
+                                    //     $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                    // }
                                 ]
                             }
                         }
@@ -142,18 +142,18 @@ export class CommentDao extends BaseDao {
                         },
                         "comment": 1,
                         "createdAt": 1,
-                        user : {
+                        user: {
                             _id: "$users._id",
-                            name: { $ifNull:["$users.firstName", ""]}, 
-                            profilePicUrl:  "$users.profilePicUrl",
-                            profession: { $ifNull:["$users.profession", ""]}
+                            name: { $ifNull: ["$users.firstName", ""] },
+                            profilePicUrl: "$users.profilePicUrl",
+                            profession: { $ifNull: ["$users.profession", ""] }
                         },
                         isComment: {
                             $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                         },
                     }
                 });
-                aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
             result = await this.aggregateWithPagination("comments", aggPipe, limit, pageNo, isPaginationEnable)
             return result
         } catch (error) {
