@@ -1,6 +1,6 @@
 declare interface UserId {
 	userId?: string;
-	Id?:string;
+	Id?: string;
 }
 
 declare interface Device extends UserId {
@@ -107,16 +107,18 @@ declare type ModelNames =
 	"admin_notifications" |
 	"contacts" |
 	"contents" |
-	"likes"	|
-	"comments"	|
+	"likes" |
+	"comments" |
 	"login_histories" |
 	"notifications" |
 	"users" |
 	"versions" |
 	"categories" |
 	"posts" |
-	"home"	|
+	"home" |
 	"inspiration" |
 	"unicorn" |
-	"gratitude_journals"	|
-	'advice';
+	"gratitude_journals" |
+	'advice' |
+	'expert' |
+	'expert_post';

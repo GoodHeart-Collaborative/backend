@@ -46,6 +46,9 @@ import { gratitudeRoute as gratitudeRouteV1 } from '@modules/admin/gratitudeJour
 import { adminLikeRoute as adminLikeRouteV1 } from '@modules/admin/like/likeRoute';
 
 import { adminCommentRoute as adminCommentRouteV1 } from '@modules/admin/comment/commentRoute';
+import { expertRoute as expertRouteV1 } from '@modules/admin/expert/expertRoute';
+import { expertPostRoute as expertPostRouteV1 } from '@modules/admin/expertPost/expertPostRoute';
+
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -78,5 +81,7 @@ export const routes: ServerRoute[] = [
 	...adminLikeRouteV1,
 	// ...versionRouteV1,
 	...adminCommentRouteV1,
-	...gratitudeRouteV1
+	...gratitudeRouteV1,
+	...expertRouteV1,
+	...expertPostRouteV1
 ];

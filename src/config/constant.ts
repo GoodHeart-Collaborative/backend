@@ -85,6 +85,8 @@ const DB_MODEL_REF = {
 	LIKE: "like",
 	ADVICE: 'advice',
 	MEMBER: 'member',
+	EXPERT: 'expert',
+	EXPERT_POST: 'expert_post'
 
 };
 
@@ -156,6 +158,28 @@ const HOME_TYPE = {
 	MEMBER_OF_DAY: 5
 };
 
+const EXPERT_CONTENT_TYPE = {
+	VIDEO: {
+		TYPE: 'video',
+		VALUE: 1,
+		DISPLAY_NAME: 'VIDEO'
+	},
+	ARTICLE: {
+		TYPE: 'article',
+		VALUE: 2,
+		DISPLAY_NAME: 'ARTICLE'
+	},
+	IMAGE: {
+		TYPE: 'image',
+		VALUE: 3,
+		DISPLAY_NAME: 'IMAGE'
+	},
+	VOICE_NOTE: {
+		TYPE: 'voice_note',
+		VALUE: 4,
+		DISPLAY_NAME: 'VOICE_NOTE'
+	}
+}
 const MEDIA_TYPE = {
 	IMAGE: 1,
 	VIDEO: 2
@@ -683,5 +707,6 @@ export const CONSTANT = Object.freeze({
 	USER_ADMIN_STATUS,
 	COMMENT_CATEGORY: COMMENT_CATEGORY,
 	// COMMENT_TYPE: COMMENT_TYPE,
-	MEDIA_TYPE: MEDIA_TYPE
+	MEDIA_TYPE: MEDIA_TYPE,
+	EXPERT_CONTENT_TYPE
 });

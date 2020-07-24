@@ -51,10 +51,6 @@ export class CommonController {
 	 */
 	async deepLink(params: DeeplinkRequest) {
 		try {
-			console.log("deepLink===================>", JSON.stringify(params));
-			console.log('params.androidparams.android', params.android);
-			console.log('iosLink: params.iosiosLink: params.ios', params.ios);
-
 			if (params.type === "login") {
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 					.compileFile({
@@ -71,7 +67,6 @@ export class CommonController {
 				let step1;
 				if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
 					step1 = await baseDao.findOne("admins", { "forgotToken": params.token }, {}, {}, {});
-					console.log('step1step1step1step1step1', step1);
 				} else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
 					step1 = await baseDao.findOne("users", { "forgotToken": params.token }, {}, {}, {});
 				}
@@ -79,8 +74,6 @@ export class CommonController {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN);
 				} else {
 					const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
-					console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
-
 					const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 					if (isExpire) {
 						let step2;
@@ -114,14 +107,8 @@ export class CommonController {
 
 	async veryEmail(params) {
 		try {
-			console.log("deepLink===================>", JSON.stringify(params));
-			console.log('params.androidparams.android', params.android);
-			console.log('iosLink: params.iosiosLink: params.ios', params.ios);
-
-			console.log('paramsparamsparamsparamsparams', params);
 
 			// const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
-			// console.log('jwtPayloadjwtPayloadjwtPayloadjwtPayload', jwtPayload);
 			// const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			// if (isExpire) {
 			// 	// let step2;
@@ -144,7 +131,6 @@ export class CommonController {
 
 				if (userData) {
 					const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
-					console.log('findAllAccountfindAllAccount', findSameEmail);
 					if (findSameEmail) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
 					}
@@ -152,8 +138,6 @@ export class CommonController {
 
 				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
 				const step1 = await baseDao.updateOne("users", { _id: params.userId }, { isEmailVerified: true }, {});
-
-				console.log('step1step1step1', step1);
 
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 					.compileFile({
