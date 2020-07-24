@@ -74,6 +74,30 @@ class ExpertController {
                 }
             })
 
+            aggPipe.push({
+                $lookup: {
+                    from: 'expert_posts',
+                    let: { 'eId': '$_id' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                "$eq": ['$expertId', '$$eId'],
+                            }
+                        }
+                    }],
+                    "as": "postData"
+                },
+            },
+            )
+            aggPipe.push({
+                $addFields: {
+                    totalPost: {
+                        $size: '$postData'
+                    }
+                }
+            })
+            aggPipe.push({ $project: { postData: 0 } })
+
             const data = await expertDao.aggreagtionWithPaginateTotal('expert', aggPipe, limit, page, true)
             console.log('datadatadata', data);
             return data;
