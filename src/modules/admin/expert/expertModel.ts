@@ -42,7 +42,7 @@ const expertSchema = new Schema({
     },
     // bio: { type: String },
     experience: { type: String },
-    catgeoryId: [{ type: Schema.Types.ObjectId }],
+    categoryId: [{ type: Schema.Types.ObjectId }],
     price: { type: Number, default: 0 },
     contentId: {
         type: Schema.Types.Number,

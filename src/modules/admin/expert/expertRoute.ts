@@ -34,7 +34,7 @@ export const expertRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 payload: {
-                    catgegoryId: Joi.array().items(Joi.string()),
+                    categoryId: Joi.array().items(Joi.string()),
                     name: Joi.string().required(),
                     email: Joi.string().required(),
                     profession: Joi.string().required(),
@@ -135,7 +135,7 @@ export const expertRoute: ServerRoute[] = [
                     expertId: Joi.string().required()
                 },
                 payload: {
-                    catgegoryId: Joi.array().items(Joi.string()).required(),
+                    categoryId: Joi.array().items(Joi.string()).required(),
                     name: Joi.string().required(),
                     email: Joi.string().required(),
                     profession: Joi.string().required(),

@@ -62,7 +62,7 @@ class ExpertController {
             aggPipe.push({
                 $lookup: {
                     from: 'categories',
-                    let: { 'cId': '$catgeoryId' },
+                    let: { 'cId': '$categoryId' },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -73,6 +73,7 @@ class ExpertController {
                     "as": "categoryData"
                 }
             })
+            console.log('>>>>>>>>>>>>>.');
 
             aggPipe.push({
                 $lookup: {
