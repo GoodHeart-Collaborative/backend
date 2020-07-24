@@ -169,16 +169,16 @@ class ExpertController {
         }
     }
 
-    async updateStatus(params: InspirationRequest.IUpdateStatus) {
+    async updateStatus(params) {
         try {
             const criteria = {
-                _id: params.Id
+                _id: params.expertId
             };
 
             const datatoUpdate = {
                 status: params.status
             };
-            const data = await expertDao.updateOne('gratitude_journals', criteria, datatoUpdate, {})
+            const data = await expertDao.updateOne('expert', criteria, datatoUpdate, {})
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
         } catch (error) {
