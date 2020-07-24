@@ -62,7 +62,7 @@ class ExpertController {
             aggPipe.push({
                 $lookup: {
                     from: 'categories',
-                    let: { 'cId': '$catgegoryId' },
+                    let: { 'cId': '$catgeoryId' },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -107,13 +107,13 @@ class ExpertController {
         }
     }
 
-    async getPostById(params: InspirationRequest.IGetInspirationById) {
+    async updateExpert(params) {
         try {
             const criteria = {
-                _id: params.Id,
+                _id: params.expertId,
             };
 
-            const data = await expertDao.findOne('gratitude_journals', criteria, {}, {})
+            const data = await expertDao.updateOne('expert', criteria, params, {})
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }

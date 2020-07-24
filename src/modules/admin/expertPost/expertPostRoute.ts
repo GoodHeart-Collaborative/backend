@@ -8,7 +8,6 @@ import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
-import { join } from "path";
 
 export const expertPostRoute: ServerRoute[] = [
     {
@@ -87,7 +86,7 @@ export const expertPostRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 query: {
-                    expertId: Joi.string(),
+                    expertId: Joi.string().required(),
                     catgegoryId: Joi.string(),
                     contentId: Joi.number()
                         .valid([

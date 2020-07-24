@@ -10,7 +10,7 @@ export interface IExpert extends Document {
     expertId: string,
 
     // profession: string,
-    catgegoryId: string,
+    categoryId: string,
     price: number;
     contentId: number
     contentType: string,

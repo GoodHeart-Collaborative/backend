@@ -70,34 +70,43 @@ class ExpertPostController {
 
     async getExpertPosts(params) {
         try {
+            const { expertId, categoryId, limit, pageNo, contentId } = params;
+            console.log('contentIdcontentIdcontentId', contentId);
 
-            const { expertId, categoryId, limit, pageNo } = params;
             let aggPipe = [];
             const match: any = {};
 
-            match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-            match._id = appUtils.toObjectId(expertId)
-
-            aggPipe.push({ $match: match })
-
-            aggPipe.push({
+            if (!contentId) {
+                match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+                match._id = appUtils.toObjectId(expertId)
+            }
+            const query = {
                 $lookup: {
-                    from: 'expert_posts',
-                    let: { 'eId': '$_id', },
+                    from: 'categories',
+                    let: { cId: '$categoryId' },
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $and: [
-                                ]
+                                $in: ['$_id', '$$cId']
                             }
                         }
                     }],
-                    as: "posts",
+                    as: 'categoryData;'
                 }
-            })
+            }
+            if (contentId) {
+                match.contentId = contentId;
+                match.status = config.CONSTANT.STATUS.ACTIVE;
+                match.expertId = appUtils.toObjectId(expertId)
+            }
+            aggPipe.push({ $match: match })
 
             aggPipe = [...aggPipe, ...await expertDao.addSkipLimit(limit, pageNo)];
-            const result = await expertDao.aggregateWithPagination("gratitude_journals", aggPipe, limit, pageNo, true)
+            if (!contentId) {
+                aggPipe.push(query)
+                return await expertDao.aggregate('expert', aggPipe, {},)
+            }
+            const result = await expertDao.aggreagtionWithPaginateTotal("expert_post", aggPipe, limit, pageNo, true)
             return result;
         } catch (error) {
             return Promise.reject(error)
