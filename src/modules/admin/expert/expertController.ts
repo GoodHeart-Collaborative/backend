@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import * as config from "@config/index";
 import * as expertConstant from "@modules/admin/expert/expertConstant";
 import { expertDao } from "@modules/admin/expert/expertDao";
+import * as appUtils from "@utils/appUtils";
 
 
 class ExpertController {
@@ -44,6 +45,41 @@ class ExpertController {
 
         } catch (error) {
             throw error;
+        }
+    }
+
+
+    async getExpert(params) {
+        try {
+
+            const { expertId, categoryId, limit, page } = params;
+            let aggPipe = [];
+            const match: any = {};
+
+            match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            aggPipe.push({ $match: match })
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'categories',
+                    let: { 'cId': '$catgegoryId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                "$in": ['$_id', '$$cId'],
+                            }
+                        }
+                    }],
+                    "as": "categoryData"
+                }
+            })
+
+            const data = await expertDao.aggreagtionWithPaginateTotal('expert', aggPipe, limit, page, true)
+            console.log('datadatadata', data);
+            return data;
+
+        } catch (error) {
+            return Promise.reject(error);
         }
     }
 
