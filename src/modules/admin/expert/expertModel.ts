@@ -20,7 +20,7 @@ export interface IExpert extends Document {
     contentId: number
     contentType: string;
     contentDisplayName: string;
-    profilePicUrl: string;
+    profilePicUrl: [string];
     bio: string
 }
 
@@ -73,6 +73,7 @@ const expertSchema = new Schema({
         default: config.CONSTANT.PRIVACY_STATUS.PRIVATE
     },
     bio: { type: String },
+
     // mediaType: {
     //     type: Number,
     //     enum: [
@@ -82,7 +83,7 @@ const expertSchema = new Schema({
     //     default: config.CONSTANT.MEDIA_TYPE.IMAGE
     // },
     postAt: { type: String, trim: true },
-    profilePicUrl: { type: String },
+    profilePicUrl: [Schema.Types.String],
     // mediaUrl: { type: String },
     // thumbnailUrl: { type: String },
     created: { type: Number }
