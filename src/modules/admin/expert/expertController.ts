@@ -51,7 +51,6 @@ class ExpertController {
 
     async getExpert(params) {
         try {
-
             const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm } = params;
             let aggPipe = [];
             const match: any = {};
@@ -71,7 +70,8 @@ class ExpertController {
             }
             if (searchTerm) {
                 match["$or"] = [
-                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "name": { "$regex": searchTerm, "$options": "-i" } },
+                    { "email": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
 
