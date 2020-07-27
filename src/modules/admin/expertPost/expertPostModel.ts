@@ -33,7 +33,7 @@ const expertPostSchema = new Schema({
     expertId: { type: Schema.Types.ObjectId, ref: 'expert' },
 
     profession: { type: String },
-    catgegoryId: { type: Schema.Types.ObjectId },
+    categoryId: { type: Schema.Types.ObjectId },
     price: { type: Number, default: 0 },
     contentId: {
         type: Schema.Types.Number,
