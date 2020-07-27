@@ -47,6 +47,7 @@ const HTTP_STATUS_CODE = {
 	ADMIN_ACCOUNT_SCREENING: 414,
 	ADMIN_REJECT_ACCOUNT: 415,
 	LOGIN_STATUS_HOME_SCREEN: 416,
+	ADMIN_REJECTED_USER: 421,
 };
 
 const MEMBER_TYPE = {
@@ -271,6 +272,11 @@ const MESSAGES = {
 			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
 			"message": "Your account have been deleted by admin.",
 			type: "DELETED"
+		},
+		ADMIN_REJECTED: {
+			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
+			"message": "Your account is rejected in the verification process.",
+			type: "REJECTED"
 		},
 		INCORRECT_PASSWORD: {
 			"statusCode": HTTP_STATUS_CODE.ACCESS_FORBIDDEN,

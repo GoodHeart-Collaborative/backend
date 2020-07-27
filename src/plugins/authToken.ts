@@ -102,7 +102,10 @@ export const plugin = {
 							delete userData._id, delete userData.createdAt;
 							if (userData.status === config.CONSTANT.STATUS.BLOCKED) {
 								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.USER_BLOCKED));
-							} else {
+							} else if (userData.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.ADMIN_REJECTED));
+							}
+							else {
 								const step3 = await loginHistoryDao.findDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId, "salt": jwtPayload.payload.salt });
 								if (!step3) {
 									return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
