@@ -101,7 +101,7 @@ export const plugin = {
 						} else {
 							delete userData._id, delete userData.createdAt;
 							if (userData.status === config.CONSTANT.STATUS.BLOCKED) {
-								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.BLOCKED));
+								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.USER_BLOCKED));
 							} else {
 								const step3 = await loginHistoryDao.findDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId, "salt": jwtPayload.payload.salt });
 								if (!step3) {

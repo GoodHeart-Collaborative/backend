@@ -238,6 +238,11 @@ const MESSAGES = {
 			"message": "Your account have been blocked by admin.",
 			"type": "USER_BLOCKED"
 		},
+		USER_BLOCKED: {
+			"statusCode": HTTP_STATUS_CODE.BLOCKED_USER,
+			"message": "Your account have been blocked by admin.",
+			"type": "USER_BLOCKED"
+		},
 		DELETED: {
 			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
 			"message": "Your account have been deleted by admin.",
