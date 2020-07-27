@@ -102,7 +102,7 @@ export const gratitudeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/gratitude`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: InspirationRequest.IGetInspirations = request.query;
+            const payload = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await gratitudeController.getPosts(payload);
@@ -131,6 +131,7 @@ export const gratitudeRoute: ServerRoute[] = [
                     sortBy: Joi.string().valid([
                         'createdAt', 'title'
                     ]),
+                    userId: Joi.string().required(),
                     fromDate: Joi.date(),
                     toDate: Joi.date(),
                     searchTerm: Joi.string(),

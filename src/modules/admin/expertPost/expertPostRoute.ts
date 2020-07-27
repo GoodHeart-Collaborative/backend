@@ -34,7 +34,7 @@ export const expertPostRoute: ServerRoute[] = [
                 headers: validator.adminAuthorizationHeaderObj,
                 payload: {
                     expertId: Joi.string(),
-                    catgegoryId: Joi.string(),
+                    categoryId: Joi.string(),
                     price: Joi.number(),
                     contentId: Joi.number().default(config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE)
                         .valid([
@@ -87,7 +87,7 @@ export const expertPostRoute: ServerRoute[] = [
                 headers: validator.adminAuthorizationHeaderObj,
                 query: {
                     expertId: Joi.string().required(),
-                    catgegoryId: Joi.string(),
+                    categoryId: Joi.string(),
                     contentId: Joi.number()
                         .valid([
                             Object.values(config.CONSTANT.EXPERT_CONTENT_TYPE).map(({ VALUE }) => VALUE)
@@ -110,4 +110,47 @@ export const expertPostRoute: ServerRoute[] = [
             }
         }
     },
+
+
+    {
+        method: "PATCH",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}/status/{status}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload = request.params;
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await expertPostController.updateStatus(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "expert"],
+            description: "update expert post",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: {
+                    postId: Joi.string().required(),
+                    status: Joi.string().valid([
+                        config.CONSTANT.STATUS.ACTIVE,
+                        config.CONSTANT.STATUS.BLOCKED,
+                        config.CONSTANT.STATUS.DELETED,
+                    ]).required()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
 ];

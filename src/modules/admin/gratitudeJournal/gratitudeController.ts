@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import * as config from "@config/index";
 import * as inspirationConstant from "@modules/admin/dailyInspiration/inspirationConstant";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
-
+import * as appUtils from "@utils/appUtils";
 
 class GratitudeController {
 
@@ -44,13 +44,14 @@ class GratitudeController {
         }
     }
 
-    async getPosts(params: InspirationRequest.IGetInspirations) {
+    async getPosts(params) {
         try {
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
             const aggPipe = [];
 
             const match: any = {};
 
+            match['userId'] = appUtils.toObjectId(params.userId)
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
             } else {

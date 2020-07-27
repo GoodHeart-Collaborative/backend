@@ -91,7 +91,7 @@ class ExpertPostController {
                             }
                         }
                     }],
-                    as: 'categoryData;'
+                    as: 'categoryData'
                 }
             }
             if (contentId) {
@@ -156,10 +156,10 @@ class ExpertPostController {
         }
     }
 
-    async updateStatus(params: InspirationRequest.IUpdateStatus) {
+    async updateStatus(params) {
         try {
             const criteria = {
-                _id: params.Id
+                _id: params.postId
             };
 
             const datatoUpdate = {

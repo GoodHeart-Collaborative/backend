@@ -6,6 +6,7 @@ declare namespace GratitudeJournalRequest {
         mediaUrl: string,
         thumbnailUrl: string
         postAt: string
+        userId: string;
     }
     export interface EditGratitudeJournalRequest extends TokenData {
         description?: string,
