@@ -31,10 +31,10 @@ class ExpertController {
     async addExpert(params) {
         try {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
-            const result = this.getTypeAndDisplayName(config.CONSTANT.EXPERT_CONTENT_TYPE, params['contentId'])
-            console.log('data1data1data1data1data1', result);
-            params['contentType'] = result['TYPE']
-            params['contentDisplayName'] = result['DISPLAY_NAME'];
+            // const result = this.getTypeAndDisplayName(config.CONSTANT.EXPERT_CONTENT_TYPE, params['contentId'])
+            // console.log('data1data1data1data1data1', result);
+            // params['contentType'] = result['TYPE']
+            // params['contentDisplayName'] = result['DISPLAY_NAME'];
 
             console.log('paramsparamsparamsparams', params);
 

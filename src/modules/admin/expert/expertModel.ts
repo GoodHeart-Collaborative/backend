@@ -17,9 +17,9 @@ export interface IExpert extends Document {
     type: number;
     mediaType: number,
     // mediaUrl: number,
-    contentId: number
-    contentType: string;
-    contentDisplayName: string;
+    // contentId: number
+    // contentType: string;
+    // contentDisplayName: string;
     profilePicUrl: [string];
     bio: string
 }
@@ -44,13 +44,13 @@ const expertSchema = new Schema({
     experience: { type: String },
     categoryId: [{ type: Schema.Types.ObjectId }],
     price: { type: Number, default: 0 },
-    contentId: {
-        type: Schema.Types.Number,
-        default: config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE,
-        enum: Object.values(config.CONSTANT.EXPERT_CONTENT_TYPE).map(({ VALUE }) => VALUE)
-    },
-    contentType: { type: String },
-    contentDisplayName: { type: String },
+    // contentId: {
+    //     type: Schema.Types.Number,
+    //     default: config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE,
+    //     enum: Object.values(config.CONSTANT.EXPERT_CONTENT_TYPE).map(({ VALUE }) => VALUE)
+    // },
+    // contentType: { type: String },
+    // contentDisplayName: { type: String },
 
     likeCount: { type: Schema.Types.Number, default: 0 },
     commentCount: { type: Schema.Types.Number, default: 0 },
