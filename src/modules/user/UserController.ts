@@ -692,7 +692,7 @@ export class UserController {
 			// 	}
 			// }
 			if (params.otp === '0000') {
-				return Promise.reject(Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP))
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP)
 			}
 
 
