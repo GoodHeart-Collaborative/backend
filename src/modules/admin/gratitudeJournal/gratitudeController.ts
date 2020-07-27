@@ -59,7 +59,7 @@ class GratitudeController {
             }
             if (searchTerm) {
                 match["$or"] = [
-                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "description": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
 

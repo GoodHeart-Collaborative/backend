@@ -92,7 +92,17 @@ export const expertRoute: ServerRoute[] = [
                 headers: validator.adminAuthorizationHeaderObj,
                 query: {
                     limit: Joi.number(),
-                    page: Joi.number()
+                    page: Joi.number(),
+                    searchTerm: Joi.string(),
+                    fromDate: Joi.date(),
+                    toDate: Joi.date(),
+                    sortBy: Joi.string().valid([
+                        'name', 'createdAt'
+                    ]),
+                    sortOrder: Joi.number().valid([
+                        config.CONSTANT.ENUM.SORT_TYPE
+                    ]),
+                    categoryId: Joi.string().trim()
                 },
                 failAction: appUtils.failActionFunction
             },

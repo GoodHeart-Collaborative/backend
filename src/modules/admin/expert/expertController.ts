@@ -52,11 +52,47 @@ class ExpertController {
     async getExpert(params) {
         try {
 
-            const { expertId, categoryId, limit, page } = params;
+            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm } = params;
             let aggPipe = [];
             const match: any = {};
+            let sort = {};
+            console.log('categoryIdcategoryIdcategoryIdcategoryId', categoryId);
 
             match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+
+            if (sortBy && sortOrder) {
+                if (sortBy === "name") {
+                    sort = { "name": sortOrder };
+                } else {
+                    sort = { "created": sortOrder };
+                }
+            } else {
+                sort = { "created": -1 };
+            }
+            if (searchTerm) {
+                match["$or"] = [
+                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
+
+            aggPipe.push({ "$sort": sort });
+
+            if (categoryId) {
+                const Ids = categoryId.split(',');
+                const ArrayIds = [];
+                Ids.map(data => {
+                    ArrayIds.push(appUtils.toObjectId(data));
+                })
+                match['categoryId'] = {
+                    $in: ArrayIds
+                }
+            }
+
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+
+
             aggPipe.push({ $match: match })
 
             aggPipe.push({

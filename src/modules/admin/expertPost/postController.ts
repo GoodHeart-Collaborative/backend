@@ -70,7 +70,7 @@ class ExpertPostController {
 
     async getExpertPosts(params) {
         try {
-            const { expertId, categoryId, limit, pageNo, contentId } = params;
+            const { expertId, categoryId, limit, pageNo, contentId, searchTerm, fromDate, toDate } = params;
             console.log('contentIdcontentIdcontentId', contentId);
 
             let aggPipe = [];
@@ -80,6 +80,18 @@ class ExpertPostController {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
                 match._id = appUtils.toObjectId(expertId)
             }
+
+            if (searchTerm) {
+                match["$or"] = [
+                    { "description": { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
+
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+
+
             const query = {
                 $lookup: {
                     from: 'categories',
@@ -173,10 +185,10 @@ class ExpertPostController {
         }
     }
 
-    async updatePost(params: InspirationRequest.IUpdateInpiration) {
+    async updatePost(params) {
         try {
             const criteria = {
-                _id: params.Id
+                _id: params.postId
             };
             const datatoUpdate = {
                 ...params
