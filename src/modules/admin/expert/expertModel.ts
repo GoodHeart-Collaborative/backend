@@ -41,7 +41,11 @@ const expertSchema = new Schema({
         ]
     },
     // bio: { type: String },
-    experience: { type: String },
+    experience: {
+        type: String, enum: [
+            'Junior', 'Mid', 'Senior',
+        ]
+    },
     categoryId: [{ type: Schema.Types.ObjectId }],
     price: { type: Number, default: 0 },
     // contentId: {

@@ -46,9 +46,10 @@ export const expertRoute: ServerRoute[] = [
                         config.INDUSTRIES.Wellness_Coaches,
                     ]).required(),
                     bio: Joi.string().required(),
-                    experience: Joi.string().required(),
+                    experience: Joi.string().valid([
+                        'Junior', 'Mid', 'Senior',
+                    ]).required(),
                     profilePicUrl: Joi.array().items(Joi.string()),
-
                     // price: Joi.number(),
                     // contentId: Joi.number().default(config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE)
                     //     .valid([
@@ -158,7 +159,9 @@ export const expertRoute: ServerRoute[] = [
                         config.INDUSTRIES.Wellness_Coaches,
                     ]).required(),
                     bio: Joi.string().required(),
-                    experience: Joi.string().required(),
+                    experience: Joi.string().valid([
+                        'Junior', 'Mid', 'Senior',
+                    ]).required(),
                     profilePicUrl: Joi.array().items(Joi.string()),
 
                     // price: Joi.number(),
