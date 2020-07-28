@@ -8,7 +8,7 @@ import * as config from "@config/index";
 
 export interface IExpert extends Document {
     expertId: string,
-
+    topic: string;
     // profession: string,
     categoryId: string,
     price: number;
@@ -31,8 +31,8 @@ export interface IExpert extends Document {
 
 const expertPostSchema = new Schema({
     expertId: { type: Schema.Types.ObjectId, ref: 'expert' },
-
-    profession: { type: String },
+    topic: { type: String },
+    // profession: { type: String },
     categoryId: { type: Schema.Types.ObjectId },
     price: { type: Number, default: 0 },
     contentId: {

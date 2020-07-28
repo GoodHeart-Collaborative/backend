@@ -1,6 +1,7 @@
 declare namespace AdminExpertPostRequest {
 
     export interface AddPost {
+        topic: string;
         expertId: string,
         categoryId: string;
         price: number;
@@ -28,6 +29,7 @@ declare namespace AdminExpertPostRequest {
 
     export interface adminUpdateExpertPost {
         postId: string,
+        topic: string;
         expertId: string;
         categoryId: string;
         price?: number;

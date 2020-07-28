@@ -5,6 +5,7 @@ import * as config from "@config/index";
 
 let validaExpertPostAdd = Joi.object({
     expertId: Joi.string(),
+    topic: Joi.string().required(),
     categoryId: Joi.string(),
     price: Joi.number(),
     contentId: Joi.number().default(config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE)
@@ -60,6 +61,7 @@ let adminUpdateExpertPostId = Joi.object({
 let adminUpdateExpertPost = Joi.object({
     expertId: Joi.string(),
     categoryId: Joi.string(),
+    topic: Joi.string().allow(''),
     price: Joi.number(),
     contentId: Joi.number().default(config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE)
         .valid([
