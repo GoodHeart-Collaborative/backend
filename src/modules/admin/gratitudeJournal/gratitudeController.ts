@@ -26,7 +26,7 @@ class GratitudeController {
         }
     }
 
-    async getPostById(params: InspirationRequest.IGetInspirationById) {
+    async getPostById(params: GratitudeRequest.IgratitudeById) {
         try {
             const criteria = {
                 _id: params.Id,
@@ -44,7 +44,7 @@ class GratitudeController {
         }
     }
 
-    async getPosts(params) {
+    async getPosts(params: GratitudeRequest.IGetGratitude) {
         try {
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
             const aggPipe = [];
@@ -88,7 +88,7 @@ class GratitudeController {
         }
     }
 
-    async updateStatus(params: InspirationRequest.IUpdateStatus) {
+    async updateStatus(params: GratitudeRequest.IUpdateStatus) {
         try {
             const criteria = {
                 _id: params.Id
@@ -105,7 +105,7 @@ class GratitudeController {
         }
     }
 
-    async updatePost(params: InspirationRequest.IUpdateInpiration) {
+    async updatePost(params: GratitudeRequest.updateGratitude) {
         try {
             const criteria = {
                 _id: params.Id

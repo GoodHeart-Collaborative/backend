@@ -8,6 +8,7 @@ import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
+import * as gratitudeValidator from './gratitudeValidator'
 
 export const gratitudeRoute: ServerRoute[] = [
     // {
@@ -63,7 +64,7 @@ export const gratitudeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/gratitude/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: InspirationRequest.IGetInspirationById = request.params;
+            const payload: GratitudeRequest.IgratitudeById = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await gratitudeController.getPostById(payload);
@@ -82,9 +83,7 @@ export const gratitudeRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    Id: Joi.string().required(), // 
-                },
+                params: gratitudeValidator.validategetGratituById,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -102,7 +101,7 @@ export const gratitudeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/gratitude`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: GratitudeRequest.IGetGratitude = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await gratitudeController.getPosts(payload);
@@ -119,23 +118,7 @@ export const gratitudeRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: {
-                    limit: Joi.number(),
-                    page: Joi.number(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.BLOCKED,
-                        config.CONSTANT.STATUS.DELETED,
-                    ]),
-                    sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
-                    sortBy: Joi.string().valid([
-                        'createdAt', 'title'
-                    ]),
-                    userId: Joi.string().required(),
-                    fromDate: Joi.date(),
-                    toDate: Joi.date(),
-                    searchTerm: Joi.string(),
-                },
+                query: gratitudeValidator.GetGratitude,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -151,7 +134,7 @@ export const gratitudeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/gratitude/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: InspirationRequest.IUpdateStatus = request.params;
+            const payload: GratitudeRequest.IUpdateStatus = request.params;
             //     ...request.payload,
             //     ...request.params
             // };
@@ -171,21 +154,7 @@ export const gratitudeRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    Id: Joi.string().required(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.DELETED,
-                        config.CONSTANT.STATUS.BLOCKED
-                    ])
-                },
-                // payload: {
-                //     status: Joi.string().valid([
-                //         config.CONSTANT.STATUS.ACTIVE,
-                //         config.CONSTANT.STATUS.DELETED,
-                //         config.CONSTANT.STATUS.BLOCKED
-                //     ])
-                // },
+                params: gratitudeValidator.gratitudestatus,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -202,7 +171,7 @@ export const gratitudeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/gratitude/{Id}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: InspirationRequest.IUpdateInpiration = {
+            const payload: GratitudeRequest.updateGratitude = {
                 ...request.payload,
                 ...request.params
             };
@@ -222,28 +191,8 @@ export const gratitudeRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    Id: Joi.string().required()
-                },
-                payload: {
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.DELETED,
-                        // config.CONSTANT.STATUS.BLOCKED
-                    ]),
-                    title: Joi.string().required(),
-                    // privacy: Joi.string().valid([
-                    //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-                    //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                    //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
-                    // ]),
-                    description: Joi.string().required(),
-                    // shortDescription: string;
-                    imageUrl: Joi.string(),
-                    isPostLater: Joi.boolean().default(false),
-                    postedAt: Joi.date(),
-                    // createdAt: Joi.number()
-                },
+                params: gratitudeValidator.validategetGratituById,
+                payload: gratitudeValidator.updateGratitude,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

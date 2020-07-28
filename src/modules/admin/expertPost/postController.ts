@@ -25,11 +25,11 @@ class ExpertPostController {
         return result[0];
     }
 	/**
-	 * @function addExpert
-	 * @description if IS_REDIS_ENABLE set to true,
-	 * than redisClient.storeList() function saves value in redis.
-	 */
-    async addExpertPost(params) {
+	 * @function addExpertPosts
+	 * @description admin add post to the experts
+     * /
+     **/
+    async addExpertPost(params: AdminExpertPostRequest.AddPost) {
         try {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
             const result = this.getTypeAndDisplayName(config.CONSTANT.EXPERT_CONTENT_TYPE, params['contentId'])
@@ -37,10 +37,7 @@ class ExpertPostController {
             params['contentType'] = result['TYPE']
             params['contentDisplayName'] = result['DISPLAY_NAME'];
 
-            console.log('paramsparamsparamsparams', params);
-
             const data = await expertPostDao.insert("expert_post", params, {});
-            console.log('datadatadatadatadata', data);
 
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -49,6 +46,11 @@ class ExpertPostController {
         }
     }
 
+    /**
+     * @function getPostById
+     * @description admin get postDetails
+     * /
+     **/
     async getPostById(params: InspirationRequest.IGetInspirationById) {
         try {
             const criteria = {
@@ -67,11 +69,15 @@ class ExpertPostController {
         }
     }
 
-
-    async getExpertPosts(params) {
+    /**
+     * @function getExpertPosts
+     * @description admin get experts post
+     * /
+    **/
+    async getExpertPosts(params: AdminExpertPostRequest.getExpert) {
         try {
-            const { expertId, categoryId, limit, pageNo, contentId, searchTerm, fromDate, toDate } = params;
-            console.log('contentIdcontentIdcontentId', contentId);
+            const pageNo = params.page;
+            const { expertId, categoryId, limit, contentId, searchTerm, fromDate, toDate } = params;
 
             let aggPipe = [];
             const match: any = {};
@@ -90,7 +96,6 @@ class ExpertPostController {
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
-
 
             const query = {
                 $lookup: {
@@ -168,7 +173,7 @@ class ExpertPostController {
         }
     }
 
-    async updateStatus(params) {
+    async updateStatus(params: AdminExpertPostRequest.updateStatus) {
         try {
             const criteria = {
                 _id: params.postId
@@ -185,7 +190,7 @@ class ExpertPostController {
         }
     }
 
-    async updatePost(params) {
+    async updatePost(params: AdminExpertPostRequest.adminUpdateExpertPost) {
         try {
             const criteria = {
                 _id: params.postId

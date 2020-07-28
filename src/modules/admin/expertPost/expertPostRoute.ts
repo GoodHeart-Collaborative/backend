@@ -8,14 +8,14 @@ import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
-
+import * as expertPostValidator from './expertPostValidator'
 export const expertPostRoute: ServerRoute[] = [
     {
         method: "POST",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expertPost`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: InspirationRequest.InspirationAdd = request.payload;
+            const payload: AdminExpertPostRequest.AddPost = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertPostController.addExpertPost(payload);
@@ -32,27 +32,7 @@ export const expertPostRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                payload: {
-                    expertId: Joi.string(),
-                    categoryId: Joi.string(),
-                    price: Joi.number(),
-                    contentId: Joi.number().default(config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE)
-                        .valid([
-                            Object.values(config.CONSTANT.EXPERT_CONTENT_TYPE).map(({ VALUE }) => VALUE)
-                        ]),
-                    mediaType: Joi.number().valid([
-                        config.CONSTANT.MEDIA_TYPE.IMAGE,
-                        config.CONSTANT.MEDIA_TYPE.VIDEO
-                    ]),
-                    description: Joi.string(),
-                    mediaUrl: Joi.string(),
-                    thumbnailUrl: Joi.string(),
-                    privacy: Joi.string().valid([
-                        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-                        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                        config.CONSTANT.PRIVACY_STATUS.PUBLIC
-                    ]).default(config.CONSTANT.PRIVACY_STATUS.PUBLIC)
-                },
+                payload: expertPostValidator.validaExpertPostAdd,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -69,7 +49,7 @@ export const expertPostRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expertPost`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: AdminExpertPostRequest.getExpert = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertPostController.getExpertPosts(payload);
@@ -86,30 +66,7 @@ export const expertPostRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: {
-                    expertId: Joi.string().required(),
-                    categoryId: Joi.string(),
-                    contentId: Joi.number()
-                        .valid([
-                            Object.values(config.CONSTANT.EXPERT_CONTENT_TYPE).map(({ VALUE }) => VALUE)
-                        ]),
-                    privacy: Joi.string().valid([
-                        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-                        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                        config.CONSTANT.PRIVACY_STATUS.PUBLIC
-                    ]).default(config.CONSTANT.PRIVACY_STATUS.PUBLIC),
-                    limit: Joi.number(),
-                    page: Joi.number(),
-                    searchTerm: Joi.string(),
-                    fromDate: Joi.date(),
-                    toDate: Joi.date(),
-                    sortBy: Joi.string().valid([
-                        'createdAt'
-                    ]),
-                    sortOrder: Joi.number().valid([
-                        config.CONSTANT.ENUM.SORT_TYPE
-                    ]),
-                },
+                query: expertPostValidator.getExpertPosts,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -120,13 +77,12 @@ export const expertPostRoute: ServerRoute[] = [
             }
         }
     },
-
     {
         method: "PATCH",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: AdminExpertPostRequest.adminUpdateExpertPost = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertPostController.updatePost(payload);
@@ -143,30 +99,8 @@ export const expertPostRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    postId: Joi.string().required(),
-                },
-                payload: {
-                    expertId: Joi.string(),
-                    categoryId: Joi.string(),
-                    price: Joi.number(),
-                    contentId: Joi.number().default(config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE)
-                        .valid([
-                            Object.values(config.CONSTANT.EXPERT_CONTENT_TYPE).map(({ VALUE }) => VALUE)
-                        ]),
-                    mediaType: Joi.number().valid([
-                        config.CONSTANT.MEDIA_TYPE.IMAGE,
-                        config.CONSTANT.MEDIA_TYPE.VIDEO
-                    ]),
-                    description: Joi.string(),
-                    mediaUrl: Joi.string(),
-                    thumbnailUrl: Joi.string(),
-                    privacy: Joi.string().valid([
-                        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-                        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-                        config.CONSTANT.PRIVACY_STATUS.PUBLIC
-                    ]).default(config.CONSTANT.PRIVACY_STATUS.PUBLIC)
-                },
+                params: expertPostValidator.adminUpdateExpertPostId,
+                payload: expertPostValidator.adminUpdateExpertPost,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -177,14 +111,12 @@ export const expertPostRoute: ServerRoute[] = [
             }
         }
     },
-
-
     {
         method: "PATCH",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: AdminExpertPostRequest.updateStatus = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertPostController.updateStatus(payload);
@@ -201,14 +133,7 @@ export const expertPostRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    postId: Joi.string().required(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.BLOCKED,
-                        config.CONSTANT.STATUS.DELETED,
-                    ]).required()
-                },
+                params: expertPostValidator.updateStatus,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -219,5 +144,4 @@ export const expertPostRoute: ServerRoute[] = [
             }
         }
     },
-
 ];

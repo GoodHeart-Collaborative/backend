@@ -1,6 +1,6 @@
-declare namespace InspirationRequest {
+declare namespace GratitudeRequest {
 
-    export interface InspirationAdd {
+    export interface GratitudeAdd {
         title: string;
         description: string;
         // shortDescription: string;
@@ -9,34 +9,35 @@ declare namespace InspirationRequest {
         isPostLater: boolean;
     }
 
-    export interface IGetInspirationById {
+    export interface IgratitudeById {
         Id: string;
     }
 
-    export interface IGetInspirations {
-        limit: number;
-        page: number;
+    export interface IGetGratitude {
+        limit: number,
+        page: number,
         status: string;
         sortOrder: number;
-        sortBy: string;
-        fromDate: string;
-        toDate: string;
-        searchTerm: string;
+        sortBy: string
+        userId: string,
+        fromDate: string,
+        toDate: string,
+        searchTerm: string,
     }
+
 
     export interface IUpdateStatus {
         status: string;
         Id: string;
     }
 
-    export interface IUpdateInpiration {
-        Id: string;
+    export interface updateGratitude {
+        Id: string
         status: string;
-        title: string;
-        description: string,
-        // shortDescription: string;
+        title: string
+        description: string
         imageUrl: string
-        isPostLater: boolean
-        postedAt: Date,
+        isPostLater: boolean,
+        postedAt: string,
     }
 }
