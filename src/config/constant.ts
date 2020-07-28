@@ -111,12 +111,24 @@ const GENDER = {
 };
 
 export const INDUSTRIES = {
-	Experts_in_Executive_Burnout: "Experts in Executive Burnout",
-	Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
-	Wellness_Coaches: "Wellness Coaches",
-	Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
-	Compassion_Fatigue: 'Compassion Fatigue'
+	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
+	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
+	// Wellness_Coaches: "Wellness Coaches",
+	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
+	// Compassion_Fatigue: 'Compassion Fatigue',
+	Nonprofit: 'Nonprofit',
+	Emergency_Services: 'Emergency Services',
+	Social_And_Community_Services: 'Social and Community Services',
+	Law_Enforcement: "Law Enforcement",
+	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
 };
+
+export const PROFESSION_TYPE = {
+	Founder: "Founder",
+	CEO: "CEO",
+	Executive_Director: 'Executive Director',
+	Managing_Director: 'Managing Director'
+}
 
 const SOCIAL_LOGIN_TYPE = {
 	FACEBOOK: "facebook",
@@ -719,5 +731,6 @@ export const CONSTANT = Object.freeze({
 	COMMENT_CATEGORY: COMMENT_CATEGORY,
 	// COMMENT_TYPE: COMMENT_TYPE,
 	MEDIA_TYPE: MEDIA_TYPE,
-	EXPERT_CONTENT_TYPE
+	EXPERT_CONTENT_TYPE,
+	PROFESSION_TYPE
 });

@@ -33,11 +33,16 @@ const expertSchema = new Schema({
     profession: { type: String },
     industry: {
         type: String, enum: [
-            config.INDUSTRIES.Compassion_Fatigue,
-            config.INDUSTRIES.Experts_in_Executive_Burnout,
-            config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-            config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-            config.INDUSTRIES.Wellness_Coaches,
+            // config.INDUSTRIES.Compassion_Fatigue,
+            // config.INDUSTRIES.Experts_in_Executive_Burnout,
+            // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
+            // config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
+            // config.INDUSTRIES.Wellness_Coaches,
+            config.INDUSTRIES.Emergency_Services,
+            config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
+            config.INDUSTRIES.Law_Enforcement,
+            config.INDUSTRIES.Nonprofit,
+            config.INDUSTRIES.Social_And_Community_Services,
         ]
     },
     // bio: { type: String },

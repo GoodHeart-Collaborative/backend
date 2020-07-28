@@ -200,15 +200,25 @@ let resetPassword = Joi.object({
 
 let updateProfile = Joi.object({
     dob: Joi.string(),
-    profession: Joi.string().allow(''),
+    profession: Joi.string().valid([
+        config.CONSTANT.PROFESSION_TYPE.CEO,
+        config.CONSTANT.PROFESSION_TYPE.Executive_Director,
+        config.CONSTANT.PROFESSION_TYPE.Founder,
+        config.CONSTANT.PROFESSION_TYPE.Managing_Director,
+    ]),
     // userName: Joi.string(),
     industryType: Joi.string().valid([
-        config.INDUSTRIES.Compassion_Fatigue,
-        config.INDUSTRIES.Experts_in_Executive_Burnout,
-        config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-        config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-        config.INDUSTRIES.Wellness_Coaches,
-    ]).allow(''),
+        config.INDUSTRIES.Emergency_Services,
+        config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
+        config.INDUSTRIES.Law_Enforcement,
+        config.INDUSTRIES.Nonprofit,
+        config.INDUSTRIES.Social_And_Community_Services
+        // config.INDUSTRIES.Compassion_Fatigue,
+        // config.INDUSTRIES.Experts_in_Executive_Burnout,
+        // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
+        // config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
+        // config.INDUSTRIES.Wellness_Coaches,
+    ]),
     experience: Joi.string().valid([
         'Junior', 'Mid', 'Senior',
     ]),
