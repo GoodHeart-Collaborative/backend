@@ -40,5 +40,28 @@ class ExpertController {
         }
     }
 
+    async getcategory(payload) {
+        try {
+            return await expertDao.getCategory(payload);
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async expertDetailWithPost(payload) {
+        try {
+            return await expertDao.expertDetailWithPost(payload);
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async postDetail(payload) {
+        try {
+            return await expertDao.getPostDetail(payload);
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 }
 export const expertController = new ExpertController();
