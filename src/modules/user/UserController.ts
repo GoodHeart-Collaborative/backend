@@ -260,9 +260,7 @@ export class UserController {
 			if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
-
 				//  if email unverifiec false hai to 411 de dena hai
-
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"firstName": step1.firstName,
@@ -310,7 +308,6 @@ export class UserController {
 					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
-
 					let arn;
 					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 						// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -390,7 +387,7 @@ export class UserController {
 					"email": step1.email,
 					"countryCode": step1.countryCode,
 					"mobileNo": step1.mobileNo,
-					"salt": step1.salt || salt,
+					"salt": step.salt || salt,
 					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 				});
 
@@ -591,9 +588,9 @@ export class UserController {
 			throw error;
 		}
 	}
-		/**
-	 * @function profile
-	 */
+	/**
+ * @function profile
+ */
 	// async getUserProfile(userId: UserId) {
 	// 	try {
 	// 		const criteria = {_id: userId.userId};
@@ -860,11 +857,11 @@ export class UserController {
 
 	async getProfileHome(query) {
 		try {
-			let getData:any = {}
-			if(query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
+			let getData: any = {}
+			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
 				getData = {}
-			} else if(query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
-				getData = await discoverDao.getDiscoverData(query, {userId: query.userId}, true)
+			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
+				getData = await discoverDao.getDiscoverData(query, { userId: query.userId }, true)
 			} else {
 				getData = await gratitudeJournalDao.userProfileHome(query)
 			}
