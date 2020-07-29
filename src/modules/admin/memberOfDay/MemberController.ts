@@ -102,7 +102,7 @@ class MemberController {
             }
             aggPipe.push({ "$sort": sort });
 
-            const data = await inspirationDao.aggreagtionWithPaginateTotal('users', aggPipe, limit, page, true);
+            const data = await inspirationDao.paginate('users', aggPipe, limit, page, {}, true);
             return data;
         } catch (error) {
             return Promise.reject(error);
