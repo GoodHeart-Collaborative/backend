@@ -26,7 +26,7 @@ let AddHome = Joi.object({
     mediaUrl: Joi.string(),
     thumbnailUrl: Joi.string(),
     addedBy: {
-        name: Joi.string().required(),
+        name: Joi.string(),
         profilePicture: Joi.string()
     }
     // imageUrl: Joi.string()
@@ -81,8 +81,8 @@ let updateHome = Joi.object({
     mediaUrl: Joi.string().allow(''),
     thumbnailUrl: Joi.string().allow(''),
     addedBy: {
-        name: Joi.string().required(),
-        profilePicture: Joi.string()
+        name: Joi.string().allow(''),
+        profilePicture: Joi.string().allow('')
     }
     // imageUrl: Joi.string()
 })
