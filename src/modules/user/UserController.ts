@@ -379,6 +379,7 @@ export class UserController {
 					params['salt'] = salt;
 					step1 = await userDao.socialSignup(params);
 				}
+				console.log('step1.saltstep1.saltstep1.salt', step1.salt);
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"firstName": step1.firstName,
@@ -387,7 +388,7 @@ export class UserController {
 					"email": step1.email,
 					"countryCode": step1.countryCode,
 					"mobileNo": step1.mobileNo,
-					"salt": step.salt || salt,
+					"salt": step1.salt || salt,
 					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 				});
 
