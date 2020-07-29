@@ -11,6 +11,7 @@ import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager } from "@lib/MailManager";
 import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/UserDao";
+import { AdminuserDao } from "@modules/admin/users/userDao";
 import { TemplateUtil } from "@utils/TemplateUtil";
 
 class AdminController {
@@ -544,7 +545,7 @@ class AdminController {
 
 	async getUserList(params) {
 		try {
-			const data = userDao.getUsers(params);
+			const data = AdminuserDao.getUsers(params);
 			return data;
 		} catch (error) {
 			throw error;
