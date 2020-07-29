@@ -83,16 +83,26 @@ class CategoryController {
 
             var result = name.replace(/ /g, "_");
 
-            const findData = await categoryDao.findOne('categories', { name: result }, {}, {});
-            if (findData) {
-                return CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST
-            } else {
+            const findData = await categoryDao.findOne('categories', { _id: params.categoryId }, {}, {});
+            console.log('findDatafindData', findData);
+            const criteria = {
+                _id: params.categoryId
+            };
+            console.log('resultresultresultresultresult', result);
+
+            if (findData.name !== result) {
+                const findName = await categoryDao.findOne('categories', { name: result }, {}, {});
+                console.log('findNamefindName22222222', findName);
+
+                if (findName) {
+                    return CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST
+                }
                 params['name'] = result;
-                const criteria = {
-                    _id: params.categoryId
-                };
                 const data = await categoryDao.updateOne('categories', criteria, params, {});
-                return data;
+                return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
+            } else {
+                const data = await categoryDao.updateOne('categories', criteria, params, {});
+                return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
             }
         } catch (error) {
             return Promise.reject(error);

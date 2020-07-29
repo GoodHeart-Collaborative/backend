@@ -48,7 +48,7 @@ let GetList = Joi.object({
     ]),
     sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
     sortBy: Joi.string().valid([
-        'createdAt', 'title'
+        'createdAt', 'title', 'description'
     ]),
     type: Joi.number().valid([
         config.CONSTANT.HOME_TYPE.UNICORN,

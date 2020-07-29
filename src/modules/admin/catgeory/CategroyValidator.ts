@@ -42,7 +42,7 @@ let GetCategoryId = Joi.object({
 
 let UpdateCategory = Joi.object({
     title: Joi.string().required(),
-    imageUrl: Joi.string()
+    imageUrl: Joi.string().allow('')
 })
 
 

@@ -15,4 +15,11 @@ export const MESSAGES = {
             "type": "EMAIL_ALREADY_EXIST"
         },
     },
+    SUCCESS: {
+        SUCCESSFULLY_UPDATED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Category successfully updated.",
+            "type": "SUCCESSFULLY_UPDATED"
+        }
+    }
 };
