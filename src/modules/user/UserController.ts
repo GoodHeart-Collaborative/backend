@@ -369,8 +369,6 @@ export class UserController {
 				}
 				let step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1step1', step1);
-
-
 				if ((step1 && !step1.isGoogleLogin) || (step1 && !step1.isFacebookLogin) || (step1 && !step1.isAppleLogin)) {
 					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
@@ -408,7 +406,7 @@ export class UserController {
 					arn = "";
 				}
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-				params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
+				params = _.extend(params, { "arn": arn, "salt": step1.salt || salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
 				const step3 = loginHistoryDao.createUserLoginHistory(params);
 				let step4, step5;
 				if (config.SERVER.IS_REDIS_ENABLE) {
