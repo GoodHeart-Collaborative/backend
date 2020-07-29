@@ -18,7 +18,7 @@ class GratitudeJournalController {
      */
     async getGratitudeJournalData(params: GratitudeJournalRequest.GetGratitudeJournalRequest, userId) {
         try {
-            let getGratitudeJournal:any = await gratitudeJournalDao.getGratitudeJournalData(params, userId.tokenData)
+            let getGratitudeJournal: any = await gratitudeJournalDao.getGratitudeJournalData(params, userId.tokenData)
             return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA(getGratitudeJournal)
         } catch (error) {
             throw error;
@@ -27,12 +27,12 @@ class GratitudeJournalController {
     async addGratitudeJournalData(params: GratitudeJournalRequest.AddGratitudeJournalRequest) {
         try {
             params["postAt"] = moment(new Date(params.postAt)).format('YYYY-MM-DD')
-            let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({userId: await appUtils.toObjectId(params.userId), postAt: params["postAt"]})
-            if(checkGJ) {
-               let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({_id: checkGJ._id}, params)
+            let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({ userId: await appUtils.toObjectId(params.userId), postAt: params["postAt"] })
+            if (checkGJ) {
+                let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
                 return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getGratitudeJournal)
             } else {
-                let getGratitudeJournal:any = await gratitudeJournalDao.addGratitudeJournal(params)
+                let getGratitudeJournal: any = await gratitudeJournalDao.addGratitudeJournal(params)
                 return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_ADDED(getGratitudeJournal)
             }
         } catch (error) {
@@ -42,18 +42,18 @@ class GratitudeJournalController {
 
     async editGratitudeJournalData(params: GratitudeJournalRequest.EditGratitudeJournalRequest, Id) {
         try {
-            let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({_id: await appUtils.toObjectId(Id)})
-            if(checkGJ) {
-                if(params.postAt) {
+            let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({ _id: await appUtils.toObjectId(Id) })
+            if (checkGJ) {
+                if (params.postAt) {
                     params["postAt"] = moment(new Date(params.postAt)).format('YYYY-MM-DD')
-                    let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({userId: await appUtils.toObjectId(params.userId), postAt: params["postAt"]})
-                    if(checkGJ) {
+                    let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({ userId: await appUtils.toObjectId(params.userId), postAt: params["postAt"] })
+                    if (checkGJ) {
                         return gratitudeJournalConstants.MESSAGES.ERROR.GRATITUDE_JOURNAL_ALREADY_ADDED(params["postAt"])
                     } else {
                         params["created"] = new Date(params.postAt).getTime()
                     }
                 }
-               let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({_id: checkGJ._id}, params)
+                let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
                 return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getGratitudeJournal)
             } else {
                 return gratitudeJournalConstants.MESSAGES.ERROR.GRATITUDE_JOURNAL_NOT_FOUND
