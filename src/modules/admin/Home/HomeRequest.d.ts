@@ -10,7 +10,7 @@ declare namespace HomeRequest {
         mediaType: number,
         mediaUrl: string;
         thumbnailUrl: string;
-
+        addedBy: Object;
     }
 
     export interface IHomeById {
@@ -28,6 +28,7 @@ declare namespace HomeRequest {
         type: number;
         mediaType: number,
         mediaUrl: number
+        addedBy: Object;
     }
     export interface updateStatus {
         Id: string;

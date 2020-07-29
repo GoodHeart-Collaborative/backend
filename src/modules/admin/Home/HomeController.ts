@@ -3,8 +3,10 @@
 import * as _ from "lodash";
 import fs = require("fs");
 import * as config from "@config/index";
+import * as HOME_CONSTANT from './HomeConstant';
 // import * as sns from "@lib/pushNotification/sns";
 import { homeDao } from "@modules/admin/Home/adminHomeDao";
+import { CONSTANT } from "@config/index";
 
 class AdminHomeController {
     /**
@@ -15,6 +17,9 @@ class AdminHomeController {
 
     async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
+            if (params.type != 3 && params.thumbnailUrl) {
+                return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
+            }
             const data = await homeDao.insert("home", params, {});
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
         } catch (error) {

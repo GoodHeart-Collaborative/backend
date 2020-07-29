@@ -25,6 +25,10 @@ let AddHome = Joi.object({
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
     mediaUrl: Joi.string(),
     thumbnailUrl: Joi.string(),
+    addedBy: {
+        name: Joi.string().required(),
+        profilePicture: Joi.string()
+    }
     // imageUrl: Joi.string()
 }).unknown()
 
@@ -76,6 +80,10 @@ let updateHome = Joi.object({
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
     mediaUrl: Joi.string().allow(''),
     thumbnailUrl: Joi.string().allow(''),
+    addedBy: {
+        name: Joi.string().required(),
+        profilePicture: Joi.string()
+    }
     // imageUrl: Joi.string()
 })
 let updateHomeId = Joi.object({
