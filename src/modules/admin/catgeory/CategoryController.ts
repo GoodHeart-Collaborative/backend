@@ -50,6 +50,7 @@ class CategoryController {
             if (searchTerm) {
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "name": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
             aggPipe.push({ "$match": match });
