@@ -20,3 +20,4 @@ export { home } from './home/homeModel'
 export { gratitude_journals } from './gratitudeJournal/gratitudeJournalModel'
 export { expert } from './admin/expert/expertModel';
 export { expert_post } from "./admin/expertPost/expertPostModel";
+export { discover } from './discover/discoverModel'

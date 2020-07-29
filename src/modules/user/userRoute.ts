@@ -402,16 +402,15 @@ export const
 				}
 			}
 		},
-
 		{
 			method: "GET",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile/home`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-				const payload = request.query;
-				payload['userId'] = tokenData['userId'];
+				const query = request.query;
+				query['userId'] = tokenData['userId'];
 				try {
-					const result = await userController.getProfileHome(payload);
+					const result = await userController.getProfileHome(query);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
@@ -425,13 +424,7 @@ export const
 					strategies: ["UserAuth"]
 				},
 				validate: {
-					query: {
-						type: Joi.string().valid([
-							'gratitude', 'posts'
-						]),
-						page: Joi.number().default(1),
-						limit: Joi.number().default(10)
-					},
+					query: validateUser.validateProfileHome,
 					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction
 				},
@@ -442,4 +435,34 @@ export const
 				}
 			}
 		},
+		// {
+		// 	method: "GET",
+		// 	path: `${config.SERVER.API_BASE_URL}/v1/user/{userId}`,
+		// 	handler: async (request: Request, h: ResponseToolkit) => {
+		// 		const userId: UserId = request.params;
+		// 		try {
+		// 			const result = await userController.getUserProfile(userId);
+		// 			return responseHandler.sendSuccess(h, result);
+		// 		} catch (error) {
+		// 			return responseHandler.sendError(error);
+		// 		}
+		// 	},
+		// 	options: {
+		// 		tags: ["api", "discover"],
+		// 		description: "get User profile",
+		// 		auth: {
+		// 			strategies: ["UserAuth"]
+		// 		},
+		// 		validate: {
+		// 			headers: validator.userAuthorizationHeaderObj,
+		// 			params: validateUser.validateUserIdParams,
+		// 			failAction: appUtils.failActionFunction
+		// 		},
+		// 		plugins: {
+		// 			"hapi-swagger": {
+		// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+		// 			}
+		// 		}
+		// 	}
+		// },
 	];
