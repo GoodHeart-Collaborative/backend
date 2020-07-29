@@ -17,7 +17,7 @@ class MemberController {
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
-    async saveMembers(params) {
+    async saveMembers(params: MemberRequest.addMember) {
         try {
 
             if (!params['memberCreatedAt']) {
@@ -34,8 +34,13 @@ class MemberController {
             throw error;
         }
     }
+    /**
+     * 
+     * @param function getMemberstById 
+     * @description member detail
+     */
 
-    async getMemberstById(params) {
+    async getMemberstById(params: MemberRequest.memberDetail) {
         try {
             const criteria = {
                 _id: params.Id,
@@ -52,8 +57,12 @@ class MemberController {
             throw error;
         }
     }
-
-    async getMembers(params) {
+    /**
+     * 
+     * @param function getMembers
+     * @description getmembers list
+     */
+    async getMembers(params: MemberRequest.getMembers) {
         try {
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
 
@@ -93,7 +102,6 @@ class MemberController {
             }
             aggPipe.push({ "$sort": sort });
 
-
             const data = await inspirationDao.paginate('users', aggPipe, limit, page, {}, true);
             return data;
         } catch (error) {
@@ -101,20 +109,5 @@ class MemberController {
         }
     }
 
-    async updatePost(params) {
-        try {
-            const criteria = {
-                _id: params.Id
-            };
-            const datatoUpdate = {
-                ...params
-            };
-            const data = await inspirationDao.updateOne('inspiration', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
-
-        } catch (error) {
-            throw error;
-        }
-    }
 }
 export const memberController = new MemberController();

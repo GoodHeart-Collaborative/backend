@@ -43,6 +43,11 @@ export const adminUser: ServerRoute[] = [
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.ACTIVE,
                     ]),
+                    adminStatus: Joi.string().valid([
+                        config.CONSTANT.USER_ADMIN_STATUS.PENDING,
+                        config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
+                        config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+                    ])
                 },
                 failAction: appUtils.failActionFunction
             },

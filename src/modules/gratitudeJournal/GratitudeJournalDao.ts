@@ -66,7 +66,7 @@ export class GratitudeJournalDao extends BaseDao {
             //       }
             //  })
             aggPipe.push({ "$match": match });
-            aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
             result = await this.aggregateWithPagination("gratitude_journals", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
@@ -90,12 +90,12 @@ export class GratitudeJournalDao extends BaseDao {
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             aggPipe.push({ "$match": match });
             aggPipe.push({
-				$lookup: {
-					"from": "users",
-					"localField": "userId",
-					"foreignField": "_id",
-					"as": "users"
-				}
+                $lookup: {
+                    "from": "users",
+                    "localField": "userId",
+                    "foreignField": "_id",
+                    "as": "users"
+                }
             })
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
@@ -170,21 +170,21 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    user : {
+                    user: {
                         _id: "$users._id",
-                        name: { $ifNull:["$users.firstName", ""]}, 
-                        profilePicUrl:  "$users.profilePicUrl",
-                        profession: { $ifNull:["$users.profession", ""]}
+                        name: { $ifNull: ["$users.firstName", ""] },
+                        profilePicUrl: "$users.profilePicUrl",
+                        profession: { $ifNull: ["$users.profession", ""] }
                     },
                     isComment: {
                         $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                     },
-                    isLike:{
-                        $cond: { if: { "$eq": [{$size: "$likeData"}, 0] }, then: false, else: true }
-                      }
-                  }
-             })
-             aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
+                    isLike: {
+                        $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
+                    }
+                }
+            })
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
             result = await this.aggregateWithPagination("gratitude_journals", aggPipe, limit, pageNo, true)
             result["type"] = config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE
             return result
@@ -276,7 +276,6 @@ export class GratitudeJournalDao extends BaseDao {
                     // }
                 }
             })
-
             const myGratitude = await this.paginate('gratitude_journals', aggPipe, 10, 1, {}, true)
             return myGratitude;
 

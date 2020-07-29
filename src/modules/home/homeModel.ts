@@ -64,8 +64,8 @@ const homeSchema = new Schema({
     // imageUrl: { type: String },
     created: { type: Number, default: new Date() },
     addedBy: {
-        name: { type: String, required: true },
-        profilePicture: { type: String, required: true }
+        name: { type: String },
+        profilePicture: { type: String }
     }
     // // createdAt: { type: Date },
     // updatedAt: { type: Date }

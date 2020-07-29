@@ -17,10 +17,10 @@ let validateAddGratitudeJournal = Joi.object({
     ]).default(config.CONSTANT.PRIVACY_STATUS.PRIVATE),
     mediaType: Joi.number().valid([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
-        config.CONSTANT.MEDIA_TYPE.VIDEO,
+        // config.CONSTANT.MEDIA_TYPE.VIDEO,
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
     mediaUrl: Joi.string().required(),
-    thumbnailUrl: Joi.string().required(),
+    // thumbnailUrl: Joi.string().required(),
     postAt: Joi.string().required()
 }).unknown()
 

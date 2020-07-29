@@ -296,8 +296,8 @@ const MESSAGES = {
 			"message": "Your account have been deleted by admin.",
 			type: "DELETED"
 		},
-		ADMIN_REJECTED: {
-			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
+		ADMIN_REJECTED_USER: {
+			statusCode: HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT,
 			"message": "Your account is rejected in the verification process.",
 			type: "REJECTED"
 		},
