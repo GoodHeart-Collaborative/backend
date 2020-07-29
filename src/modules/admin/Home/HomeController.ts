@@ -17,7 +17,7 @@ class AdminHomeController {
 
     async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
-            if (params.type != 3 && params.thumbnailUrl) {
+            if (params.type == 2 && params.thumbnailUrl) {
                 return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
             }
             const data = await homeDao.insert("home", params, {});
