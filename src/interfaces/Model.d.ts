@@ -121,4 +121,5 @@ declare type ModelNames =
 	"gratitude_journals" |
 	'advice' |
 	'expert' |
+	'discover' |
 	'expert_post';

@@ -224,6 +224,19 @@ let updateProfile = Joi.object({
     ]),
     about: Joi.string().allow('')
 })
+let validateProfileHome = Joi.object({
+    type: Joi.number().valid([
+        config.CONSTANT.USER_PROFILE_TYPE.GRATITUDE_JOURNAL,
+        config.CONSTANT.USER_PROFILE_TYPE.POST,
+        config.CONSTANT.USER_PROFILE_TYPE.DISCOVER
+    ]).description("1-gratitude,  2-post, 3-discover").default(config.CONSTANT.USER_PROFILE_TYPE.GRATITUDE_JOURNAL),
+    page: Joi.number().required(),
+    limit: Joi.number().required()
+})
+
+let validateUserIdParams = Joi.object({
+    userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
+}).unknown()
 export {
     signUp,
     login,
@@ -235,4 +248,6 @@ export {
     forGotPassword,
     resetPassword,
     updateProfile,
+    validateUserIdParams,
+    validateProfileHome
 };

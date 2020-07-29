@@ -18,6 +18,8 @@ import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
+import { discoverDao } from "../discover/DiscoverDao";
+
 var ObjectID = require('mongodb').ObjectID;
 export class UserController {
 
@@ -589,6 +591,18 @@ export class UserController {
 			throw error;
 		}
 	}
+		/**
+	 * @function profile
+	 */
+	// async getUserProfile(userId: UserId) {
+	// 	try {
+	// 		const criteria = {_id: userId.userId};
+	// 		const findByMobile = await userDao.findOne('users', criteria, {}, {}, {});
+	// 		return userConstant.MESSAGES.SUCCESS.PROFILE(findByMobile);
+	// 	} catch (error) {
+	// 		throw error;
+	// 	}
+	// }
 
 	async updateProfile(params, userData) {
 		try {
@@ -844,10 +858,17 @@ export class UserController {
 		}
 	}
 
-	async getProfileHome(payload) {
+	async getProfileHome(query) {
 		try {
-			const data = await gratitudeJournalDao.userProfileHome(payload)
-			return data;
+			let getData:any = {}
+			if(query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
+				getData = {}
+			} else if(query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
+				getData = await discoverDao.getDiscoverData(query, {userId: query.userId}, true)
+			} else {
+				getData = await gratitudeJournalDao.userProfileHome(query)
+			}
+			return getData;
 		} catch (error) {
 			return Promise.reject(error);
 		}

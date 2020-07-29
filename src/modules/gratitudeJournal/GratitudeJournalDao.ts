@@ -266,14 +266,14 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    isLike: {
-                        $cond: {
-                            if: {
-                                $eq: ["$likeData.userId", appUtils.toObjectId(params.userId)],
-                                then: true, else: false
-                            }
-                        }
-                    }
+                    // isLike: {
+                    //     $cond: {
+                    //         if: {
+                    //             $eq: ["$likeData.userId", appUtils.toObjectId(params.userId)],
+                    //             then: true, else: false
+                    //         }
+                    //     }
+                    // }
                 }
             })
 

@@ -81,6 +81,7 @@ const DB_MODEL_REF = {
 	CATEGORY: "categories",
 	INSPIRATION: 'inspiration',
 	HOME: 'home',
+	DISCOVER: 'discover',
 	UNICORN: 'unicorn',
 	COMMENT: "comment",
 	LIKE: "like",
@@ -147,6 +148,16 @@ const STATUS = {
 const COMMENT_CATEGORY = {
 	POST: 1,
 	COMMENT: 2
+};
+const DISCOVER_STATUS = {
+	PENDING: 1,
+	ACCEPT: 2,
+	REJECT: 3
+};
+const USER_PROFILE_TYPE = {
+	GRATITUDE_JOURNAL: 1,
+	POST: 2,
+	DISCOVER: 3
 };
 
 // const COMMENT_TYPE = {
@@ -732,5 +743,7 @@ export const CONSTANT = Object.freeze({
 	// COMMENT_TYPE: COMMENT_TYPE,
 	MEDIA_TYPE: MEDIA_TYPE,
 	EXPERT_CONTENT_TYPE,
-	PROFESSION_TYPE
+	PROFESSION_TYPE,
+	DISCOVER_STATUS,
+	USER_PROFILE_TYPE
 });
