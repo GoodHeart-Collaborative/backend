@@ -69,8 +69,8 @@ export class AdminUserDao extends BaseDao {
             // return verifiedCount,
             // pendingCount,
             // rejectedCount,
-            return { verifiedCount, pendingCount, rejectedCount, data }
-            // return data;
+            // return { verifiedCount, pendingCount, rejectedCount, data }
+            return data;
         } catch (error) {
             return Promise.reject(error);
         }
