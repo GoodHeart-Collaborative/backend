@@ -20,6 +20,11 @@ class AdminHomeController {
             if (params.type == 2 && params.thumbnailUrl) {
                 return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
             }
+            if (!params.postedAt) {
+                params.postedAt = new Date();
+            }
+            // console.log('paramsparams', params);
+
             const data = await homeDao.insert("home", params, {});
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
         } catch (error) {
