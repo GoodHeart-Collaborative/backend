@@ -118,7 +118,7 @@ export const MESSAGES = {
 		},
 		PASSWORD_SUCCESSFULLY_CHANGED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-			"message": "Password successfully changed",
+			"message": "Password reset successfully",
 			"type": "DEFAULT",
 			data: {}
 		},
