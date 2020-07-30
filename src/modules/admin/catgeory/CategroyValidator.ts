@@ -14,7 +14,7 @@ let AddCategory = Joi.object({
 
     // name: Joi.string().lowercase().required(),
     title: Joi.string().required(),
-    imageUrl: Joi.string()
+    imageUrl: Joi.string().allow('')
 
 })
 
