@@ -95,10 +95,10 @@ class MemberController {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "memberCreatedAt": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "memberCreatedAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 

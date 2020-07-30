@@ -6,7 +6,7 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
 import { ElasticSearch } from "@lib/ElasticSearch";
 import * as appUtils from '@utils/appUtils'
-
+import * as moment from 'moment'
 
 const elasticSearch = new ElasticSearch();
 
@@ -285,6 +285,7 @@ export class UserDao extends BaseDao {
 			}
 			// params.created = new Date();
 			if (step1.email === params.email) {
+				console.log('22222222222');
 				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
 				// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 			}
@@ -366,6 +367,8 @@ export class UserDao extends BaseDao {
 		 */
 	async dashboardGraph() {
 		try {
+			var date = new Date();
+
 			const promise = [];
 
 			const query = {
@@ -377,21 +380,26 @@ export class UserDao extends BaseDao {
 					}
 				]
 			}
-			var date = new Date();
-			var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+			// var firstDay = moment(new Date(date.getFullYear(), date.getMonth(), 1)).format('YYYY-MM-DD')
+			let firstDay1 = moment().startOf('month');
 			var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-
+			console.log('firstDay1', firstDay1);
 			promise.push(this.count("users", query));
 
 			const newUsers = {
-				$or: [
-					{
-						status: config.CONSTANT.STATUS.ACTIVE,
-					}, {
-						status: config.CONSTANT.STATUS.BLOCKED
-					}
-				],
-				createdAt: { $gt: firstDay }
+				$and: [{
+					$or: [
+						{
+							status: config.CONSTANT.STATUS.ACTIVE,
+						}, {
+							status: config.CONSTANT.STATUS.BLOCKED
+						}
+					],
+				},
+				{
+					createdAt: { $gte: new Date(firstDay1.toISOString()) }
+				}
+				]
 			}
 
 			promise.push(this.count("users", newUsers));

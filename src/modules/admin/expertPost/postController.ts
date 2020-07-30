@@ -83,8 +83,13 @@ class ExpertPostController {
             const match: any = {};
 
             if (!contentId) {
-                match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-                match._id = appUtils.toObjectId(expertId)
+                match['status'] = { "$ne": config.CONSTANT.STATUS.DELETED };
+                match['_id'] = appUtils.toObjectId(expertId)
+            } else {
+                match['status'] = { "$ne": config.CONSTANT.STATUS.DELETED };
+                match['expertId'] = appUtils.toObjectId(expertId);
+                match.contentId = contentId;
+
             }
 
             if (searchTerm) {
@@ -97,33 +102,72 @@ class ExpertPostController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-            const query = {
-                $lookup: {
-                    from: 'categories',
-                    let: { cId: '$categoryId' },
-                    pipeline: [{
-                        $match: {
-                            $expr: {
-                                $in: ['$_id', '$$cId']
-                            }
-                        }
-                    }],
-                    as: 'categoryData'
-                }
-            }
-            if (contentId) {
-                match.contentId = contentId;
-                match.status = config.CONSTANT.STATUS.ACTIVE;
-                match.expertId = appUtils.toObjectId(expertId)
-            }
+            let query;
+
+            // if (contentId) {
+            //     match.contentId = contentId;
+            //     // match.status = config.CONSTANT.STATUS.ACTIVE;
+            //     // match.expertId = appUtils.toObjectId(expertId)
+            // }
             aggPipe.push({ $match: match })
 
+            if (!contentId) {
+                aggPipe.push({
+                    $lookup: {
+                        from: 'categories',
+                        let: { 'cId': '$categoryId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    "$in": ['$_id', '$$cId'],
+                                }
+                            }
+                        }],
+                        "as": "categoryData"
+                    }
+                })
+            }
+            else {
+                aggPipe.push({
+                    $lookup: {
+                        from: 'categories',
+                        let: { cId: '$categoryId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$_id', '$$cId']
+                                        },
+                                        // {
+                                        //     $eq: ['$contentId', contentId]
+                                        // },
+                                        // {
+                                        //     $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
+                                        // },
+                                        // {
+                                        //     $eq: ['expertId', appUtils.toObjectId(expertId)]
+                                        // }
+                                    ]
+                                }
+                            }
+                        }],
+                        as: 'categoryData'
+                    }
+                })
+                // aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } })
+            }
+            console.log('aggPipeaggPipe', JSON.stringify(aggPipe));
+
+            // aggPipe.push({ $match: query })
             aggPipe = [...aggPipe, ...await expertDao.addSkipLimit(limit, pageNo)];
             if (!contentId) {
-                aggPipe.push(query)
+                console.log('5f193411e8e62430c62cada55f193411e8e62430c62cada5');
+
+                // aggPipe.push(query)
                 return await expertDao.aggregate('expert', aggPipe, {},)
             }
-            const result = await expertDao.aggreagtionWithPaginateTotal("expert_post", aggPipe, limit, pageNo, true)
+            const result = await expertPostDao.aggreagtionWithPaginateTotal("expert_post", aggPipe, limit, pageNo, true)
             return result;
         } catch (error) {
             return Promise.reject(error)

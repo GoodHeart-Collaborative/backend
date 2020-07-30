@@ -37,6 +37,18 @@ const setInsertObject = function (source, destination, fields) {
 	return destination;
 };
 
+const createMembersArray = function (members) {
+	try {
+		let membersMembers = []
+		for (const userId of members) {
+			membersMembers.push({userId: userId})
+		}
+		return membersMembers
+	} catch (error) {
+		throw error
+	}
+}
+
 const unsetInsertObject = function (source, destination, fields) {
 	_.each(fields, function (value, index) {
 		if (!source[value]) {
@@ -596,6 +608,7 @@ export {
 	encodeToBase64,
 	decodeBase64,
 	tinyUrl,
+	createMembersArray,
 	// getRandomOtp,
 	isValidEmail,
 	stringToBoolean,

@@ -230,6 +230,7 @@ let validateProfileHome = Joi.object({
         config.CONSTANT.USER_PROFILE_TYPE.POST,
         config.CONSTANT.USER_PROFILE_TYPE.DISCOVER
     ]).description("1-gratitude,  2-post, 3-discover").default(config.CONSTANT.USER_PROFILE_TYPE.GRATITUDE_JOURNAL),
+    searchKey: Joi.string().optional().description("Search by Name"),
     page: Joi.number().required(),
     limit: Joi.number().required()
 })
