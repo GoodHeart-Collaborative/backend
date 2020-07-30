@@ -289,7 +289,7 @@ const MESSAGES = {
 		},
 		USER_BLOCKED: {
 			"statusCode": HTTP_STATUS_CODE.BLOCKED_USER,
-			"message": "Your account have been blocked by admin.",
+			"message": "Your account has been blocked by admin",
 			"type": "USER_BLOCKED"
 		},
 		DELETED: {
