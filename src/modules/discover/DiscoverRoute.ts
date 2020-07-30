@@ -13,7 +13,7 @@ export const discoverRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/discover`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const query = request.query;
+            const query: ListingRequest = request.query;
             try {
                 const result = await discoverController.getDiscoverData({ ...query }, { userId: tokenData.userId });
                 return responseHandler.sendSuccess(h, result);

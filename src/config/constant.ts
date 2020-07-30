@@ -82,6 +82,7 @@ const DB_MODEL_REF = {
 	INSPIRATION: 'inspiration',
 	HOME: 'home',
 	DISCOVER: 'discover',
+	SHOUTOUT: 'shoutout',
 	UNICORN: 'unicorn',
 	COMMENT: "comment",
 	LIKE: "like",

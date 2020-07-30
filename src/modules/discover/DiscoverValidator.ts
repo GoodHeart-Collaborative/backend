@@ -19,7 +19,8 @@ let validateEditDiscoverParams = Joi.object({
 
 let validateListDiscover = Joi.object({
     pageNo: Joi.number().required(),
-    limit: Joi.number().required()
+    limit: Joi.number().required(),
+    searchKey: Joi.string().optional().description("Search by Name")
 }).unknown()
 
 export {
