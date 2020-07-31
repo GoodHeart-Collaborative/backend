@@ -15,7 +15,7 @@ export class GratitudeJournalDao extends BaseDao {
             let result: any = {}
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             match["userId"] = await appUtils.toObjectId(userId.userId)
-            aggPipe.push({ "$sort": { "createdAt": -1 } });
+            aggPipe.push({ "$sort": { "postAt": -1 } });
             if (startDate && endDate) { 
                 match['postAt'] = { $gte: startDate, $lte: endDate }
             }
@@ -31,7 +31,6 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1
                   }
              })
-            //  result = await this.aggregateWithPagination("gratitude_journals", aggPipe, 31, 1, true)
              result = await this.aggregate('gratitude_journals', aggPipe, {})
             return result
         } catch (error) {
