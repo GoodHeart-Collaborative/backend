@@ -42,7 +42,8 @@ class AdminHomeController {
 
     async getPosts(params: HomeRequest.IgetHome) {
         try {
-            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
+            const { sortBy, sortOrder, limit, page, status, fromDate, toDate } = params;
+            let { searchTerm } = params
             const aggPipe = [];
 
             const match: any = {};
@@ -55,6 +56,7 @@ class AdminHomeController {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
             if (searchTerm) {
+                searchTerm = searchTerm.replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '')
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
                     { "description": { "$regex": searchTerm, "$options": "-i" } },

@@ -334,7 +334,7 @@ const MESSAGES = {
 		},
 		INVALID_OTP: {
 			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "otp must be a safe number",
+			"message": "Invalid otp",
 			"type": "INVALID_OTP"
 		},
 		FIELD_REQUIRED: (value) => {

@@ -95,7 +95,7 @@ class MemberController {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "memberCreatedAt": sortOrder };
                 }
             } else {
                 sort = { "memberCreatedAt": -1 };
