@@ -77,7 +77,7 @@ export class HomeDao extends BaseDao {
                     as: "commentData",
                 }
             })
-
+            aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({
                 $project:
                 {
@@ -90,6 +90,7 @@ export class HomeDao extends BaseDao {
                     mediaUrl: 1,
                     thumbnailUrl: 1,
                     title: 1,
+                    createdd:1,
                     isPostLater: 1,
                     description: 1,
                     created: 1,
