@@ -5,7 +5,7 @@ declare namespace HomeRequest {
         description: string,
         isPostLater: boolean,
         // imageUrl: string,
-        postedAt: string,
+        postedAt: any,
         type: number;
         mediaType: number,
         mediaUrl: string;
