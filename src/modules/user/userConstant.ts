@@ -122,6 +122,12 @@ export const MESSAGES = {
 			"type": "DEFAULT",
 			data: {}
 		},
+		RESET_PASSWORD_SUCCESSFULLY: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Reset password successfully",
+			"type": "RESET_PASSWORD_SUCCESSFULLY",
+			data: {}
+		},
 		BLOCKED: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER,
