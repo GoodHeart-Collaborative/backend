@@ -50,7 +50,7 @@ const homeSchema = new Schema({
     },
     description: { type: String },
     isPostLater: { type: Boolean },
-    postedAt: { type: Date, trim: true, },
+    postedAt: { type: String, trim: true, },
     mediaType: {
         type: Number,
         enum: [

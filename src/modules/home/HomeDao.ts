@@ -15,7 +15,7 @@ export class HomeDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            match["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
+            match["postAt"] = { $lte: moment(new Date()).format('YYYY-MM-DD') }
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {
@@ -105,12 +105,12 @@ export class HomeDao extends BaseDao {
 
             aggPipe.push({ "$match": match });
             aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
-            result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
-            if (result && result.list && result.list.length == 0) {
-                delete match.postedAt
-                aggPipe.pop()
+            // result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
+            // if (result && result.list && result.list.length == 0) {
+            //     delete match.postedAt
+            //     aggPipe.pop()
                 result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
-            }
+            // }
             return result
         } catch (error) {
             throw error;
