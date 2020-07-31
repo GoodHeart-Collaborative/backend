@@ -27,6 +27,11 @@ class AdminHomeController {
             } else {
                 params.postedAt =  new Date()//moment(new Date()).format('YYYY-MM-DD')
             }
+            if (!params.postedAt) {
+                params.postedAt = new Date();
+            }
+            // console.log('paramsparams', params);
+
             const data = await homeDao.insert("home", params, {});
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
         } catch (error) {

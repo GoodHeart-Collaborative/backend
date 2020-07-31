@@ -260,9 +260,7 @@ export class UserController {
 			if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
-
 				//  if email unverifiec false hai to 411 de dena hai
-
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"firstName": step1.firstName,
@@ -310,7 +308,6 @@ export class UserController {
 					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
-
 					let arn;
 					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 						// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -365,11 +362,13 @@ export class UserController {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
 				const step = await userDao.checkSocialId(params);
+				console.log('stepstepstepstep', step);
+
 				if (step) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_ALREADY_EXIST);
 				}
 				let step1 = await userDao.findUserByEmailOrMobileNo(params);
-
+				console.log('step1step1step1step1step1step1', step1);
 				if ((step1 && !step1.isGoogleLogin) || (step1 && !step1.isFacebookLogin) || (step1 && !step1.isAppleLogin)) {
 					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
@@ -382,6 +381,7 @@ export class UserController {
 					params['salt'] = salt;
 					step1 = await userDao.socialSignup(params);
 				}
+				console.log('step1.saltstep1.saltstep1.salt', step1.salt);
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"firstName": step1.firstName,
@@ -406,7 +406,7 @@ export class UserController {
 					arn = "";
 				}
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-				params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
+				params = _.extend(params, { "arn": arn, "salt": step1.salt || salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
 				const step3 = loginHistoryDao.createUserLoginHistory(params);
 				let step4, step5;
 				if (config.SERVER.IS_REDIS_ENABLE) {
@@ -592,9 +592,9 @@ export class UserController {
 			throw error;
 		}
 	}
-		/**
-	 * @function profile
-	 */
+	/**
+ * @function profile
+ */
 	// async getUserProfile(userId: UserId) {
 	// 	try {
 	// 		const criteria = {_id: userId.userId};
@@ -831,7 +831,7 @@ export class UserController {
 
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = userDao.changeForgotPassword(params, { userId: tokenData.userId });
-				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY;
+				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 			} else {
 				// if (params.token) {
@@ -849,7 +849,7 @@ export class UserController {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = userDao.changeForgotPassword(params, tokenData);
 				// }
-				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY;
+				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
 
@@ -861,11 +861,11 @@ export class UserController {
 
 	async getProfileHome(query) {
 		try {
-			let getData:any = {}
-			if(query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
+			let getData: any = {}
+			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
 				getData = {}
-			} else if(query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
-				getData = await discoverDao.getDiscoverData(query, {userId: query.userId}, true)
+			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
+				getData = await discoverDao.getDiscoverData(query, { userId: query.userId }, true)
 			} else {
 				getData = await gratitudeJournalDao.userProfileHome(query)
 			}
