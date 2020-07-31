@@ -120,10 +120,10 @@ export class CommentDao extends BaseDao {
                                     },
                                     {
                                         $eq: ['$category', CONSTANT.COMMENT_CATEGORY.COMMENT]
-                                    },
-                                    {
-                                        $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
                                     }
+                                    // {
+                                    //     $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
+                                    // }
                                 ]
                             }
                         }
