@@ -37,7 +37,7 @@ export const MESSAGES = {
         GRATITUDE_JOURNAL_DATA_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Gratitude journal data added successfully.",
+                "message": "Gratitude journal data updated successfully.",
                 "type": "GRATITUDE_JOURNAL_DATA_UPDATED",
                 "data": data
             };

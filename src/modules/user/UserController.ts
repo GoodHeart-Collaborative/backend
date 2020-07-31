@@ -422,6 +422,7 @@ export class UserController {
 					step5 = redisClient.createJobs(jobPayload);
 				}
 				const step6 = await promise.join(step3, step4, step5);
+				await userDao.updateLikeAndCommentCount({_id: appUtils.toObjectId(step1._id)}, { "$set": { isEmailVerified: true } })
 				return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
 			}
 		} catch (error) {

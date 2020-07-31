@@ -29,8 +29,9 @@ class GratitudeJournalController {
             params["postAt"] = moment(new Date(params.postAt)).format('YYYY-MM-DD')
             let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({ userId: await appUtils.toObjectId(params.userId), postAt: params["postAt"] })
             if (checkGJ) {
-                let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
-                return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getGratitudeJournal)
+               await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
+                let getResponse = await gratitudeJournalDao.checkGratitudeJournal({_id: checkGJ._id})
+                return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getResponse)
             } else {
                 let getGratitudeJournal: any = await gratitudeJournalDao.addGratitudeJournal(params)
                 return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_ADDED(getGratitudeJournal)
@@ -54,7 +55,8 @@ class GratitudeJournalController {
                     }
                 }
                 let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
-                return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getGratitudeJournal)
+                let getResponse = await gratitudeJournalDao.checkGratitudeJournal({_id: checkGJ._id})
+                return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getResponse)
             } else {
                 return gratitudeJournalConstants.MESSAGES.ERROR.GRATITUDE_JOURNAL_NOT_FOUND
             }
