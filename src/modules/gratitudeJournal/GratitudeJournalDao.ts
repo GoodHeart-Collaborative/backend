@@ -9,65 +9,30 @@ export class GratitudeJournalDao extends BaseDao {
 
     async getGratitudeJournalData(params, userId) {
         try {
-            let { pageNo, limit } = params
+            let { startDate, endDate } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
             match["status"] = config.CONSTANT.STATUS.ACTIVE
+            match["userId"] = await appUtils.toObjectId(userId.userId)
             aggPipe.push({ "$sort": { "createdAt": -1 } });
-            // aggPipe.push({
-            // 	$lookup: {
-            // 		from: "likes",
-            // 		let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
-            // 		pipeline: [
-            // 			{
-            // 				$match: {
-            // 					$expr: {
-            // 						$and: [
-            //                         {
-            // 							$eq: ["$postId", "$$post"]
-            //                         },
-            //                         {
-            // 							$eq: ["$userId", "$$user"]
-            //                         }, 
-            //                         {
-            // 							$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
-            //                         }
-            //                     ]
-            // 					}
-            // 				}
-            // 			}
-            // 		],
-            // 	 	as: "likeData"
-            // 	}
-            // })
-            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
-
-            // aggPipe.push({
-            //     $project:
-            //       {
-            //         _id: 1,
-            //         likeCount: 1,
-            //         commentCount: 1,
-            //         status: 1,
-            //         type: 1,
-            //         mediaType: 1,
-            //         thumbnailUrl: 1,
-            //         title: 1,
-            //         isPostLater: 1,
-            //         description: 1,
-            //         created: 1,
-            //         postedAt: 1,
-            //         createdAt: 1,
-            //         isLike: 
-            //           {
-            //             $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
-            //           }
-            //       }
-            //  })
+            if (startDate && endDate) { 
+                match['postAt'] = { $gte: startDate, $lte: endDate }
+            }
             aggPipe.push({ "$match": match });
-            aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
-            result = await this.aggregateWithPagination("gratitude_journals", aggPipe, limit, pageNo, true)
+            aggPipe.push({
+                $project:
+                  {
+                    _id: 1,
+                    mediaUrl: 1,
+                    privacy:1,
+                    title: 1,
+                    description: 1,
+                    postAt: 1
+                  }
+             })
+            //  result = await this.aggregateWithPagination("gratitude_journals", aggPipe, 31, 1, true)
+             result = await this.aggregate('gratitude_journals', aggPipe, {})
             return result
         } catch (error) {
             throw error;

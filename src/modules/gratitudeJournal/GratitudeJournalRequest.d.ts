@@ -17,7 +17,7 @@ declare namespace GratitudeJournalRequest {
         postAt?: string
     }
     export interface GetGratitudeJournalRequest extends Device {
-        pageNo: number,
-        limit: number
+        startDate: string,
+        endDate: string
     }
 }

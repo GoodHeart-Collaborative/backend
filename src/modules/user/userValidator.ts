@@ -2,7 +2,6 @@
 import * as Joi from "joi";
 import * as config from "@config/index";
 
-
 let signUp = Joi.object({
     firstName: Joi.string()
         .trim()
@@ -39,7 +38,7 @@ let signUp = Joi.object({
     // type: Joi.string().allow('mobile', 'email').default('mobile'),
     deviceId: Joi.string().trim().required(),
     deviceToken: Joi.string().trim().required(),
-    profilePicUrl: Joi.array().items(Joi.string()),
+    profilePicUrl: Joi.array().items(Joi.string().valid(config.CONSTANT.REGEX.URL)),
     gender: Joi.string()
         .trim()
         .optional()
