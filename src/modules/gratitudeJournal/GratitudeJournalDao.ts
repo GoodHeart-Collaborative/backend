@@ -120,7 +120,7 @@ export class GratitudeJournalDao extends BaseDao {
                     as: "commentData",
                 }
             })
-
+            aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({
                 $project:
                 {
