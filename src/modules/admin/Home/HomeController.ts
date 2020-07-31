@@ -7,6 +7,8 @@ import * as HOME_CONSTANT from './HomeConstant';
 // import * as sns from "@lib/pushNotification/sns";
 import { homeDao } from "@modules/admin/Home/adminHomeDao";
 import { CONSTANT } from "@config/index";
+import * as moment from 'moment';
+
 
 class AdminHomeController {
     /**
@@ -17,8 +19,11 @@ class AdminHomeController {
 
     async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
-            if (params.type == 2 && params.thumbnailUrl) {
-                return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
+            // if (params.type == 2 && params.thumbnailUrl) {
+            //     return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
+            // }
+            if(params.postedAt) {
+                params.postedAt =  moment(new Date(params.postedAt)).format('YYYY-MM-DD')
             }
             if (!params.postedAt) {
                 params.postedAt = new Date();
