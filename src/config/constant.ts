@@ -289,7 +289,7 @@ const MESSAGES = {
 		},
 		USER_BLOCKED: {
 			"statusCode": HTTP_STATUS_CODE.BLOCKED_USER,
-			"message": "Your account have been blocked by admin.",
+			"message": "Your account has been blocked by admin",
 			"type": "USER_BLOCKED"
 		},
 		DELETED: {
@@ -298,7 +298,7 @@ const MESSAGES = {
 			type: "DELETED"
 		},
 		ADMIN_REJECTED_USER: {
-			statusCode: HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT,
+			statusCode: HTTP_STATUS_CODE.ADMIN_REJECTED_USER,
 			"message": "Your account is rejected in the verification process.",
 			type: "REJECTED"
 		},

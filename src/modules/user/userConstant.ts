@@ -118,7 +118,7 @@ export const MESSAGES = {
 		},
 		PASSWORD_SUCCESSFULLY_CHANGED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-			"message": "Password successfully changed",
+			"message": "Password reset successfully",
 			"type": "DEFAULT",
 			data: {}
 		},
@@ -131,14 +131,14 @@ export const MESSAGES = {
 		BLOCKED: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER,
-				"message": "Your account have been blocked by admin.",
+				"message": "Your account has been blocked by admin",
 				"type": "USER_BLOCKED",
 			}
 		},
 		DELETED: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-				"message": "Your account have been deleted by admin.",
+				"message": "Your account has been blocked by admin",
 				"type": "USER_DELETED",
 				data: data,
 			}
