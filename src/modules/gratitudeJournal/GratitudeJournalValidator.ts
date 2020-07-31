@@ -3,8 +3,8 @@ import * as Joi from "joi";
 import * as config from "@config/index";
 
 let validateUserGratitudeJournal = Joi.object({
-    limit: Joi.number().required(),
-    pageNo: Joi.number().required()
+    startDate: Joi.string().required(),
+    endDate: Joi.string().required()
 
 }).unknown()
 
