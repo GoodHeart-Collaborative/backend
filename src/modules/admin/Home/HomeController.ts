@@ -27,9 +27,9 @@ class AdminHomeController {
             } else {
                 params.postedAt =  new Date()//moment(new Date()).format('YYYY-MM-DD')
             }
-            if (!params.postedAt) {
-                params.postedAt = new Date();
-            }
+            // if (!params.postedAt) {
+            //     params.postedAt = new Date();
+            // }
             // console.log('paramsparams', params);
 
             const data = await homeDao.insert("home", params, {});
@@ -123,6 +123,11 @@ class AdminHomeController {
         try {
             const criteria = {
                 _id: params.Id
+            }
+            if(params.postedAt) {
+                params.postedAt =  new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
+            } else {
+                params.postedAt =  new Date()//moment(new Date()).format('YYYY-MM-DD')
             }
             const dataToUpdate = {
                 ...params

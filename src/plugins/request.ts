@@ -20,8 +20,9 @@ export const plugin = {
 			console.log("Request Params=====>", request.params);
 			console.log("Request Query======>", request.query);
 			console.log("Authorization======>", request.headers.authorization);
-			console.log("api_key============>", request.headers.api_key);
-			console.log("platform===========>", request.headers.platform);
+			// console.log("api_key============>", request.headers.api_key);
+			// console.log("platform===========>", request.headers.platform);
+			console.log("header===========>", request.headers);
 			console.log("--------------------------------REQUEST ENDS------------------------------------------");
 			return h.continue;
 		});
