@@ -111,16 +111,24 @@ export class BootStrap {
 			];
 			const dataToUpdate = {
 				countMember: a,
+				isMemberOfDay: true,
 				memberCreatedAt: Date.now()
 			};
 
 			const getUsers = await userDao.aggregate('users', criteria, {});
 
-
 			if (getUsers && getUsers[0]) {
 				const criteria = {
 					_id: getUsers[0]._id
 				};
+				let startDate:any 
+				let endDate:any
+					startDate = new Date();
+					startDate.setHours(0,0,0,0);
+					endDate = new Date();
+					endDate.setHours(23,59,59,999);
+				await userDao.updateMany('users', {memberCreatedAt: { $gte: startDate, $lte: endDate}}, {"$unset": {memberCreatedAt: ""}}, {});
+				await userDao.updateMany('users', {isMemberOfDay: true}, {"$set": {isMemberOfDay: false}}, {});
 				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
 			}
 
