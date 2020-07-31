@@ -831,9 +831,7 @@ export class UserController {
 
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = userDao.changeForgotPassword(params, { userId: tokenData.userId });
-				// return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
-				return userConstant.MESSAGES.SUCCESS.PASSWORD_SUCCESSFULLY_CHANGED;
-
+				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 			} else {
 				// if (params.token) {
@@ -851,7 +849,7 @@ export class UserController {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = userDao.changeForgotPassword(params, tokenData);
 				// }
-				return userConstant.MESSAGES.SUCCESS.PASSWORD_SUCCESSFULLY_CHANGED;
+				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
 
