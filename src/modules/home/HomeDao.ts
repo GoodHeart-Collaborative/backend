@@ -15,7 +15,9 @@ export class HomeDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            match["postAt"] = { $lte: moment(new Date()).format('YYYY-MM-DD') }
+           let  endDateee = new Date();
+           endDateee.setHours(23,59,59,999);
+            match["postedAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {

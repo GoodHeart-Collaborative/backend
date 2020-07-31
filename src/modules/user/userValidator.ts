@@ -38,7 +38,7 @@ let signUp = Joi.object({
     // type: Joi.string().allow('mobile', 'email').default('mobile'),
     deviceId: Joi.string().trim().required(),
     deviceToken: Joi.string().trim().required(),
-    profilePicUrl: Joi.array().items(Joi.string().valid(config.CONSTANT.REGEX.URL)),
+    profilePicUrl: Joi.array().items(Joi.string()),
     gender: Joi.string()
         .trim()
         .optional()
