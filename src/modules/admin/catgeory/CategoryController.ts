@@ -70,6 +70,43 @@ class CategoryController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
+
+            aggPipe.push({
+                '$lookup': {
+                    from: 'expert_posts',
+                    let: {
+                        cId: '$_id'
+                    },
+                    pipeline: [{
+                        '$match': {
+                            '$expr': {
+                                '$eq': ['$categoryId', '$$cId']
+                            }
+                        }
+                    }],
+                    as: 'expertData'
+                }
+            })
+
+
+            aggPipe.push({
+                '$addFields': {
+                    totalPost: {
+                        '$size': '$expertData'
+                    }
+                }
+            })
+
+
+            aggPipe.push({
+                '$project': {
+                    expertData: 0
+                }
+            })
+
+
+
+
             const data = await categoryDao.paginate('categories', aggPipe, limit, page, {}, true);
             return data;
         } catch (error) {
@@ -109,18 +146,15 @@ class CategoryController {
         }
     }
 
-    async getById(params) {
-        try {
-            const criteria = {
-                _id: params.categoryId,
-            }
 
-            const data = await categoryDao.findOne('categories', criteria, {}, {})
-            return data;
+    async getDetails(params) {
+        try {
+            return await categoryDao.getCatgeoryPosts(params)
         } catch (error) {
             return Promise.reject(error);
         }
     }
+
 
     async updateStatus(params) {
         try {

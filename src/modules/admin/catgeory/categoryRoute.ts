@@ -128,7 +128,7 @@ export const categoryRoute: ServerRoute[] = [
             }
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await categoryController.getById(payload);
+                const result = await categoryController.getDetails(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
