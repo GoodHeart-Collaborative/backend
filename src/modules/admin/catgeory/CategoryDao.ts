@@ -36,8 +36,8 @@ export class CategoryDao extends BaseDao {
 
             if (searchTerm) {
                 match["$or"] = [
-                    { "title": { "$regex": searchTerm, "$options": "-i" } },
-                    { "name": { "$regex": searchTerm, "$options": "-i" } },
+                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
+                    { "description": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
             aggPipe.push({ "$match": match });
