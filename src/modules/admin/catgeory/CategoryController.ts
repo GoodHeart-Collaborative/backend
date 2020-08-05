@@ -24,7 +24,10 @@ class CategoryController {
             }
             params['name'] = result;
             const data = await categoryDao.insert('categories', params, {});
-            return data;
+            if (data) {
+                return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED
+            }
+            return
 
         } catch (error) {
             throw error;
@@ -166,8 +169,7 @@ class CategoryController {
                 status: params.status
             }
             const data = await categoryDao.updateOne('categories', criteria, dataToUpdate, {});
-
-            return data;
+            return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
         } catch (error) {
             throw error;
         }

@@ -20,6 +20,11 @@ export const MESSAGES = {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
             "message": "Category successfully updated.",
             "type": "SUCCESSFULLY_UPDATED"
+        },
+        SUCCESSFULLY_ADDED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Category successfully added.",
+            "type": "SUCCESSFULLY_ADDED"
         }
     }
 };
