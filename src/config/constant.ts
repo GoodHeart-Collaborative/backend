@@ -89,7 +89,8 @@ const DB_MODEL_REF = {
 	ADVICE: 'advice',
 	MEMBER: 'member',
 	EXPERT: 'expert',
-	EXPERT_POST: 'expert_post'
+	EXPERT_POST: 'expert_post',
+	EVENT:'event'
 
 };
 

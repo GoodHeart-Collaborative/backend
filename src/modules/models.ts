@@ -21,4 +21,5 @@ export { gratitude_journals } from './gratitudeJournal/gratitudeJournalModel'
 export { expert } from './admin/expert/expertModel';
 export { expert_post } from "./admin/expertPost/expertPostModel";
 export { discover } from './discover/discoverModel'
-export { shoutout } from './shoutout/shoutoutModel'
+export { shoutout } from './shoutout/shoutoutModel';
+export {event} from './event/eventModel';

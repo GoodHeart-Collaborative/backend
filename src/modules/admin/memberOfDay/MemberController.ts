@@ -98,7 +98,7 @@ class MemberController {
                     sort = { "memberCreatedAt": sortOrder };
                 }
             } else {
-                sort = { "memberCreatedAt": -1 };
+                sort = { "createdAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 
