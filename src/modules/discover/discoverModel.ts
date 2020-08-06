@@ -19,7 +19,8 @@ const discoverSchema = new Schema({
         enum: [
             config.CONSTANT.DISCOVER_STATUS.PENDING,
             config.CONSTANT.DISCOVER_STATUS.ACCEPT,
-            config.CONSTANT.DISCOVER_STATUS.REJECT
+            config.CONSTANT.DISCOVER_STATUS.REJECT,
+            config.CONSTANT.DISCOVER_STATUS.NO_ACTION
         ],
         default: config.CONSTANT.DISCOVER_STATUS.PENDING
     }

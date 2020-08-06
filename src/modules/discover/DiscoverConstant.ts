@@ -17,7 +17,7 @@ export const MESSAGES = {
         SUCCESSFULLY_ADDED:(data)=> {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Request send successfully",
+                "message": "follow successfully",
                 "type": "SUCCESSFULLY_ADDED",
                 "data" : data
             }
@@ -25,7 +25,7 @@ export const MESSAGES = {
         SUCCESSFULLY_REMOVE:(data)=> {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Undo send request successfully",
+                "message": "unfollow successfully",
                 "type": "SUCCESSFULLY_REMOVE",
                 "data" : data
             }

@@ -7,21 +7,27 @@ import * as appUtils from "@utils/appUtils";
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
         try {
-            let { pageNo, limit, searchKey  } = params
+            let { pageNo, limit, searchKey,_id  } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
             userId = await appUtils.toObjectId(userId.userId)
-            if(isMyConnection) {
-                match["$or"] = [
-                    { "userId": userId },
-                    { "followerId": userId }
-                ];
-                match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
-            } else {
-                match["followerId"] = userId
-                match['discover_status'] = {$ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT}
-            }
+            if(_id) {
+                aggPipe.push({ "$match": { "_id": _id } })
+                pageNo = 1 
+                limit = 1
+             } else {
+                if(isMyConnection) {
+                    match["$or"] = [
+                        { "userId": userId },
+                        { "followerId": userId }
+                    ];
+                    match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
+                } else {
+                    match["followerId"] = userId
+                    match['discover_status'] = {$ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT}
+                }
+             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
             aggPipe.push({ "$match": match })
             aggPipe.push({
@@ -41,6 +47,7 @@ export class DiscoverDao extends BaseDao {
                     "as": "followers"
                 }
             })
+            aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({ '$unwind': { path: '$followers', preserveNullAndEmptyArrays: true } })
             aggPipe.push({ $project:
                 {
@@ -59,13 +66,54 @@ export class DiscoverDao extends BaseDao {
                             profession: { $ifNull: ["$users.profession", ""] }
                         }]
                     },
-                    createdAt: 1,
+                    created:1
+                    // createdAt: 1,
                 }
             })
             if (searchKey) {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
 			}
             result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
+            return result
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getUserData(params, userId, _id) {
+        try {
+            let { pageNo, limit, searchKey  } = params
+            let aggPipe = [];
+            let result: any = {}
+            aggPipe.push({ "$sort": { "createdAt": 1 } })
+            aggPipe.push({
+                $lookup: {
+                    "from": "discovers",
+                    "localField": "_id",
+                    "foreignField": "followerId",
+                    "as": "discovers"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$discovers', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
+            aggPipe.push({ $project:
+                {
+                    _id: 1,
+                    discover_status: {
+                        $cond: { if: { "$eq": ["$discovers.userId", await appUtils.toObjectId(userId.userId)] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
+                    },
+                    user: {
+                        _id: "$_id",
+                        name: { $ifNull: ["$firstName", ""] },
+                        profilePicUrl: "$profilePicUrl",
+                        profession: { $ifNull: ["$profession", ""] }
+                    },
+                    created:1
+                }
+            })
+            if (searchKey) {
+                aggPipe.push({ "$match": { "$firstName": { "$regex": searchKey, "$options": "-i" } } });
+			}
+            result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
             return result
         } catch (error) {
             throw error;

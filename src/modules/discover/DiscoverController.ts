@@ -18,6 +18,14 @@ class DiscoverController {
             throw error;
         }
     }
+    async getUserData(params, userId) {
+        try {
+            let getData = await discoverDao.getUserData(params, userId, {})
+            return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA(getData)
+        } catch (error) {
+            throw error;
+        }
+    }
 
     /** 7664
      * @function Home
@@ -50,11 +58,14 @@ class DiscoverController {
             let checkDiscover = await discoverDao.checkDiscover({followerId: params.followerId, userId: userId.userId})
             if(checkDiscover) {
                 let deleteDiscover = await discoverDao.deletedDiscover({followerId: params.followerId, userId: userId.userId})
-                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_REMOVE(deleteDiscover)
+                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_REMOVE({})
             } else {
                 params['userId'] = userId.userId
                 let checkDiscover = await discoverDao.saveDiscover(params)
-                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(checkDiscover)
+                params["_id"] = checkDiscover._id
+                params['userId'] = userId
+                let getData = await discoverDao.getDiscoverData(params, userId, true)
+                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }
 
         } catch (error) {
