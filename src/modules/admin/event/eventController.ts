@@ -23,17 +23,30 @@ class EventController {
 
 async getEvent(params){
     try{
-        const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm } = params;
+        const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm ,userId ,status} = params;
         let aggPipe = [];
         const match: any = {};
         let sort = {};
-        match.userId =appUtils.toObjectId(params.userId);
-        match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+        if(userId){
+            match.userId =appUtils.toObjectId(params.userId);
+        }
+        if (status) {
+            match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
+        }else{
+            match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+        }
 
         if (sortBy && sortOrder) {
-            if (sortBy === "name") {
+            if (sortBy === "title") {
                 sort = { "name": sortOrder };
-            } else {
+            }
+            else if (sortBy === "startDate") {
+                sort = { "startDate": sortOrder };
+            }            
+            else if (sortBy === "endDate") {
+                sort = { "endDate": sortOrder };
+            }
+             else {
                 sort = { "created": sortOrder };
             }
         } else {
@@ -41,8 +54,8 @@ async getEvent(params){
         }
         if (searchTerm) {
             match["$or"] = [
-                { "name": { "$regex": searchTerm, "$options": "-i" } },
-                { "email": { "$regex": searchTerm, "$options": "-i" } },
+                { "title": { "$regex": searchTerm, "$options": "-i" } },
+                { "description": { "$regex": searchTerm, "$options": "-i" } },
             ];
         }
         if (categoryId) {
@@ -58,20 +71,20 @@ async getEvent(params){
 
         aggPipe.push({ $match: match })
 
-        aggPipe.push({
-            $lookup: {
-                from: 'categories',
-                let: { 'cId': '$categoryId' },
-                pipeline: [{
-                    $match: {
-                        $expr: {
-                            "$eq": ['$_id', '$$cId'],
-                        }
-                    }
-                }],
-                "as": "categoryData"
-            }
-        })
+        // aggPipe.push({
+        //     $lookup: {
+        //         from: 'categories',
+        //         let: { 'cId': '$categoryId' },
+        //         pipeline: [{
+        //             $match: {
+        //                 $expr: {
+        //                     "$eq": ['$_id', '$$cId'],
+        //                 }
+        //             }
+        //         }],
+        //         "as": "categoryData"
+        //     }
+        // })
         console.log('>>>>>>>>>>>>>.');
 
  
@@ -107,15 +120,15 @@ async getEvent(params){
      * @description admin update status active ,block ,delete
      */
 
-    async updateStatus(params: AdminExpertRequest.updateStatus) {
+    async updateStatus(params) {
         try {
             const criteria = {
-                _id: params.expertId
+                _id: params.Id
             };
             const datatoUpdate = {
                 status: params.status
             };
-            const data = await eventDao.updateOne('expert', criteria, datatoUpdate, {})
+            const data = await eventDao.updateOne('event', criteria, datatoUpdate, {})
             return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
         } catch (error) {
             return Promise.reject(error)

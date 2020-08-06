@@ -7,33 +7,41 @@ import * as config from "@config/index";
 
 export interface Ievent extends Document {
     userId: string,
-    categoryId: string;
+    // categoryId: string;
     name:string;
-
+    location:any;
     title: string,
-    type:string;
+    privacy:string;
     startDate:Date;
     endDate:Date;
-    price:string;
-
-
-    description: string,
+    price:number;
+    url:string;
+allowSharing:boolean;
+    description: string;
+    goingCount:number;
+    interestCount:number;
+    eventCategory:string,
+    created:number;
 }
 
 const eventSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
-    categoryId:{type:Schema.Types.ObjectId },
+    // categoryId:{type:Schema.Types.ObjectId },
     name:{type:String},
-type:{type:String,enum:[
+    privacy:{type:String,enum:[
     config.CONSTANT.PRIVACY_STATUS.PRIVATE,
     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
     config.CONSTANT.PRIVACY_STATUS.PUBLIC
 ]},
 startDate:{type:Date},
 endDate:{type:Date},
-// location:{},
-price:{type:String,default:0},
-	// title: { type: String, trim: true, required: true },
+// location: {
+// 	address: { type: String, trim: true, required: true },
+// 	type: { type: String, default: "Point" },
+//     coordinates: { type: [Number], index: "2dsphere" }// [longitude, latitude]
+//   },
+price:{type:Number,default:0},
+	title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
     // membersDetail: [{userId: { type: Schema.Types.ObjectId, ref: "users", default: null, index: true }}],
     status: {
@@ -44,7 +52,20 @@ price:{type:String,default:0},
             config.CONSTANT.STATUS.DELETED
         ],
         default: config.CONSTANT.STATUS.ACTIVE
-    }
+    },
+    imageUrl:{type:String},
+    eventUrl:{type:String},
+    allowSharing:{type:Boolean},
+    goingCount:{type:Number,default:0},
+    eventCategory:{type:String,enum:[
+      config.CONSTANT.EVENT_CATEGORY.CLASSES,
+      config.CONSTANT.EVENT_CATEGORY.EVENTS,
+      config.CONSTANT.EVENT_CATEGORY.MEETUP,
+      config.CONSTANT.EVENT_CATEGORY.TRAINING
+    ]},
+    interestCount:{type:Number,default:0},
+    created:{type:Number},
+
 }, {
     versionKey: false,
     timestamps: true

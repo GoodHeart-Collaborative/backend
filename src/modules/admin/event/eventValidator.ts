@@ -10,13 +10,18 @@ let getEvents = Joi.object({
     fromDate: Joi.date(),
     toDate: Joi.date(),
     sortBy: Joi.string().valid([
-        'name', 'createdAt'
+        'title', 'createdAt','startDate','endDate'
     ]),
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
     ]),
-    categoryId: Joi.string().trim(),
-    userId:Joi.string().trim().required()
+    // categoryId: Joi.string().trim(),
+    status:Joi.string().allow([
+config.CONSTANT.STATUS.ACTIVE,
+config.CONSTANT.STATUS.BLOCKED ,
+// config.CONSTANT.STATUS.DELETED ,
+    ]),
+    userId:Joi.string().trim()
 }).unknown()
 
 
@@ -27,7 +32,7 @@ let validateExpertId = Joi.object({
 
 
 let updateStatus = Joi.object({
-    expertId: Joi.string().required(),
+    Id: Joi.string().required(),
     status: Joi.string().valid([
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
@@ -36,5 +41,6 @@ let updateStatus = Joi.object({
 })
 
 export {
- getEvents
+ getEvents,
+ updateStatus
 };

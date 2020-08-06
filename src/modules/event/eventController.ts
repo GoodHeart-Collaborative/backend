@@ -24,8 +24,9 @@ class EventController {
 	 * @function addExpert
 	 * @description admin add experts
 	 */
-    async addEvent(params: AdminExpertRequest.expertAdd) {
+    async addEvent(params ) {
         try {
+            params["created"] = new Date().getTime()
             const data = await eventDao.insert("event", params, {});
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
