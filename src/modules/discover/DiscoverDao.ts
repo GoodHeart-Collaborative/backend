@@ -79,11 +79,17 @@ export class DiscoverDao extends BaseDao {
             throw error;
         }
     }
-    async getUserData(params, userId, _id) {
+    async getUserData(params, userId) {
         try {
-            let { pageNo, limit, searchKey  } = params
+            let { pageNo, limit, searchKey, _id  } = params
             let aggPipe = [];
             let result: any = {}
+            userId = await appUtils.toObjectId(userId.userId)
+            if(_id) {
+                aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
+                pageNo = 1 
+                limit = 1
+             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
             aggPipe.push({
                 $lookup: {
@@ -93,13 +99,38 @@ export class DiscoverDao extends BaseDao {
                     "as": "discovers"
                 }
             })
+            if (searchKey) {
+                aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
+			}
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "follower": "$_id", "user": await appUtils.toObjectId(userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$followerId", "$$follower"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    }
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "discovers",
+                }
+            })
             aggPipe.push({ '$unwind': { path: '$discovers', preserveNullAndEmptyArrays: true } })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({ $project:
                 {
                     _id: 1,
                     discover_status: {
-                        $cond: { if: { "$eq": ["$discovers.userId", await appUtils.toObjectId(userId.userId)] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
+                        $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
                     },
                     user: {
                         _id: "$_id",
@@ -110,9 +141,6 @@ export class DiscoverDao extends BaseDao {
                     created:1
                 }
             })
-            if (searchKey) {
-                aggPipe.push({ "$match": { "$firstName": { "$regex": searchKey, "$options": "-i" } } });
-			}
             result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
             return result
         } catch (error) {
