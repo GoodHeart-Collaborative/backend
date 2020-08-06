@@ -66,8 +66,7 @@ class DiscoverController {
                 await discoverDao.saveDiscover(params)
                 let param:any = {}
                 param["_id"] = params.followerId
-                // param['userId'] = userId
-                let getData = await discoverDao.getUserData(params, userId)
+                let getData = await discoverDao.getUserData(param, userId)
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }
 
