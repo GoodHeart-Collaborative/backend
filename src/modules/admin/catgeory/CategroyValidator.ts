@@ -36,6 +36,24 @@ let getCategory = Joi.object({
     toDate: Joi.date()
 })
 
+let GetCategoryDetailsList = Joi.object({
+    categoryId: Joi.string().required(),
+    limit: Joi.number(),
+    page: Joi.number(),
+    sortOrder: Joi.number().valid([
+        config.CONSTANT.ENUM.SORT_TYPE
+    ]),
+    sortBy: Joi.string().valid('title', 'createdAt').default('createdAt'),
+    searchTerm: Joi.string(),
+    status: Joi.string().valid([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED
+    ]),
+    fromDate: Joi.date(),
+    toDate: Joi.date()
+}).unknown()
+
 let GetCategoryId = Joi.object({
     categoryId: Joi.string().required()
 })
@@ -111,6 +129,7 @@ export {
     AddCategory,
     getCategory,
     GetCategoryId,
-    UpdateCategory
+    UpdateCategory,
+    GetCategoryDetailsList
 
 };
