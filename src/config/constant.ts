@@ -90,7 +90,7 @@ const DB_MODEL_REF = {
 	MEMBER: 'member',
 	EXPERT: 'expert',
 	EXPERT_POST: 'expert_post',
-	EVENT:'event'
+	EVENT: 'event'
 
 };
 
@@ -193,6 +193,15 @@ const HOME_TYPE = {
 	MEMBER_OF_DAY: 5
 };
 
+const HOME_TYPES = {
+	UNICORN: 'Unicorn',
+	INSPIRATION: 'Inspiration',
+	DAILY_ADVICE: 'Daily advice',
+	GENERAL_GRATITUDE: 'General gratitude',
+	MEMBER_OF_DAY: 'Member'
+};
+
+
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
 		TYPE: 'video',
@@ -226,11 +235,11 @@ const PRIVACY_STATUS = {
 	PROTECTED: 'protected'
 };
 
-const EVENT_CATEGORY={
-EVENTS:'events',
-CLASSES:'classes',
-TRAINING:'training',
-MEETUP:'meetup'
+const EVENT_CATEGORY = {
+	EVENTS: 'events',
+	CLASSES: 'classes',
+	TRAINING: 'training',
+	MEETUP: 'meetup'
 }
 const VALIDATION_CRITERIA = {
 	FIRST_NAME_MIN_LENGTH: 3,
@@ -768,5 +777,6 @@ export const CONSTANT = Object.freeze({
 	PROFESSION_TYPE,
 	DISCOVER_STATUS,
 	USER_PROFILE_TYPE,
-	EVENT_CATEGORY
+	EVENT_CATEGORY,
+	HOME_TYPES
 });

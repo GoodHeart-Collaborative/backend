@@ -23,7 +23,28 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Successfully added",
+            "message": "Gratitude added successfully",
+            "type": "DEFAULT"
+        },
+        SUCCESSFULLY_UPDATED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Gratitude has been updated successfully",
+            "type": "DEFAULT"
+        },
+
+        SUCCESSFULLY_DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Gratitude has been deleted successFully",
+            "type": "DEFAULT"
+        },
+        SUCCESSFULLY_BLOCKED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Gratitude has been blocked successFully",
+            "type": "DEFAULT"
+        },
+        SUCCESSFULLY_ACTIVE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Gratitude has been active successFully",
             "type": "DEFAULT"
         },
 
@@ -35,29 +56,6 @@ export const MESSAGES = {
                 "data": data
             }
         },
-
-        LOGOUT: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Logout successfully.",
-            "type": "LOGOUT"
-        },
-        USER_LIST: (data) => {
-            return {
-                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "User list get successfully.",
-                "type": "USER_LIST",
-                "data": data
-            };
-        },
-
-        BLOCK_USER: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User account successfully blocked.",
-            "type": "BLOCK_USER"
-        },
-    },
-    OTP_TEXT: (otp) => {
-        return `Your App code is " + ${otp} + ". " + "Welcome to the community!`
-    },
+    }
 };
 

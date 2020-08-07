@@ -116,15 +116,27 @@ class AdminHomeController {
             const dataToUpdate = {
                 ...params
             }
-            const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
+
+            const data = await homeDao.findOneAndUpdate('home', criteria, dataToUpdate, { new: true, lean: true });
+            console.log('datadatadatadatadata>>>>>>>>', data);
+            if (data.type == config.CONSTANT.HOME_TYPE.UNICORN) {
+                data.type = config.CONSTANT.HOME_TYPES.UNICORN
+            }
+            if (data.type == config.CONSTANT.HOME_TYPE.INSPIRATION) {
+                data.type = config.CONSTANT.HOME_TYPES.INSPIRATION
+            }
+            if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+                data.type = config.CONSTANT.HOME_TYPES.DAILY_ADVICE
+            }
+            console.log('data.type =data.type =', data.type);
 
             if (data && params.status == config.CONSTANT.STATUS.BLOCKED) {
-                return HOME_CONSTANT.MESSAGES.SUCCESS.BLOCKED;
+                return HOME_CONSTANT.MESSAGES.SUCCESS.BLOCKED(data.type);
 
             } else if (data && params.status == config.CONSTANT.STATUS.DELETED) {
-                return HOME_CONSTANT.MESSAGES.SUCCESS.DELETED;
+                return HOME_CONSTANT.MESSAGES.SUCCESS.DELETED(data.type);
             }
-            return HOME_CONSTANT.MESSAGES.SUCCESS.ACTIVE;
+            return HOME_CONSTANT.MESSAGES.SUCCESS.ACTIVE(data.type);
         } catch (error) {
             return Promise.reject(error);
         }
@@ -143,10 +155,19 @@ class AdminHomeController {
             const dataToUpdate = {
                 ...params
             }
-            const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
+            const data = await homeDao.findOneAndUpdate('home', criteria, dataToUpdate, { new: true, lean: true });
             console.log('updateOneupdateOne', data);
-
-            return HOME_CONSTANT.MESSAGES.SUCCESS.UPDATED_SUCCESSFULLY
+            if (data.type == config.CONSTANT.HOME_TYPE.UNICORN) {
+                data.type = config.CONSTANT.HOME_TYPES.UNICORN
+            }
+            if (data.type == config.CONSTANT.HOME_TYPE.INSPIRATION) {
+                data.type = config.CONSTANT.HOME_TYPES.INSPIRATION
+            }
+            if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+                data.type = config.CONSTANT.HOME_TYPES.DAILY_ADVICE
+            }
+            console.log('data.type =data.type =', data.type);
+            return HOME_CONSTANT.MESSAGES.SUCCESS.UPDATED_SUCCESSFULLY(data.type)
 
         } catch (error) {
             return Promise.reject(error);

@@ -3,7 +3,7 @@
 import * as _ from "lodash";
 
 import * as config from "@config/index";
-import * as inspirationConstant from "@modules/admin/dailyInspiration/inspirationConstant";
+import * as gratitudeConstant from "@modules/admin/gratitudeJournal/gratitudeConstant";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
 import * as appUtils from "@utils/appUtils";
 
@@ -19,7 +19,7 @@ class GratitudeController {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
 
             const data = await gratitudeJournalDao.insert("inspiration", params, {});
-            return inspirationConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            return gratitudeConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;
@@ -34,9 +34,9 @@ class GratitudeController {
 
             const data = await gratitudeJournalDao.findOne('gratitude_journals', criteria, {}, {})
             if (!data) {
-                return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
+                return gratitudeConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            return gratitudeConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
 
             // return data;
         } catch (error) {
@@ -98,7 +98,13 @@ class GratitudeController {
                 status: params.status
             };
             const data = await gratitudeJournalDao.updateOne('gratitude_journals', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+            if (data && params.status == config.CONSTANT.STATUS.BLOCKED) {
+                return gratitudeConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+
+            } else if (data && params.status == config.CONSTANT.STATUS.DELETED) {
+                return gratitudeConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
+            }
+            return gratitudeConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
 
         } catch (error) {
             return Promise.reject(error)
@@ -115,7 +121,7 @@ class GratitudeController {
             };
             const data = await gratitudeJournalDao.updateOne('gratitude_journals', criteria, datatoUpdate, {})
             if (data) {
-                return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+                return gratitudeConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
             }
         } catch (error) {
             throw error;

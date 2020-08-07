@@ -46,25 +46,35 @@ export const MESSAGES = {
             "message": "Daily advice added Successfully",
             "type": "DEFAULT"
         },
-        BLOCKED: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Blocked successfully",
-            "type": "DEFAULT"
+        BLOCKED: (data) => {
+            console.log('datadatadatadatadata111111111111111', data);
+
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": `${data} blocked successfully`,
+                "type": "DEFAULT"
+            }
         },
-        DELETED: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Deleted successfully",
-            "type": "DEFAULT"
+        DELETED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": `${data} deleted successfully`,
+                "type": "DEFAULT"
+            }
         },
-        ACTIVE: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Active successfully",
-            "type": "DEFAULT"
+        ACTIVE: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": `${data} active successfully`,
+                "type": "DEFAULT"
+            }
         },
-        UPDATED_SUCCESSFULLY: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Updated Successfully",
-            "type": "DEFAULT"
+        UPDATED_SUCCESSFULLY: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": `${data} Updated Successfully`,
+                "type": "DEFAULT"
+            }
         },
 
         DEFAULT_WITH_DATA: (data) => {
