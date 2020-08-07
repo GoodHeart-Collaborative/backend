@@ -51,7 +51,8 @@ import { expertPostRoute as expertPostRouteV1 } from '@modules/admin/expertPost/
 import { userExpertRoute as userExpertRouteV1 } from '@modules/expert/expertRoute';
 import { discoverRoute as discoverRouteV1 } from '@modules/discover/DiscoverRoute';
 import { shoutoutRoute as shoutoutRouteV1 } from '@modules/shoutout/ShoutoutRoute';
-
+import {adminEventRoutes as adminEventRouteV1} from '@modules/admin/event/eventRoute';
+import {userEventRoutes as userEventRoutesV1} from '@modules/event/eventRoute';
 
 const baseRoute = [
 	{
@@ -90,5 +91,7 @@ export const routes: ServerRoute[] = [
 	...expertPostRouteV1,
 	...userExpertRouteV1,
 	...discoverRouteV1,
-	...shoutoutRouteV1
+	...shoutoutRouteV1,
+	...adminEventRouteV1,
+	...userEventRoutesV1,
 ];

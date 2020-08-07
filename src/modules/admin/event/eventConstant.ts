@@ -23,38 +23,33 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been added successFully",
-            "type": "DEFAULT"
-        },
-        SUCCESSFULLY_DELETED: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been deleted successFully",
+            "message": "Successfully added",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been blocked successFully",
+            "message": "Event has been blocked successfully",
             "type": "DEFAULT"
         },
+        SUCCESSFULLY_DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Event has been deletd successfully",
+            "type": "DEFAULT"
+        },        
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been active successFully",
+            "message": "Event has been active successfully",
             "type": "DEFAULT"
         },
+
 
         DEFAULT_WITH_DATA: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Expert has been updated succesfully",
+                "message": "SUCCESS",
                 "type": "DEFAULT",
                 "data": data
             }
-        },
-
-        LOGOUT: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Logout successfully.",
-            "type": "LOGOUT"
         },
     }
 };

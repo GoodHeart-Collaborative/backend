@@ -89,7 +89,8 @@ const DB_MODEL_REF = {
 	ADVICE: 'advice',
 	MEMBER: 'member',
 	EXPERT: 'expert',
-	EXPERT_POST: 'expert_post'
+	EXPERT_POST: 'expert_post',
+	EVENT:'event'
 
 };
 
@@ -217,6 +218,12 @@ const PRIVACY_STATUS = {
 	PROTECTED: 'protected'
 };
 
+const EVENT_CATEGORY={
+EVENTS:'events',
+CLASSES:'classes',
+TRAINING:'training',
+MEETUP:'meetup'
+}
 const VALIDATION_CRITERIA = {
 	FIRST_NAME_MIN_LENGTH: 3,
 	FIRST_NAME_MAX_LENGTH: 20,
@@ -361,6 +368,11 @@ const MESSAGES = {
 			"statusCode": HTTP_STATUS_CODE.OK,
 			"message": "Successfully updated",
 			"type": "DEFAULT"
+		},
+		SUCCESSFULLY_DELETED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully deleted",
+			"type": "SUCCESSFULLY_DELETED"
 		},
 		REFRESH_TOKEN: (data) => {
 			return {
@@ -747,5 +759,6 @@ export const CONSTANT = Object.freeze({
 	EXPERT_CONTENT_TYPE,
 	PROFESSION_TYPE,
 	DISCOVER_STATUS,
-	USER_PROFILE_TYPE
+	USER_PROFILE_TYPE,
+	EVENT_CATEGORY
 });
