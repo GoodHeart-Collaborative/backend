@@ -81,9 +81,25 @@ export class DiscoverDao extends BaseDao {
     }
     async getUserData(params, userId) {
         try {
-            let { pageNo, limit, searchKey, _id  } = params
+            let { pageNo, limit, searchKey, _id, longitude, latitude, distance  } = params
             let aggPipe = [];
             let result: any = {}
+            let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
+            let pickupLocation = [];
+            if (longitude != undefined && latitude != undefined) {
+                pickupLocation.push(latitude, longitude);
+                aggPipe.push(
+                    {
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
+                    },
+                    { "$sort": { dist: -1 } }
+                )
+            }
             userId = await appUtils.toObjectId(userId.userId)
             if(_id) {
                 aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })

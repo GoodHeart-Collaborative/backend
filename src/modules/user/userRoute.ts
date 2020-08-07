@@ -323,7 +323,6 @@ export const
 			config: {
 				tags: ["api", "user"],
 				description: "user reset password",
-				// notes: "",
 				auth: {
 					strategies: ["BasicAuth"]
 				},

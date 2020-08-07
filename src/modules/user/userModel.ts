@@ -57,13 +57,13 @@ export interface IUser extends Document {
 	// isAdminVerified: boolean;
 }
 
-const geoSchema = new Schema({
-	address: { type: String, trim: true, required: true },
+var geoSchema = new Schema({
+	location: { type: String, trim: true, required: true, default: '' },
 	type: { type: String, default: "Point" },
-	coordinates: { type: [Number], index: "2dsphere" }// [longitude, latitude]
+	coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
 }, {
-	_id: false
-});
+		_id: false
+	});
 
 const userSchema = new Schema({
 	mobileOtp: { type: Number },
@@ -106,7 +106,7 @@ const userSchema = new Schema({
 	dob: { type: String },
 	// profilePicUrl: { type: String },
 	profilePicUrl: [Schema.Types.String],
-	address: geoSchema,
+	// address: geoSchema,
 	status: {
 		type: String,
 		enum: [
@@ -166,6 +166,7 @@ const userSchema = new Schema({
 			config.CONSTANT.PRIVACY_STATUS.PUBLIC,
 		]
 	},
+	location: geoSchema,
 	likeCount: { type: Number, default: 0 },
 	commentCount: { type: Number, default: 0 },
 	createdAt: { type: Date },
@@ -229,6 +230,10 @@ userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
 	return object;
 };
+/* Crate 2dsphere index */
+userSchema.index({
+	location: '2dsphere'
+});
 
 // to set findAndModify false
 mongoose.set("useFindAndModify", false);

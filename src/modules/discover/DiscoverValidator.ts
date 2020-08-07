@@ -16,11 +16,13 @@ let validateEditDiscover = Joi.object({
 let validateEditDiscoverParams = Joi.object({
     discoverId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
 }).unknown()
-
 let validateListDiscover = Joi.object({
     pageNo: Joi.number().required(),
     limit: Joi.number().required(),
-    searchKey: Joi.string().optional().description("Search by Name")
+    searchKey: Joi.string().optional().description("Search by Name"),
+    longitude: Joi.number().optional(),
+    latitude: Joi.number().optional(),
+    distance: Joi.number().optional(),
 }).unknown()
 
 export {
