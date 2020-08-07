@@ -171,5 +171,20 @@ class EventController {
             return Promise.reject(error)
         }
     }
+
+    async updateEvent(params) {
+        try {
+            const criteria = {
+                _id: params.eventId
+            }
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await eventDao.updateOne('event', criteria, dataToUpdate, {})
+            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATE;
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 }
 export const eventController = new EventController();

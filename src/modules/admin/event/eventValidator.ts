@@ -45,7 +45,40 @@ let addEvents = Joi.object({
     // userId: string,
     // categoryId: Joi.string().required(),
     // name: Joi.string(),
-    title: Joi.string(),
+    title: Joi.string().required(),
+    privacy: Joi.string().allow([
+        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+    ]),
+    startDate: Joi.date().required(),
+    endDate: Joi.date().required(),
+    price: Joi.number(),
+    imageUrl: Joi.string(),
+    eventUrl: Joi.string(),
+    location: Joi.object().keys({
+        address: Joi.string().trim(),
+        type: Joi.string().required().valid(["Point"]),
+        coordinates: [{
+            longitude: Joi.number().precision(8),
+            latitude: Joi.number().precision(8)
+        }]
+    }),
+    eventCategory: Joi.string().allow([
+        config.CONSTANT.EVENT_CATEGORY.CLASSES,
+        config.CONSTANT.EVENT_CATEGORY.EVENTS,
+        config.CONSTANT.EVENT_CATEGORY.MEETUP,
+        config.CONSTANT.EVENT_CATEGORY.TRAINING
+    ]).required(),
+    allowSharing: Joi.boolean().default(true),
+    description: Joi.string().allow('').required(),
+})
+
+let updateEvent = Joi.object({
+    // userId: string,
+    // categoryId: Joi.string().required(),
+    // name: Joi.string(),
+    title: Joi.string().required(),
     privacy: Joi.string().allow([
         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
@@ -78,5 +111,6 @@ export {
     getEvents,
     updateStatus,
     validateEventId,
-    addEvents
+    addEvents,
+    updateEvent
 };

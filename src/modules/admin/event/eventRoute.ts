@@ -110,14 +110,17 @@ export const adminEventRoutes: ServerRoute[] = [
     },
 
     {
-        method: "GET",
+        method: "PATCH",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{eventId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = request.params;
+            const payload: any = {
+                ...request.params,
+                ...request.payload
+            }
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await eventController.getDetails(payload);
+                const result = await eventController.updateEvent(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -125,13 +128,14 @@ export const adminEventRoutes: ServerRoute[] = [
         },
         config: {
             tags: ["api", "events"],
-            description: "update event status",
+            description: "update event",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 params: eventValidator.validateEventId,
+                payload: eventValidator.updateEvent,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -141,7 +145,6 @@ export const adminEventRoutes: ServerRoute[] = [
             }
         }
     },
-
 
 ];
 

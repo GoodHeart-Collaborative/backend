@@ -41,6 +41,11 @@ export const MESSAGES = {
             "message": "Event has been active successfully",
             "type": "DEFAULT"
         },
+        SUCCESSFULLY_UPDATE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Event has been updated successfully",
+            "type": "DEFAULT"
+        },
 
 
         DEFAULT_WITH_DATA: (data) => {
