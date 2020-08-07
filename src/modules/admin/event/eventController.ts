@@ -21,83 +21,99 @@ class EventController {
         return result[0];
     }
 
-async getEvent(params){
-    try{
-        const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm ,userId ,status} = params;
-        let aggPipe = [];
-        const match: any = {};
-        let sort = {};
-        if(userId){
-            match.userId =appUtils.toObjectId(params.userId);
+    /**
+   * @function addExpert
+   * @description admin add experts
+   */
+    async addEvent(params) {
+        try {
+            params["created"] = new Date().getTime()
+            const data = await eventDao.insert("event", params, {});
+            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+
+        } catch (error) {
+            throw error;
         }
-        if (status) {
-            match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
-        }else{
-            match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-        }
-
-        if (sortBy && sortOrder) {
-            if (sortBy === "title") {
-                sort = { "name": sortOrder };
-            }
-            else if (sortBy === "startDate") {
-                sort = { "startDate": sortOrder };
-            }            
-            else if (sortBy === "endDate") {
-                sort = { "endDate": sortOrder };
-            }
-             else {
-                sort = { "created": sortOrder };
-            }
-        } else {
-            sort = { "created": -1 };
-        }
-        if (searchTerm) {
-            match["$or"] = [
-                { "title": { "$regex": searchTerm, "$options": "-i" } },
-                { "description": { "$regex": searchTerm, "$options": "-i" } },
-            ];
-        }
-        if (categoryId) {
-
-        match.userId =appUtils.toObjectId(params.categoryId);
-        }
-        aggPipe.push({ "$sort": sort });
-
-        if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
-        if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
-        if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
-
-
-        aggPipe.push({ $match: match })
-
-        // aggPipe.push({
-        //     $lookup: {
-        //         from: 'categories',
-        //         let: { 'cId': '$categoryId' },
-        //         pipeline: [{
-        //             $match: {
-        //                 $expr: {
-        //                     "$eq": ['$_id', '$$cId'],
-        //                 }
-        //             }
-        //         }],
-        //         "as": "categoryData"
-        //     }
-        // })
-        console.log('>>>>>>>>>>>>>.');
-
- 
-
-        const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
-        console.log('datadatadata', data);
-        return data;
-
-    }catch(error){
-        return Promise.reject(error);
     }
 
-}
+
+    async getEvent(params) {
+        try {
+            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status } = params;
+            let aggPipe = [];
+            const match: any = {};
+            let sort = {};
+            if (userId) {
+                match.userId = appUtils.toObjectId(params.userId);
+            }
+            if (status) {
+                match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
+            } else {
+                match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            }
+
+            if (sortBy && sortOrder) {
+                if (sortBy === "title") {
+                    sort = { "name": sortOrder };
+                }
+                else if (sortBy === "startDate") {
+                    sort = { "startDate": sortOrder };
+                }
+                else if (sortBy === "endDate") {
+                    sort = { "endDate": sortOrder };
+                }
+                else {
+                    sort = { "created": sortOrder };
+                }
+            } else {
+                sort = { "created": -1 };
+            }
+            if (searchTerm) {
+                match["$or"] = [
+                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "description": { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
+            if (categoryId) {
+
+                match.userId = appUtils.toObjectId(params.categoryId);
+            }
+            aggPipe.push({ "$sort": sort });
+
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+
+
+            aggPipe.push({ $match: match })
+
+            // aggPipe.push({
+            //     $lookup: {
+            //         from: 'categories',
+            //         let: { 'cId': '$categoryId' },
+            //         pipeline: [{
+            //             $match: {
+            //                 $expr: {
+            //                     "$eq": ['$_id', '$$cId'],
+            //                 }
+            //             }
+            //         }],
+            //         "as": "categoryData"
+            //     }
+            // })
+            console.log('>>>>>>>>>>>>>.');
+
+
+
+            const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
+            console.log('datadatadata', data);
+            return data;
+
+        } catch (error) {
+            return Promise.reject(error);
+        }
+
+    }
 
     // async updateExpert(params: AdminExpertRequest.updateExpert) {
     //     try {
@@ -122,7 +138,7 @@ async getEvent(params){
 
     async updateStatus(params) {
         try {
-            const {Id ,status}  =params ;
+            const { Id, status } = params;
             const criteria = {
                 _id: Id
             };
@@ -130,10 +146,10 @@ async getEvent(params){
                 status: status
             };
             const data = await eventDao.updateOne('event', criteria, datatoUpdate, {})
-            if(data && status==config.CONSTANT.STATUS.DELETED){
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
+            if (data && status == config.CONSTANT.STATUS.DELETED) {
+                return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
             }
-            else if(data && status==config.CONSTANT.STATUS.BLOCKED){
+            else if (data && status == config.CONSTANT.STATUS.BLOCKED) {
                 return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
             }
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
@@ -145,12 +161,12 @@ async getEvent(params){
     /**
      * @description admin get event detail
      */
-    async getDetails(params){
+    async getDetails(params) {
         try {
-            const criteria={
-                _id:params.eventId
+            const criteria = {
+                _id: params.eventId
             }
-            return await eventDao.findOne('event', criteria ,{},{} )
+            return await eventDao.findOne('event', criteria, {}, {})
         } catch (error) {
             return Promise.reject(error)
         }

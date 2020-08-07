@@ -21,10 +21,10 @@ class EventController {
         return result[0];
     }
 	/**
-	 * @function addExpert
-	 * @description admin add experts
+	 * @function add event
+	 * @description user add event
 	 */
-    async addEvent(params ) {
+    async addEvent(params) {
         try {
             params["created"] = new Date().getTime()
             const data = await eventDao.insert("event", params, {});

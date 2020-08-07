@@ -23,7 +23,7 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Successfully added",
+            "message": "Event added successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
@@ -35,7 +35,7 @@ export const MESSAGES = {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
             "message": "Event has been deletd successfully",
             "type": "DEFAULT"
-        },        
+        },
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
             "message": "Event has been active successfully",
