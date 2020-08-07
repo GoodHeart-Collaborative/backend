@@ -586,22 +586,22 @@ class AdminController {
 			if (!data) {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}
-			if(data && params.status === config.CONSTANT.STATUS.DELETED){
+			if (data && params.status === config.CONSTANT.STATUS.DELETED) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
 			}
-			else if(data && params.status === config.CONSTANT.STATUS.BLOCKED){
+			else if (data && params.status === config.CONSTANT.STATUS.BLOCKED) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED
 			}
-			else if(data && params.adminStatus===config.CONSTANT.USER_ADMIN_STATUS.PENDING){
+			else if (data && params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_PENDING
 			}
-			else if(data && params.adminStatus===config.CONSTANT.USER_ADMIN_STATUS.REJECTED){
+			else if (data && params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_REJECTED
-			}			
-			else if(data && params.adminStatus===config.CONSTANT.USER_ADMIN_STATUS.VERIFIED){
+			}
+			else if (data && params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_VERIFIED
 			}
-			return adminUserConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA
+			return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE
 		} catch (error) {
 			throw error;
 		}
