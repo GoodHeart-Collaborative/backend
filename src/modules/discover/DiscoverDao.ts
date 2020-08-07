@@ -87,7 +87,7 @@ export class DiscoverDao extends BaseDao {
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
             let pickupLocation = [];
             if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(longitude && latitude );
+                pickupLocation.push(latitude, longitude);
                 aggPipe.push(
                     {
                         '$geoNear': {
