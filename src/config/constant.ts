@@ -113,17 +113,25 @@ const GENDER = {
 	// TRANSG
 };
 
+// export const INDUSTRIES = {
+// 	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
+// 	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
+// 	// Wellness_Coaches: "Wellness Coaches",
+// 	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
+// 	// Compassion_Fatigue: 'Compassion Fatigue',
+// 	Nonprofit: 'Nonprofit',
+// 	Emergency_Services: 'Emergency Services',
+// 	Social_And_Community_Services: 'Social and Community Services',
+// 	Law_Enforcement: "Law Enforcement",
+// 	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
+// };
+
 export const INDUSTRIES = {
-	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
-	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
-	// Wellness_Coaches: "Wellness Coaches",
-	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
-	// Compassion_Fatigue: 'Compassion Fatigue',
-	Nonprofit: 'Nonprofit',
-	Emergency_Services: 'Emergency Services',
-	Social_And_Community_Services: 'Social and Community Services',
-	Law_Enforcement: "Law Enforcement",
-	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
+	NONPROFIT: 1,
+	EMERGENCY_SERVICES: 2,
+	SOCIAL_AND_COMMUNITY_SERVICES: 3,
+	LAW_ENFORCEMENT: 4,
+	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5
 };
 
 export const PROFESSION_TYPE = {

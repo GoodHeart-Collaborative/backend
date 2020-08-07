@@ -81,7 +81,7 @@ export class DiscoverDao extends BaseDao {
     }
     async getUserData(params, userId) {
         try {
-            let { pageNo, limit, searchKey, _id, longitude, latitude, distance  } = params
+            let { pageNo, limit, searchKey, _id, longitude, latitude, distance, industryType} = params
             let aggPipe = [];
             let result: any = {}
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
@@ -115,6 +115,9 @@ export class DiscoverDao extends BaseDao {
                     "as": "discovers"
                 }
             })
+            if(industryType) {
+                aggPipe.push({ "$match": {industryType: { $in: industryType }} })
+            }
             if (searchKey) {
                 aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
 			}
