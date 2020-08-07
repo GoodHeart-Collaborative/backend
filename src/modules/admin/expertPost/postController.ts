@@ -4,7 +4,7 @@
 import * as _ from "lodash";
 
 import * as config from "@config/index";
-import * as expertConstant from "@modules/admin/expert/expertConstant";
+import * as expertPostConstant from "@modules/admin/expertPost/expertPostConstant";
 import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
 import * as appUtils from "@utils/appUtils";
 import { expertDao } from "../expert/expertDao";
@@ -39,7 +39,7 @@ class ExpertPostController {
 
             const data = await expertPostDao.insert("expert_post", params, {});
 
-            return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
         } catch (error) {
             throw error;
@@ -59,9 +59,9 @@ class ExpertPostController {
 
             const data = await expertPostDao.findOne('expert_post', criteria, {}, {})
             if (!data) {
-                return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            return expertPostConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
 
             // return data;
         } catch (error) {
@@ -219,15 +219,22 @@ class ExpertPostController {
 
     async updateStatus(params: AdminExpertPostRequest.updateStatus) {
         try {
+            const {postId ,status} =params;
             const criteria = {
-                _id: params.postId
+                _id: postId
             };
 
             const datatoUpdate = {
-                status: params.status
+                status: status
             };
             const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+            if(data && status ==config.CONSTANT.STATUS.DELETED){
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED ;
+           }
+            else if(data && status ==config.CONSTANT.STATUS.BLOCKED){
+            return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            }
+             return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE; 
 
         } catch (error) {
             return Promise.reject(error)
@@ -244,7 +251,7 @@ class ExpertPostController {
             };
             const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
             if (data) {
-                return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+                 expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED ;
             }
         } catch (error) {
             throw error;
