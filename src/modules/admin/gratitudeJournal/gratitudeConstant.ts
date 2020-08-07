@@ -34,17 +34,17 @@ export const MESSAGES = {
 
         SUCCESSFULLY_DELETED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude has been deleted successFully",
+            "message": "Gratitude has been deleted successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude has been blocked successFully",
+            "message": "Gratitude has been blocked successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude has been active successFully",
+            "message": "Gratitude has been active successfully",
             "type": "DEFAULT"
         },
 

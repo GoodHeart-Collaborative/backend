@@ -23,22 +23,22 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User has been added successFully",
+            "message": "User has been added successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_DELETED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User has been deleted successFully",
+            "message": "User has been deleted successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User has been blocked successFully",
+            "message": "User has been blocked successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User has been active successFully",
+            "message": "User has been active successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_UPDATED: {
@@ -49,17 +49,17 @@ export const MESSAGES = {
 
         SUCCESSFULLY_PENDING: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User account has been pending successFully",
+            "message": "User account has been pending successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_REJECTED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User account has been rejected successFully",
+            "message": "User account has been rejected successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_VERIFIED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User account has been verified successFully",
+            "message": "User account has been verified successfully",
             "type": "DEFAULT"
         },
         DEFAULT_WITH_DATA: (data) => {

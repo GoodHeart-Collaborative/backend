@@ -23,22 +23,22 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been added successFully",
+            "message": "Expert has been added successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_DELETED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been deleted successFully",
+            "message": "Expert has been deleted successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been blocked successFully",
+            "message": "Expert has been blocked successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Expert has been active successFully",
+            "message": "Expert has been active successfully",
             "type": "DEFAULT"
         },
 

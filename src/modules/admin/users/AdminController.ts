@@ -582,7 +582,7 @@ class AdminController {
 				}
 			}
 
-			const data = await userDao.update('users', criteria, dataToUpdate, {})
+			const data = await userDao.updateOne('users', criteria, dataToUpdate, {})
 			if (!data) {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}

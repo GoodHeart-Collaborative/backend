@@ -23,22 +23,22 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been added successFully",
+            "message": "Post has been added successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_DELETED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been deleted successFully",
+            "message": "Post has been deleted successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been blocked successFully",
+            "message": "Post has been blocked successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been active successFully",
+            "message": "Post has been active successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_UPDATED: {
