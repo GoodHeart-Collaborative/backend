@@ -206,12 +206,17 @@ let updateProfile = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Managing_Director,
     ]),
     // userName: Joi.string(),
-    industryType: Joi.string().valid([
-        config.INDUSTRIES.Emergency_Services,
-        config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-        config.INDUSTRIES.Law_Enforcement,
-        config.INDUSTRIES.Nonprofit,
-        config.INDUSTRIES.Social_And_Community_Services
+    industryType: Joi.number().valid([
+        config.INDUSTRIES.NONPROFIT,
+        config.INDUSTRIES.EMERGENCY_SERVICES,
+        config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+        config.INDUSTRIES.LAW_ENFORCEMENT,
+        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+        // config.INDUSTRIES.Emergency_Services,
+        // config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
+        // config.INDUSTRIES.Law_Enforcement,
+        // config.INDUSTRIES.Nonprofit,
+        // config.INDUSTRIES.Social_And_Community_Services
         // config.INDUSTRIES.Compassion_Fatigue,
         // config.INDUSTRIES.Experts_in_Executive_Burnout,
         // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
