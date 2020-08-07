@@ -25,8 +25,8 @@ config.CONSTANT.STATUS.BLOCKED ,
 }).unknown()
 
 
-let validateExpertId = Joi.object({
-    expertId: Joi.string().required()
+let validateEventId = Joi.object({
+    eventId: Joi.string().required()
 }).unknown()
 
 
@@ -42,5 +42,6 @@ let updateStatus = Joi.object({
 
 export {
  getEvents,
- updateStatus
+ updateStatus,
+ validateEventId
 };

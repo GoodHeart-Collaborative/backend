@@ -161,15 +161,21 @@ class CategoryController {
 
     async updateStatus(params) {
         try {
-
+            const {status ,categoryId}=params;
             const criteria = {
-                _id: params.categoryId,
+                _id: categoryId,
             };
             const dataToUpdate = {
                 status: params.status
             }
             const data = await categoryDao.updateOne('categories', criteria, dataToUpdate, {});
-            return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
+            if(data && status ==config.CONSTANT.STATUS.DELETED ){
+            return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
+            }
+            if(data && status ==config.CONSTANT.STATUS.BLOCKED ){
+                return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED
+            }
+            return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE
         } catch (error) {
             throw error;
         }

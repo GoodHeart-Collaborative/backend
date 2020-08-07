@@ -369,6 +369,11 @@ const MESSAGES = {
 			"message": "Successfully updated",
 			"type": "DEFAULT"
 		},
+		SUCCESSFULLY_DELETED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully deleted",
+			"type": "SUCCESSFULLY_DELETED"
+		},
 		REFRESH_TOKEN: (data) => {
 			return {
 				"statusCode": HTTP_STATUS_CODE.OK,

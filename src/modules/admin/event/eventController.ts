@@ -4,7 +4,7 @@
 import * as _ from "lodash";
 
 import * as config from "@config/index";
-import * as expertConstant from "@modules/admin/expert/expertConstant";
+import * as eventConstant from "@modules/admin/event/eventConstant";
 import { eventDao } from "@modules/event/eventDao";
 import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
@@ -99,21 +99,21 @@ async getEvent(params){
 
 }
 
-    async updateExpert(params: AdminExpertRequest.updateExpert) {
-        try {
-            const criteria = {
-                _id: params.expertId,
-            };
+    // async updateExpert(params: AdminExpertRequest.updateExpert) {
+    //     try {
+    //         const criteria = {
+    //             _id: params.expertId,
+    //         };
 
-            const data = await eventDao.updateOne('expert', criteria, params, {})
-            if (!data) {
-                return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
-            }
-            return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-        } catch (error) {
-            throw error;
-        }
-    }
+    //         const data = await eventDao.updateOne('expert', criteria, params, {})
+    //         if (!data) {
+    //             return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
+    //         }
+    //         return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }
 
     /**
      * @function updateStatus
@@ -122,14 +122,35 @@ async getEvent(params){
 
     async updateStatus(params) {
         try {
+            const {Id ,status}  =params ;
             const criteria = {
-                _id: params.Id
+                _id: Id
             };
             const datatoUpdate = {
-                status: params.status
+                status: status
             };
             const data = await eventDao.updateOne('event', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+            if(data && status==config.CONSTANT.STATUS.DELETED){
+            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
+            }
+            else if(data && status==config.CONSTANT.STATUS.BLOCKED){
+                return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            }
+            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    /**
+     * @description admin get event detail
+     */
+    async getDetails(params){
+        try {
+            const criteria={
+                _id:params.eventId
+            }
+            return await eventDao.findOne('event', criteria ,{},{} )
         } catch (error) {
             return Promise.reject(error)
         }
