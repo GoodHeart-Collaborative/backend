@@ -22,10 +22,10 @@ class AdminHomeController {
             // if (params.type == 2 && params.thumbnailUrl) {
             //     return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
             // }
-            if(params.postedAt) {
-                params.postedAt =  new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
+            if (params.postedAt) {
+                params.postedAt = new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
             } else {
-                params.postedAt =  new Date()//moment(new Date()).format('YYYY-MM-DD')
+                params.postedAt = new Date()//moment(new Date()).format('YYYY-MM-DD')
             }
             // if (!params.postedAt) {
             //     params.postedAt = new Date();
@@ -33,7 +33,13 @@ class AdminHomeController {
             // console.log('paramsparams', params);
 
             const data = await homeDao.insert("home", params, {});
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
+            if (data && params.type == config.CONSTANT.HOME_TYPE.UNICORN) {
+                return HOME_CONSTANT.MESSAGES.SUCCESS.UNICORN_ADDED
+            } else if (data && params.type == config.CONSTANT.HOME_TYPE.INSPIRATION) {
+                return HOME_CONSTANT.MESSAGES.SUCCESS.UNICORN_ADDED
+            } else {
+                return HOME_CONSTANT.MESSAGES.SUCCESS.DAILY_ADVICE
+            }
         } catch (error) {
             throw error;
         }
@@ -111,9 +117,14 @@ class AdminHomeController {
                 ...params
             }
             const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
 
+            if (data && params.status == config.CONSTANT.STATUS.BLOCKED) {
+                return HOME_CONSTANT.MESSAGES.SUCCESS.BLOCKED;
 
+            } else if (data && params.status == config.CONSTANT.STATUS.DELETED) {
+                return HOME_CONSTANT.MESSAGES.SUCCESS.DELETED;
+            }
+            return HOME_CONSTANT.MESSAGES.SUCCESS.ACTIVE;
         } catch (error) {
             return Promise.reject(error);
         }
@@ -124,16 +135,18 @@ class AdminHomeController {
             const criteria = {
                 _id: params.Id
             }
-            if(params.postedAt) {
-                params.postedAt =  new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
+            if (params.postedAt) {
+                params.postedAt = new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
             } else {
-                params.postedAt =  new Date()//moment(new Date()).format('YYYY-MM-DD')
+                params.postedAt = new Date()//moment(new Date()).format('YYYY-MM-DD')
             }
             const dataToUpdate = {
                 ...params
             }
             const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
+            console.log('updateOneupdateOne', data);
+
+            return HOME_CONSTANT.MESSAGES.SUCCESS.UPDATED_SUCCESSFULLY
 
         } catch (error) {
             return Promise.reject(error);

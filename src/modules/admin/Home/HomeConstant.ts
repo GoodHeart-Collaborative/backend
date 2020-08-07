@@ -31,6 +31,41 @@ export const MESSAGES = {
             "message": "Successfully added",
             "type": "DEFAULT"
         },
+        UNICORN_ADDED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Unicorn successfully added",
+            "type": "DEFAULT"
+        },
+        INSPIRATION_ADDED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Inspiration added successfully",
+            "type": "DEFAULT"
+        },
+        DAILY_ADVICE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Daily advice added Successfully",
+            "type": "DEFAULT"
+        },
+        BLOCKED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Blocked successfully",
+            "type": "DEFAULT"
+        },
+        DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Deleted successfully",
+            "type": "DEFAULT"
+        },
+        ACTIVE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Active successfully",
+            "type": "DEFAULT"
+        },
+        UPDATED_SUCCESSFULLY: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Updated Successfully",
+            "type": "DEFAULT"
+        },
 
         DEFAULT_WITH_DATA: (data) => {
             return {
