@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 // console.log('process.envprocess.env',process.env)
-const ENVIRONMENT :any= 'development' ;// process.env.NODE_ENV; //.trim();
+const ENVIRONMENT = process.env.NODE_ENV.trim();
 
 switch (ENVIRONMENT) {
 	// case "dev":
