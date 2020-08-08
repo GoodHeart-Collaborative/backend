@@ -23,14 +23,29 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Successfully added",
+            "message": "Expert has been added successfully",
+            "type": "DEFAULT"
+        },
+        SUCCESSFULLY_DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Expert has been deleted successfully",
+            "type": "DEFAULT"
+        },
+        SUCCESSFULLY_BLOCKED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Expert has been blocked successfully",
+            "type": "DEFAULT"
+        },
+        SUCCESSFULLY_ACTIVE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Expert has been active successfully",
             "type": "DEFAULT"
         },
 
         DEFAULT_WITH_DATA: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "SUCCESS",
+                "message": "Expert has been updated succesfully",
                 "type": "DEFAULT",
                 "data": data
             }
@@ -41,23 +56,6 @@ export const MESSAGES = {
             "message": "Logout successfully.",
             "type": "LOGOUT"
         },
-        USER_LIST: (data) => {
-            return {
-                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "User list get successfully.",
-                "type": "USER_LIST",
-                "data": data
-            };
-        },
-
-        BLOCK_USER: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "User account successfully blocked.",
-            "type": "BLOCK_USER"
-        },
-    },
-    OTP_TEXT: (otp) => {
-        return `Your App code is " + ${otp} + ". " + "Welcome to the community!`
-    },
+    }
 };
 

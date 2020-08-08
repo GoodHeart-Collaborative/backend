@@ -1,78 +1,75 @@
 "use strict";
 
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
-import * as Joi from "joi";
-
-import { categoryController } from "@modules/admin/catgeory/CategoryController";
+import { eventController } from "@modules/admin/event/eventController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
-import * as CategoryValidator from './CategroyValidator'
-
-export const categoryRoute: ServerRoute[] = [
+import * as eventValidator from './eventValidator';
+export const adminEventRoutes: ServerRoute[] = [
     {
         method: "POST",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/category`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/event`,
         handler: async (request: Request, h: ResponseToolkit) => {
-            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: CategoryRequest.CategoryAdd = request.payload;
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            const payload: any = request.payload;
+            // payload['userId'] = tokenData['userId']
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await categoryController.addCategory(payload);
+                const result = await eventController.addEvent(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "category"],
-            description: "Add category",
+            tags: ["api", "events"],
+            description: "add events",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                payload: CategoryValidator.AddCategory,
+                payload: eventValidator.addEvents,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
                 "hapi-swagger": {
-                    // payloadType: 'form',
                     responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
                 }
             }
         }
     },
 
+
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/category`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/event`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: CategoryRequest.IGetCategory = request.query;
+            const payload: any = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await categoryController.getCategory(payload);
+                const result = await eventController.getEvent(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "category"],
-            description: "Add category",
+            tags: ["api", "events"],
+            description: "get events",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: CategoryValidator.getCategory,
+                query: eventValidator.getEvents,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
                 "hapi-swagger": {
-                    // payloadType: 'form',
                     responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
                 }
             }
@@ -81,121 +78,107 @@ export const categoryRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/category/{categoryId}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: CategoryRequest.IUpdateCategory = {
-                ...request.params,
-                ...request.payload
-            }
+            const payload: any = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await categoryController.updateCategory(payload);
+                const result = await eventController.updateStatus(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "category"],
-            description: "update category",
+            tags: ["api", "events"],
+            description: "update event status",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: CategoryValidator.GetCategoryId,
-                payload: CategoryValidator.UpdateCategory,
+                params: eventValidator.updateStatus,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
                 "hapi-swagger": {
-                    // payloadType: 'form',
                     responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
                 }
             }
         }
     },
-
-    {
-        method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/categoryDetails`,
-        handler: async (request: Request, h: ResponseToolkit) => {
-            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
-            try {
-                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await categoryController.getDetails(payload);
-                return responseHandler.sendSuccess(h, result);
-            } catch (error) {
-                return responseHandler.sendError(error);
-            }
-        },
-        config: {
-            tags: ["api", "category"],
-            description: "update category",
-            auth: {
-                strategies: ["AdminAuth"]
-            },
-            validate: {
-                headers: validator.adminAuthorizationHeaderObj,
-                query: CategoryValidator.GetCategoryDetailsList,
-                failAction: appUtils.failActionFunction
-            },
-            plugins: {
-                "hapi-swagger": {
-                    // payloadType: 'form',
-                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-                }
-            }
-        }
-    },
-
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/category/{categoryId}/status/{status}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{eventId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: any = {
                 ...request.params,
                 ...request.payload
             }
-            console.log('payloadpayloadpayloadpayload', payload);
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await categoryController.updateStatus(payload);
+                const result = await eventController.updateEvent(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "category"],
-            description: "update category status",
+            tags: ["api", "events"],
+            description: "update event",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    categoryId: Joi.string().required(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.BLOCKED,
-                        config.CONSTANT.STATUS.DELETED
-                    ]).required()
-                },
+                params: eventValidator.validateEventId,
+                payload: eventValidator.updateEvent,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
                 "hapi-swagger": {
-                    // payloadType: 'form',
                     responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
                 }
             }
         }
     },
-
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{eventId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload: any = request.params;
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await eventController.getDetails(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "events"],
+            description: "get events",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: eventValidator.validateEventId,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
 
 ];
+
+
+

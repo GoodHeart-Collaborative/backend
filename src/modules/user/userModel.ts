@@ -57,13 +57,13 @@ export interface IUser extends Document {
 	// isAdminVerified: boolean;
 }
 
-const geoSchema = new Schema({
-	address: { type: String, trim: true, required: true },
+var geoSchema = new Schema({
+	location: { type: String, trim: true, required: true, default: '' },
 	type: { type: String, default: "Point" },
-	coordinates: { type: [Number], index: "2dsphere" }// [longitude, latitude]
+	coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
 }, {
-	_id: false
-});
+		_id: false
+	});
 
 const userSchema = new Schema({
 	mobileOtp: { type: Number },
@@ -106,7 +106,7 @@ const userSchema = new Schema({
 	dob: { type: String },
 	// profilePicUrl: { type: String },
 	profilePicUrl: [Schema.Types.String],
-	address: geoSchema,
+	// address: geoSchema,
 	status: {
 		type: String,
 		enum: [
@@ -125,19 +125,30 @@ const userSchema = new Schema({
 	memberShipStatus: { type: String },
 	emailOtp: { type: Number },
 	preference: { type: String },
+	// industryType: {
+	// 	type: String, enum: [
+	// 		// config.INDUSTRIES.Compassion_Fatigue,
+	// 		// config.INDUSTRIES.Experts_in_Executive_Burnout,
+	// 		// config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
+	// 		// config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
+	// 		// config.INDUSTRIES.Wellness_Coaches,
+	// 		config.INDUSTRIES.Emergency_Services,
+	// 		config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
+	// 		config.INDUSTRIES.Law_Enforcement,
+	// 		config.INDUSTRIES.Nonprofit,
+	// 		config.INDUSTRIES.Social_And_Community_Services,
+	// 	],
+	// },
 	industryType: {
-		type: String, enum: [
-			// config.INDUSTRIES.Compassion_Fatigue,
-			// config.INDUSTRIES.Experts_in_Executive_Burnout,
-			// config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-			// config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-			// config.INDUSTRIES.Wellness_Coaches,
-			config.INDUSTRIES.Emergency_Services,
-			config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-			config.INDUSTRIES.Law_Enforcement,
-			config.INDUSTRIES.Nonprofit,
-			config.INDUSTRIES.Social_And_Community_Services,
+		type: Number, 
+		enum: [
+			config.INDUSTRIES.NONPROFIT,
+			config.INDUSTRIES.EMERGENCY_SERVICES,
+			config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+			config.INDUSTRIES.LAW_ENFORCEMENT,
+			config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
 		],
+		default: config.INDUSTRIES.NONPROFIT
 	},
 	// isAdminVerified: { type: Boolean, default: false },
 	// isAdminRejected: { type: Boolean, default: false },
@@ -166,6 +177,7 @@ const userSchema = new Schema({
 			config.CONSTANT.PRIVACY_STATUS.PUBLIC,
 		]
 	},
+	location: geoSchema,
 	likeCount: { type: Number, default: 0 },
 	commentCount: { type: Number, default: 0 },
 	createdAt: { type: Date },
@@ -229,6 +241,10 @@ userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
 	return object;
 };
+/* Crate 2dsphere index */
+userSchema.index({
+	location: '2dsphere'
+});
 
 // to set findAndModify false
 mongoose.set("useFindAndModify", false);

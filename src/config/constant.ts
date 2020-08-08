@@ -89,7 +89,8 @@ const DB_MODEL_REF = {
 	ADVICE: 'advice',
 	MEMBER: 'member',
 	EXPERT: 'expert',
-	EXPERT_POST: 'expert_post'
+	EXPERT_POST: 'expert_post',
+	EVENT: 'event'
 
 };
 
@@ -112,17 +113,25 @@ const GENDER = {
 	// TRANSG
 };
 
+// export const INDUSTRIES = {
+// 	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
+// 	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
+// 	// Wellness_Coaches: "Wellness Coaches",
+// 	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
+// 	// Compassion_Fatigue: 'Compassion Fatigue',
+// 	Nonprofit: 'Nonprofit',
+// 	Emergency_Services: 'Emergency Services',
+// 	Social_And_Community_Services: 'Social and Community Services',
+// 	Law_Enforcement: "Law Enforcement",
+// 	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
+// };
+
 export const INDUSTRIES = {
-	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
-	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
-	// Wellness_Coaches: "Wellness Coaches",
-	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
-	// Compassion_Fatigue: 'Compassion Fatigue',
-	Nonprofit: 'Nonprofit',
-	Emergency_Services: 'Emergency Services',
-	Social_And_Community_Services: 'Social and Community Services',
-	Law_Enforcement: "Law Enforcement",
-	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
+	NONPROFIT: 1,
+	EMERGENCY_SERVICES: 2,
+	SOCIAL_AND_COMMUNITY_SERVICES: 3,
+	LAW_ENFORCEMENT: 4,
+	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5
 };
 
 export const PROFESSION_TYPE = {
@@ -153,7 +162,8 @@ const COMMENT_CATEGORY = {
 const DISCOVER_STATUS = {
 	PENDING: 1,
 	ACCEPT: 2,
-	REJECT: 3
+	REJECT: 3,
+	NO_ACTION: 4
 };
 const USER_PROFILE_TYPE = {
 	GRATITUDE_JOURNAL: 1,
@@ -182,6 +192,15 @@ const HOME_TYPE = {
 	GENERAL_GRATITUDE: 4,
 	MEMBER_OF_DAY: 5
 };
+
+const HOME_TYPES = {
+	UNICORN: 'Unicorn',
+	INSPIRATION: 'Inspiration',
+	DAILY_ADVICE: 'Daily advice',
+	GENERAL_GRATITUDE: 'General gratitude',
+	MEMBER_OF_DAY: 'Member'
+};
+
 
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
@@ -216,6 +235,12 @@ const PRIVACY_STATUS = {
 	PROTECTED: 'protected'
 };
 
+const EVENT_CATEGORY = {
+	EVENTS: 'events',
+	CLASSES: 'classes',
+	TRAINING: 'training',
+	MEETUP: 'meetup'
+}
 const VALIDATION_CRITERIA = {
 	FIRST_NAME_MIN_LENGTH: 3,
 	FIRST_NAME_MAX_LENGTH: 20,
@@ -360,6 +385,11 @@ const MESSAGES = {
 			"statusCode": HTTP_STATUS_CODE.OK,
 			"message": "Successfully updated",
 			"type": "DEFAULT"
+		},
+		SUCCESSFULLY_DELETED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully deleted",
+			"type": "SUCCESSFULLY_DELETED"
 		},
 		REFRESH_TOKEN: (data) => {
 			return {
@@ -746,5 +776,7 @@ export const CONSTANT = Object.freeze({
 	EXPERT_CONTENT_TYPE,
 	PROFESSION_TYPE,
 	DISCOVER_STATUS,
-	USER_PROFILE_TYPE
+	USER_PROFILE_TYPE,
+	EVENT_CATEGORY,
+	HOME_TYPES
 });

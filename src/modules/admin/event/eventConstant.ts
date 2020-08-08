@@ -23,29 +23,30 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been added successfully",
-            "type": "DEFAULT"
-        },
-        SUCCESSFULLY_DELETED: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been deleted successfully",
+            "message": "Event added successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been blocked successfully",
+            "message": "Event has been blocked successfully",
+            "type": "DEFAULT"
+        },
+        SUCCESSFULLY_DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Event has been deletd successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Post has been active successfully",
+            "message": "Event has been active successfully",
             "type": "DEFAULT"
         },
-        SUCCESSFULLY_UPDATED: {
+        SUCCESSFULLY_UPDATE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "post has been updated successfully",
+            "message": "Event has been updated successfully",
             "type": "DEFAULT"
         },
+
 
         DEFAULT_WITH_DATA: (data) => {
             return {

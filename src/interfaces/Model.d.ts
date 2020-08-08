@@ -123,4 +123,5 @@ declare type ModelNames =
 	'expert' |
 	'discover' |
 	'shoutout'	|
-	'expert_post';
+	'expert_post' |
+	'event' ;

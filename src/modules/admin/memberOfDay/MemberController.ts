@@ -94,7 +94,11 @@ class MemberController {
             if (sortBy && sortOrder) {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
-                } else {
+                }
+                if(sortBy ==='createdAt'){
+                    sort = { "createdAt": sortOrder };
+                }
+                 else {
                     sort = { "memberCreatedAt": sortOrder };
                 }
             } else {

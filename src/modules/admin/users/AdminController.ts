@@ -5,6 +5,7 @@ import * as promise from "bluebird";
 
 import { adminDao, adminMapper } from "@modules/admin/index";
 import * as adminConstant from "@modules/admin/adminConstant";
+import * as adminUserConstant from "@modules/admin/users/AdminUserConstant";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
@@ -581,11 +582,26 @@ class AdminController {
 				}
 			}
 
-			const data = await userDao.update('users', criteria, dataToUpdate, {})
+			const data = await userDao.updateOne('users', criteria, dataToUpdate, {})
 			if (!data) {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}
-			return data;
+			if (data && params.status === config.CONSTANT.STATUS.DELETED) {
+				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
+			}
+			else if (data && params.status === config.CONSTANT.STATUS.BLOCKED) {
+				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED
+			}
+			else if (data && params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
+				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_PENDING
+			}
+			else if (data && params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_REJECTED
+			}
+			else if (data && params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
+				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_VERIFIED
+			}
+			return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE
 		} catch (error) {
 			throw error;
 		}

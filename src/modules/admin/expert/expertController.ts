@@ -160,14 +160,21 @@ class ExpertController {
 
     async updateStatus(params: AdminExpertRequest.updateStatus) {
         try {
+            const {expertId ,status} =params;
             const criteria = {
-                _id: params.expertId
+                _id: expertId
             };
             const datatoUpdate = {
-                status: params.status
+                status: status
             };
-            const data = await expertDao.updateOne('expert', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+            const data = await expertDao.updateOne('expert', criteria, datatoUpdate, {});
+            if(data && status ==config.CONSTANT.STATUS.DELETED){
+               return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED ;
+          }
+           else if(data && status ==config.CONSTANT.STATUS.BLOCKED){
+           return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+           }
+            return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
         } catch (error) {
             return Promise.reject(error)
         }

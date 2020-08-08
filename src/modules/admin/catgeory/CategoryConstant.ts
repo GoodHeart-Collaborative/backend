@@ -18,8 +18,28 @@ export const MESSAGES = {
     SUCCESS: {
         SUCCESSFULLY_UPDATED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Category successfully updated.",
+            "message": "Category has been updated successfully.",
             "type": "SUCCESSFULLY_UPDATED"
+        },
+        SUCCESSFULLY_DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Category been been deleted successfully.",
+            "type": "SUCCESSFULLY_DELETED"
+        },
+        SUCCESSFULLY_BLOCKED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Category has been blocked successfully.",
+            "type": "SUCCESSFULLY_BLOCKED"
+        },
+        SUCCESSFULLY_ACTIVE: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Category has been active successfully.",
+            "type": "SUCCESSFULLY_ACTIVE"
+        },
+        SUCCESSFULLY_ADDED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Category successfully added.",
+            "type": "SUCCESSFULLY_ADDED"
         }
     }
 };

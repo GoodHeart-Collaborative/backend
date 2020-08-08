@@ -24,7 +24,7 @@ let membersList = Joi.object({
     searchTerm: Joi.string().trim(),
     sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
     sortBy: Joi.string().valid([
-        'name', 'createdAt'
+        'name', 'createdAt','memberCreatedAt'
     ]),
 }).unknown()
 
