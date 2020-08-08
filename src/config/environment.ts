@@ -5,10 +5,10 @@ import * as fs from "fs";
 import * as path from "path";
 
 // console.log('process.envprocess.env',process.env)
-const ENVIRONMENT :any= 'development' ;// process.env.NODE_ENV; //.trim();
+const ENVIRONMENT = process.env.NODE_ENV.trim();
 
 switch (ENVIRONMENT) {
-	// case "dev":
+	case "dev":
 	case "development": {
 		if (fs.existsSync(path.join(process.cwd(), "/.env.development"))) {
 			dotenv.config({ path: ".env.development" });
@@ -18,49 +18,49 @@ switch (ENVIRONMENT) {
 		}
 		break;
 	}
-	// case "stag":
-	// case "staging": {
-	// 	if (fs.existsSync(path.join(process.cwd(), "/.env.staging"))) {
-	// 		dotenv.config({ path: ".env.staging" });
-	// 	} else {
-	// 		process.exit(1);
-	// 	}
-	// 	break;
-	// }
-	// case "test":
-	// case "testing": {
-	// 	if (fs.existsSync(path.join(process.cwd(), "/.env.testing"))) {
-	// 		dotenv.config({ path: ".env.testing" });
-	// 	} else {
-	// 		process.exit(1);
-	// 	}
-	// 	break;
-	// }
-	// case "prod":
-	// case "production": {
-	// 	if (fs.existsSync(path.join(process.cwd(), "/.env"))) {
-	// 		dotenv.config({ path: ".env" });
-	// 	} else {
-	// 		process.exit(1);
-	// 	}
-	// 	break;
-	// }
-	// case "default": {
-	// 	if (fs.existsSync(path.join(process.cwd(), "/.env.default"))) {
-	// 		dotenv.config({ path: ".env.default" });
-	// 	} else {
-	// 		process.exit(1);
-	// 	}
-	// 	break;
-	// }
-	// case "local": {
-	// 	if (fs.existsSync(path.join(process.cwd(), "/.env.local"))) {
-	// 		dotenv.config({ path: ".env.local" });
-	// 	} else {
-	// 		process.exit(1);
-	// 	}
-	// 	break;
-	// }
+	case "stag":
+	case "staging": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.staging"))) {
+			dotenv.config({ path: ".env.staging" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
+	case "test":
+	case "testing": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.testing"))) {
+			dotenv.config({ path: ".env.testing" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
+	case "prod":
+	case "production": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env"))) {
+			dotenv.config({ path: ".env" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
+	case "default": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.default"))) {
+			dotenv.config({ path: ".env.default" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
+	case "local": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.local"))) {
+			dotenv.config({ path: ".env.local" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
 	default: {
 		if (fs.existsSync(path.join(process.cwd(), "/.env.local"))) {
 			dotenv.config({ path: ".env.local" });
