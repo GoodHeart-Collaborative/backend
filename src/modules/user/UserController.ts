@@ -643,9 +643,9 @@ export class UserController {
 				about: params.about,
 				'profilePicUrl.2': params.profilePicUrl,
 			}
-
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
-			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE({ data, accessToken: token.Token });
+			data['accessToken'] = token.Token;
+			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE({ data });
 
 		} catch (error) {
 			return Promise.reject(error);
