@@ -645,7 +645,7 @@ export class UserController {
 			}
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
-			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE({ data });
+			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE(data);
 
 		} catch (error) {
 			return Promise.reject(error);
