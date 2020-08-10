@@ -119,6 +119,12 @@ const GENDER = {
 	// TRANSG
 };
 
+const EXPERIENCE_LEVEL = {
+	JUNIOR: 'Junior',
+	MID: 'Mid',
+	SENIOR: 'Senior',
+}
+
 // export const INDUSTRIES = {
 // 	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
 // 	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
@@ -785,5 +791,6 @@ export const CONSTANT = Object.freeze({
 	USER_PROFILE_TYPE,
 	EVENT_CATEGORY,
 	HOME_TYPES,
-	EVENT_INTEREST
+	EVENT_INTEREST,
+	EXPERIENCE_LEVEL
 });

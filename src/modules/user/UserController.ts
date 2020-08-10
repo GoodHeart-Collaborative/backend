@@ -422,7 +422,7 @@ export class UserController {
 					step5 = redisClient.createJobs(jobPayload);
 				}
 				const step6 = await promise.join(step3, step4, step5);
-				await userDao.updateLikeAndCommentCount({_id: appUtils.toObjectId(step1._id)}, { "$set": { isEmailVerified: true } })
+				await userDao.updateLikeAndCommentCount({ _id: appUtils.toObjectId(step1._id) }, { "$set": { isEmailVerified: true } })
 				return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
 			}
 		} catch (error) {
@@ -610,12 +610,43 @@ export class UserController {
 			const updateCriteria = {
 				_id: userData.userId
 			};
+
 			const dataToUpdate = {
 				...params
 			}
 
 			const data = await userDao.updateOne('users', updateCriteria, dataToUpdate, {});
 			return {};
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
+	async updateProfileUser(params, userData, token) {
+		try {
+			console.log('profilePicUrlprofilePicUrlprofilePicUrlprofilePicUrl', token,);
+
+			const updateCriteria = {
+				_id: userData.userId
+			};
+
+			const dataToUpdate = {
+				dob: params.dob,
+				profession: params.profession,
+				email: params.email,
+				firstName: params.firstName,
+				lastName: params.lastName,
+				mobileNumber: params.mobileNumber,
+				countryCode: params.countryCode,
+				industryType: params.industryType,
+				experience: params.experience,
+				about: params.about,
+				'profilePicUrl.2': params.profilePicUrl,
+			}
+
+			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
+			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE({ data, accessToken: token.Token });
+
 		} catch (error) {
 			return Promise.reject(error);
 		}

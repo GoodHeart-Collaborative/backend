@@ -205,6 +205,7 @@ let updateProfile = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Founder,
         config.CONSTANT.PROFESSION_TYPE.Managing_Director,
     ]),
+
     // userName: Joi.string(),
     industryType: Joi.number().valid([
         config.INDUSTRIES.NONPROFIT,
@@ -224,10 +225,46 @@ let updateProfile = Joi.object({
         // config.INDUSTRIES.Wellness_Coaches,
     ]),
     experience: Joi.string().valid([
-        'Junior', 'Mid', 'Senior',
+        config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
+        config.CONSTANT.EXPERIENCE_LEVEL.MID,
+        config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
     ]),
     about: Joi.string().allow('')
-})
+}).unknown()
+
+
+let updateProfileUser = Joi.object({
+    dob: Joi.string(),
+    profession: Joi.string().valid([
+        config.CONSTANT.PROFESSION_TYPE.CEO,
+        config.CONSTANT.PROFESSION_TYPE.Executive_Director,
+        config.CONSTANT.PROFESSION_TYPE.Founder,
+        config.CONSTANT.PROFESSION_TYPE.Managing_Director,
+    ]).required(),
+    email: Joi.string().email().required(),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().allow(''),
+    profilePicUrl: Joi.string().required(),
+
+    mobileNumber: Joi.string().required(),
+    countryCode: Joi.string().required(),
+
+    industryType: Joi.number().valid([
+        config.INDUSTRIES.NONPROFIT,
+        config.INDUSTRIES.EMERGENCY_SERVICES,
+        config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+        config.INDUSTRIES.LAW_ENFORCEMENT,
+        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    ]).required(),
+    experience: Joi.string().valid([
+        config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
+        config.CONSTANT.EXPERIENCE_LEVEL.MID,
+        config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
+    ]).required(),
+    about: Joi.string().allow('')
+}).unknown()
+
+
 let validateProfileHome = Joi.object({
     type: Joi.number().valid([
         config.CONSTANT.USER_PROFILE_TYPE.GRATITUDE_JOURNAL,
@@ -254,5 +291,6 @@ export {
     resetPassword,
     updateProfile,
     validateUserIdParams,
-    validateProfileHome
+    validateProfileHome,
+    updateProfileUser
 };

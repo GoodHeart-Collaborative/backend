@@ -625,7 +625,6 @@ export const adminRoute: ServerRoute[] = [
 		config: {
 			tags: ["api", "admin"],
 			description: "Dashboard",
-			// notes: "",
 			auth: {
 				strategies: ["AdminAuth"]
 			},

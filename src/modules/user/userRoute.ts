@@ -369,7 +369,7 @@ export const
 			}
 		},
 		{
-			method: "PATCH",
+			method: "POST",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
@@ -383,7 +383,7 @@ export const
 			},
 			options: {
 				tags: ["api", "user"],
-				description: "User Profile",
+				description: "User update Profile from login screen or register screen",
 				// notes: "",
 				auth: {
 					strategies: ["UserAuth"]
@@ -400,6 +400,42 @@ export const
 				}
 			}
 		},
+
+		{
+			method: "PATCH",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const payload = request.payload
+				console.log('headersheaders', request.headers.authorization);
+
+				try {
+					const result = await userController.updateProfileUser(payload, userData, { Token: request.headers.authorization });
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			options: {
+				tags: ["api", "user"],
+				description: "User update Profile",
+				// notes: "",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					payload: validateUser.updateProfileUser,
+					headers: validator.userAuthorizationHeaderObj,
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+
 		{
 			method: "GET",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile/home`,

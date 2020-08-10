@@ -231,6 +231,15 @@ export const MESSAGES = {
 				"data": data
 			};
 		},
+		PROFILE_UPDATE: (data) => {
+			// data['message'] = 'Profile update successfully'
+			return {
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+				"message": "Profile update successfully.",
+				"type": "PROFILE_UPDATE",
+				"data": data
+			};
+		},
 		FORGET_PASSWORD: (data) => {
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
