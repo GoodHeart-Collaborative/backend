@@ -641,7 +641,7 @@ export class UserController {
 				industryType: params.industryType,
 				experience: params.experience,
 				about: params.about,
-				'profilePicUrl.2': params.profilePicUrl,
+				'profilePicUrl.0': params.profilePicUrl,
 			}
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
