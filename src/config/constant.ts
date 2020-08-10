@@ -50,6 +50,11 @@ const HTTP_STATUS_CODE = {
 	ADMIN_REJECTED_USER: 421,
 };
 
+const EVENT_INTEREST = {
+	GOING: 1,
+	INTEREST: 2
+}
+
 const MEMBER_TYPE = {
 	FREE: 'Free',
 	PREMIUM: 'Premium'
@@ -90,7 +95,8 @@ const DB_MODEL_REF = {
 	MEMBER: 'member',
 	EXPERT: 'expert',
 	EXPERT_POST: 'expert_post',
-	EVENT: 'event'
+	EVENT: 'event',
+	EVENT_INTEREST: 'event_interest'
 
 };
 
@@ -778,5 +784,6 @@ export const CONSTANT = Object.freeze({
 	DISCOVER_STATUS,
 	USER_PROFILE_TYPE,
 	EVENT_CATEGORY,
-	HOME_TYPES
+	HOME_TYPES,
+	EVENT_INTEREST
 });

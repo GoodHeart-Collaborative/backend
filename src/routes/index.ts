@@ -51,9 +51,10 @@ import { expertPostRoute as expertPostRouteV1 } from '@modules/admin/expertPost/
 import { userExpertRoute as userExpertRouteV1 } from '@modules/expert/expertRoute';
 import { discoverRoute as discoverRouteV1 } from '@modules/discover/DiscoverRoute';
 import { shoutoutRoute as shoutoutRouteV1 } from '@modules/shoutout/ShoutoutRoute';
-import {adminEventRoutes as adminEventRouteV1} from '@modules/admin/event/eventRoute';
-import {userEventRoutes as userEventRoutesV1} from '@modules/event/eventRoute';
-
+import { adminEventRoutes as adminEventRouteV1 } from '@modules/admin/event/eventRoute';
+import { userEventRoutes as userEventRoutesV1 } from '@modules/event/eventRoute';
+import { EventInterestRoute as eventInterestRouteV1 } from '@modules/eventInterest/interestRoute';
+import { adminEventInterest as adminEventInterestV1 } from '@modules/admin/eventInterest/interestRoute';
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -94,4 +95,6 @@ export const routes: ServerRoute[] = [
 	...shoutoutRouteV1,
 	...adminEventRouteV1,
 	...userEventRoutesV1,
+	...eventInterestRouteV1,
+	...adminEventInterestV1
 ];

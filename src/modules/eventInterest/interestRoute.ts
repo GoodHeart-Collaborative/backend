@@ -1,23 +1,23 @@
 "use strict";
 
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
-import { eventController } from "@modules/event/eventController";
+import { interestController } from "@modules/eventInterest/eventInterestController";
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
-import * as eventValidator from './eventValidator';
-export const userEventRoutes: ServerRoute[] = [
+import * as interestValidator from './interestValidator';
+export const EventInterestRoute: ServerRoute[] = [
     {
         method: "POST",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/event`,
+        path: `${config.SERVER.API_BASE_URL}/v1/user/event-interest`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload: any = request.payload;
+            const payload: EventInterest.AddInterest = request.payload;
             payload['userId'] = tokenData['userId']
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await eventController.addEvent(payload);
+                const result = await interestController.addInterests(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -31,7 +31,7 @@ export const userEventRoutes: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                payload: eventValidator.addEvents,
+                payload: interestValidator.addEventInterest,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

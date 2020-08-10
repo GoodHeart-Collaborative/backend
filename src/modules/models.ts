@@ -22,4 +22,5 @@ export { expert } from './admin/expert/expertModel';
 export { expert_post } from "./admin/expertPost/expertPostModel";
 export { discover } from './discover/discoverModel'
 export { shoutout } from './shoutout/shoutoutModel';
-export {event} from './event/eventModel';
+export { event } from './event/eventModel';
+export { event_interest } from './eventInterest/interestModel';
