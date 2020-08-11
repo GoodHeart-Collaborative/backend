@@ -442,10 +442,25 @@ export class UserDao extends BaseDao {
 				},
 				{ $sort: { '_id.month_joined': 1 } },
 			];
+			const previousYearTotalUser = {
+				createdAt: {
+					$gte: new Date(new Date().getFullYear() - 1, 0, 1),
+					$lt: new Date(new Date().getFullYear(), 0, 1)
+				},
+				status: { $ne: config.CONSTANT.STATUS.DELETED }
+			};
+			const thisYeartotalUser = {
+				createdAt: {
+					$gte: new Date(new Date().getFullYear(), 0, 1)
+				},
+				status: { $ne: config.CONSTANT.STATUS.DELETED }
+			};
 
 			pipeline.push(this.count("users", newUsers));
+			pipeline.push(this.count('users', previousYearTotalUser))
+			pipeline.push(this.count('users', thisYeartotalUser))
 
-			const [userCount, newUser] = await Promise.all(pipeline);
+			const [userCount, newUser, previousYearUserCount, currentYearUserCount] = await Promise.all(pipeline);
 
 			const userGraph = await this.aggregate("users", userGraphCriteria, {});
 			const userGraphPreviousYear = await this.aggregate('users', userGraphLastYearCriteria, {})
@@ -467,7 +482,9 @@ export class UserDao extends BaseDao {
 				totalUsers: userCount,
 				newUser,
 				userGraphThisYear,
-				userGraphLastYear
+				userGraphLastYear,
+				previousYearUserCount,
+				currentYearUserCount
 			}
 
 		} catch (error) {

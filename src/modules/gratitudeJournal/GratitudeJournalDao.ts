@@ -16,22 +16,22 @@ export class GratitudeJournalDao extends BaseDao {
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             match["userId"] = await appUtils.toObjectId(userId.userId)
             aggPipe.push({ "$sort": { "postAt": -1 } });
-            if (startDate && endDate) { 
+            if (startDate && endDate) {
                 match['postAt'] = { $gte: startDate, $lte: endDate }
             }
             aggPipe.push({ "$match": match });
             aggPipe.push({
                 $project:
-                  {
+                {
                     _id: 1,
                     mediaUrl: 1,
-                    privacy:1,
+                    privacy: 1,
                     title: 1,
                     description: 1,
                     postAt: 1
-                  }
-             })
-             result = await this.aggregate('gratitude_journals', aggPipe, {})
+                }
+            })
+            result = await this.aggregate('gratitude_journals', aggPipe, {})
             return result
         } catch (error) {
             throw error;
@@ -195,6 +195,9 @@ export class GratitudeJournalDao extends BaseDao {
             match['userId'] = appUtils.toObjectId(params['userId']);
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
 
+            const userData = await this.findOne('users', { _id: params['userId'] }, { profession: 1, experience: 1, profilePicUrl: 1, fisrtName: 1, lastName: 1 }, {})
+            console.log('userDatauserDatauserData', userData);
+
             // aggPipe.push(match);
             // aggPipe.push({ "$sort": { "createdAt": -1 } });
             aggPipe.push({ "$match": match });
@@ -219,6 +222,34 @@ export class GratitudeJournalDao extends BaseDao {
                     as: 'likeData'
                 }
             })
+
+            aggPipe.push({
+                $lookup: {
+                    from: "comments",
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(params.userId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ["$postId", "$$post"]
+                                    },
+                                    {
+                                        $eq: ["$userId", "$$user"]
+                                    },
+                                    {
+                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+                                    }
+                                ]
+                            }
+                        }
+
+                    }],
+                    as: "commentData",
+                }
+            })
+            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+
             aggPipe.push({
                 $project: {
                     likeCount: 1,
@@ -231,14 +262,14 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    // isLike: {
-                    //     $cond: {
-                    //         if: {
-                    //             $eq: ["$likeData.userId", appUtils.toObjectId(params.userId)],
-                    //             then: true, else: false
-                    //         }
-                    //     }
-                    // }
+                    users: userData,
+                    isLike:
+                    {
+                        $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
+                    },
+                    isComment: {
+                        $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                    }
                 }
             })
             const myGratitude = await this.paginate('gratitude_journals', aggPipe, 10, 1, {}, true)

@@ -410,7 +410,7 @@ export const
 				console.log('headersheaders', request.headers.authorization);
 
 				try {
-					const result = await userController.updateProfileUser(payload, userData, { Token: request.headers.authorization });
+					const result = await userController.updateProfileUser(payload, userData, { accessToken: request.headers.authorization });
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
@@ -442,9 +442,8 @@ export const
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const query = request.query;
-				query['userId'] = tokenData['userId'];
 				try {
-					const result = await userController.getProfileHome(query);
+					const result = await userController.getProfileHome(query, tokenData);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);

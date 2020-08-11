@@ -241,6 +241,8 @@ export class BaseDao {
 
 	async updateOne(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
 		try {
+			console.log('optionsoptions', options);
+
 			const ModelName: any = models[model];
 			return await ModelName.updateOne(query, update, options);
 		} catch (error) {
@@ -310,7 +312,6 @@ export class BaseDao {
 		try {
 			// data['createdAt'] = Date.now();
 			// data['updatedAt'] = Date.now();
-
 			const ModelName: any = models[model];
 
 			const obj = new ModelName(data);

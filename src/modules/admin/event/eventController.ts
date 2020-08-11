@@ -27,6 +27,8 @@ class EventController {
    */
     async addEvent(params) {
         try {
+            console.log('paramsparams', params.location);
+
             params["created"] = new Date().getTime()
             const data = await eventDao.insert("event", params, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;

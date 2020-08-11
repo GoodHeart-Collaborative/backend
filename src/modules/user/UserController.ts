@@ -629,16 +629,7 @@ export class UserController {
 			const updateCriteria = {
 				_id: userData.userId
 			};
-			const findUser = await userDao.findOne('users', { _id: userData.userId }, {}, {});
-
-			// if (findUser && findUser.email === params.email && findUser.email) {
-
-			// }
-			// if (findUser && (findUser.mobileNo === params.mobileNo && findUser.countryCode === params.countryCode)) {
-
-			// }
-
-			const findVerifiedMobileorEMail = await userDao.findVerifiedEmailOrMobile
+			const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
 			const dataToUpdate = {
 				dob: params.dob,
 				profession: params.profession,
@@ -899,8 +890,11 @@ export class UserController {
 		}
 	}
 
-	async getProfileHome(query) {
+	async getProfileHome(query, tokenData) {
 		try {
+			query['userId'] = query.userId ? query.userId : tokenData['userId'];
+
+
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
 				getData = {}

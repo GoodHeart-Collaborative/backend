@@ -59,10 +59,13 @@ let addEvents = Joi.object({
     location: Joi.object().keys({
         address: Joi.string().trim(),
         type: Joi.string().required().valid(["Point"]),
-        coordinates: [{
-            longitude: Joi.number().precision(8),
-            latitude: Joi.number().precision(8)
-        }]
+        coordinates:
+            Joi.array().items(Joi.number())
+        // longitude: Joi.number(),
+        // latitude: Joi.number()
+        // coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
+
+
     }),
     eventCategory: Joi.string().allow([
         config.CONSTANT.EVENT_CATEGORY.CLASSES,
