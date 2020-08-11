@@ -368,9 +368,7 @@ export class UserDao extends BaseDao {
 	async dashboardGraph() {
 		try {
 			var date = new Date();
-
-			const promise = [];
-
+			const pipeline = [];
 			const query = {
 				$or: [
 					{
@@ -384,7 +382,7 @@ export class UserDao extends BaseDao {
 			let firstDay1 = moment().startOf('month');
 			var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 			console.log('firstDay1', firstDay1);
-			promise.push(this.count("users", query));
+			pipeline.push(this.count("users", query));
 
 			const newUsers = {
 				$and: [{
@@ -402,13 +400,74 @@ export class UserDao extends BaseDao {
 				]
 			}
 
-			promise.push(this.count("users", newUsers));
+			const userGraphCriteria = [
+				{
+					$match: {
+						createdAt: {
+							$gte: new Date(new Date().getFullYear(), 0, 1)
+						}
+					}
+				},
+				{
+					$project:
+						{ month: { $month: { $toDate: '$createdAt' } } },
+				},
+				{
+					$group: {
+						_id: { month_joined: '$month' },
+						number: { $sum: 1 }
+					}
+				},
+				{ $sort: { '_id.month_joined': 1 } },
+			];
 
-			const [userCount, newUser] = await Promise.all(promise);
+			const userGraphLastYearCriteria = [
+				{
+					$match: {
+						createdAt: {
+							$gte: new Date(new Date().getFullYear() - 1, 0, 1),
+							$lt: new Date(new Date().getFullYear(), 0, 1)
+						}
+					}
+				},
+				{
+					$project:
+						{ month: { $month: { $toDate: '$createdAt' } } },
+				},
+				{
+					$group: {
+						_id: { month_joined: '$month' },
+						number: { $sum: 1 }
+					}
+				},
+				{ $sort: { '_id.month_joined': 1 } },
+			];
+
+			pipeline.push(this.count("users", newUsers));
+
+			const [userCount, newUser] = await Promise.all(pipeline);
+
+			const userGraph = await this.aggregate("users", userGraphCriteria, {});
+			const userGraphPreviousYear = await this.aggregate('users', userGraphLastYearCriteria, {})
+			console.log('userGraph1userGraph1userGraph1userGraph1', userGraph);
+
+
+			const userGraphThisYear = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
+			const userGraphLastYear = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
+
+			userGraph.map(data => {
+				userGraphThisYear[data['_id']['month_joined']] = data.number;
+			});
+
+			userGraphPreviousYear.map(data => {
+				userGraphLastYear[data['_id']['month_joined']] = data.number;
+			});
 
 			return {
 				totalUsers: userCount,
-				newUser
+				newUser,
+				userGraphThisYear,
+				userGraphLastYear
 			}
 
 		} catch (error) {
