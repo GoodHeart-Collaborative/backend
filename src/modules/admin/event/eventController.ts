@@ -149,7 +149,7 @@ class EventController {
             };
             const data = await eventDao.updateOne('event', criteria, datatoUpdate, {})
             if (data && status == config.CONSTANT.STATUS.DELETED) {
-                return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
+                return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
             }
             else if (data && status == config.CONSTANT.STATUS.BLOCKED) {
                 return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
