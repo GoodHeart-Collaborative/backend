@@ -38,11 +38,10 @@ const eventSchema = new Schema({
     startDate: { type: Date },
     endDate: { type: Date },
     location: {
-        address: { type: String, trim: true, required: true },
         type: { type: String, default: "Point" },
-        coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
-        // coordinates: { type: [Number], default: [0, 0], index: "2dsphere" }// [longitude, latitude]
+        coordinates: [Number],
     },
+    address: { type: String, trim: true, required: true },
     price: { type: Number, default: 0 },
     title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
