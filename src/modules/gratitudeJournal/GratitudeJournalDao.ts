@@ -194,8 +194,22 @@ export class GratitudeJournalDao extends BaseDao {
             let result: any = {}
             match['userId'] = appUtils.toObjectId(params['userId']);
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
-
-            const userData = await this.findOne('users', { _id: params['userId'] }, { profession: 1, experience: 1, profilePicUrl: 1, fisrtName: 1, lastName: 1 }, {})
+            const userDataCriteria = [
+                {
+                    $match: {
+                        _id: appUtils.toObjectId(params.userId)
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        name: { $concat: ['$firstName', ' ', '$lastName'] },
+                        profilePicUrl: 1,
+                        profession: 1
+                    }
+                }
+            ]
+            const userData = await this.aggregate('users', userDataCriteria, {})
             console.log('userDatauserDatauserData', userData);
 
             // aggPipe.push(match);
@@ -262,7 +276,7 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    users: userData,
+                    user: userData,
                     isLike:
                     {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }

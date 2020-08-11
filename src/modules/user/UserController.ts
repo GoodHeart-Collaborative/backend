@@ -897,7 +897,10 @@ export class UserController {
 
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
-				getData = {}
+				// getData = {}
+				// for now 
+				getData = await gratitudeJournalDao.userProfileHome(query);
+
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: query.userId }, true)
 			} else {
