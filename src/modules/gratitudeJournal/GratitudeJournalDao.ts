@@ -207,6 +207,9 @@ export class GratitudeJournalDao extends BaseDao {
                         profilePicUrl: 1,
                         profession: 1
                     }
+                },
+                {
+                    $limit: 1
                 }
             ]
             const userData = await this.aggregate('users', userDataCriteria, {})
@@ -276,7 +279,7 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    user: userData,
+                    user: userData[0],
                     isLike:
                     {
                         $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
