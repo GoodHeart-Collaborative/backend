@@ -15,7 +15,7 @@ import { commonRoute as commonRouteV1 } from "@modules/common/commonRoute";
 // content routes
 import { contentRoute as contentRouteV1 } from "@modules/content/v1/contentRoute";
 // notification routes
-// import { notificationRoute as notificationRouteV1 } from "@modules/notification/v1/notificationRoute";
+import { notificationRoute as notificationRouteV1 } from "@modules/notification/v1/notificationRoute";
 // user routes
 import { userRoute as userRouteV1 } from "@modules/user/userRoute";
 import { homeRoute as HomeRoute } from "@modules/home/HomeRoute";
@@ -72,10 +72,10 @@ export const routes: ServerRoute[] = [
 	...HomeRoute,
 	...adminRouteV1,
 	...gratitudeJournalRoutev1,
-	// ...adminNotificationRouteV1,
+	...adminNotificationRouteV1,
 	...commonRouteV1,
 	...contentRouteV1,
-	// ...notificationRouteV1,
+	...notificationRouteV1,
 	...userRouteV1,
 	...categoryRouteV1,
 	...postRouteV1,

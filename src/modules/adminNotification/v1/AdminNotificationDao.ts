@@ -83,7 +83,7 @@ export class AdminNotificationDao extends BaseDao {
 			}
 			aggPipe.push({ "$sort": sort });
 
-			return await this.paginate("admin_notifications", aggPipe, params.limit, params.pageNo, true);
+            return await this.paginate('admin_notifications', aggPipe, params.limit, params.pageNo, {}, true)
 		} catch (error) {
 			throw error;
 		}

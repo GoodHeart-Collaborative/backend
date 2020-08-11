@@ -115,7 +115,7 @@ const ADMIN_TYPE = {
 const GENDER = {
 	MALE: "male",
 	FEMALE: "female",
-	// ALL: "all"
+	ALL: "all"
 	// TRANSG
 };
 
