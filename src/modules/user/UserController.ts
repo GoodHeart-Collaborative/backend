@@ -629,7 +629,16 @@ export class UserController {
 			const updateCriteria = {
 				_id: userData.userId
 			};
+			const findUser = await userDao.findOne('users', { _id: userData.userId }, {}, {});
 
+			// if (findUser && findUser.email === params.email && findUser.email) {
+
+			// }
+			// if (findUser && (findUser.mobileNo === params.mobileNo && findUser.countryCode === params.countryCode)) {
+
+			// }
+
+			const findVerifiedMobileorEMail = await userDao.findVerifiedEmailOrMobile
 			const dataToUpdate = {
 				dob: params.dob,
 				profession: params.profession,
