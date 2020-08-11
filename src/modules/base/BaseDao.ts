@@ -226,7 +226,7 @@ export class BaseDao {
 		}
 	}
 
-	async update(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async update(model: ModelNames, query: any, update: any, options: any) {
 		try {
 			// if (!options) {
 			// 	options['new'] = true;
