@@ -61,7 +61,7 @@ class AdminHomeController {
 
             aggPipe.push({
                 $lookup: {
-                    from: 'admins',
+                    from: 'admin',
                     let: { 'adminId': '$addedBy' },
                     pipeline: [{
                         $match: {

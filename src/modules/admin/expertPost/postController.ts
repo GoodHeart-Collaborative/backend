@@ -89,7 +89,6 @@ class ExpertPostController {
                 match['status'] = { "$ne": config.CONSTANT.STATUS.DELETED };
                 match['expertId'] = appUtils.toObjectId(expertId);
                 match.contentId = contentId;
-
             }
 
             if (searchTerm) {
