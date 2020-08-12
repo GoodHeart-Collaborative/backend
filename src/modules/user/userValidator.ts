@@ -247,8 +247,12 @@ let updateProfileUser = Joi.object({
     profilePicUrl: Joi.string().required(),
 
     mobileNumber: Joi.string().required(),
-    countryCode: Joi.string().required(),
-
+    // countryCode: Joi.string().required(),
+    countryCode: Joi.string().trim()
+        .regex(config.CONSTANT.REGEX.COUNTRY_CODE)
+        .min(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MIN_LENGTH)
+        .max(config.CONSTANT.VALIDATION_CRITERIA.COUNTRY_CODE_MAX_LENGTH)
+        .optional(),
     industryType: Joi.number().valid([
         config.INDUSTRIES.NONPROFIT,
         config.INDUSTRIES.EMERGENCY_SERVICES,
