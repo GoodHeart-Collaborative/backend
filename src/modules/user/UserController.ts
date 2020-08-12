@@ -629,7 +629,7 @@ export class UserController {
 			const updateCriteria = {
 				_id: userData.userId
 			};
-			const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
+			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
 			const dataToUpdate = {
 				dob: params.dob,
 				profession: params.profession,

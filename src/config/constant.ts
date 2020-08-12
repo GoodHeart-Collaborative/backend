@@ -272,7 +272,7 @@ const BYPASS_OTP = '4242';
 const MESSAGES = {
 	ERROR: {
 		UNAUTHORIZED_ACCESS: {
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
 			"message": "You are not authorized to perform this action.",
 			"type": "UNAUTHORIZED_ACCESS"
 		},
@@ -301,7 +301,7 @@ const MESSAGES = {
 		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please register your email address.",
+			"message": "Oops! It looks like you are not registered on the network",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_VERIFIED: {
