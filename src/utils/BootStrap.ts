@@ -103,7 +103,7 @@ export class BootStrap {
 				{
 					$match: {
 						status: config.CONSTANT.STATUS.ACTIVE,
-						isAdminVerified: true,
+						adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
 						countMember: 0,
 					}
 				},
@@ -121,14 +121,14 @@ export class BootStrap {
 				const criteria = {
 					_id: getUsers[0]._id
 				};
-				let startDate:any 
-				let endDate:any
-					startDate = new Date();
-					startDate.setHours(0,0,0,0);
-					endDate = new Date();
-					endDate.setHours(23,59,59,999);
-				await userDao.updateMany('users', {memberCreatedAt: { $gte: startDate, $lte: endDate}}, {"$unset": {memberCreatedAt: ""}}, {});
-				await userDao.updateMany('users', {isMemberOfDay: true}, {"$set": {isMemberOfDay: false}}, {});
+				let startDate: any
+				let endDate: any
+				startDate = new Date();
+				startDate.setHours(0, 0, 0, 0);
+				endDate = new Date();
+				endDate.setHours(23, 59, 59, 999);
+				await userDao.updateMany('users', { memberCreatedAt: { $gte: startDate, $lte: endDate } }, { "$unset": { memberCreatedAt: "" } }, {});
+				await userDao.updateMany('users', { isMemberOfDay: true }, { "$set": { isMemberOfDay: false } }, {});
 				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
 			}
 
