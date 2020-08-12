@@ -82,7 +82,7 @@ class AdminHomeController {
                 }
             })
             const data = await homeDao.aggregate('home', aggPipe, {})
-            return data[0] ? data : {};
+            return data[0] ? data[0] : {};
         } catch (error) {
             throw error;
         }
