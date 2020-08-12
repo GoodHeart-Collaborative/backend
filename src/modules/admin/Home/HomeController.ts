@@ -8,6 +8,7 @@ import * as HOME_CONSTANT from './HomeConstant';
 import { homeDao } from "@modules/admin/Home/adminHomeDao";
 import { CONSTANT } from "@config/index";
 import * as moment from 'moment';
+import * as appUtils from "@utils/appUtils";
 
 
 class AdminHomeController {
@@ -48,11 +49,40 @@ class AdminHomeController {
     async getPostById(params: HomeRequest.IHomeById) {
         try {
             const criteria = {
-                _id: params.Id,
+                _id: appUtils.toObjectId(params.Id),
             };
 
-            const data = await homeDao.findOne('home', criteria, {}, {})
-            return data;
+            let aggPipe = [];
+
+            aggPipe.push({
+                $match: criteria
+            })
+            // const data = await homeDao.findOne('home', criteria, {}, {})
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'admins',
+                    let: { 'adminId': '$addedBy' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                "$eq": ['$_id', '$$adminId'],
+                            }
+                        }
+                    },
+                    {
+                        '$project': {
+                            name: 1,
+                            profilePicture: 1,
+                            email: 1
+                        }
+                    }
+                    ],
+                    "as": "adminData"
+                }
+            })
+            const data = await homeDao.aggregate('home', aggPipe, {})
+            return data[0] ? data : {};
         } catch (error) {
             throw error;
         }
@@ -97,26 +127,6 @@ class AdminHomeController {
                 sort = { "postedAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
-
-            //     aggPipe.push({
-            //         $lookup: {
-            //             from: 'admins',
-            //             let: { 'cId': '$categoryId' },
-            //             pipeline: [{
-            //                 $match: {
-            //                     $expr: {
-            //                         "$in": ['$_id', '$$cId'],
-            //                     }
-            //                 }
-            //             }],
-            //             "as": "categoryData"
-            //         }
-            //     })
-            //     console.log('>>>>>>>>>>>>>.');
-            //     // }
-            // })
-
-
 
             const data = await homeDao.paginate('home', aggPipe, limit, page, {}, true);
             return data;
