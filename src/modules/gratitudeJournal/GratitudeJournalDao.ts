@@ -50,6 +50,9 @@ export class GratitudeJournalDao extends BaseDao {
             if (startDate && endDate) {
                 match['createdAt'] = { $gte: endDate, $lte: startDate }
             }
+            if (!startDate && endDate ) {
+                match["createdAt"] = { $lt: new Date(endDate) };
+            }
             match["userId"] = { $ne: await appUtils.toObjectId(userId.userId) }
             match["privacy"] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
             aggPipe.push({ "$sort": { "createdAt": -1 } });

@@ -11,22 +11,48 @@ export class HomeDao extends BaseDao {
 
     async getHomeData(params, userId) {
         try {
-            let { pageNo, limit, endDate } = params
+            let { pageNo, limit, endDate, type } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-           let  endDateee = new Date();
-           endDateee.setHours(23,59,59,999);
+            let endDateee = new Date();
+            let idKey:string = '$_id'
+            endDateee.setHours(23, 59, 59, 999);
             match["postedAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {
                 match["createdAt"] = { $lt: new Date(endDate) };
             }
+            if (type) {
+                match["type"] = type
+                aggPipe.push({ "$match": match });
+            } else {
+                aggPipe.push({ "$match": match });
+                idKey = '$_idd'
+                aggPipe.push({
+                    $group: {
+                        _id: "$type",
+                        description: { $first: "$description" },
+                        _idd: { $first: "$_id" },
+                        likeCount: { $first: "$likeCount" },
+                        commentCount: { $first: "$commentCount" },
+                        // status: { $first : "$status" },
+                        type: { $first: "$type" },
+                        mediaType: { $first: "$mediaType" },
+                        created: { $first: "$created" },
+                        mediaUrl: { $first: "$mediaUrl" },
+                        // title: { $first : "$title" },
+                        // isPostLater: { $first : "$isPostLater" },
+                        // postedAt: { $first : "$postedAt" },
+                        createdAt: { $first: "$createdAt" }
+                    }
+                })
+            }
             aggPipe.push({
                 $lookup: {
                     from: "likes",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    let: { "post": idKey, "user": await appUtils.toObjectId(userId.userId) },
                     pipeline: [
                         {
                             $match: {
@@ -49,13 +75,11 @@ export class HomeDao extends BaseDao {
                     as: "likeData"
                 }
             })
-
-            aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
-
+            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
                     from: "comments",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    let: { "post": idKey, "user": await appUtils.toObjectId(userId.userId) },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -78,42 +102,46 @@ export class HomeDao extends BaseDao {
                 }
             })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
-            aggPipe.push({
-                $project:
-                {
-                    _id: 1,
-                    likeCount: 1,
-                    commentCount: 1,
-                    status: 1,
-                    type: 1,
-                    mediaType: 1,
-                    mediaUrl: 1,
-                    thumbnailUrl: 1,
-                    title: 1,
-                    createdd:1,
-                    isPostLater: 1,
-                    description: 1,
-                    created: 1,
-                    postedAt: 1,
-                    createdAt: 1,
-                    isLike:
-                    {
-                        $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
-                    },
-                    isComment: {
-                        $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
-                    }
+            // aggPipe.push({ $group : { _id : "$type",  description: { $first : "$description" } } } )
+            let project: any = {
+                // _id: "$_idd",
+                likeCount: "$likeCount",
+                commentCount: "$commentCount",
+                // status: "$status",
+                type: "$type",
+                mediaType: "$mediaType",
+                mediaUrl: "$mediaUrl",
+                // thumbnailUrl: "$",
+                // title: "$title",
+                // createdd:"$created",
+                // isPostLater: "$isPostLater",
+                description: "$description",
+                created: "$created",
+                // postedAt: "$postedAt",
+                createdAt: "$createdAt",
+                // likeData: "$likeData",
+                isLike: {
+                    // $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
+                    $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
+                },
+                isComment: {
+                    $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                 }
-            });
-
-            aggPipe.push({ "$match": match });
-            aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
-            // result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
-            // if (result && result.list && result.list.length == 0) {
-            //     delete match.postedAt
-            //     aggPipe.pop()
+            }
+            if (!type) {
+                project["_id"] = "$_idd"
+            }
+            aggPipe.push({ $project: project });
+            if (!type) {
+                result = await this.aggregate('home', aggPipe, {})
+                if (result && result.length > 1) {
+                    result.sort(function (a, b) { return b.type - a.type });
+                    result.reverse()
+                }
+            } else {
+                aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
                 result = await this.aggregateWithPagination("home", aggPipe, limit, pageNo, true)
-            // }
+            }
             return result
         } catch (error) {
             throw error;
