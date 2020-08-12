@@ -119,10 +119,10 @@ export class HomeDao extends BaseDao {
                 created: "$created",
                 // postedAt: "$postedAt",
                 createdAt: "$createdAt",
-                isLike:
-                {
+                // likeData: "$likeData",
+                isLike: {
                     // $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
-                    $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: true, else: false }
+                    $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
                 },
                 isComment: {
                     $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
