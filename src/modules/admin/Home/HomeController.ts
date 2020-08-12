@@ -94,7 +94,7 @@ class AdminHomeController {
                     sort = { "createdAt": sortOrder };
                 }
             } else {
-                sort = { "createdAt": -1 };
+                sort = { "postedAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 

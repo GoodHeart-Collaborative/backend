@@ -272,7 +272,7 @@ const BYPASS_OTP = '4242';
 const MESSAGES = {
 	ERROR: {
 		UNAUTHORIZED_ACCESS: {
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
 			"message": "You are not authorized to perform this action.",
 			"type": "UNAUTHORIZED_ACCESS"
 		},
