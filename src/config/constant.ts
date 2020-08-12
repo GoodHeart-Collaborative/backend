@@ -301,7 +301,7 @@ const MESSAGES = {
 		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please register your email address.",
+			"message": "Oops! It looks like you are not registered on the network",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_VERIFIED: {
