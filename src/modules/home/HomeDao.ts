@@ -16,6 +16,7 @@ export class HomeDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             let endDateee = new Date();
+            let idKey:string = '$_id'
             endDateee.setHours(23, 59, 59, 999);
             match["postedAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
@@ -28,6 +29,7 @@ export class HomeDao extends BaseDao {
                 aggPipe.push({ "$match": match });
             } else {
                 aggPipe.push({ "$match": match });
+                idKey = '$_idd'
                 aggPipe.push({
                     $group: {
                         _id: "$type",
@@ -50,7 +52,7 @@ export class HomeDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "likes",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    let: { "post": idKey, "user": await appUtils.toObjectId(userId.userId) },
                     pipeline: [
                         {
                             $match: {
@@ -77,7 +79,7 @@ export class HomeDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "comments",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+                    let: { "post": idKey, "user": await appUtils.toObjectId(userId.userId) },
                     pipeline: [{
                         $match: {
                             $expr: {
