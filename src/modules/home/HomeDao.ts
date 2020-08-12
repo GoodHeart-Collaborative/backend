@@ -29,8 +29,8 @@ export class HomeDao extends BaseDao {
                 aggPipe.push({ "$match": match });
             } else {
                 aggPipe.push({ "$match": match });
-                idKey = '$_id'
-                aggPipe.push({
+                idKey = '$_idd' 
+                aggPipe.push({ 
                     $group: {
                         _id: "$type",
                         description: { $first: "$description" },
