@@ -56,7 +56,7 @@ export const MESSAGES = {
 		},
 		FORGOT_PASSWORD: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-			"message": "Please check your e-mail for password reset link.",
+			"message": "We've sent a password reset link to ******. Click the link to retrieve your lost password If you don't see the email, check your spam folder.",
 			"type": "FORGOT_PASSWORD"
 		},
 		CHANGE_FORGOT_PASSWORD: {
