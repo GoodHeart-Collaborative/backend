@@ -36,7 +36,10 @@ class HomeController {
                 params.limit = 5
                 getGeneralGratitude = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
                 if(getGeneralGratitude && getGeneralGratitude.list && getGeneralGratitude.list.length > 0) {
-                    responseData["getGratitudeJournal"] = getGeneralGratitude
+                    responseData.unshift(getGeneralGratitude)
+                    responseData.unshift(getmemberOfTheDay)
+
+                    // responseData["getGratitudeJournal"] = getGeneralGratitude
                 //     if(responseData && responseData.list && responseData.list.length > 9) {
                 //         responseData.list.pop()
                 //         if(responseData.next_hit === 0) {
@@ -45,10 +48,12 @@ class HomeController {
                 //     }
                 //     responseData.list.push(getGeneralGratitude)
                 }
-                responseData["getmemberOfTheDay"] = getmemberOfTheDay
+                // responseData["getmemberOfTheDay"] = getmemberOfTheDay
             } else {
                 if(params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                     responseData = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
+                } else {
+                    responseData = await homeDao.getHomeData(params, userId.tokenData)
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
