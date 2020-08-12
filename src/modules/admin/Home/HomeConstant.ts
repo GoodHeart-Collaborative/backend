@@ -31,19 +31,19 @@ export const MESSAGES = {
             "message": "Successfully added",
             "type": "DEFAULT"
         },
-        UNICORN_ADDED: {
+        DAILY_SMILES: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Unicorn successfully added",
+            "message": "Daily smiles added successfully",
             "type": "DEFAULT"
         },
         INSPIRATION_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Inspiration added successfully",
+            "message": "Inspiring women added successfully",
             "type": "DEFAULT"
         },
-        DAILY_ADVICE: {
+        DAILY_PEP_TALK: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Daily advice added Successfully",
+            "message": "Daily pep talk added Successfully",
             "type": "DEFAULT"
         },
         BLOCKED: (data) => {

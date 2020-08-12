@@ -34,11 +34,11 @@ class AdminHomeController {
 
             const data = await homeDao.insert("home", params, {});
             if (data && params.type == config.CONSTANT.HOME_TYPE.UNICORN) {
-                return HOME_CONSTANT.MESSAGES.SUCCESS.UNICORN_ADDED
+                return HOME_CONSTANT.MESSAGES.SUCCESS.DAILY_SMILES
             } else if (data && params.type == config.CONSTANT.HOME_TYPE.INSPIRATION) {
                 return HOME_CONSTANT.MESSAGES.SUCCESS.UNICORN_ADDED
             } else {
-                return HOME_CONSTANT.MESSAGES.SUCCESS.DAILY_ADVICE
+                return HOME_CONSTANT.MESSAGES.SUCCESS.DAILY_PEP_TALK
             }
         } catch (error) {
             throw error;

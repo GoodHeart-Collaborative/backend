@@ -206,11 +206,11 @@ const HOME_TYPE = {
 };
 
 const HOME_TYPES = {
-	UNICORN: 'Unicorn',
-	INSPIRATION: 'Inspiration',
-	DAILY_ADVICE: 'Daily advice',
+	UNICORN: 'Daily smiles',
+	INSPIRATION: 'Inspiring women',
+	DAILY_ADVICE: 'Daily pep talk',
 	GENERAL_GRATITUDE: 'General gratitude',
-	MEMBER_OF_DAY: 'Member'
+	MEMBER_OF_DAY: 'Leader of the day'
 };
 
 

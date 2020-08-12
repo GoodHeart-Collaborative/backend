@@ -408,7 +408,6 @@ export const
 				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const payload = request.payload
 				console.log('headersheaders', request.headers.authorization);
-
 				try {
 					const result = await userController.updateProfileUser(payload, userData, { accessToken: request.headers.authorization });
 					return responseHandler.sendSuccess(h, result);
@@ -452,7 +451,6 @@ export const
 			options: {
 				tags: ["api", "user", "home"],
 				description: "User Profile home",
-				// notes: "",
 				auth: {
 					strategies: ["UserAuth"]
 				},
