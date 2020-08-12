@@ -203,7 +203,15 @@ export class GratitudeJournalDao extends BaseDao {
                 {
                     $project: {
                         _id: 1,
-                        name: { $concat: ['$firstName', ' ', '$lastName'] },
+                        name: {
+                            $cond: {
+                                if: {
+                                    $eq: ['$lastName', null]
+                                },
+                                then: '$firstName',
+                                else: { $concat: ['$firstName', ' ', '$lastName'] }
+                            }
+                        },
                         profilePicUrl: 1,
                         profession: 1
                     }

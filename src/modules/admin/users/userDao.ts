@@ -28,11 +28,55 @@ export class AdminUserDao extends BaseDao {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
+            aggPipe.push({
+                "$project": {
+                    isAppleLogin: 1,
+                    isAppleVerified: 1,
+                    isMobileVerified: 1,
+                    isEmailVerified: 1,
+                    isFacebookLogin: 1,
+                    isGoogleLogin: 1,
+                    firstName: 1,
+                    lastName: 1,
+                    email: 1,
+                    countryCode: 1,
+                    mobileNo: 1,
+                    fullMobileNo: 1,
+                    gender: 1,
+                    dob: 1,
+                    profilePicUrl: [1],
+                    address: 1,
+                    status: 1,
+                    preference: 1,
+                    industryType: 1,
+                    experience: 1,
+                    about: 1,
+                    createdAt: 1,
+                    countMember: 1,
+                    memberCreatedAt: 1,
+                    isMemberOfDay: 1,
+                    likeCount: 1,
+                    commentCount: 1,
+                    adminStatus: 1,
+                    fullName: {
+                        $cond: {
+                            if: {
+                                $eq: ['$lastName', null]
+                            },
+                            then: '$firstName',
+                            else: { $concat: ['$firstName', ' ', '$lastName'] }
+                        }
+                    }
+                }
+            });
+
             if (searchTerm) {
+                const reg = new RegExp(searchTerm, 'ig');
                 match['$or'] = [
-                    { email: new RegExp('.*' + searchTerm + '.*', 'i') },
-                    { firstName: new RegExp('.*' + searchTerm + '.*', 'i') },
-                    { lastName: new RegExp('.*' + searchTerm + '.*', 'i') },
+                    { email: reg },
+                    { firstName: reg },
+                    { lastName: reg },
+                    { fullName: reg }
                 ]
             }
 

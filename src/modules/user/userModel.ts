@@ -62,8 +62,8 @@ var geoSchema = new Schema({
 	type: { type: String, default: "Point" },
 	coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
 }, {
-		_id: false
-	});
+	_id: false
+});
 
 const userSchema = new Schema({
 	mobileOtp: { type: Number },
@@ -92,7 +92,6 @@ const userSchema = new Schema({
 			config.CONSTANT.PROFESSION_TYPE.Executive_Director,
 			config.CONSTANT.PROFESSION_TYPE.Founder,
 			config.CONSTANT.PROFESSION_TYPE.Managing_Director,
-			// config.CONSTANT.PROFESSION_TYPE.CEO
 		]
 	},
 	gender: {
@@ -100,13 +99,10 @@ const userSchema = new Schema({
 		enum: [
 			config.CONSTANT.GENDER.FEMALE,
 			config.CONSTANT.GENDER.MALE,
-			// config.CONSTANT.GENDER.,
 		]
 	},
 	dob: { type: String },
-	// profilePicUrl: { type: String },
 	profilePicUrl: [Schema.Types.String],
-	// address: geoSchema,
 	status: {
 		type: String,
 		enum: [
@@ -125,22 +121,8 @@ const userSchema = new Schema({
 	memberShipStatus: { type: String },
 	emailOtp: { type: Number },
 	preference: { type: String },
-	// industryType: {
-	// 	type: String, enum: [
-	// 		// config.INDUSTRIES.Compassion_Fatigue,
-	// 		// config.INDUSTRIES.Experts_in_Executive_Burnout,
-	// 		// config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-	// 		// config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-	// 		// config.INDUSTRIES.Wellness_Coaches,
-	// 		config.INDUSTRIES.Emergency_Services,
-	// 		config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-	// 		config.INDUSTRIES.Law_Enforcement,
-	// 		config.INDUSTRIES.Nonprofit,
-	// 		config.INDUSTRIES.Social_And_Community_Services,
-	// 	],
-	// },
 	industryType: {
-		type: Number, 
+		type: Number,
 		enum: [
 			config.INDUSTRIES.NONPROFIT,
 			config.INDUSTRIES.EMERGENCY_SERVICES,
@@ -162,7 +144,9 @@ const userSchema = new Schema({
 	},
 	experience: {
 		type: String, enum: [
-			'Junior', 'Mid', 'Senior',
+			config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
+			config.CONSTANT.EXPERIENCE_LEVEL.MID,
+			config.CONSTANT.EXPERIENCE_LEVEL.SENIOR
 		]
 	},
 	countMember: { type: Number, default: 0 },
