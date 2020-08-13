@@ -44,7 +44,7 @@ export class AdminUserDao extends BaseDao {
                     fullMobileNo: 1,
                     gender: 1,
                     dob: 1,
-                    profilePicUrl: [1],
+                    profilePicUrl: 1,
                     address: 1,
                     status: 1,
                     preference: 1,

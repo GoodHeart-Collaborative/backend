@@ -19,6 +19,8 @@ export const homeRoute: ServerRoute[] = [
             const query = request.query;
             try {
                 const result = await homeController.getHomeData({ ...query }, { tokenData });
+                console.log('resultresultresultresult', result);
+
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

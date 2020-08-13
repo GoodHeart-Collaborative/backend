@@ -89,12 +89,11 @@ class ExpertPostController {
                 match['status'] = { "$ne": config.CONSTANT.STATUS.DELETED };
                 match['expertId'] = appUtils.toObjectId(expertId);
                 match.contentId = contentId;
-
             }
 
             if (searchTerm) {
                 match["$or"] = [
-                    { "description": { "$regex": searchTerm, "$options": "-i" } },
+                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
 
@@ -219,7 +218,7 @@ class ExpertPostController {
 
     async updateStatus(params: AdminExpertPostRequest.updateStatus) {
         try {
-            const {postId ,status} =params;
+            const { postId, status } = params;
             const criteria = {
                 _id: postId
             };
@@ -228,13 +227,13 @@ class ExpertPostController {
                 status: status
             };
             const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
-            if(data && status ==config.CONSTANT.STATUS.DELETED){
-                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED ;
-           }
-            else if(data && status ==config.CONSTANT.STATUS.BLOCKED){
-            return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            if (data && status == config.CONSTANT.STATUS.DELETED) {
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
             }
-             return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE; 
+            else if (data && status == config.CONSTANT.STATUS.BLOCKED) {
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            }
+            return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
 
         } catch (error) {
             return Promise.reject(error)
@@ -251,7 +250,7 @@ class ExpertPostController {
             };
             const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
             if (data) {
-                 expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED ;
+                expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
             }
         } catch (error) {
             throw error;

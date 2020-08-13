@@ -161,7 +161,7 @@ class CategoryController {
 
     async updateStatus(params) {
         try {
-            const {status ,categoryId}=params;
+            const { status, categoryId } = params;
             const criteria = {
                 _id: categoryId,
             };
@@ -169,15 +169,27 @@ class CategoryController {
                 status: params.status
             }
             const data = await categoryDao.updateOne('categories', criteria, dataToUpdate, {});
-            if(data && status ==config.CONSTANT.STATUS.DELETED ){
-            return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
+            if (data && status == config.CONSTANT.STATUS.DELETED) {
+                return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
             }
-            if(data && status ==config.CONSTANT.STATUS.BLOCKED ){
+            if (data && status == config.CONSTANT.STATUS.BLOCKED) {
                 return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED
             }
             return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE
         } catch (error) {
             throw error;
+        }
+    }
+
+    async getCategoryDetailById(params) {
+        try {
+            const criteria = {
+                _id: params.categoryId
+            }
+            const data = await categoryDao.findOne('categories', criteria, {}, {});
+            return data;
+        } catch (error) {
+            return Promise.reject(error);
         }
     }
 }

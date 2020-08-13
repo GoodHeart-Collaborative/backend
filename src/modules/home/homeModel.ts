@@ -21,7 +21,8 @@ export interface Ihome extends Document {
     type: number;
     mediaType: number,
     mediaUrl: number,
-    addedBy: Object;
+    addedBy: string;
+    // addedBy: Object;
     // imageUrl: string;
 }
 
@@ -63,10 +64,11 @@ const homeSchema = new Schema({
     thumbnailUrl: { type: String },
     // imageUrl: { type: String },
     created: { type: Number, default: new Date() },
-    addedBy: {
-        name: { type: String },
-        profilePicture: { type: String }
-    }
+    addedBy: { type: Schema.Types.ObjectId }
+    // {
+    //     name: { type: String },
+    //     profilePicture: { type: String }
+    // }
     // // createdAt: { type: Date },
     // updatedAt: { type: Date }
 }, {
