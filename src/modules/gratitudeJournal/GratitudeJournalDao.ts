@@ -230,7 +230,7 @@ export class GratitudeJournalDao extends BaseDao {
 
             // aggPipe.push(match);
             aggPipe.push({ "$match": match });
-            aggPipe.push({ "$sort": { "post": -1 } });
+            aggPipe.push({ "$sort": { "postAt": -1 } });
 
             idKey = '$_idd'
             aggPipe.push({
@@ -274,7 +274,7 @@ export class GratitudeJournalDao extends BaseDao {
                                         $eq: ["$userId", "$$user"]
                                     },
                                     {
-                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.COMMENT]
+                                        $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
                                     }
                                 ]
                             }
