@@ -18,6 +18,7 @@ import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
+// import {} from '@modules/'
 import { discoverDao } from "../discover/DiscoverDao";
 
 var ObjectID = require('mongodb').ObjectID;
@@ -900,19 +901,18 @@ export class UserController {
 
 	async getProfileHome(query, tokenData) {
 		try {
-			query['userId'] = query.userId ? query.userId : tokenData['userId'];
-
+			// query['userId'] = query.userId ? query.userId : tokenData['userId'];
 
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
 				// getData = {}
-				// for now 
-				getData = await gratitudeJournalDao.userProfileHome(query);
+				// for now
+				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
 
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: query.userId }, true)
 			} else {
-				getData = await gratitudeJournalDao.userProfileHome(query)
+				getData = await gratitudeJournalDao.userProfileHome(query, tokenData)
 			}
 			return getData;
 		} catch (error) {

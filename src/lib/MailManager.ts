@@ -165,7 +165,7 @@ export class MailManager {
 	}
 
 	async sendRegisterMailToUser(params) {
-		console.log('params.token', params);
+		const lastName = params.lastName ? params.lastName : ''
 
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "verifyEmail.html"))
 			.compileFile({
@@ -173,7 +173,7 @@ export class MailManager {
 					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
 					`&type=verifyEmail&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}` +
 					`&userId=${params.userId}`,
-				"name": params.firstName + " " + params.lastName,
+				"name": params.firstName + " " + lastName,
 				"year": new Date().getFullYear(),
 				"userId": params.userId
 				// "validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins

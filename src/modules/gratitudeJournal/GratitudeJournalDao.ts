@@ -190,20 +190,30 @@ export class GratitudeJournalDao extends BaseDao {
         }
     }
 
-    async userProfileHome(params) {
+    async userProfileHome(params, tokenData) {
         try {
+
+            // query['userId'] = query.userId ? query.userId : tokenData['userId'];
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            match['userId'] = appUtils.toObjectId(params['userId']);
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            let idKey: string = '$_id'
 
+            if (params.userId) {
+                match['userId'] = appUtils.toObjectId(params['userId']);
+                match['status'] = config.CONSTANT.STATUS.ACTIVE;
+                match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
+            } else {
+                match['status'] = config.CONSTANT.STATUS.ACTIVE;
+                match['userId'] = appUtils.toObjectId(tokenData['userId']);
+                match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            }
+            // let idKey: string = '$_id'
             const userDataCriteria = [
                 {
-                    $match: {
-                        _id: appUtils.toObjectId(params.userId)
-                    }
+                    $match: match
+                    // {
+                    //     _id: appUtils.toObjectId(params.userId)
+                    // }
                 },
                 {
                     $project: {
@@ -232,7 +242,7 @@ export class GratitudeJournalDao extends BaseDao {
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
 
-            idKey = '$_idd'
+            // idKey = '$_idd'
             aggPipe.push({
                 $lookup: {
                     from: "likes",
