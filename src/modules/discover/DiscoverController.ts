@@ -32,20 +32,20 @@ class DiscoverController {
      * @description if IS_REDIS_ENABLE set to true,
      * than redisClient.storeList() function saves value in redis.
      */
-    async updateDiscoverData(params:DiscoverRequest.DiscoverRequestEdit, userId) {
+    async updateDiscoverData(params: DiscoverRequest.DiscoverRequestEdit, userId) {
         try {
             let query:any = {}
-            query["_id"]= params.discoverId
+            query["_id"]= params.followerId
             userId.userId = await appUtils.toObjectId(userId.userId)
 			query["$or"] = [{ userId: userId.userId }, { followerId: userId.userId }];
-            let checkDiscover = await discoverDao.checkDiscover(query)
+            let checkDiscover = await discoverDao.checkDiscover({followerId: params.followerId, userId: userId.userId})
             if(checkDiscover) {
-                query = {
-                    _id: await appUtils.toObjectId(params.discoverId),
-                    followerId: userId.userId
-                }
-                let updateDiscover = await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
-                return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_UPDATED(updateDiscover)
+                query = {_id: checkDiscover._id}
+                await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
+                userId = userId.userId.toString()
+                let getData = await discoverDao.getUserData({_id: params.followerId}, userId)
+                getData.data[0].discover_status = params.discover_status
+                return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_UPDATED(getData.data[0])
             } else {
                 return homeConstants.MESSAGES.ERROR.DISCOVER_NOT_FOUND
             }
