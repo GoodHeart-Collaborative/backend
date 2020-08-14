@@ -343,8 +343,9 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const userId = request.query.userId;
 				try {
-					const result = await userController.profile(tokenData);
+					const result = await userController.profile(tokenData, userId);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
@@ -358,6 +359,9 @@ export const
 					strategies: ["UserAuth"]
 				},
 				validate: {
+					query: {
+						userId: Joi.string()
+					},
 					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction
 				},

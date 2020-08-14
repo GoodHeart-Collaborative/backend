@@ -584,10 +584,18 @@ export class UserController {
 	/**
 	 * @function profile
 	 */
-	async profile(tokenData: TokenData) {
+	async profile(tokenData: TokenData, userId) {
+		console.log('userIduserIduserId', userId);
+
 		try {
-			delete tokenData.deviceId, delete tokenData.deviceToken, delete tokenData.platform, delete tokenData.accountLevel;
-			return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+			if (tokenData.userId === userId || !userId) {
+				delete tokenData.deviceId, delete tokenData.deviceToken, delete tokenData.platform, delete tokenData.accountLevel;
+				return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+			} else {
+				const data = await userDao.findOne('users', { _id: userId }, { deviceId: 0, deviceToken: 0 }, {})
+				return userConstant.MESSAGES.SUCCESS.PROFILE(data);
+			}
+
 		} catch (error) {
 			throw error;
 		}
