@@ -55,6 +55,8 @@ import { adminEventRoutes as adminEventRouteV1 } from '@modules/admin/event/even
 import { userEventRoutes as userEventRoutesV1 } from '@modules/event/eventRoute';
 import { EventInterestRoute as eventInterestRouteV1 } from '@modules/eventInterest/interestRoute';
 import { adminEventInterest as adminEventInterestV1 } from '@modules/admin/eventInterest/interestRoute';
+import { AdminForumRoute as AdminForumRouteV1 } from '@modules/admin/forum/forumRoute';
+
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -96,5 +98,6 @@ export const routes: ServerRoute[] = [
 	...adminEventRouteV1,
 	...userEventRoutesV1,
 	...eventInterestRouteV1,
-	...adminEventInterestV1
+	...adminEventInterestV1,
+	...AdminForumRouteV1
 ];

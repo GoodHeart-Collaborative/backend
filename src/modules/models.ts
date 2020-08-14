@@ -24,3 +24,4 @@ export { discover } from './discover/discoverModel'
 export { shoutout } from './shoutout/shoutoutModel';
 export { event } from './event/eventModel';
 export { event_interest } from './eventInterest/interestModel';
+export { forum_topic } from './forum/forumModel';
