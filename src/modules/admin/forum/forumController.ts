@@ -133,16 +133,17 @@ class AdminForumController {
      * @description admin update status active ,block ,delete
      */
 
-    async updateStatus(params: AdminExpertRequest.updateStatus) {
+    async updateStatus(params: AdminForumRequest.UpdateForum) {
         try {
             const criteria = {
-                _id: params.expertId
+                _id: params.postId
             };
             const datatoUpdate = {
                 status: params.status
             };
-            const data = await eventDao.updateOne('expert', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+            const data = await eventDao.findOneAndUpdate('forum_topic', criteria, datatoUpdate, { new: true })
+            return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
+
         } catch (error) {
             return Promise.reject(error)
         }

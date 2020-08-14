@@ -35,8 +35,16 @@ let getForum = Joi.object({
 
 })
 
-
+let updateForum = Joi.object({
+    postId: Joi.string(),
+    status: Joi.string().allow([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.DELETED,
+        config.CONSTANT.STATUS.BLOCKED,
+    ])
+})
 export {
     addForum,
-    getForum
+    getForum,
+    updateForum
 };

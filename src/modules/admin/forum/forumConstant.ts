@@ -26,6 +26,14 @@ export const MESSAGES = {
                 "data": data
             };
         },
+        FORUM_UPDATED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "Forum updated successful.",
+                "type": "FORUM_ADDED",
+                "data": data
+            };
+        },
         GRATITUDE_JOURNAL_DATA_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,

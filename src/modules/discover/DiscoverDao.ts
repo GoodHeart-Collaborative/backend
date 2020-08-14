@@ -193,7 +193,7 @@ export class DiscoverDao extends BaseDao {
         try {
             let updateData: any = {}
             updateData["$set"] = update
-            return await this.updateOne('discover', query, updateData, {});
+            return await this.findOneAndUpdate('discover', query, updateData, { new: true });
         } catch (error) {
             throw error;
         }

@@ -24,4 +24,9 @@ declare namespace AdminForumRequest {
         categoryId: string
     }
 
+
+    export interface UpdateForum {
+        postId: string;
+        status: string
+    }
 }

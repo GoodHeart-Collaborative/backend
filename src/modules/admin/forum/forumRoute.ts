@@ -75,4 +75,37 @@ export const AdminForumRoute: ServerRoute[] = [
             }
         }
     },
+    {
+        method: "PATCH",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/forums/{postId}/status/{status}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
+            const payload: AdminForumRequest.UpdateForum = request.params;
+            try {
+                // payload["userId"] = tokenData.userId
+                const result = await adminForumController.updateStatus(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "forum"],
+            description: "update admin forums topic",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: forumValidator.updateForum,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
 ];
