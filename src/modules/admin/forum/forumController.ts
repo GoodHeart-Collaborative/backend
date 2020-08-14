@@ -112,17 +112,20 @@ class AdminForumController {
         }
     }
 
-    async updateForumTopic(params: AdminExpertRequest.updateExpert) {
+    async updateForumTopic(params: AdminForumRequest.UpdateForum) {
         try {
             const criteria = {
-                _id: params.expertId,
+                _id: params.postId,
             };
-
-            const data = await eventDao.updateOne('expert', criteria, params, {})
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await eventDao.findOneAndUpdate('expert', criteria, dataToUpdate, {})
             if (!data) {
                 // return forumConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            // return forumConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+
+            return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
         } catch (error) {
             throw error;
         }
@@ -133,7 +136,7 @@ class AdminForumController {
      * @description admin update status active ,block ,delete
      */
 
-    async updateStatus(params: AdminForumRequest.UpdateForum) {
+    async updateStatus(params: AdminForumRequest.UpdateForumStatus) {
         try {
             const criteria = {
                 _id: params.postId
@@ -144,6 +147,18 @@ class AdminForumController {
             const data = await eventDao.findOneAndUpdate('forum_topic', criteria, datatoUpdate, { new: true })
             return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
 
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async getForum(params) {
+        try {
+            const criteria = {
+                _id: params.postId
+            }
+            const data = await eventDao.findOne('forum_topic', criteria, {}, {})
+            return data;
         } catch (error) {
             return Promise.reject(error)
         }

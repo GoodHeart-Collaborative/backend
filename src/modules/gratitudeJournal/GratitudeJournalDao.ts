@@ -197,23 +197,25 @@ export class GratitudeJournalDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
+            let criteria: any = {};
+            // if (params.userId) {
+            //     match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            //     match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
+            // } else {
+            //     // match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            //     match['_id'] = appUtils.toObjectId(tokenData['userId']);
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            // }
 
-            if (params.userId) {
-                match['userId'] = appUtils.toObjectId(params['userId']);
-                match['status'] = config.CONSTANT.STATUS.ACTIVE;
-                match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
-            } else {
-                match['status'] = config.CONSTANT.STATUS.ACTIVE;
-                match['userId'] = appUtils.toObjectId(tokenData['userId']);
-                match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            }
+            const _id = params.userId ? appUtils.toObjectId(params.userId) : appUtils.toObjectId(tokenData.userId)
+
             // let idKey: string = '$_id'
             const userDataCriteria = [
                 {
-                    $match: match
-                    // {
-                    //     _id: appUtils.toObjectId(params.userId)
-                    // }
+                    $match: {
+                        _id: _id,
+                        status: config.CONSTANT.STATUS.ACTIVE,
+                    }
                 },
                 {
                     $project: {
@@ -230,14 +232,18 @@ export class GratitudeJournalDao extends BaseDao {
                         profilePicUrl: 1,
                         profession: 1
                     }
-                },
-                {
-                    $limit: 1
                 }
             ]
             const userData = await this.aggregate('users', userDataCriteria, {})
             console.log('userDatauserDatauserData', userData);
 
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
+            if (params.userId) {
+                match['userId'] = appUtils.toObjectId(params['userId']);
+            } else {
+                match['userId'] = appUtils.toObjectId(tokenData['userId']);
+            }
             // aggPipe.push(match);
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });

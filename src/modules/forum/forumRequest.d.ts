@@ -25,8 +25,21 @@ declare namespace AdminForumRequest {
     }
 
 
-    export interface UpdateForum {
+    export interface UpdateForumStatus {
         postId: string;
         status: string
     }
+
+    export interface UpdateForum {
+        postId: string;
+        categoryId: string,
+        categoryName: string, // only for searching
+        // userId: string,
+        userStatus: string
+        topic: string,
+        mediaUrl: string,
+        description: string,
+        postAnonymous: boolean
+    }
+
 }

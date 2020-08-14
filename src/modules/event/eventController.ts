@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import * as config from "@config/index";
 import * as expertConstant from "@modules/admin/expert/expertConstant";
 import { eventDao } from "@modules/event/eventDao";
+import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
 
@@ -35,40 +36,22 @@ class EventController {
         }
     }
 
-
-    async updateExpert(params: AdminExpertRequest.updateExpert) {
+    async getEvent(params: UserEventRequest.userGetEvent) {
         try {
-            const criteria = {
-                _id: params.expertId,
-            };
+            const { page, limit } = params;
+            let aggPipe = [];
+            let match: any = {};
+            params['userId'] = params['userId']
 
-            const data = await eventDao.updateOne('expert', criteria, params, {})
-            if (!data) {
-                return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
+            if (params.type == 'interest') {
+                match['type'] = config.CONSTANT.EVENT_INTEREST.GOING;
             }
-            return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-        } catch (error) {
-            throw error;
-        }
-    }
 
-    /**
-     * @function updateStatus
-     * @description admin update status active ,block ,delete
-     */
+            aggPipe.push({ $match: match })
 
-    async updateStatus(params: AdminExpertRequest.updateStatus) {
-        try {
-            const criteria = {
-                _id: params.expertId
-            };
-            const datatoUpdate = {
-                status: params.status
-            };
-            const data = await eventDao.updateOne('expert', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+            const data = await eventInterestDao.aggreagtionWithPaginateTotal('event_interest', aggPipe, limit, page, true)
         } catch (error) {
-            return Promise.reject(error)
+            return Promise.reject(error);
         }
     }
 }

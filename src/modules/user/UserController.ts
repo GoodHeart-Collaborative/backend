@@ -19,6 +19,7 @@ import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
 // import {} from '@modules/'
+import { forumtopicDao } from '@modules/forum/forumDao';
 import { discoverDao } from "../discover/DiscoverDao";
 
 var ObjectID = require('mongodb').ObjectID;
@@ -908,6 +909,8 @@ export class UserController {
 				// getData = {}
 				// for now
 				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
+
+				// getData = await forumtopicDao.getTopicForHomeProfile(query, tokenData);
 
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)

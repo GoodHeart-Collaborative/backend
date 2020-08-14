@@ -29,7 +29,7 @@ class forumController {
             params["created"] = new Date().getTime()
 
             const data = await eventDao.insert("forum_topic", params, {});
-            return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED;
+            return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED(data);
         } catch (error) {
             throw error;
         }
