@@ -46,8 +46,14 @@ class EventController {
             if (params.type == 'interest') {
                 match['type'] = config.CONSTANT.EVENT_INTEREST.GOING;
             }
-
             aggPipe.push({ $match: match })
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'events',
+                    let: {}
+                }
+            })
 
             const data = await eventInterestDao.aggreagtionWithPaginateTotal('event_interest', aggPipe, limit, page, true)
         } catch (error) {
