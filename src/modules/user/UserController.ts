@@ -910,7 +910,7 @@ export class UserController {
 				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
 
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
-				getData = await discoverDao.getDiscoverData(query, { userId: query.userId }, true)
+				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
 			} else {
 				getData = await gratitudeJournalDao.userProfileHome(query, tokenData)
 			}

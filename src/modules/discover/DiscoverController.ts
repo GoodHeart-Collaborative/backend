@@ -2,6 +2,7 @@
 import * as homeConstants from "./DiscoverConstant";
 import { discoverDao } from "./DiscoverDao";
 import * as appUtils from "@utils/appUtils";
+import { CONSTANT } from "@config/constant";
 
 class DiscoverController {
 
@@ -13,10 +14,10 @@ class DiscoverController {
     async getDiscoverData(params, userId) {
         try {
             let getData = await discoverDao.getDiscoverData(params, userId, false)
-            if (!getData[0]) {
-                return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_NO_USER(getData)
+            if (getData && getData.total > 0) {
+                return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA(getData)
             }
-            return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA(getData)
+            return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_NO_USER(getData)
         } catch (error) {
             throw error;
         }
@@ -40,8 +41,10 @@ class DiscoverController {
             let query:any = {}
             query["_id"]= params.followerId
             userId.userId = await appUtils.toObjectId(userId.userId)
-			query["$or"] = [{ userId: userId.userId }, { followerId: userId.userId }];
-            let checkDiscover = await discoverDao.checkDiscover({followerId: params.followerId, userId: userId.userId})
+            query["$or"] = [{ userId: userId.userId }, { followerId: userId.userId }];
+            let checkQuery:any = {}
+            checkQuery["$or"] = [{userId: userId.userId, followerId: params.followerId}, {followerId: userId.userId, userId: params.followerId}] 
+            let checkDiscover = await discoverDao.checkDiscover(checkQuery)
             if(checkDiscover) {
                 query = {_id: checkDiscover._id}
                 await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
@@ -58,12 +61,24 @@ class DiscoverController {
     }
     async saveDiscoverData(params: DiscoverRequest.DiscoverRequestAdd, userId) {
         try {
-            let checkDiscover = await discoverDao.checkDiscover({ followerId: params.followerId, userId: userId.userId })
+            let checkQuery:any = {}
+            let status:any = {}
+            checkQuery["$or"] = [{userId: userId.userId, followerId: params.followerId}, {followerId: userId.userId, userId: params.followerId}] 
+            let checkDiscover = await discoverDao.checkDiscover(checkQuery)
+                // { followerId: params.followerId, userId: userId.userId })
             if (checkDiscover) {
-                let deleteDiscover = await discoverDao.deletedDiscover({ followerId: params.followerId, userId: userId.userId })
-                params["_id"] = params.followerId
-                let getData = await discoverDao.getUserData(params, userId)
-                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_REMOVE(getData.data[0])
+                if(checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                    status = CONSTANT.DISCOVER_STATUS.ACCEPT
+                } else {
+                    // update 
+                    status = CONSTANT.DISCOVER_STATUS.PENDING
+                    await discoverDao.updateDiscover({_id: checkDiscover._id}, { discover_status: status })
+                }
+                let param: any = {}
+                param["_id"] = params.followerId
+                let getData = await discoverDao.getUserData(param, userId)
+                getData.data[0].discover_status = status
+                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
                 params['userId'] = userId.userId
                 await discoverDao.saveDiscover(params)

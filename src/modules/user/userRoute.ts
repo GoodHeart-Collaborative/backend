@@ -446,6 +446,9 @@ export const
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const query = request.query;
 				try {
+					if(query &&  query.userId) {
+						query["user"] = query.userId
+					}
 					const result = await userController.getProfileHome(query, tokenData);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {

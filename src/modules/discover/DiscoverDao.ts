@@ -2,15 +2,25 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
+import { CONSTANT } from "@config/index";
 
 
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
         try {
-            let { pageNo, limit, searchKey, _id } = params
+            let { pageNo, limit ,user, searchKey, _id } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
+            if(user) {
+                // let match2:any = {}
+                // match["$or"] = [
+                //     { "userId": { $ne: await appUtils.toObjectId(userId.userId) } },
+                //     { "followerId": { $ne: await appUtils.toObjectId(userId.userId) } }
+                // ];
+                // aggPipe.push({ "$match": match2 })
+                userId.userId = user
+            }
             userId = await appUtils.toObjectId(userId.userId)
             if (_id) {
                 aggPipe.push({ "$match": { "_id": _id } })
