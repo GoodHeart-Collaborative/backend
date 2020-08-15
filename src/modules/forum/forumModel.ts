@@ -39,8 +39,8 @@ const forumSchema = new Schema({
         default: config.CONSTANT.STATUS.ACTIVE,
 
     },
-    likeCount: { type: Number },
-    commentCount: { type: Number },
+    likeCount: { type: Number, default: 0 },
+    commentCount: { type: Number, default: 0 },
     topic: { type: String },
     mediaUrl: { type: String, required: true },
     description: { type: String, required: true },

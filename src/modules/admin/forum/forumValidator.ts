@@ -35,7 +35,7 @@ let getForum = Joi.object({
 
 })
 
-let updateForum = Joi.object({
+let updateForumStatus = Joi.object({
     postId: Joi.string(),
     status: Joi.string().allow([
         config.CONSTANT.STATUS.ACTIVE,
@@ -43,8 +43,39 @@ let updateForum = Joi.object({
         config.CONSTANT.STATUS.BLOCKED,
     ])
 })
+
+let forumId = Joi.object({
+    postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+}).unknown()
+
+let forumDetail = Joi.object({
+    userType: Joi.string().allow([
+        config.CONSTANT.ACCOUNT_LEVEL.USER,
+        config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
+    ]).required()
+}).unknown()
+
+
+let updateForum = Joi.object({
+    categoryId: Joi.string().required(),
+    categoryName: Joi.string(), // only for searching
+    // userId: Joi.string().required(),
+    userType: Joi.string().required().allow([
+        config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
+        config.CONSTANT.ACCOUNT_LEVEL.USER
+    ]),
+    topic: Joi.string().optional().description('optional'),
+    mediaUrl: Joi.string(),
+    description: Joi.string().required(),
+    postAnonymous: Joi.boolean().default(false),
+}).unknown()
+
+
 export {
     addForum,
     getForum,
-    updateForum
+    updateForumStatus,
+    updateForum,
+    forumId,
+    forumDetail
 };

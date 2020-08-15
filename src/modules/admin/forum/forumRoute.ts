@@ -97,7 +97,7 @@ export const AdminForumRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: forumValidator.updateForum,
+                params: forumValidator.updateForumStatus,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -110,10 +110,13 @@ export const AdminForumRoute: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/forums`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/forums/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload: AdminForumRequest.UpdateForum = request.payload;
+            const payload = {
+                ...request.payload,
+                ...request.params
+            }
             try {
                 // payload["userId"] = tokenData.userId
                 const result = await adminForumController.updateForumTopic(payload);
@@ -130,6 +133,7 @@ export const AdminForumRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
+                params: forumValidator.forumId,
                 payload: forumValidator.updateForum,
                 failAction: appUtils.failActionFunction
             },
@@ -143,10 +147,13 @@ export const AdminForumRoute: ServerRoute[] = [
 
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/forums/{postId}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/forums/detail/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload: AdminForumRequest.GetForum = request.params;
+            const payload = {
+                ...request.params,
+                ...request.query
+            }
             try {
                 // payload["userId"] = tokenData.userId
                 const result = await adminForumController.getForum(payload);
@@ -157,13 +164,14 @@ export const AdminForumRoute: ServerRoute[] = [
         },
         config: {
             tags: ["api", "forum"],
-            description: "update admin forums topic",
+            description: "get detail forums topic",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: forumValidator.updateForum,
+                params: forumValidator.forumId,
+                query: forumValidator.forumDetail,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

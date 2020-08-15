@@ -55,7 +55,6 @@ class AdminForumController {
                     { "description": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
-            aggPipe.push({ "$match": match });
             let sort = {};
             if (sortBy && sortOrder) {
                 if (sortBy === "title") {
@@ -71,6 +70,48 @@ class AdminForumController {
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+
+            aggPipe.push({ "$match": match });
+
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { uId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$uId']
+                                    },
+                                    // {
+                                    //     $eq: ['$userType', config.CONSTANT.ACCOUNT_LEVEL.USER]
+                                    // }
+                                ]
+                            }
+                        }
+                    }],
+                    as: 'userData'
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: true } });
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'admin',
+                    let: { aId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$aId']
+                            }
+                        }
+                    }],
+                    as: 'adminData'
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$adminData', preserveNullAndEmptyArrays: true } });
 
 
             aggPipe.push({
@@ -104,6 +145,58 @@ class AdminForumController {
 
             aggPipe.push({ '$unwind': { path: '$categoryData' } });
 
+            aggPipe.push({
+                $project: {
+                    "_id": 1,
+                    "status": 1,
+                    "categoryId": 1,
+                    "categoryName": 1,
+                    "userId": 1,
+                    "userType": 1,
+                    "topic": 1,
+                    "mediaUrl": 1,
+                    "description": 1,
+                    "postAnonymous": 1,
+                    "created": 1,
+                    "createdAt": 1,
+                    "updatedAt": 1,
+                    categoryData: '$categoryData',
+                    'userData.firstName': {
+                        $cond: {
+                            if: '$userData.firstName',
+                            then: '$userData.firstName',
+                            else: '$adminData.name'
+                        }
+                    },
+                    'userData.lastName': {
+                        $cond: {
+                            if: '$userData.lastName',
+                            // {
+                            //     $ne: [{
+                            //         $size: '$userData'
+                            //     }, 0
+                            //     ]
+                            // },
+                            then: '$userData.lastName',
+                            else: ''
+
+                        }
+                    },
+                    'userData.profilePic': {
+                        $cond: {
+                            if: '$userData.profilePicUrl',
+                            //     $ne: [{
+                            //         $size: '$userData'
+                            //     }, 0
+                            //     ]
+                            // },
+                            then: '$userData.profilePicUrl',
+                            else: ['$adminData.profilePicture']
+
+                        }
+                    }
+                }
+            })
             const data = await eventDao.aggreagtionWithPaginateTotal('forum_topic', aggPipe, limit, page, true);
             return data;
 
@@ -120,11 +213,10 @@ class AdminForumController {
             const dataToUpdate = {
                 ...params
             }
-            const data = await eventDao.findOneAndUpdate('expert', criteria, dataToUpdate, {})
+            const data = await eventDao.findOneAndUpdate('forum_topic', criteria, dataToUpdate, { new: true })
             if (!data) {
                 // return forumConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-
             return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
         } catch (error) {
             throw error;
@@ -145,7 +237,7 @@ class AdminForumController {
                 status: params.status
             };
             const data = await eventDao.findOneAndUpdate('forum_topic', criteria, datatoUpdate, { new: true })
-            return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
+            return forumConstant.MESSAGES.SUCCESS.FORUM_STATUS_UPDATED(data.status);
 
         } catch (error) {
             return Promise.reject(error)
@@ -154,11 +246,68 @@ class AdminForumController {
 
     async getForum(params) {
         try {
-            const criteria = {
-                _id: params.postId
+            let aggPipe = [];
+            let match: any = {}
+
+            match['_id'] = appUtils.toObjectId(params.postId)
+
+            aggPipe.push({
+                $match: match
+            })
+            if (params.userType == config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+
+                aggPipe.push({
+                    $lookup: {
+                        from: 'admin',
+                        let: { aId: '$userId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $eq: ['$_id', '$$aId']
+                                }
+                            }
+                        }],
+                        as: 'adminData'
+                    }
+                })
+                aggPipe.push({ '$unwind': { path: '$adminData' } });
             }
-            const data = await eventDao.findOne('forum_topic', criteria, {}, {})
-            return data;
+            if (params.userType == config.CONSTANT.ACCOUNT_LEVEL.USER) {
+                aggPipe.push({
+                    $lookup: {
+                        from: 'users',
+                        let: { uId: '$userId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$_id', '$$uId']
+                                        },
+                                        // {
+                                        //     $eq: ['$userType', config.CONSTANT.ACCOUNT_LEVEL.USER]
+                                        // }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                firstName: 1,
+                                lastName: 1,
+                                profilePicUrl: 1,
+                                status: 1
+                            }
+                        }],
+                        as: 'userData'
+                    }
+                })
+                aggPipe.push({ '$unwind': { path: '$userData' } });
+
+            }
+
+            const data = await eventDao.aggregate('forum_topic', aggPipe, {})
+            return data[0];
         } catch (error) {
             return Promise.reject(error)
         }
