@@ -3,7 +3,7 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
-import { DataSync } from "aws-sdk";
+import { DataSync, Config } from "aws-sdk";
 import { categoryDao } from "@modules/admin/catgeory";
 import { expert } from "@modules/admin/expert/expertModel";
 import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
@@ -25,7 +25,7 @@ export class ExpertDao extends BaseDao {
 
     async getExperts(payload) {
         try {
-            const { searchTerm, } = payload;
+            const { searchTerm, sortingType } = payload;
             let { limit, page } = payload
             let searchCriteria: any = {};
             const criteria = {
@@ -47,6 +47,7 @@ export class ExpertDao extends BaseDao {
                     $or: [
                         { title: { $regex: searchTerm, $options: 'i' } },
                         { description: { $regex: searchTerm, $options: 'i' } },
+                        { name: { $regex: searchTerm, $options: 'i' } },
                     ],
                 };
             }
@@ -55,31 +56,113 @@ export class ExpertDao extends BaseDao {
                 };
             }
 
-            const pipeline =
-                [
-                    {
-                        $lookup: {
-                            from: 'experts',
-                            localField: '_id',
-                            foreignField: 'categoryId',
-                            as: 'expertdata'
-                        }
+            const pipeline = [
+                {
+                    $match: searchCriteria,
+                },
+                {
+                    $sort: {
+                        _id: -1
                     },
-                    { "$unwind": "$expertdata" },
-                    //       { "$group": {
-                    //         "_id": "null",
+                },
+                {
+                    $group: {
+                        _id: null,
+                        list: {
+                            $push: '$$ROOT',
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        results: {
+                            $reduce: {
+                                input: '$list',
+                                initialValue: {
+                                    LIST: [],
+                                },
+                                in: {
+                                    $mergeObjects: ['$$value', { LIST: { $concatArrays: ['$$value.LIST', ['$$this']] } }],
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        LIST: '$results.LIST',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        let: { list: '$LIST' },
+                        as: 'CATEGORIES',
+                        pipeline: [
+                            // {
+                            //     $match: {
+                            //         status: config.CONSTANT.STATUS.ACTIVE,
+                            //     },
+                            // },
+                            {
+                                $project: {
+                                    title: 1,
+                                    name: 1,
+                                    expert: {
+                                        $filter: {
+                                            input: '$$list',
+                                            as: 'experts',
+                                            cond: {
+                                                $in: ['$_id', '$$experts.categoryId'],
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                $project: {
+                                    CATEGORIES: 1,
+                                    title: 1,
+                                    name: 1,
+                                    experts: {
+                                        $slice: ['$expert', 5],
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $project: {
+                        LIST: 0,
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        // FEATURED: {
+                        //     $push: '$FEATURED',
+                        // },
+                        // LATEST: {
+                        //     $first: '$LATEST',
+                        // },
+                        CATEGORIES: {
+                            $first: '$CATEGORIES',
+                        },
 
-                    //         "name": { "$push": "$products" },
-                    //         "productObjects": { "$push": "$productObjects" }
-                    //     }}
-                ]
-            const getExperts = await categoryDao.aggregate('categories', pipeline, {})
+                    },
+                },
+            ];
 
+            const data = await expertDao.aggregate('expert', pipeline, {});
 
-            return {
-                getCatgeory,
-                getExperts
+            // if (!data || data.length === 0) return UniversalFunctions.sendSuccess(Constant.STATUS_MSG.SUCCESS.S204.NO_CONTENT_AVAILABLE, data);
+            return data[0] || {
+                CATEGORIES: [],
+                getCatgeory
             };
+
 
 
         } catch (error) {
@@ -112,7 +195,6 @@ export class ExpertDao extends BaseDao {
                     }
                 },
                 { '$unwind': { path: '$categoriesData', preserveNullAndEmptyArrays: true } }
-
             ]
             const data = await expertPostDao.aggregate('expert_post', pipeline, {});
             return data;

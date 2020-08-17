@@ -48,10 +48,9 @@ export const userEventRoutes: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: UserEventRequest.userGetEvent = request.query;
-            payload['userId'] = tokenData['userId'];
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await eventController.getEvent(payload);
+                const result = await eventController.getEvent(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

@@ -63,8 +63,8 @@ let getEvent = Joi.object({
     page: Joi.number(),
     // userId: Joi.string(),
     type: Joi.string().allow([
-        'eventInterstedByme', 'myEvents'
-    ]),
+        'going', 'myEvent'
+    ]).default('going').required(),
 
 })
 

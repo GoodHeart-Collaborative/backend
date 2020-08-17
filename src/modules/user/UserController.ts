@@ -908,9 +908,9 @@ export class UserController {
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
 				// getData = {}
 				// for now
-				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
+				// getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
 
-				// getData = await forumtopicDao.getTopicForHomeProfile(query, tokenData);
+				getData = await forumtopicDao.getTopicForHomeProfile(query, tokenData);
 
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)

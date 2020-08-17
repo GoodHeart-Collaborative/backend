@@ -36,26 +36,49 @@ class EventController {
         }
     }
 
-    async getEvent(params: UserEventRequest.userGetEvent) {
+    async getEvent(params: UserEventRequest.userGetEvent, tokenData) {
         try {
+            console.log('tokenData', tokenData.userId);
+
             const { page, limit } = params;
             let aggPipe = [];
             let match: any = {};
-            params['userId'] = params['userId']
 
-            if (params.type == 'interest') {
+            match['userId'] = appUtils.toObjectId(tokenData.userId);
+
+            if (params.type == 'going') {
                 match['type'] = config.CONSTANT.EVENT_INTEREST.GOING;
+                aggPipe.push({
+                    $lookup: {
+                        from: 'events',
+                        let: { eId: '$eventId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [{
+                                        $eq: ['$_id', '$$eId']
+                                    }]
+                                }
+                            }
+                        }],
+                        as: 'eventData'
+                    }
+                })
+                aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
             }
+
             aggPipe.push({ $match: match })
+            aggPipe.push({ $sort: { startDate: -1 } });
+            let data;
+            if (params.type == 'going') {
+                data = await eventInterestDao.aggreagtionWithPaginateTotal('event_interest', aggPipe, limit, page, true)
+                console.log('datadatadatadata', data);
+            } else {
+                data = await eventInterestDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
+                console.log('datadatadatadata', data);
+            }
+            return data;
 
-            aggPipe.push({
-                $lookup: {
-                    from: 'events',
-                    let: {}
-                }
-            })
-
-            const data = await eventInterestDao.aggreagtionWithPaginateTotal('event_interest', aggPipe, limit, page, true)
         } catch (error) {
             return Promise.reject(error);
         }
