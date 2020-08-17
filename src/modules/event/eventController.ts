@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import * as config from "@config/index";
 import * as expertConstant from "@modules/admin/expert/expertConstant";
 import { eventDao } from "@modules/event/eventDao";
+import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
 
@@ -35,40 +36,51 @@ class EventController {
         }
     }
 
-
-    async updateExpert(params: AdminExpertRequest.updateExpert) {
+    async getEvent(params: UserEventRequest.userGetEvent, tokenData) {
         try {
-            const criteria = {
-                _id: params.expertId,
-            };
+            console.log('tokenData', tokenData.userId);
 
-            const data = await eventDao.updateOne('expert', criteria, params, {})
-            if (!data) {
-                return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
+            const { page, limit } = params;
+            let aggPipe = [];
+            let match: any = {};
+
+            match['userId'] = appUtils.toObjectId(tokenData.userId);
+
+            if (params.type == 'going') {
+                match['type'] = config.CONSTANT.EVENT_INTEREST.GOING;
+                aggPipe.push({
+                    $lookup: {
+                        from: 'events',
+                        let: { eId: '$eventId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [{
+                                        $eq: ['$_id', '$$eId']
+                                    }]
+                                }
+                            }
+                        }],
+                        as: 'eventData'
+                    }
+                })
+                aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
             }
-            return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-        } catch (error) {
-            throw error;
-        }
-    }
 
-    /**
-     * @function updateStatus
-     * @description admin update status active ,block ,delete
-     */
+            aggPipe.push({ $match: match })
+            aggPipe.push({ $sort: { startDate: -1 } });
+            let data;
+            if (params.type == 'going') {
+                data = await eventInterestDao.aggreagtionWithPaginateTotal('event_interest', aggPipe, limit, page, true)
+                console.log('datadatadatadata', data);
+            } else {
+                data = await eventInterestDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
+                console.log('datadatadatadata', data);
+            }
+            return data;
 
-    async updateStatus(params: AdminExpertRequest.updateStatus) {
-        try {
-            const criteria = {
-                _id: params.expertId
-            };
-            const datatoUpdate = {
-                status: params.status
-            };
-            const data = await eventDao.updateOne('expert', criteria, datatoUpdate, {})
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
         } catch (error) {
-            return Promise.reject(error)
+            return Promise.reject(error);
         }
     }
 }

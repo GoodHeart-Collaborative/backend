@@ -35,10 +35,12 @@ const forumSchema = new Schema({
             config.CONSTANT.STATUS.ACTIVE,
             config.CONSTANT.STATUS.BLOCKED,
             config.CONSTANT.STATUS.DELETED,
-        ]
+        ],
+        default: config.CONSTANT.STATUS.ACTIVE,
+
     },
-    likeCount: { type: Number },
-    commentCount: { type: Number },
+    likeCount: { type: Number, default: 0 },
+    commentCount: { type: Number, default: 0 },
     topic: { type: String },
     mediaUrl: { type: String, required: true },
     description: { type: String, required: true },

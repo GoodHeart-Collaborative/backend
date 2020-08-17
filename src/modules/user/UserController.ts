@@ -19,6 +19,7 @@ import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
 // import {} from '@modules/'
+import { forumtopicDao } from '@modules/forum/forumDao';
 import { discoverDao } from "../discover/DiscoverDao";
 import { CONSTANT } from "@config/index";
 
