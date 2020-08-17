@@ -18,6 +18,8 @@ import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
+// import {} from '@modules/'
+import { forumtopicDao } from '@modules/forum/forumDao';
 import { discoverDao } from "../discover/DiscoverDao";
 
 var ObjectID = require('mongodb').ObjectID;
@@ -584,10 +586,18 @@ export class UserController {
 	/**
 	 * @function profile
 	 */
-	async profile(tokenData: TokenData) {
+	async profile(tokenData: TokenData, userId) {
+		console.log('userIduserIduserId', userId);
+
 		try {
-			delete tokenData.deviceId, delete tokenData.deviceToken, delete tokenData.platform, delete tokenData.accountLevel;
-			return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+			if (tokenData.userId === userId || !userId) {
+				delete tokenData.deviceId, delete tokenData.deviceToken, delete tokenData.platform, delete tokenData.accountLevel;
+				return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+			} else {
+				const data = await userDao.findOne('users', { _id: userId }, { deviceId: 0, deviceToken: 0 }, {})
+				return userConstant.MESSAGES.SUCCESS.PROFILE(data);
+			}
+
 		} catch (error) {
 			throw error;
 		}
@@ -892,19 +902,20 @@ export class UserController {
 
 	async getProfileHome(query, tokenData) {
 		try {
-			query['userId'] = query.userId ? query.userId : tokenData['userId'];
-
+			// query['userId'] = query.userId ? query.userId : tokenData['userId'];
 
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
 				// getData = {}
-				// for now 
-				getData = await gratitudeJournalDao.userProfileHome(query);
+				// for now
+				// getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
+
+				getData = await forumtopicDao.getTopicForHomeProfile(query, tokenData);
 
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
-				getData = await discoverDao.getDiscoverData(query, { userId: query.userId }, true)
+				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
 			} else {
-				getData = await gratitudeJournalDao.userProfileHome(query)
+				getData = await gratitudeJournalDao.userProfileHome(query, tokenData)
 			}
 			return getData;
 		} catch (error) {

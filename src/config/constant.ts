@@ -96,7 +96,8 @@ const DB_MODEL_REF = {
 	EXPERT: 'expert',
 	EXPERT_POST: 'expert_post',
 	EVENT: 'event',
-	EVENT_INTEREST: 'event_interest'
+	EVENT_INTEREST: 'event_interest',
+	FORUM: 'forum'
 
 };
 
@@ -202,7 +203,9 @@ const HOME_TYPE = {
 	INSPIRATION: 2,
 	DAILY_ADVICE: 3,
 	GENERAL_GRATITUDE: 4,
-	MEMBER_OF_DAY: 5
+	MEMBER_OF_DAY: 5,
+	FORUM_TOPIC: 6,
+	EXPERTS: 7
 };
 
 const HOME_TYPES = {

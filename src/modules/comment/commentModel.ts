@@ -17,32 +17,33 @@ export interface Icomment extends Document {
 
 
 const commentSchema = new Schema({
-  likeCount: { type: Number, default: 0},
-  commentCount: { type: Number, default: 0},
-  comment: { type: String, trim: true },
-  userId: { type: Schema.Types.ObjectId, required: true},
-  postId: { type: Schema.Types.ObjectId, required: true },
-  commentId: { type: Schema.Types.ObjectId },
-  category: {
-    type: Number,
-    enum: [
-        config.CONSTANT.COMMENT_CATEGORY.POST,
-        config.CONSTANT.COMMENT_CATEGORY.COMMENT
-    ],
-    default: config.CONSTANT.COMMENT_CATEGORY.POST
-},
-type: {
-  type: Number,
-  enum: [
-      config.CONSTANT.HOME_TYPE.UNICORN,
-      config.CONSTANT.HOME_TYPE.INSPIRATION,
-      config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
-      config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
-      config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
-  ],
-  default: config.CONSTANT.HOME_TYPE.UNICORN
-},
-created: { type: Number, default: new Date() }
+    likeCount: { type: Number, default: 0 },
+    commentCount: { type: Number, default: 0 },
+    comment: { type: String, trim: true },
+    userId: { type: Schema.Types.ObjectId, required: true },
+    postId: { type: Schema.Types.ObjectId, required: true },
+    commentId: { type: Schema.Types.ObjectId },
+    category: {
+        type: Number,
+        enum: [
+            config.CONSTANT.COMMENT_CATEGORY.POST,
+            config.CONSTANT.COMMENT_CATEGORY.COMMENT
+        ],
+        default: config.CONSTANT.COMMENT_CATEGORY.POST
+    },
+    type: {
+        type: Number,
+        enum: [
+            config.CONSTANT.HOME_TYPE.UNICORN,
+            config.CONSTANT.HOME_TYPE.INSPIRATION,
+            config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
+            config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
+            config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY,
+            config.CONSTANT.HOME_TYPE.FORUM_TOPIC
+        ],
+        default: config.CONSTANT.HOME_TYPE.UNICORN
+    },
+    created: { type: Number, default: new Date() }
 }, {
     versionKey: false,
     timestamps: true
