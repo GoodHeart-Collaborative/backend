@@ -646,6 +646,20 @@ export class UserDao extends BaseDao {
 			throw error
 		}
 	}
+
+	    async getMembers(params) {
+        try {
+            let {userId, followerId} = params
+            let query:any = {}
+            query = {
+                _id: await appUtils.toObjectId(userId),
+                "members": { $all: [ await appUtils.toObjectId(followerId) ]}
+            }
+            return await this.findOne('users', query, {},{});
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export const userDao = new UserDao();

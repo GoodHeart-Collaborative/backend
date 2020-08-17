@@ -11,6 +11,10 @@ export class DiscoverDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             if(user) {
+                match["$nor"] = [
+                    { "userId": await appUtils.toObjectId(userId.userId), "followerId": await appUtils.toObjectId(user) }, 
+                    { "userId": await appUtils.toObjectId(user), "followerId": await appUtils.toObjectId(userId.userId) }
+                ];
                 userId.userId = user
             }
             userId = await appUtils.toObjectId(userId.userId)
