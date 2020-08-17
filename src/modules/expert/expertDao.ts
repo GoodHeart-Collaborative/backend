@@ -37,66 +37,148 @@ export class ExpertDao extends BaseDao {
             };
             console.log('paginateOptions', paginateOptions);
 
-            // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
-
-            const newlyAdded = [{
+            const categoryPipeline = [{
                 $lookup: {
-                    from: 'categories',
-                    let: { cId: '$categoryId' },
-                    as: 'categoryData',
+                    from: 'experts',
+                    let: { cId: '$_id' },
+                    as: 'expertData',
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
-                                    $in: ['$_id', '$$cId'],
+                                    $in: ['$$cId', '$categoryId'],
                                 }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1, name: 1, title: 1, imageUrl: 1
                             }
                         }
                     ],
-                },
-            },
-            {
-                $sort: {
-                    _id: -1
                 }
             },
             {
                 $match: {
-                    categoryData: { $ne: [] }
+                    expertData: { $ne: [] }
+                }
+            },
+            {
+                $project: {
+                    expertData: 0
                 }
             }
-            ]
-            const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {})
+            ];
+            const CategoryLIST = await expertDao.aggregate('categories', categoryPipeline, {})
 
-            // const getNewlyAddedExperts = await categories('expert', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
-
-
-            // console.log('getCatgeporygetCatgepory', getCatgeory);
-
-
-            if (searchTerm) {
-                searchCriteria = {
-                    $or: [
-                        { title: { $regex: searchTerm, $options: 'i' } },
-                        { description: { $regex: searchTerm, $options: 'i' } },
-                        { name: { $regex: searchTerm, $options: 'i' } },
-                    ],
-                };
+            let CATEGORIES = {
+                CategoryLIST,
+                type: 1,
             }
-            else {
-                searchCriteria = {
-                };
-            }
+            // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
+
+
+            // const newlyAdded = [{
+            //     $lookup: {
+            //         from: 'categories',
+            //         let: { cId: '$categoryId' },
+            //         as: 'categoryData',
+            //         pipeline: [
+            //             {
+            //                 $match: {
+            //                     $expr: {
+            //                         $in: ['$_id', '$$cId'],
+            //                     }
+            //                 }
+            //             }
+            //         ],
+            //     },
+            // },
+            // {
+            //     $sort: {
+            //         _id: -1
+            //     }
+            // },
+            // {
+            //     $match: {
+            //         categoryData: { $ne: [] }
+            //     }
+            // }
+            // ]
+            // const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {})
+
+            // // const getNewlyAddedExperts = await categories('expert', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
+
+
+            // // console.log('getCatgeporygetCatgepory', getCatgeory);
+
+
+            // if (searchTerm) {
+            //     searchCriteria = {
+            //         $or: [
+            //             { title: { $regex: searchTerm, $options: 'i' } },
+            //             { description: { $regex: searchTerm, $options: 'i' } },
+            //             { name: { $regex: searchTerm, $options: 'i' } },
+            //         ],
+            //     };
+            // }
+            // else {
+            //     searchCriteria = {
+            //     };
+            // }
+
+            // const pipeline = [
+            //     {
+            //         $match: searchCriteria,
+            //     },
+            //     {
+            //         $sort: {
+            //             _id: -1
+            //         },
+            //     },
+            //     {
+            //         $lookup: {
+            //             from: 'experts',
+            //             let: { cId: '$_id' },
+            //             as: 'expertData',
+            //             pipeline: [
+            //                 {
+            //                     $match: {
+            //                         $expr: {
+            //                             $and: [{
+            //                                 $in: ['$$cId', '$categoryId'],
+            //                             },
+            //                             {
+            //                                 $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+            //                             }]
+            //                         }
+            //                     }
+            //                 }
+            //             ],
+            //         },
+            //     },
+            //     {
+            //         $match: {
+            //             expertData: { $ne: [] }
+            //         }
+            //     }
+            // ];
+
+            // const data1 = await expertDao.aggregate('categories', pipeline, {});
+            // console.log('data1data1data1data1', data1);
+
+            // // if (!data || data.length === 0) return UniversalFunctions.sendSuccess(Constant.STATUS_MSG.SUCCESS.S204.NO_CONTENT_AVAILABLE, data);
+            // return {
+            //     categories: data1,
+            //     getNewlyAddedExperts
+            // };
 
             const pipeline = [
-                {
-                    $match: searchCriteria,
-                },
-                {
-                    $sort: {
-                        _id: -1
-                    },
-                },
+                // {
+                // $match: {
+                //     searchCriteria
+                // },
+                // },
                 {
                     $lookup: {
                         from: 'experts',
@@ -106,35 +188,138 @@ export class ExpertDao extends BaseDao {
                             {
                                 $match: {
                                     $expr: {
-                                        $and: [{
-                                            $in: ['$$cId', '$categoryId'],
-                                        },
-                                        {
-                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                        }]
+                                        $in: ['$$cId', '$categoryId'],
                                     }
                                 }
                             }
                         ],
-                    },
+                    }
                 },
                 {
                     $match: {
                         expertData: { $ne: [] }
                     }
-                }
-            ];
+                },
+                //            {
+                //             $unwind:{
+                //                 path:'$expertData'
+                //                 }   
+                //           },
+                {
+                    $group: {
+                        _id: null,
+                        list: {
+                            $push: '$$ROOT',
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        results: {
+                            $reduce: {
+                                input: '$list',
+                                initialValue: {
+                                    CATEGORIES: [],
+                                    NEWEXPERTS: [],
+                                    EXPERTS: [],
+                                },
+                                in: {
+                                    $cond: {
+                                        if: {
+                                            $and: [
+                                                {
+                                                    $ne: [{ $size: '$$value.CATEGORIES' }, 1],
+                                                }
+                                            ],
+                                        },
+                                        then: {
+                                            $mergeObjects: ['$$value', { CATEGORIES: ['$$this'] }],
+                                        },
+                                        else: {
+                                            $cond: {
+                                                if: {
+                                                    $ne: [{ $size: '$$value.NEWEXPERTS' }, 1],
+                                                },
+                                                then: {
+                                                    $mergeObjects: ['$$value', { NEWEXPERTS: { $concatArrays: ['$$value.NEWEXPERTS', ['$$this']] } }],
+                                                },
+                                                else: {
+                                                    $mergeObjects: ['$$value', { EXPERTS: { $concatArrays: ['$$value.EXPERTS', ['$$this']] } }],
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        NEWLY_ON_BOARD_EXPERT: '$results.NEWEXPERTS',
+                        EXPERT_LIST: '$results.EXPERTS',
+                    }
+                },
+                //                 {
+                //                   $unwind:{
+                //                       path:'$LATEST'
+                //                       }  
+                //                 },
+                //                 {
+                //                  $group:{
+                //                      _id: '$LATEST.expertData._id',
+                //                      "price" : {'$first':'$LATEST.expertData.price'},
+                //                     "likeCount" : {'$first':'$LATEST.expertData.likeCount'},
+                //                    "commentCount" : {'$first':'LATEST.expertData.commentCount'},
+                //                     "status" : {'$first':'$LATEST.expertData.status'},
+                //                 "privacy" : {"likeCount.privacy",
+                //                 "profilePicUrl" : '$first.likeCount'
+                //                     expertId:{$first:'$LATEST.expertData._id'},
+                //                     "name" : {'$first': '$LATEST.expertData.name'},
+                //                    "email" : {'$first':"$LATEST.expertData.email"},
+                //                 "profession" : "$first.profession",
+                //                 "industry" : "$first.industry",
+                //                 "bio" : "$first.bio",
+                //                 "experience" : "first.experience",  
+                //                     "doc": { "$first": "$$ROOT" }
+                //                      }   
+                //                },
+                //           {
+                //            "$replaceRoot": { "newRoot": "$doc" }
+                //           },
+            ]
+            // result = CategoryLIST;
+            // CATEGORIES = {
+            //     CategoryLIST,
+            //     type: 0,
+            // }
+            // result.type = 0
 
-            const data1 = await expertDao.aggregate('categories', pipeline, {});
-            console.log('data1data1data1data1', data1);
+            console.log('data1data1data1data1', pipeline);
+            const data: any = await categoryDao.aggregate('categories', pipeline, {})
+            console.log('data1data1data1data1', data);
 
             // if (!data || data.length === 0) return UniversalFunctions.sendSuccess(Constant.STATUS_MSG.SUCCESS.S204.NO_CONTENT_AVAILABLE, data);
+            const CATEGORY_LIST = data[0]['NEWLY_ON_BOARD_EXPERT']
+            const NEWLY_ON_BOARD_EXPERT = {
+                CATEGORY_LIST,
+                type: 2
+            }
+
+            for (var key of data[0].EXPERT_LIST) {
+                key['type'] = 3
+            }
+
+            const EXPERTS = data[0].EXPERT_LIST
+
+            const EXPERT_LIST = {
+                EXPERTS,
+            }
             return {
-                categories: data1,
-                getNewlyAddedExperts
+                CATEGORIES,
+                NEWLY_ON_BOARD_EXPERT,
+                EXPERT_LIST
             };
-
-
 
         } catch (error) {
             return Promise.reject(error)

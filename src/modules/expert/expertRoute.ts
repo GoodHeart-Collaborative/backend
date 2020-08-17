@@ -21,6 +21,8 @@ export const userExpertRoute: ServerRoute[] = [
             try {
                 payload["userId"] = tokenData.userId
                 const result = await expertController.getExperts(payload);
+                console.log('resultresultresultresult', result);
+
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
