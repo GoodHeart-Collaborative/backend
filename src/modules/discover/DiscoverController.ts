@@ -55,8 +55,10 @@ class DiscoverController {
 
                 } else {
                     //pull
-                    await userDao.pullMember({userId: userId.userId.toString(), followerId: params.followerId})
-                    await userDao.pullMember({userId: params.followerId, followerId: userId.userId.toString()})
+                    if(checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                        await userDao.pullMember({userId: userId.userId.toString(), followerId: params.followerId})
+                        await userDao.pullMember({userId: params.followerId, followerId: userId.userId.toString()})
+                    }
                 }
                 await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
                 userId = userId.userId.toString()
