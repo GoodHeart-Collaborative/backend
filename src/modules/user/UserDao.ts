@@ -613,6 +613,39 @@ export class UserDao extends BaseDao {
 			return Promise.reject(error);
 		}
 	}
+
+	async pullMember(params) {
+		try {
+			let query:any = {}
+			query = {
+				_id: await appUtils.toObjectId(params.userId)
+			}
+			let update:any = {}
+			update["$pull"] = {
+				members: await appUtils.toObjectId(params.followerId)
+			}
+			update["$inc"] = {myConnection: -1}
+			return await this.update('users', query, update, {});
+		} catch(error) {
+			throw error
+		}
+	}
+	async pushMember(params) {
+		try {
+			let query:any = {}
+			query = {
+				_id: await appUtils.toObjectId(params.userId)
+			}
+			let update:any = {}
+			update["$push"] = {
+				members: await appUtils.toObjectId(params.followerId)
+			}
+			update["$inc"] = {myConnection: 1}
+			return await this.update('users', query, update, {});
+		} catch(error) {
+			throw error
+		}
+	}
 }
 
 export const userDao = new UserDao();

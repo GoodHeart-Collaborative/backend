@@ -2,8 +2,6 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
-import { CONSTANT } from "@config/index";
-
 
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
@@ -13,12 +11,6 @@ export class DiscoverDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             if(user) {
-                // let match2:any = {}
-                // match["$or"] = [
-                //     { "userId": { $ne: await appUtils.toObjectId(userId.userId) } },
-                //     { "followerId": { $ne: await appUtils.toObjectId(userId.userId) } }
-                // ];
-                // aggPipe.push({ "$match": match2 })
                 userId.userId = user
             }
             userId = await appUtils.toObjectId(userId.userId)
@@ -67,11 +59,21 @@ export class DiscoverDao extends BaseDao {
                     user: {
                         $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                             _id: "$followers._id",
+                            industryType: "$followers.industryType",
+                            myConnection: "$followers.myConnection",
+                            experience: "$followers.experience",
+                            about: "$followers.about",
+                            discover_status: "$discover_status",
                             name: { $ifNull: ["$followers.firstName", ""] },
                             profilePicUrl: "$followers.profilePicUrl",
                             profession: { $ifNull: ["$followers.profession", ""] }
                         }, {
                             _id: "$users._id",
+                            industryType: "$users.industryType",
+                            myConnection: "$users.myConnection",
+                            experience: "$users.experience",
+                            about: "$users.about",
+                            discover_status: "$discover_status",
                             name: { $ifNull: ["$users.firstName", ""] },
                             profilePicUrl: "$users.profilePicUrl",
                             profession: { $ifNull: ["$users.profession", ""] }
@@ -167,6 +169,13 @@ export class DiscoverDao extends BaseDao {
                     },
                     user: {
                         _id: "$_id",
+                        industryType: "$industryType",
+                        myConnection: "$myConnection",
+                        experience: "$experience",
+                        discover_status: {
+                            $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
+                        },
+                        about: "$about",
                         name: { $ifNull: ["$firstName", ""] },
                         profilePicUrl: "$profilePicUrl",
                         profession: { $ifNull: ["$profession", ""] }
@@ -183,6 +192,19 @@ export class DiscoverDao extends BaseDao {
     async checkDiscover(params) {
         try {
             return await this.findOne('discover', params, {}, {});
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getMembers(params) {
+        try {
+            let {_id, userId, followerId} = params
+            let query:any = {}
+            query = {
+                _id: _id,
+                "members": { $all: [ await appUtils.toObjectId(userId), await appUtils.toObjectId(followerId) ]}
+            }
+            return await this.findOne('discover', query, {},{});
         } catch (error) {
             throw error;
         }

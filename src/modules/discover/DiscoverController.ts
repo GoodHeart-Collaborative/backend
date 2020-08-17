@@ -3,6 +3,7 @@ import * as homeConstants from "./DiscoverConstant";
 import { discoverDao } from "./DiscoverDao";
 import * as appUtils from "@utils/appUtils";
 import { CONSTANT } from "@config/constant";
+import { userDao } from "@modules/user";
 
 class DiscoverController {
 
@@ -47,10 +48,21 @@ class DiscoverController {
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
             if(checkDiscover) {
                 query = {_id: checkDiscover._id}
+                if(params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                    // push
+                    await userDao.pushMember({userId: userId.userId.toString(), followerId: params.followerId})
+                    await userDao.pushMember({userId: params.followerId, followerId: userId.userId.toString()})
+
+                } else {
+                    //pull
+                    await userDao.pullMember({userId: userId.userId.toString(), followerId: params.followerId})
+                    await userDao.pullMember({userId: params.followerId, followerId: userId.userId.toString()})
+                }
                 await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
                 userId = userId.userId.toString()
                 let getData = await discoverDao.getUserData({_id: params.followerId}, userId)
                 getData.data[0].discover_status = params.discover_status
+                getData.data[0].user.discover_status = params.discover_status
                 return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_UPDATED(getData.data[0])
             } else {
                 return homeConstants.MESSAGES.ERROR.DISCOVER_NOT_FOUND
@@ -78,6 +90,7 @@ class DiscoverController {
                 param["_id"] = params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].discover_status = status
+                getData.data[0].user.discover_status = status
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
                 params['userId'] = userId.userId
@@ -85,6 +98,7 @@ class DiscoverController {
                 let param: any = {}
                 param["_id"] = params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
+                getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }
 
