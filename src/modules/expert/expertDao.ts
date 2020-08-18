@@ -79,7 +79,10 @@ export class ExpertDao extends BaseDao {
             },
             {
                 $project: {
-                    expertData: 0
+                    expertData: 0,
+                    createdAt: 0,
+                    updatedAt: 0,
+                    status: 0,
                 }
             }
             ];
@@ -117,17 +120,20 @@ export class ExpertDao extends BaseDao {
                 $match: {
                     categoryData: { $ne: [] }
                 }
+            },
+            {
+                $project: {
+                    categoryId: 0,
+                    status: 0,
+                    createdAt: 0,
+                    updatedAt: 0
+
+                }
             }
             ]
             const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {})
 
             // // const getNewlyAddedExperts = await categories('expert', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
-
-
-            // // console.log('getCatgeporygetCatgepory', getCatgeory);
-
-
-
 
             const pipeline = [
                 {
@@ -296,6 +302,7 @@ export class ExpertDao extends BaseDao {
                 ];
             }
 
+
             const paginateOptions = {
                 limit: limit || 10,
                 pageNo: page || 1,
@@ -346,7 +353,7 @@ export class ExpertDao extends BaseDao {
             // }
             // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
 
-            const CategoryLIST = await expertDao.aggregateWithPagination('categories', categoryPipeline, limit, page, true)
+            const CategoryLIST = await expertDao.paginate('categories', categoryPipeline, limit, page, true)
 
             return CategoryLIST;
         } catch (error) {
@@ -356,6 +363,38 @@ export class ExpertDao extends BaseDao {
 
     async expertDetailWithPost(payload) {
         try {
+            console.log('payloadpayloadpayload', payload);
+            // ])
+            let postConditions: any = []
+            postConditions = [
+                {
+                    $eq: ['$expertId', '$$eId']
+                },
+                {
+                    $eq: ['$categoryId', '$$cId']
+                },
+                {
+                    $eq: ['$status', 'active']
+                },
+            ];
+            if (payload.postedBy == 'lastWeek') {
+                console.log('LLLLLLLLLLLLLL');
+                postConditions.push({
+                    $gt: ['$createdAt', '2020-07-24']
+                })
+            } else if (payload.postedBy == 'lastMonth') {
+                console.log('LLLLLLLLLLLLLL');
+                postConditions.push({
+                    $gt: ['$createdAt',]
+                })
+            }
+            if (payload.contentType) {
+                postConditions.push({
+                    $eq: ['$contentId', payload.contentType]
+                })
+            }
+            console.log('postConditionspostConditions', postConditions);
+
             const pipeline = [
                 {
                     $match: {
@@ -373,6 +412,13 @@ export class ExpertDao extends BaseDao {
                                         $eq: ['$_id', '$$cId']
                                     }
                                 }
+                            },
+                            {
+                                $project: {
+                                    createdAt: 0,
+                                    updatedAt: 0,
+                                    status: 0
+                                }
                             }
                         ],
                         as: 'categoryData'
@@ -388,26 +434,16 @@ export class ExpertDao extends BaseDao {
                             {
                                 $match: {
                                     $expr: {
-                                        $and: [
-                                            {
-                                                $eq: ['$expertId', '$$eId']
-                                            },
-                                            {
-                                                $eq: ['$categoryId', '$$cId']
-                                            },
-                                            {
-                                                $eq: ['$status', 'active']
-                                            }
-
-                                        ]
+                                        $and: postConditions
                                     }
                                 }
                             }
                         ],
                         as: 'expertPosts'
                     }
-                }
+                },
             ];
+
             const data = await expertDao.aggregate('expert', pipeline, {});
             return data;
         } catch (error) {

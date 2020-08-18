@@ -86,7 +86,6 @@ export const userExpertRoute: ServerRoute[] = [
             }
         }
     },
-
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/users/experts/categoryDetail`,
@@ -124,8 +123,6 @@ export const userExpertRoute: ServerRoute[] = [
             }
         }
     },
-
-
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/users/experts/detail`,
@@ -153,7 +150,16 @@ export const userExpertRoute: ServerRoute[] = [
                     page: Joi.number(),
                     // searchTerm: Joi.string(),
                     categoryId: Joi.string().required(),
-                    expertId: Joi.string().required()
+                    expertId: Joi.string().required(),
+                    postedBy: Joi.string().allow([
+                        'lastWeek', 'lastMonth'
+                    ]),
+                    contentType: Joi.number().allow([
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE,
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.IMAGE.VALUE,
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.VIDEO.VALUE,
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.VOICE_NOTE.VALUE
+                    ])
                 },
                 failAction: appUtils.failActionFunction
             },

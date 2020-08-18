@@ -401,7 +401,7 @@ export class BaseDao {
 		];
 	}
 
-	paginate = async (model: ModelNames, pipeline: Array<Object>, limit: number, pageNo: number, options: any = {}, pageCount = false) => {
+	paginate = async (model: ModelNames, pipeline: Array<Object>, limit: number, pageNo: number, options: any = {}, pageCount = true) => {
 		try {
 			pipeline = [...pipeline, ...this.addSkipLimit(limit, pageNo)];
 			let ModelName: any = models[model];

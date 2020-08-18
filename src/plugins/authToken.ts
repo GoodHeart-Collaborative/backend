@@ -111,7 +111,7 @@ export const plugin = {
 									return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
 								} else {
 									userData = _.extend(userData, { "deviceId": tokenData.deviceId, "accountLevel": tokenData.accountLevel, "platform": tokenData.platform, "userId": tokenData.userId, "lastLogin": step3.lastLogin });
-									tokenData["userData"] = userData;
+									tokenData["userData"] = userData;	
 									return ({ isValid: true, credentials: { accessToken: accessToken, tokenData: tokenData } });
 								}
 							}

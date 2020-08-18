@@ -3,20 +3,14 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
 
+
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
         try {
-            let { pageNo, limit ,user, searchKey, _id, followerId, discover_status, ShoutoutConnection } = params
+            let { pageNo, limit, user, searchKey, _id, followerId, discover_status, ShoutoutConnection } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            if(user) {
-                match["$nor"] = [
-                    { "userId": await appUtils.toObjectId(userId.userId), "followerId": await appUtils.toObjectId(user) }, 
-                    { "userId": await appUtils.toObjectId(user), "followerId": await appUtils.toObjectId(userId.userId) }
-                ];
-                userId.userId = user
-            }
             userId = await appUtils.toObjectId(userId.userId)
             if (_id) {
                 aggPipe.push({ "$match": { "_id": _id } })
@@ -31,16 +25,10 @@ export class DiscoverDao extends BaseDao {
                     match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
                     match["followerId"] = userId
-                    if(followerId) {
-                        match["userId"] = await appUtils.toObjectId(followerId)
-                    }
                     match['discover_status'] = { $ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT }
                 }
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
-            if(discover_status) {
-                match["discover_status"] = discover_status
-            }
             aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {
@@ -69,21 +57,11 @@ export class DiscoverDao extends BaseDao {
                     user: {
                         $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                             _id: "$followers._id",
-                            industryType: "$followers.industryType",
-                            myConnection: "$followers.myConnection",
-                            experience: "$followers.experience",
-                            about: "$followers.about",
-                            discover_status: "$discover_status",
                             name: { $ifNull: ["$followers.firstName", ""] },
                             profilePicUrl: "$followers.profilePicUrl",
                             profession: { $ifNull: ["$followers.profession", ""] }
                         }, {
                             _id: "$users._id",
-                            industryType: "$users.industryType",
-                            myConnection: "$users.myConnection",
-                            experience: "$users.experience",
-                            about: "$users.about",
-                            discover_status: "$discover_status",
                             name: { $ifNull: ["$users.firstName", ""] },
                             profilePicUrl: "$users.profilePicUrl",
                             profession: { $ifNull: ["$users.profession", ""] }
@@ -96,7 +74,7 @@ export class DiscoverDao extends BaseDao {
             if (searchKey) {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
             }
-            if(ShoutoutConnection) {
+            if (ShoutoutConnection) {
                 result = await this.aggregate('discover', aggPipe, {})
             } else {
                 result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
@@ -108,7 +86,7 @@ export class DiscoverDao extends BaseDao {
     }
     async getUserData(params, userId) {
         try {
-            let { pageNo, limit, searchKey, _id, longitude, latitude, distance, industryType, } = params
+            let { pageNo, limit, searchKey, _id, longitude, latitude, distance, industryType } = params
             let aggPipe = [];
             let result: any = {}
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
@@ -127,13 +105,11 @@ export class DiscoverDao extends BaseDao {
                     { "$sort": { dist: -1 } }
                 )
             }
-                userId = await appUtils.toObjectId(userId.userId)
+            userId = await appUtils.toObjectId(userId.userId)
             if (_id) {
                 aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
                 pageNo = 1
                 limit = 1
-            } else {
-                aggPipe.push({ "$match": { _id: {$ne: userId} } })
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
             aggPipe.push({
@@ -153,7 +129,7 @@ export class DiscoverDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "discovers",
-                    let: { "follower": "$_id", "user": userId },
+                    let: { "follower": "$_id", "user": await appUtils.toObjectId(userId) },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -183,13 +159,6 @@ export class DiscoverDao extends BaseDao {
                     },
                     user: {
                         _id: "$_id",
-                        industryType: "$industryType",
-                        myConnection: "$myConnection",
-                        experience: "$experience",
-                        discover_status: {
-                            $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
-                        },
-                        about: "$about",
                         name: { $ifNull: ["$firstName", ""] },
                         profilePicUrl: "$profilePicUrl",
                         profession: { $ifNull: ["$profession", ""] }
@@ -206,19 +175,6 @@ export class DiscoverDao extends BaseDao {
     async checkDiscover(params) {
         try {
             return await this.findOne('discover', params, {}, {});
-        } catch (error) {
-            throw error;
-        }
-    }
-    async getMembers(params) {
-        try {
-            let {_id, userId, followerId} = params
-            let query:any = {}
-            query = {
-                _id: _id,
-                "members": { $all: [ await appUtils.toObjectId(userId), await appUtils.toObjectId(followerId) ]}
-            }
-            return await this.findOne('discover', query, {},{});
         } catch (error) {
             throw error;
         }
@@ -249,14 +205,14 @@ export class DiscoverDao extends BaseDao {
 
     async getShoutoutMyConnection(params) {
         try {
-            let {userId } = params
-            let query:any = {}
+            let { userId } = params
+            let query: any = {}
             query['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
             query["$or"] = [
-                { "userId": await appUtils.toObjectId(userId)}, 
+                { "userId": await appUtils.toObjectId(userId) },
                 { "followerId": await appUtils.toObjectId(userId) }
             ]
-            return await this.findAll('discover', query, {},{});
+            return await this.findAll('discover', query, {}, {});
         } catch (error) {
             throw error;
         }
