@@ -52,6 +52,11 @@ export class ExpertDao extends BaseDao {
             }
 
             const categoryPipeline = [{
+                $match: {
+                    status: config.CONSTANT.STATUS.ACTIVE
+                }
+            },
+            {
                 $lookup: {
                     from: 'experts',
                     let: { cId: '$_id' },
@@ -104,7 +109,12 @@ export class ExpertDao extends BaseDao {
                         {
                             $match: {
                                 $expr: {
-                                    $in: ['$_id', '$$cId'],
+                                    $and: [{
+                                        $in: ['$_id', '$$cId'],
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }]
                                 }
                             }
                         }
@@ -179,6 +189,11 @@ export class ExpertDao extends BaseDao {
 
 
             const expertPipline = [
+                {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE
+                    }
+                },
                 {
                     $match: searchCriteria,
                 },
@@ -325,7 +340,7 @@ export class ExpertDao extends BaseDao {
                                             $in: ['$$cId', '$categoryId'],
                                         },
                                         {
-                                            $$eq: ['status': config.CONSTANT.STATUS.ACTIVE]
+                                            $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
                                         }]
                                     }
                                 }
