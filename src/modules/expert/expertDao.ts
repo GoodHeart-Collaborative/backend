@@ -328,6 +328,9 @@ export class ExpertDao extends BaseDao {
                 },
                 {
                     $project: {
+                        createdAt: 0,
+                        updatedAt: 0,
+                        status: 0,
                         expertData: 0
                     }
                 }
@@ -343,7 +346,7 @@ export class ExpertDao extends BaseDao {
             // }
             // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
 
-            const CategoryLIST = await expertDao.aggreagtionWithPaginateTotal('categories', categoryPipeline, limit, page, true)
+            const CategoryLIST = await expertDao.aggregateWithPagination('categories', categoryPipeline, limit, page, true)
 
             return CategoryLIST;
         } catch (error) {
@@ -569,11 +572,25 @@ export class ExpertDao extends BaseDao {
                         categoryData: { $ne: [] }
                     }
                 },
+                {
+                    $project: {
+                        categoryData: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        categoryId: 0,
+                        email: 0,
+                        status: 0,
+                        privacy: 0,
+                        contentId: 0,
+                        contentType: 0,
+                        contentDisplayName: 0
+                    }
+                }
             ];
 
-            const CategoryLIST = await expertDao.aggreagtionWithPaginateTotal('expert', categoryPipeline, limit, page, true)
+            const expertList = await expertDao.aggregateWithPagination('expert', categoryPipeline, limit, page, true)
 
-            return CategoryLIST;
+            return expertList;
         } catch (error) {
             return Promise.reject(error);
         }
