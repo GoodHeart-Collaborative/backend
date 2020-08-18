@@ -52,7 +52,7 @@ export const userExpertRoute: ServerRoute[] = [
     },
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/category`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/categoriesList`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload = request.query;
@@ -88,7 +88,7 @@ export const userExpertRoute: ServerRoute[] = [
     },
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/categoryDetail`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/category/ExpertsList`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload = request.query;
@@ -151,7 +151,7 @@ export const userExpertRoute: ServerRoute[] = [
                     // searchTerm: Joi.string(),
                     categoryId: Joi.string().required(),
                     expertId: Joi.string().required(),
-                    postedBy: Joi.string().allow([
+                    posted: Joi.string().allow([
                         'lastWeek', 'lastMonth'
                     ]),
                     contentType: Joi.number().allow([
