@@ -14,7 +14,7 @@ class ShoutoutController {
      */
     async getShoutoutData(params, userId) {
         try {
-            let getData = await shoutoutDao.getShoutoutData(params, userId)
+            let getData = await shoutoutDao.getShoutoutUpdatedData(params, userId)
             return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
         } catch (error) {
             throw error;
@@ -64,8 +64,9 @@ class ShoutoutController {
                     privacy: params.privacy,
                     gif: params.gif,
                     members: members,
-                    senderId: userId.userId,
-                    receiverId: params.members[i]
+                    createdAt: new Date(),
+                    senderId: await appUtils.toObjectId(userId.userId),
+                    receiverId: await appUtils.toObjectId(params.members[i])
                 })
             }
             
