@@ -48,6 +48,15 @@ class ExpertController {
         }
     }
 
+    async getcategoryExperts(payload) {
+        try {
+            return await expertDao.getcategoryExperts(payload);
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+
     async expertDetailWithPost(payload) {
         try {
             return await expertDao.expertDetailWithPost(payload);
