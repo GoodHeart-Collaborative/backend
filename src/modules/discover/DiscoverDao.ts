@@ -6,7 +6,7 @@ import * as appUtils from "@utils/appUtils";
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
         try {
-            let { pageNo, limit ,user, searchKey, _id } = params
+            let { pageNo, limit ,user, searchKey, _id, followerId, discover_status } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
@@ -31,10 +31,16 @@ export class DiscoverDao extends BaseDao {
                     match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
                     match["followerId"] = userId
+                    if(followerId) {
+                        match["userId"] = await appUtils.toObjectId(followerId)
+                    }
                     match['discover_status'] = { $ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT }
                 }
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
+            if(discover_status) {
+                match["discover_status"] = discover_status
+            }
             aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {

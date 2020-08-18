@@ -917,8 +917,20 @@ export class UserController {
 							getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
 							getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
 						} else {
-							getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
-							getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+							let params:any = {}
+							params = {
+								pageNo: 1,
+								limit: 1,
+								followerId: getData.data[i].user._id.toString()
+							}
+							let getDataa = await discoverDao.getDiscoverData(params, {userId: tokenData.userId}, false)
+								if (getDataa && getDataa.total && getDataa.total > 0) {
+									getData.data[i].user.discover_status = getDataa.data[0].user.discover_status
+									getData.data[i].discover_status = getDataa.data[0].user.discover_status
+								} else {
+									getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+									getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+								}
 						}
 						// } 
 					  }

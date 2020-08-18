@@ -14,6 +14,7 @@ class DiscoverController {
      */
     async getDiscoverData(params, userId) {
         try {
+            params.discover_status = CONSTANT.DISCOVER_STATUS.PENDING
             let getData = await discoverDao.getDiscoverData(params, userId, false)
             if (getData && getData.total > 0) {
                 return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA(getData)
