@@ -97,6 +97,13 @@ export class ShoutoutDao extends BaseDao {
             throw error;
         }
     }
+    async saveBulkShoutout(params) {
+        try {
+            return await this.insertMany('shoutout', params, {})
+        } catch (error) {
+            throw error;
+        }
+    }
 
 }
 

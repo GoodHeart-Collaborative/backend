@@ -6,7 +6,7 @@ import * as appUtils from "@utils/appUtils";
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
         try {
-            let { pageNo, limit ,user, searchKey, _id, followerId, discover_status } = params
+            let { pageNo, limit ,user, searchKey, _id, followerId, discover_status, ShoutoutConnection } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
@@ -96,7 +96,11 @@ export class DiscoverDao extends BaseDao {
             if (searchKey) {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
             }
-            result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
+            if(ShoutoutConnection) {
+                result = await this.aggregate('discover', aggPipe, {})
+            } else {
+                result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
+            }
             return result
         } catch (error) {
             throw error;
