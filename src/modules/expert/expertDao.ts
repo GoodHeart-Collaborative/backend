@@ -321,7 +321,12 @@ export class ExpertDao extends BaseDao {
                             {
                                 $match: {
                                     $expr: {
-                                        $in: ['$$cId', '$categoryId'],
+                                        $and: [{
+                                            $in: ['$$cId', '$categoryId'],
+                                        },
+                                        {
+                                            $$eq: ['status': config.CONSTANT.STATUS.ACTIVE]
+                                        }]
                                     }
                                 }
                             },
