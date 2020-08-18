@@ -340,8 +340,9 @@ export class ExpertDao extends BaseDao {
                                             $in: ['$$cId', '$categoryId'],
                                         },
                                         {
-                                            $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
-                                        }]
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }
+                                        ]
                                     }
                                 }
                             },
