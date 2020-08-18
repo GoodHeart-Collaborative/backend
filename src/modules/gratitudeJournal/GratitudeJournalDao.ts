@@ -252,7 +252,7 @@ export class GratitudeJournalDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "likes",
-                    let: { "post": '$_id', "user": await appUtils.toObjectId(params.userId) },
+                    let: { "post": '$_id', "user": await appUtils.toObjectId(tokenData.userId) },
                     pipeline: [
                         {
                             $match: {
@@ -278,7 +278,7 @@ export class GratitudeJournalDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "comments",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(params.userId) },
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(tokenData.userId) },
                     pipeline: [{
                         $match: {
                             $expr: {

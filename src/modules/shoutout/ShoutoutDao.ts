@@ -148,7 +148,7 @@ export class ShoutoutDao extends BaseDao {
                     },
                     created: 1,
                     story: {
-                    gredWord: 'congrats',
+                    greetWord: 'congratulates',
                      gif: "$gif",
                      title: "$title",
                      description: "$description"
