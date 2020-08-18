@@ -89,7 +89,6 @@ export class ExpertDao extends BaseDao {
                 CategoryLIST,
                 type: 1,
             }
-
             // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
 
 
@@ -214,7 +213,6 @@ export class ExpertDao extends BaseDao {
             console.log('data1data1data1data1>>>>>>>>>>>>>>', EXPERTS1);
 
             // result = CategoryLIST;
-            
             CATEGORIES = {
                 CategoryLIST,
                 type: 0,
@@ -235,6 +233,20 @@ export class ExpertDao extends BaseDao {
             for (var key of EXPERTS1) {
                 key['type'] = 2
             }
+
+            // const EXPERTS = data[0].EXPERT_LIST
+
+            // const EXPERT_LIST = {
+            //     EXPERTS1,
+            // }
+            // return {
+            //     CATEGORIES,
+            //     NEWLY_ON_BOARD_EXPERT,
+            //     EXPERT_LIST
+            //     // CATEGORIES,
+            //     // NEWLY_ON_BOARD_EXPERT,
+            //     // EXPERT_LIST
+            // };
             EXPERTS1.unshift({
                 data: getNewlyAddedExperts,
                 type: 1
@@ -558,16 +570,6 @@ export class ExpertDao extends BaseDao {
                     }
                 },
             ];
-
-            // if (payload.categoryId) {
-            //     // const a = {
-            //     //     $project: {
-            //     //         expertData: 1
-            //     //     }
-            //     // }
-            //     categoryPipeline.splice(3, 3)
-            // }
-            // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
 
             const CategoryLIST = await expertDao.aggreagtionWithPaginateTotal('expert', categoryPipeline, limit, page, true)
 
