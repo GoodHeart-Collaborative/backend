@@ -109,8 +109,8 @@ export const userExpertRoute: ServerRoute[] = [
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
                 query: {
-                    limit: Joi.number().required(),
-                    page: Joi.number().required(),
+                    limit: Joi.number(),
+                    page: Joi.number(),
                     searchTerm: Joi.string(),
                     categoryId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
                 },
