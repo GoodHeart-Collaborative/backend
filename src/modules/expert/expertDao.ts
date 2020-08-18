@@ -89,7 +89,6 @@ export class ExpertDao extends BaseDao {
                 CategoryLIST,
                 type: 1,
             }
-
             // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
 
 
@@ -214,7 +213,6 @@ export class ExpertDao extends BaseDao {
             console.log('data1data1data1data1>>>>>>>>>>>>>>', EXPERTS1);
 
             // result = CategoryLIST;
-            
             CATEGORIES = {
                 CategoryLIST,
                 type: 0,
@@ -235,6 +233,20 @@ export class ExpertDao extends BaseDao {
             for (var key of EXPERTS1) {
                 key['type'] = 2
             }
+
+            // const EXPERTS = data[0].EXPERT_LIST
+
+            // const EXPERT_LIST = {
+            //     EXPERTS1,
+            // }
+            // return {
+            //     CATEGORIES,
+            //     NEWLY_ON_BOARD_EXPERT,
+            //     EXPERT_LIST
+            //     // CATEGORIES,
+            //     // NEWLY_ON_BOARD_EXPERT,
+            //     // EXPERT_LIST
+            // };
             EXPERTS1.unshift({
                 data: getNewlyAddedExperts,
                 type: 1
@@ -316,6 +328,9 @@ export class ExpertDao extends BaseDao {
                 },
                 {
                     $project: {
+                        createdAt: 0,
+                        updatedAt: 0,
+                        status: 0,
                         expertData: 0
                     }
                 }
@@ -331,7 +346,7 @@ export class ExpertDao extends BaseDao {
             // }
             // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
 
-            const CategoryLIST = await expertDao.aggreagtionWithPaginateTotal('categories', categoryPipeline, limit, page, true)
+            const CategoryLIST = await expertDao.aggregateWithPagination('categories', categoryPipeline, limit, page, true)
 
             return CategoryLIST;
         } catch (error) {
@@ -557,21 +572,26 @@ export class ExpertDao extends BaseDao {
                         categoryData: { $ne: [] }
                     }
                 },
+                {
+                    $project: {
+                        categoryData: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        categoryId: 0,
+                        email: 0,
+                        status: 0,
+                        privacy: 0,
+                        contentId: 0,
+                        contentType: 0,
+                        contentDisplayName: 0
+                    }
+                }
             ];
+            console.log('limit>>>>>>>', limit, 'pageLLLLLLLLLLL', page);
 
-            // if (payload.categoryId) {
-            //     // const a = {
-            //     //     $project: {
-            //     //         expertData: 1
-            //     //     }
-            //     // }
-            //     categoryPipeline.splice(3, 3)
-            // }
-            // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
+            const expertList = await expertDao.aggregateWithPagination('expert', categoryPipeline, limit, page, true)
 
-            const CategoryLIST = await expertDao.aggreagtionWithPaginateTotal('expert', categoryPipeline, limit, page, true)
-
-            return CategoryLIST;
+            return expertList;
         } catch (error) {
             return Promise.reject(error);
         }
