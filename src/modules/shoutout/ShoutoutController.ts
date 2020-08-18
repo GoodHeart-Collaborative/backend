@@ -24,11 +24,11 @@ class ShoutoutController {
         try {
             let response:any = {}
            let getData = await discoverDao.getDiscoverData({ShoutoutConnection: true}, userId, true)
-        //    response = {
-        //     gredWord:  {id:, title, gif: environment.SERVER.SERVER_URL },  ],
-        //     data: getData, //myconnection
-        //    }
-            return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
+           response = {
+            greetWord:  await appUtils.getShoutoutCard(),
+            data: getData, //myconnection
+           }
+            return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(response)
         } catch (error) {
             throw error;
         }
@@ -41,8 +41,20 @@ class ShoutoutController {
     async saveShoutoutData(params: ShoutoutRequest.ShoutoutRequestAdd, userId) {
         try {
             params['userId'] = userId.userId
+            let members:any = []
             // params['membersDetail'] = await appUtils.createMembersArray(params.members)
             // delete params.members
+            let memberss = await discoverDao.getShoutoutMyConnection(userId)
+            members.push(await appUtils.toObjectId(userId.userId))
+            if(memberss && memberss.length > 0) {
+                for (let i = 0; i < memberss.length; i++) {
+                    if(memberss[i].userId.toString() === userId.userId) {
+                        members.push(memberss[i].followerId)
+                    } else {
+                        members.push(memberss[i].userId)
+                    }
+                }
+            }
             let createArr:any  = []
 			for (let i = 0; i < params.members.length; i++) {
                 createArr.push({
@@ -51,6 +63,7 @@ class ShoutoutController {
                     title: params.title,
                     privacy: params.privacy,
                     gif: params.gif,
+                    members: members,
                     senderId: userId.userId,
                     receiverId: params.members[i]
                 })

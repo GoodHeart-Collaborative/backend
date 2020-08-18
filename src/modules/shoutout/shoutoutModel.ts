@@ -18,6 +18,8 @@ const shoutoutSchema = new Schema({
     receiverId: { type: Schema.Types.ObjectId, ref: 'users' },
 	title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
+    members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
+
     membersDetail: [{userId: { type: Schema.Types.ObjectId, ref: "users", default: null, index: true }}],
     status: {
         type: String,

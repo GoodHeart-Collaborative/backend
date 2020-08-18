@@ -247,6 +247,21 @@ export class DiscoverDao extends BaseDao {
         }
     }
 
+    async getShoutoutMyConnection(params) {
+        try {
+            let {userId } = params
+            let query:any = {}
+            query['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
+            query["$or"] = [
+                { "userId": await appUtils.toObjectId(userId)}, 
+                { "followerId": await appUtils.toObjectId(userId) }
+            ]
+            return await this.findAll('discover', query, {},{});
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 
 export const discoverDao = new DiscoverDao();
