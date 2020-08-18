@@ -265,33 +265,75 @@ export class ExpertDao extends BaseDao {
 
     async getCategory(payload) {
         try {
-            const pipeline = [
+            const { searchTerm, sortingType } = payload;
+            let { limit, page } = payload
+            let criteria: any = {};
+
+
+            const match: any = {};
+            // if (status) {
+            // match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
+            // } else {
+            match.status = config.CONSTANT.STATUS.ACTIVE;
+            // }
+
+            if (searchTerm) {
+                match["$or"] = [
+                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "name": { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
+
+            const paginateOptions = {
+                limit: limit || 10,
+                pageNo: page || 1,
+            };
+            console.log('paginateOptions', paginateOptions);
+
+            const categoryPipeline = [
                 {
-                    $group: {
-                        _id: '$categoryId'
-                    }
-                },
-                {
+                    $match: match
+                }, {
                     $lookup: {
-                        from: 'categories',
-                        let: { 'cid': '$_id' },
+                        from: 'experts',
+                        let: { cId: '$_id' },
+                        as: 'expertData',
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: ['$_id', '$$cid']
+                                        $in: ['$$cId', '$categoryId'],
                                     }
                                 }
-                            }
+                            },
                         ],
-                        as: 'categoriesData'
                     }
                 },
-                { '$unwind': { path: '$categoriesData', preserveNullAndEmptyArrays: true } }
+                {
+                    $match: {
+                        expertData: { $ne: [] }
+                    }
+                },
+                {
+                    $project: {
+                        expertData: 0
+                    }
+                }
+            ];
 
-            ]
-            const data = await expertPostDao.aggregate('expert_post', pipeline, {});
-            return data;
+            // if (payload.categoryId) {
+            //     // const a = {
+            //     //     $project: {
+            //     //         expertData: 1
+            //     //     }
+            //     // }
+            //     categoryPipeline.splice(3, 3)
+            // }
+            // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
+
+            const CategoryLIST = await expertDao.aggreagtionWithPaginateTotal('categories', categoryPipeline, limit, page, true)
+
+            return CategoryLIST;
         } catch (error) {
             return Promise.reject(error)
         }
@@ -454,6 +496,82 @@ export class ExpertDao extends BaseDao {
             console.log('datadatadatadatadatadatadatadata', data);
             return data;
 
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async getcategoryExperts(payload) {
+        try {
+            const { searchTerm, sortingType } = payload;
+            let { limit, page } = payload
+            let criteria: any = {};
+
+
+            const match: any = {};
+
+            // match.status = config.CONSTANT.STATUS.ACTIVE;
+
+            if (searchTerm) {
+                match["$or"] = [
+                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "name": { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
+
+            const paginateOptions = {
+                limit: limit || 10,
+                pageNo: page || 1,
+            };
+
+            match['categoryId'] = {
+                $in: ['categoryId', appUtils.toObjectId(payload.categoryId)]
+            }
+
+            console.log('paginateOptions', paginateOptions);
+
+            const categoryPipeline = [
+                {
+                    $match: match
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        let: { cId: '$categoryId' },
+                        as: 'categoryData',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [{
+                                            $in: ['$_id', '$$cId'],
+                                        }]
+                                    }
+                                }
+                            },
+                        ],
+                    }
+                },
+                {
+                    $match: {
+                        categoryData: { $ne: [] }
+                    }
+                },
+            ];
+
+            // if (payload.categoryId) {
+            //     // const a = {
+            //     //     $project: {
+            //     //         expertData: 1
+            //     //     }
+            //     // }
+            //     categoryPipeline.splice(3, 3)
+            // }
+            // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
+
+            const CategoryLIST = await expertDao.aggreagtionWithPaginateTotal('expert', categoryPipeline, limit, page, true)
+
+            return CategoryLIST;
         } catch (error) {
             return Promise.reject(error);
         }
