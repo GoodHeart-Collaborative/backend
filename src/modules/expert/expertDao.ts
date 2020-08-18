@@ -646,8 +646,8 @@ export class ExpertDao extends BaseDao {
             ];
             console.log('limit>>>>>>>', limit, 'pageLLLLLLLLLLL', page);
 
-            const expertList = await expertDao.aggregate('expert', categoryPipeline, {})
-            // const data = expertList;
+            const expertList = await expertDao.aggregateWithPagination('expert', categoryPipeline, limit, page, true)
+
             return expertList;
         } catch (error) {
             return Promise.reject(error);
