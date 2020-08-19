@@ -5,6 +5,7 @@ import fs = require("fs");
 
 import * as likeConstants from "./LikeConstant";
 import { likeDao } from "./LikeDao";
+import { forumtopicDao } from "../forum/forumDao";
 import * as config from "@config/index";
 import { homeDao } from "../home/HomeDao";
 import { gratitudeJournalDao } from "../gratitudeJournal/GratitudeJournalDao";
@@ -158,6 +159,8 @@ class LikeController {
                 getPost = await userDao.checkUser(query)
             } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                 getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
+            } else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                getPost = await forumtopicDao.checkForum(query)
             } else {
                 getPost = await homeDao.checkHomePost(query)
             }
@@ -195,6 +198,8 @@ class LikeController {
                     data = await userDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
                 } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                     data = await gratitudeJournalDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
+                } else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                    data = await forumtopicDao.updateForumLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
                 } else {
                     data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })
                 }

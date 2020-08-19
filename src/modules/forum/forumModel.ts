@@ -21,8 +21,9 @@ export interface Iforum extends Document {
 
 const forumSchema = new Schema({
     categoryId: { type: Schema.Types.ObjectId, required: true },
-    categoryName: { type: String }, // only for searching
-    userId: { type: Schema.Types.ObjectId, required: true },
+    commentId: { type: Schema.Types.ObjectId, required: false },
+    categoryName: { type: String }, // only for searching commentId
+    userId: { type: Schema.Types.ObjectId, required: false },
     userType: {
         type: String, enum: [
             config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
@@ -39,6 +40,7 @@ const forumSchema = new Schema({
         default: config.CONSTANT.STATUS.ACTIVE,
 
     },
+    createrId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
     topic: { type: String },
@@ -63,4 +65,4 @@ forumSchema.methods.toJSON = function () {
 };
 
 // Export shoutout
-export const forum_topic: Model<Iforum> = mongoose.model<Iforum>(config.CONSTANT.DB_MODEL_REF.FORUM, forumSchema);
+export const forum: Model<Iforum> = mongoose.model<Iforum>(config.CONSTANT.DB_MODEL_REF.FORUM, forumSchema);

@@ -116,7 +116,7 @@ const getShoutoutCard = function () {
 		response.push({
 			id: i+1,
 			title: stringArr[i],
-			gif: `${environment.SERVER.SERVER_URL}/images/gif_1.pdf`
+			gif: `${environment.SERVER.SERVER_URL}/images/card_${i+1}.png`
 		})
 	}
 	return response

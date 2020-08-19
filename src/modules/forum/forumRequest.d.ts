@@ -2,10 +2,10 @@ declare namespace AdminForumRequest {
 
     export interface AddForum {
         categoryId: string,
-        categoryName: string, // only for searching
+        // categoryName: string, // only for searching
         // userId: string,
-        userStatus: string
-        topic: string,
+        // userStatus: string
+        topic?: string,
         mediaUrl: string,
         description: string,
         postAnonymous: boolean
@@ -36,6 +36,14 @@ declare namespace AdminForumRequest {
         categoryName: string, // only for searching
         // userId: string,
         userStatus: string
+        topic: string,
+        mediaUrl: string,
+        description: string,
+        postAnonymous: boolean
+    }
+    export interface EditForum {
+        postId: string;
+        categoryId: string,
         topic: string,
         mediaUrl: string,
         description: string,

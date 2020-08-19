@@ -12,6 +12,7 @@ import * as config from "@config/index";
 import { CONSTANT } from "@config/index";
 import * as appUtils from '../../utils/appUtils'
 import { gratitudeJournalDao } from "../gratitudeJournal/GratitudeJournalDao";
+import { forumtopicDao } from "../forum/forumDao";
 import { userDao } from "../user/v1/UserDao";
 
 
@@ -158,7 +159,8 @@ class CommentController {
                 getPost = await userDao.checkUser(query)
             } else if (params.type === CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                 getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
-
+            } else if (params.type === CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                getPost = await forumtopicDao.checkForum(query)
             } else {
                 getPost = await homeDao.checkHomePost(query)
             }
@@ -190,6 +192,9 @@ class CommentController {
                 }
             }
             let addCcomment = await commentDao.addComments(params)
+            if(params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC && !(params && params.commentId)) {
+                data = await forumtopicDao.updateForumLikeAndCommentCount(query, { "$inc": { commentCount: 1 }, "$set": { commentId: addCcomment._id } })
+            }
             params["_id"] = addCcomment._id
             let getComments:any = await commentDao.getCommentList(params)
             return commentConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getComments.list[0]);

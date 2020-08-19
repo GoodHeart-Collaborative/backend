@@ -49,28 +49,59 @@ export class DiscoverDao extends BaseDao {
             })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({ '$unwind': { path: '$followers', preserveNullAndEmptyArrays: true } })
-            aggPipe.push({
-                $project:
-                {
-                    _id: 1,
-                    discover_status: 1,
-                    user: {
-                        $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
-                            _id: "$followers._id",
-                            name: { $ifNull: ["$followers.firstName", ""] },
-                            profilePicUrl: "$followers.profilePicUrl",
-                            profession: { $ifNull: ["$followers.profession", ""] }
-                        }, {
-                            _id: "$users._id",
-                            name: { $ifNull: ["$users.firstName", ""] },
-                            profilePicUrl: "$users.profilePicUrl",
-                            profession: { $ifNull: ["$users.profession", ""] }
-                        }]
-                    },
-                    created: 1
-                    // createdAt: 1,
-                }
-            })
+            if (ShoutoutConnection) {
+                aggPipe.push({
+                    $project:
+                    {
+                        _id : 0,
+                        user: {
+                            $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
+                                _id: "$followers._id",
+                                name: { $ifNull: ["$followers.firstName", ""] },
+                                profilePicUrl: "$followers.profilePicUrl",
+                                profession: { $ifNull: ["$followers.profession", ""] }
+                            }, {
+                                _id: "$users._id",
+                                name: { $ifNull: ["$users.firstName", ""] },
+                                profilePicUrl: "$users.profilePicUrl",
+                                profession: { $ifNull: ["$users.profession", ""] }
+                            }]
+                        }
+                    }
+                })
+                aggPipe.push({
+                    $project:
+                    {
+                        _id: "$user._id",
+                        name: "$user.name",
+                        profilePicUrl: "$user.profilePicUrl",
+                        profession: "$user.profession"
+                    }
+                })
+            } else {
+                aggPipe.push({
+                    $project:
+                    {
+                        _id: 1,
+                        discover_status: 1,
+                        user: {
+                            $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
+                                _id: "$followers._id",
+                                name: { $ifNull: ["$followers.firstName", ""] },
+                                profilePicUrl: "$followers.profilePicUrl",
+                                profession: { $ifNull: ["$followers.profession", ""] }
+                            }, {
+                                _id: "$users._id",
+                                name: { $ifNull: ["$users.firstName", ""] },
+                                profilePicUrl: "$users.profilePicUrl",
+                                profession: { $ifNull: ["$users.profession", ""] }
+                            }]
+                        },
+                        created: 1
+                        // createdAt: 1,
+                    }
+                })
+            }
             if (searchKey) {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
             }
