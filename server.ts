@@ -23,7 +23,7 @@ import { logger } from "@lib/index";
 import { plugins } from "@plugins/index";
 import { routes } from "@routes/index";
 import * as BootStrap from "@utils/BootStrap";
-
+let path = require('path')
 const originArray: string[] = [
 	"http://localhost:4200",
 	"http://localhost:4201",
@@ -38,6 +38,7 @@ const server = new Server({
 	// host: "localhost",
 	port: config.SERVER.PORT,
 	routes: {
+		files: { relativeTo: path.join(__dirname, 'public') },
 		cors: {
 			origin: ["*"],
 			// origin: originArray,
@@ -96,9 +97,15 @@ start();
 const init = async () => {
 	await server.register(plugins);
 	// await server.register({plugin: YourPlugin}, {routes:{prefix: '/api'}});
-
 	const a = server.route(routes);
 	console.log('aaaa', a);
+	// server.route({
+	// 	method: 'GET',
+	// 	path: '/images/{image}',
+	// 	handler: function (request, h) {
+	// 		return h.file(`/images/${request.params.image}`);
+	// 	}
+	// });
 
 	await server.start();
 	const boot = new BootStrap.BootStrap();
