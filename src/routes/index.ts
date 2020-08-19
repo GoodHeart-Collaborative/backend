@@ -57,6 +57,7 @@ import { EventInterestRoute as eventInterestRouteV1 } from '@modules/eventIntere
 import { adminEventInterest as adminEventInterestV1 } from '@modules/admin/eventInterest/interestRoute';
 import { AdminForumRoute as AdminForumRouteV1 } from '@modules/admin/forum/forumRoute';
 import { userForumRoutes as userForumRoutesV1 } from '@modules/forum/forumRoute';
+import { AdminFeedRoute as AdminFeedRouteV1 } from '@modules/admin/feed/feedRoute';
 
 const baseRoute = [
 	{
@@ -101,5 +102,6 @@ export const routes: ServerRoute[] = [
 	...eventInterestRouteV1,
 	...adminEventInterestV1,
 	...AdminForumRouteV1,
-	...userForumRoutesV1
+	...userForumRoutesV1,
+	...AdminFeedRouteV1
 ];

@@ -18,7 +18,7 @@ export class APIResponse {
 			result ? self.data = result : "";
 		}
 		// self.time = new Date().getTime();
-		delete self.type;
+		// delete self.type;
 		return self;
 	}
 }

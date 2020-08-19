@@ -2,6 +2,7 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
+import { CONSTANT } from "@config/index";
 
 
 export class ShoutoutDao extends BaseDao {
@@ -90,9 +91,85 @@ export class ShoutoutDao extends BaseDao {
             throw error;
         }
     }
+
+    async getShoutoutUpdatedData(params, userId) {
+        try {
+            let { pageNo, limit  } = params
+            let match: any = {};
+            let aggPipe = [];
+            let result: any = {}
+            userId = await appUtils.toObjectId(userId.userId)
+            match["$or"] = [
+                {"members": { $all: [ userId ]}, privacy:  CONSTANT.PRIVACY_STATUS.PUBLIC},
+                { "senderId": userId },
+                { "receiverId": userId }
+            ];
+            aggPipe.push({ "$sort": { "createdAt": 1 } })
+            aggPipe.push({ "$match": match })
+            aggPipe.push({
+                $lookup: {
+                    "from": "users",
+                    "localField": "senderId",
+                    "foreignField": "_id",
+                    "as": "sender"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                $lookup: {
+                    "from": "users",
+                    "localField": "receiverId",
+                    "foreignField": "_id",
+                    "as": "receiver"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
+                aggPipe.push({ "$project": {
+                    sender: {
+                        industryType: "$sender.industryType",
+                        myConnection: "$sender.myConnection",
+                        experience: "$sender.experience",
+                        // discover_status: 
+                        about: "$sender.about",
+                        name: { $ifNull: ["$sender.firstName", ""] },
+                        profilePicUrl: "$sender.profilePicUrl",
+                        profession: { $ifNull: ["$sender.profession", ""] }
+                    },
+                    receiver: {
+                        industryType: "$receiver.industryType",
+                        myConnection: "$receiver.myConnection",
+                        experience: "$receiver.experience",
+                        // discover_status: 
+                        about: "$receiver.about",
+                        name: { $ifNull: ["$receiver.firstName", ""] },
+                        profilePicUrl: "$receiver.profilePicUrl",
+                        profession: { $ifNull: ["$receiver.profession", ""] }
+                    },
+                    created: 1,
+                    story: {
+                    greetWord: 'congratulates',
+                     gif: "$gif",
+                     title: "$title",
+                     description: "$description"
+                     }	
+                    }}); 
+            result = await this.paginate('shoutout', aggPipe, limit, pageNo, {}, true)
+            return result
+        } catch (error) {
+            throw error;
+        }
+    }
     async saveShoutout(params) {
         try {
             return await this.save('shoutout', params)
+        } catch (error) {
+            throw error;
+        }
+    }
+    async saveBulkShoutout(params) {
+        try {
+            return await this.insertMany('shoutout', params, {})
         } catch (error) {
             throw error;
         }

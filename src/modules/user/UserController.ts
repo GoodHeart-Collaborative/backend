@@ -21,6 +21,7 @@ import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalD
 // import {} from '@modules/'
 import { forumtopicDao } from '@modules/forum/forumDao';
 import { discoverDao } from "../discover/DiscoverDao";
+import { CONSTANT } from "@config/index";
 
 var ObjectID = require('mongodb').ObjectID;
 export class UserController {
@@ -902,18 +903,38 @@ export class UserController {
 
 	async getProfileHome(query, tokenData) {
 		try {
-			// query['userId'] = query.userId ? query.userId : tokenData['userId'];
-
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
-				// getData = {}
-				// for now
-				// getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
-
-				getData = await forumtopicDao.getTopicForHomeProfile(query, tokenData);
-
+				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
+				if(query && query.userId && getData && getData.data && getData.data.length > 0) {
+					for (let i = 0; i < getData.data.length; i++) {
+						// if(tokenData.userId !== getData.data[i].user._id.toString()) {
+							// let members = await discoverDao.getMembers({_id: getData.data[i]._id, userId: query.userId, followerId: tokenData.userId})
+						let members = await userDao.getMembers({ followerId: getData.data[i].user._id.toString(), userId: tokenData.userId})
+						if(members) {
+							getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
+							getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
+						} else {
+							let params:any = {}
+							params = {
+								pageNo: 1,
+								limit: 1,
+								followerId: getData.data[i].user._id.toString()
+							}
+							let getDataa = await discoverDao.getDiscoverData(params, {userId: tokenData.userId}, false)
+								if (getDataa && getDataa.total && getDataa.total > 0) {
+									getData.data[i].user.discover_status = getDataa.data[0].user.discover_status
+									getData.data[i].discover_status = getDataa.data[0].user.discover_status
+								} else {
+									getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+									getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+								}
+						}
+						// } 
+					  }
+				}
 			} else {
 				getData = await gratitudeJournalDao.userProfileHome(query, tokenData)
 			}

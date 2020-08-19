@@ -83,6 +83,7 @@ export const SERVER = Object.freeze({
 
 	JWT_CERT_KEY: "g8b9(-=~Sdf)",
 	SALT_ROUNDS: 10,
+	SERVER_URL: process.env["SERVER_URL"],
 	// for private.key file use RS256, SHA256, RSA
 	JWT_ALGO: "HS256", // HS384
 	CHUNK_SIZE: 100,

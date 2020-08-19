@@ -2,25 +2,15 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
-import { CONSTANT } from "@config/index";
 
 
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
         try {
-            let { pageNo, limit ,user, searchKey, _id } = params
+            let { pageNo, limit, user, searchKey, _id, followerId, discover_status, ShoutoutConnection } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            if(user) {
-                // let match2:any = {}
-                // match["$or"] = [
-                //     { "userId": { $ne: await appUtils.toObjectId(userId.userId) } },
-                //     { "followerId": { $ne: await appUtils.toObjectId(userId.userId) } }
-                // ];
-                // aggPipe.push({ "$match": match2 })
-                userId.userId = user
-            }
             userId = await appUtils.toObjectId(userId.userId)
             if (_id) {
                 aggPipe.push({ "$match": { "_id": _id } })
@@ -84,7 +74,11 @@ export class DiscoverDao extends BaseDao {
             if (searchKey) {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
             }
-            result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
+            if (ShoutoutConnection) {
+                result = await this.aggregate('discover', aggPipe, {})
+            } else {
+                result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
+            }
             return result
         } catch (error) {
             throw error;
@@ -92,7 +86,7 @@ export class DiscoverDao extends BaseDao {
     }
     async getUserData(params, userId) {
         try {
-            let { pageNo, limit, searchKey, _id, longitude, latitude, distance, industryType, } = params
+            let { pageNo, limit, searchKey, _id, longitude, latitude, distance, industryType } = params
             let aggPipe = [];
             let result: any = {}
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
@@ -111,13 +105,11 @@ export class DiscoverDao extends BaseDao {
                     { "$sort": { dist: -1 } }
                 )
             }
-                userId = await appUtils.toObjectId(userId.userId)
+            userId = await appUtils.toObjectId(userId.userId)
             if (_id) {
                 aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
                 pageNo = 1
                 limit = 1
-            } else {
-                aggPipe.push({ "$match": { _id: {$ne: userId} } })
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
             aggPipe.push({
@@ -137,7 +129,7 @@ export class DiscoverDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "discovers",
-                    let: { "follower": "$_id", "user": userId },
+                    let: { "follower": "$_id", "user": await appUtils.toObjectId(userId) },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -206,6 +198,21 @@ export class DiscoverDao extends BaseDao {
             let updateData: any = {}
             updateData["$set"] = update
             return await this.findOneAndUpdate('discover', query, updateData, { new: true });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getShoutoutMyConnection(params) {
+        try {
+            let { userId } = params
+            let query: any = {}
+            query['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
+            query["$or"] = [
+                { "userId": await appUtils.toObjectId(userId) },
+                { "followerId": await appUtils.toObjectId(userId) }
+            ]
+            return await this.findAll('discover', query, {}, {});
         } catch (error) {
             throw error;
         }
