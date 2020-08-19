@@ -26,6 +26,7 @@ class ExpertController {
 	 */
     async addExpert(params: AdminExpertRequest.expertAdd) {
         try {
+            params['created'] = new Date().getTime()
             const data = await expertDao.insert("expert", params, {});
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -54,7 +55,7 @@ class ExpertController {
                     sort = { "created": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "createdAt": -1 };
             }
             if (searchTerm) {
                 match["$or"] = [
@@ -160,7 +161,7 @@ class ExpertController {
 
     async updateStatus(params: AdminExpertRequest.updateStatus) {
         try {
-            const {expertId ,status} =params;
+            const { expertId, status } = params;
             const criteria = {
                 _id: expertId
             };
@@ -168,12 +169,12 @@ class ExpertController {
                 status: status
             };
             const data = await expertDao.updateOne('expert', criteria, datatoUpdate, {});
-            if(data && status ==config.CONSTANT.STATUS.DELETED){
-               return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED ;
-          }
-           else if(data && status ==config.CONSTANT.STATUS.BLOCKED){
-           return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
-           }
+            if (data && status == config.CONSTANT.STATUS.DELETED) {
+                return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
+            }
+            else if (data && status == config.CONSTANT.STATUS.BLOCKED) {
+                return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            }
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
         } catch (error) {
             return Promise.reject(error)
