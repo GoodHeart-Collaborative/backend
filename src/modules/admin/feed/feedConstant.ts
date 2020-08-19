@@ -21,7 +21,7 @@ export const MESSAGES = {
         FORUM_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Forum added successful.",
+                "message": "Feed added successful.",
                 "type": "FORUM_ADDED",
                 "data": data
             };
@@ -29,14 +29,14 @@ export const MESSAGES = {
         FORUM_STATUS_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": `Forum ${data} successful.`,
+                "message": `Feed ${data} successful.`,
                 "type": "FORUM_ADDED"
             };
         },
         FORUM_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": `Forum updated successful.`,
+                "message": `Feed updated successful.`,
                 "type": "FORUM_ADDED",
                 "data": data
             };

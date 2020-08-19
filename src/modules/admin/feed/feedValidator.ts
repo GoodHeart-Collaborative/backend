@@ -89,10 +89,33 @@ let getFeed = Joi.object({
     sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
     fromDate: Joi.date(),
     toDate: Joi.date(),
-    categoryId: Joi.string()
+    privacy: Joi.string().allow([
+        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+    ])
+}).unknown()
 
+let feedPostId = Joi.object({
+    postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+
+}).unknown()
+
+let updateFeedStatus = Joi.object({
+    status: Joi.string().allow([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED
+    ]),
+    type: Joi.string().allow([
+        config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
+        config.CONSTANT.HOME_TYPE.SHOUTOUT,
+    ]).required(),
 })
 
+
 export {
-    getFeed
+    getFeed,
+    feedPostId,
+    updateFeedStatus
 };

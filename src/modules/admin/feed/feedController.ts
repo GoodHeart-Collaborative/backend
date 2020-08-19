@@ -4,11 +4,12 @@
 import * as _ from "lodash";
 
 import * as config from "@config/index";
-import * as forumConstant from "@modules/admin/forum/forumConstant";
+import * as feedConstant from "@modules/admin/feed/feedConstant";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
+import { shoutoutDao } from '@modules/shoutout/ShoutoutDao';
 import * as appUtils from '@utils/appUtils';
 
-class AdminForumController {
+class AdminFeedController {
 
     getTypeAndDisplayName(findObj, num: number) {
         const obj = findObj;
@@ -35,14 +36,18 @@ class AdminForumController {
 
     async GetFeed(params) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, type } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, type, privacy } = params;
             const aggPipe = [];
             const match: any = {};
+
 
             if (status) {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            }
+            if (privacy) {
+                match.privacy = params.privacy;
             }
 
             if (searchTerm) {
@@ -107,7 +112,7 @@ class AdminForumController {
             }
 
             if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
-                const data = await gratitudeJournalDao.aggreagtionWithPaginateTotal('shoutout', aggPipe, limit, page, true);
+                const data = await shoutoutDao.aggreagtionWithPaginateTotal('shoutout', aggPipe, limit, page, true);
                 console.log('data>>>>>>>>>>>', data);
                 return data;
             }
@@ -135,26 +140,36 @@ class AdminForumController {
     //     }
     // }
 
-    // /**
-    //  * @function updateStatus
-    //  * @description admin update status active ,block ,delete
-    //  */
+    /**
+     * @function updateStatus
+     * @description admin update status active ,block ,delete
+     */
 
-    // async updateStatus(params: AdminForumRequest.UpdateForumStatus) {
-    //     try {
-    //         const criteria = {
-    //             _id: params.postId
-    //         };
-    //         const datatoUpdate = {
-    //             status: params.status
-    //         };
-    //         const data = await eventDao.findOneAndUpdate('forum_topic', criteria, datatoUpdate, { new: true })
-    //         return forumConstant.MESSAGES.SUCCESS.FORUM_STATUS_UPDATED(data.status);
+    async updateStatus(params) {
+        try {
+            const { type, postId, status } = params
+            const criteria = {
+                _id: postId
+            };
 
-    //     } catch (error) {
-    //         return Promise.reject(error)
-    //     }
-    // }
+            const datatoUpdate = {
+                status: status
+            };
+            if (type == config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                const data = await gratitudeJournalDao.findOneAndUpdate('gratitude_journals', criteria, datatoUpdate, { new: true })
+                return feedConstant.MESSAGES.SUCCESS.FORUM_STATUS_UPDATED(data.status);
+
+            }
+            if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
+                const data = await shoutoutDao.findOneAndUpdate('shoutout', criteria, datatoUpdate, { new: true })
+                return feedConstant.MESSAGES.SUCCESS.FORUM_STATUS_UPDATED(data.status);
+
+            }
+            return;
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 
     // async getForum(params) {
     //     try {
@@ -225,4 +240,4 @@ class AdminForumController {
     //     }
     // }
 }
-export const adminForumController = new AdminForumController();
+export const adminFeedController = new AdminFeedController();
