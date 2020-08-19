@@ -21,16 +21,18 @@ class forumController {
 	 * @function add event
 	 * @description user add event
 	 */
-    async updateForum(params: AdminForumRequest.EditForum) {
+    async updateForum(params: AdminForumRequest.EditForum, userId) {
         try {
-            const criteria = {_id: params.postId};
+            const criteria = {_id: params.postId, createrId: userId.userId};
             delete params.postId
             // const dataToUpdate = {...params}
-            const data = await eventDao.findOneAndUpdate('forum', criteria, params, { new: true })
-            if (!data) {
+            let checkForum  = await forumtopicDao.checkForum(criteria)
+            if(checkForum) {
+                let updateForum  = await forumtopicDao.updateForum(criteria, params)
+                return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(updateForum);
+            } else {
                 return forumConstant.MESSAGES.ERROR.FORUM_NOT_FOUND;
             }
-            return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
         } catch (error) {
             throw error;
         }

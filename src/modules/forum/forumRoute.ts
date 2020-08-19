@@ -80,13 +80,12 @@ export const userForumRoutes: ServerRoute[] = [
     },
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/forums`,
+        path: `${config.SERVER.API_BASE_URL}/v1/user/forums`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload = request.payload
             try {
-                // payload["userId"] = tokenData.userId
-                const result = await userForumController.updateForum(payload);
+                const result = await userForumController.updateForum(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

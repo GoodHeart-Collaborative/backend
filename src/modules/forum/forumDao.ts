@@ -181,6 +181,22 @@ export class ForumTopic extends BaseDao {
 			throw error;
 		}
     }
+    async updateForum(query, params) {
+        try {
+            let update:any = {}
+            if(params && params.postAnonymous) {
+                params['userId'] = query.createrId
+            } else {
+                if(params && params.postAnonymous === false){
+                update["$unset"] = {userId: ""}
+                }
+            }
+            update["$set"] = params
+            return await this.updateOne('forum', query, update, {});
+        } catch (error) {
+            throw error;
+        }
+    }
     async updateForumLikeAndCommentCount(query, update) {
         try {
             return await this.updateOne('forum', query, update, {});
