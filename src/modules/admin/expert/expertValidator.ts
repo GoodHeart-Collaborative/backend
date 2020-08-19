@@ -45,6 +45,11 @@ let validateGetExpert = Joi.object({
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
     ]),
+    status: Joi.string().valid([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED,
+    ]),
     categoryId: Joi.string().trim()
 
 }).unknown()

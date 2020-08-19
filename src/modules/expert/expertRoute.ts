@@ -149,7 +149,7 @@ export const userExpertRoute: ServerRoute[] = [
                     limit: Joi.number(),
                     page: Joi.number(),
                     // searchTerm: Joi.string(),
-                    categoryId: Joi.string().required(),
+                    // categoryId: Joi.string().required(),
                     expertId: Joi.string().required(),
                     posted: Joi.string().allow([
                         'lastWeek', 'lastMonth'

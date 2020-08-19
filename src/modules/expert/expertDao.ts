@@ -397,36 +397,42 @@ export class ExpertDao extends BaseDao {
     async expertDetailWithPost(payload) {
         try {
             console.log('payloadpayloadpayload', payload);
-            // ])
-            let postConditions: any = []
-            postConditions = [
-                {
-                    $eq: ['$expertId', '$$eId']
-                },
-                {
-                    $eq: ['$categoryId', '$$cId']
-                },
-                {
-                    $eq: ['$status', 'active']
-                },
-            ];
-            if (payload.postedBy == 'lastWeek') {
-                console.log('LLLLLLLLLLLLLL');
-                postConditions.push({
-                    $gt: ['$createdAt', '2020-07-24']
-                })
-            } else if (payload.postedBy == 'lastMonth') {
-                console.log('LLLLLLLLLLLLLL');
-                postConditions.push({
-                    $gt: ['$createdAt',]
-                })
+            const paginateOptions = {
+                limit: payload.limit || 10,
+                page: payload.page || 1
             }
-            if (payload.contentType) {
-                postConditions.push({
-                    $eq: ['$contentId', payload.contentType]
-                })
-            }
-            console.log('postConditionspostConditions', postConditions);
+
+            let match: any = {}
+
+            // let postConditions: any = []
+            // postConditions = [
+            //     {
+            //         $eq: ['$expertId', '$$eId']
+            //     },
+            //     {
+            //         $eq: ['$categoryId', '$$cId']
+            //     },
+            //     {
+            //         $eq: ['$status', 'active']
+            //     },
+            // ];
+            // if (payload.postedBy == 'lastWeek') {
+            //     console.log('LLLLLLLLLLLLLL');
+            //     postConditions.push({
+            //         $gt: ['$createdAt', '2020-07-24']
+            //     })
+            // } else if (payload.postedBy == 'lastMonth') {
+            //     console.log('LLLLLLLLLLLLLL');
+            //     postConditions.push({
+            //         $gt: ['$createdAt',]
+            //     })
+            // }
+            // if (payload.contentType) {
+            //     postConditions.push({
+            //         $eq: ['$contentId', payload.contentType]
+            //     })
+            // }
+            // console.log('postConditionspostConditions', postConditions);
 
             const pipeline = [
                 {
@@ -437,12 +443,17 @@ export class ExpertDao extends BaseDao {
                 {
                     $lookup: {
                         from: 'categories',
-                        let: { cId: appUtils.toObjectId(payload.categoryId) },
+                        let: { cId: '$categoryId' },
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: ['$_id', '$$cId']
+                                        $and: [{
+                                            $in: ['$_id', '$$cId']
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }]
                                     }
                                 }
                             },
@@ -456,29 +467,104 @@ export class ExpertDao extends BaseDao {
                         ],
                         as: 'categoryData'
                     },
-                    //                     
+
                 },
-                { '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } },
+                // { '$unwind': { path: '$categoryData' } },
                 {
-                    $lookup: {
-                        from: 'expert_posts',
-                        let: { eId: '$_id', cId: appUtils.toObjectId(payload.categoryId) },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: postConditions
-                                    }
-                                }
-                            }
-                        ],
-                        as: 'expertPosts'
+                    $project: {
+                        status: 0,
+                        privacy: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        categoryId: 0
                     }
                 },
             ];
 
-            const data = await expertDao.aggregate('expert', pipeline, {});
-            return data;
+            let data;
+            if (paginateOptions.page < 2) {
+                console.log('pagepage', paginateOptions.page);
+                data = await expertDao.aggregate('expert', pipeline, {});
+            }
+
+            let expertPostspipeline = []
+            match['expertId'] = appUtils.toObjectId(payload.expertId);
+
+            match['status'] == config.CONSTANT.STATUS.ACTIVE;
+            if (payload.postedBy == 'lastWeek') {
+                console.log('LLLLLLLLLLLLLL');
+                match['createdAt'] = {
+                    $gt: '2020-07-24'
+                }
+            }
+            if (payload.contentType) {
+                match['contentId'] = payload.contentType;
+
+            }
+            console.log('match', match);
+
+            expertPostspipeline = [
+                {
+                    $match: match
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        let: { cId: '$categoryId' },
+                        as: 'categoryData',
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$_id', '$$cId']
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                title: 1,
+                                imageUrl: 1
+                            }
+                        }],
+
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$categoryData', preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        // categoryData: 0,
+                        updatedAt: 0,
+                        createdAt: 0,
+                        status: 0,
+                        privacy: 0,
+                    }
+                },
+
+            ]
+            expertPostspipeline = [...expertPostspipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            let EXPERTPOST = await this.aggregateWithPagination1("expert_post", expertPostspipeline);
+            console.log('resultresultresult', EXPERTPOST);
+            const data0 = data ? data[0] : {};
+            console.log('data0data0', data0);
+
+            const expertPosts = EXPERTPOST
+            return {
+                expert: data0 ? data0 : {},
+                expertPosts
+            };
+            // const expertPost = await expertDao.aggreagtionWithPaginateTotal('expert',expertPostspipeline,)
         } catch (error) {
             return Promise.reject(error)
         }

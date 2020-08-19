@@ -42,17 +42,22 @@ class ExpertController {
 
     async getExpert(params: AdminExpertRequest.getExpert) {
         try {
-            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm } = params;
+            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, status } = params;
             let aggPipe = [];
             const match: any = {};
             let sort = {};
-            match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+
+            if (status) {
+                match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
+            } else {
+                match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            }
 
             if (sortBy && sortOrder) {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "createdAt": sortOrder };
                 }
             } else {
                 sort = { "createdAt": -1 };
