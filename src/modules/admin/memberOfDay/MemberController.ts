@@ -128,9 +128,9 @@ class MemberController {
                 ];
             }
 
-            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
-            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
-            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+            if (fromDate && toDate) { match['memberCreatedAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['memberCreatedAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['memberCreatedAt'] = { $lte: toDate }; }
 
             aggPipe.push({ "$match": match });
 
