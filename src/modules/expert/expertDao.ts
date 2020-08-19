@@ -539,7 +539,7 @@ export class ExpertDao extends BaseDao {
                 },
                 {
                     $unwind: {
-                        path: '$categoryData', preserveNullAndEmptyArrays: true
+                        path: '$categoryData', preserveNullAndEmptyArrays: false
                     }
                 },
                 {
