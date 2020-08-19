@@ -602,7 +602,7 @@ export class ExpertDao extends BaseDao {
 
             console.log('paginateOptions', paginateOptions);
 
-            const categoryPipeline = [
+            let categoryPipeline:any = [
                 {
                     $match: match
                 },
@@ -644,11 +644,13 @@ export class ExpertDao extends BaseDao {
                     }
                 }
             ];
-            console.log('limit>>>>>>>', limit, 'pageLLLLLLLLLLL', page);
+            // console.log('limit>>>>>>>', limit, 'pageLLLLLLLLLLL', page);
+            categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(limit, page)];
+           let result = await this.aggregateWithPagination("expert", categoryPipeline, limit, page, true)
 
-            const expertList = await expertDao.aggregateWithPagination('expert', categoryPipeline, limit, page, true)
+            // const expertList = await expertDao.aggreagtionWithPaginateTotal('expert', categoryPipeline, limit, page, true)
 
-            return expertList;
+            return result;
         } catch (error) {
             return Promise.reject(error);
         }
