@@ -36,7 +36,7 @@ class EventController {
         }
     }
 
-    async getEvent(params: UserEventRequest.userGetEvent, tokenData) {
+    async calenderEvent(params: UserEventRequest.userGetEvent, tokenData) {
         try {
             console.log('tokenData', tokenData.userId);
 
@@ -83,5 +83,238 @@ class EventController {
             return Promise.reject(error);
         }
     }
+
+    async getEvent(params, tokenData) {
+        try {
+            console.log('JKKKKKKKKKKKKKKKKKKKK', tokenData['userId']);
+
+            const { longitude, latitude, distance, eventCategory, date } = params;
+            let pickupLocation = [];
+            let aggPipe = [];
+            let featureAggPipe = [];
+            let match: any = {}
+            let searchDistance = distance ? distance * 1000 : 200 * 1000// Default value is 10 km.
+
+            if (eventCategory) {
+                match['eventCategory'] = eventCategory;
+            }
+            if (date == 'tomorrow') {
+                match['startDate'] = ''
+            }
+            else if (date == 'weekend') {
+                match['startDate'] = ''
+            } else if (date == 'month') {
+                match['startDate'] = ''
+            }
+            // else {
+            //     // for today only 
+            //     match['startDate'] = {
+            //         $gt: new Date()
+            //     }
+            // }
+            console.log('matchmatchmatch', match);
+            aggPipe.push({
+                $sort: {
+                    _id: -1
+                }
+            })
+
+            if (longitude != undefined && latitude != undefined) {
+                pickupLocation.push(latitude, longitude);
+                aggPipe.push(
+                    {
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
+                    },
+                    { "$sort": { dist: -1 } }
+                )
+            }
+
+            featureAggPipe.push(
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'event_interests',
+                        let: { userId: '$userId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $eq: ['$userId', '$$userId']
+                                }
+                            }
+                        }],
+                        as: 'interestData',
+                    }
+                })
+            featureAggPipe.push({ '$unwind': { path: '$interestData', preserveNullAndEmptyArrays: true } },
+                {
+                    $project: {
+                        name: 1,
+                        location: 1,
+                        title: 1,
+                        privacy: 1,
+                        startDate: 1,
+                        endDate: Date,
+                        price: 1,
+                        url: 1,
+                        allowSharing: 1,
+                        description: 1,
+                        goingCount: 1,
+                        interestCount: 1,
+                        eventCategory: 1,
+                        created: 1,
+                        interestData: 1,
+                        "isInterest": {
+                            $cond: {
+                                if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
+                                then: true,
+                                else: false
+                            }
+                        },
+                        users: 1,
+                        // user: {
+                        //     _id: "$users._id",
+                        //     name: { $ifNull: ["$users.firstName", ""] },
+                        //     profilePicUrl: "$users.profilePicUrl",
+                        //     profession: { $ifNull: ["$users.profession", ""] }
+                        // },
+                        // // commentData:1
+                        // isComment: {
+                        //     $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                        // },
+                    },
+                },
+                {
+                    $limit: 5
+                }
+
+            );
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'event_interests',
+                    let: { userId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$userId', '$$userId']
+                            }
+                        }
+                    }],
+                    as: 'interestData',
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$interestData', preserveNullAndEmptyArrays: true } },
+                {
+                    "$project": {
+                        name: 1,
+                        location: 1,
+                        title: 1,
+                        privacy: 1,
+                        startDate: 1,
+                        endDate: Date,
+                        price: 1,
+                        url: 1,
+                        allowSharing: 1,
+                        description: 1,
+                        goingCount: 1,
+                        interestCount: 1,
+                        eventCategory: 1,
+                        created: 1,
+                        interestData: 1,
+                        "isInterest": {
+                            $cond: {
+                                if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
+                                then: true,
+                                else: false
+                            }
+                        },
+                        users: 1,
+                        // user: {
+                        //     _id: "$users._id",
+                        //     name: { $ifNull: ["$users.firstName", ""] },
+                        //     profilePicUrl: "$users.profilePicUrl",
+                        //     profession: { $ifNull: ["$users.profession", ""] }
+                        // },
+                        // // commentData:1
+                        // isComment: {
+                        //     $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                        // },
+                    },
+
+                },
+                {
+                    $limit: 5
+                });
+            console.log('aggPipeaggPipeaggPipe', aggPipe);
+
+            const FeaturedEvent = await eventDao.aggregate('event', featureAggPipe, {})
+
+            const EVENT = await eventDao.aggregate('event', aggPipe, {})
+            console.log('datadata', EVENT);
+            return {
+                FeaturedEvent,
+                EVENT
+            };
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async getEventDetail(payload) {
+        try {
+
+            const match: any = {};
+            let aggPipe = [];
+
+            match['_id'] = appUtils.toObjectId(payload.eventId)
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { uId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$uId']
+                            }
+                        }
+                    }],
+                    as: 'userData'
+                }
+            })
+            aggPipe.push({
+                $lookup: {
+                    from: 'event_interests',
+                    let: { eId: appUtils.toObjectId(payload.eventId) },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$eventId', '$$eId']
+                            }
+                        }
+                    }],
+                    as: 'interestedData'
+                }
+            })
+
+
+            const data = await eventDao.aggregate('event', aggPipe, {})
+            console.log('datadata', data);
+            return data;
+
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
 }
 export const eventController = new EventController();

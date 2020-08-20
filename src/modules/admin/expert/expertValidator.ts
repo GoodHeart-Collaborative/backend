@@ -60,7 +60,7 @@ let validateExpertId = Joi.object({
 }).unknown()
 
 
-let updateExpertPost = Joi.object({
+let updateExpert = Joi.object({
     categoryId: Joi.array().items(Joi.string()).required(),
     name: Joi.string().required(),
     email: Joi.string().required(),
@@ -102,6 +102,6 @@ export {
     validaExpertAdd,
     validateGetExpert,
     validateExpertId,
-    updateExpertPost,
+    updateExpert,
     updateStatus
 };

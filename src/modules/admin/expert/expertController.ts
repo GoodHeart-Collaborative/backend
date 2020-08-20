@@ -185,5 +185,47 @@ class ExpertController {
             return Promise.reject(error)
         }
     }
+
+    async getExpertDetail(payload: AdminExpertRequest.expertDetail) {
+        try {
+            let aggPipe = [];
+            const match: any = {};
+            match['_id'] = appUtils.toObjectId(payload.expertId);
+
+            aggPipe.push({ $match: match })
+            aggPipe.push({
+                $lookup: {
+                    from: 'catgeories',
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $in: ['$_id', '$$cId']
+                                },
+                                    // {
+                                    //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    // }
+                                ]
+                            }
+                        }
+                    }]
+                },
+            });
+
+            // aggPipe.push({
+            //     $unwind: {
+            //         path: '$categoryData',
+            //         preserveNullAndEmptyArrays: true,
+            //     }
+            // })
+            const data = await expertDao.aggregate('expert', aggPipe, {});
+
+            return data;
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 }
 export const expertController = new ExpertController();

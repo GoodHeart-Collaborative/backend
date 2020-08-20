@@ -41,6 +41,10 @@ declare namespace AdminExpertRequest {
         expertId: string;
         status: string;
     }
+
+    export interface expertDetail {
+        expertId: string;
+    }
 }
 
 

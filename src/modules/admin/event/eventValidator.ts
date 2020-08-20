@@ -69,6 +69,7 @@ let addEvents = Joi.object({
     ]).required(),
     allowSharing: Joi.boolean().default(true),
     description: Joi.string().allow('').required(),
+    isFeatured: Joi.boolean().default(false),
 })
 
 let updateEvent = Joi.object({
