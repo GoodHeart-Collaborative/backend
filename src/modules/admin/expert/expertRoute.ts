@@ -152,7 +152,7 @@ export const expertRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expert/{expertId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: AdminExpertRequest.expertDetail = request.query;
+            const payload: AdminExpertRequest.expertDetail = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertController.getExpertDetail(payload);
@@ -169,7 +169,7 @@ export const expertRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: expertValidator.validateExpertId,
+                params: expertValidator.validateExpertId,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

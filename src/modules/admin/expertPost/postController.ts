@@ -51,19 +51,39 @@ class ExpertPostController {
      * @description admin get postDetails
      * /
      **/
-    async getPostById(params: InspirationRequest.IGetInspirationById) {
+    async getPostById(params) {
         try {
-            const criteria = {
-                _id: params.Id,
-            };
-
-            const data = await expertPostDao.findOne('expert_post', criteria, {}, {})
+            const match: any = {}
+            const aggPipe = [];
+            match['_id'] = appUtils.toObjectId(params.postId);
+            aggPipe.push({ $match: match })
+            aggPipe.push({
+                $lookup: {
+                    from: 'categories',
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$cId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+                            }
+                        }
+                    }]
+                }
+            })
+            aggPipe.push({
+                $unwind: '$categoryData'
+            })
+            const data = await expertPostDao.aggregate('expert_post', aggPipe, {})
             if (!data) {
                 return expertPostConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
             return expertPostConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-
-            // return data;
         } catch (error) {
             throw error;
         }
