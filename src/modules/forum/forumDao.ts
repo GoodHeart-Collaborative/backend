@@ -3,78 +3,88 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
-import { DataSync } from "aws-sdk";
-import { categoryDao } from "@modules/admin/catgeory";
-import { expert } from "@modules/admin/expert/expertModel";
-import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
 
 export class ForumTopic extends BaseDao {
 
-    async getGratitudeJournalData(params) {
+    async saveForum(params) {
         try {
+            let data = await this.save("forum", params);
+            return data
         } catch (error) {
             return Promise.reject(error);
         }
     }
 
-    async getTopicForHomeProfile(params, tokenData) {
+    async getFormPosts(params) {
         try {
-            console.log('paramsparamsparams', params.userId);
-            console.log('tokenDatatokenDatatokenDatatokenData', tokenData.userId);
-
             let aggPipe = [];
             let match: any = {};
             let criteria: any = {};
-            if (params.userId) {
-                criteria['_id'] = appUtils.toObjectId(params['userId']);
-                criteria['status'] = config.CONSTANT.STATUS.ACTIVE;
-                // criteria['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
-            } else {
-                criteria['status'] = config.CONSTANT.STATUS.ACTIVE;
-                criteria['_id'] = appUtils.toObjectId(tokenData['userId']);
-            }
-            let idKey: string = '$_id'
-            const userDataCriteria = [
-                {
-                    $match: criteria
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        name: {
-                            $cond: {
-                                if: {
-                                    $eq: ['$lastName', null]
-                                },
-                                then: '$firstName',
-                                else: { $concat: ['$firstName', ' ', '$lastName'] }
-                            }
-                        },
-                        profilePicUrl: 1,
-                        profession: 1
-                    }
+            aggPipe.push({
+                $lookup: {
+                    "from": "users",
+                    "localField": "userId",
+                    "foreignField": "_id",
+                    "as": "users"
                 }
-            ]
-            const userData = await this.aggregate('users', userDataCriteria, {})
-            console.log('userDatauserDatauserData', userData);
+            })
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                $lookup: {
+                    "from": "comments",
+                    "localField": "commentId",
+                    "foreignField": "_id",
+                    "as": "comments"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$comments', preserveNullAndEmptyArrays: true } })
+            // if (params.userId) {
+            //     criteria['_id'] = appUtils.toObjectId(params['userId']);
+            //     criteria['status'] = config.CONSTANT.STATUS.ACTIVE;
+            //     // criteria['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
+            // } else {
+            //     criteria['status'] = config.CONSTANT.STATUS.ACTIVE;
+            //     criteria['_id'] = appUtils.toObjectId(tokenData['userId']);
+            // }
+            // let idKey: string = '$_id'
+            // const userDataCriteria = [
+            //     {
+            //         $match: criteria
+            //     },
+            //     {
+            //         $project: {
+            //             _id: 1,
+            //             name: {
+            //                 $cond: {
+            //                     if: {
+            //                         $eq: ['$lastName', null]
+            //                     },
+            //                     then: '$firstName',
+            //                     else: { $concat: ['$firstName', ' ', '$lastName'] }
+            //                 }
+            //             },
+            //             profilePicUrl: 1,
+            //             profession: 1
+            //         }
+            //     }
+            // ]
+            // const userData = await this.aggregate('users', userDataCriteria, {})
+            // console.log('userDatauserDatauserData', userData);
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            if (params.userId) {
-                match['postAnonymous'] = false;
-            }
-            if (params.userId) {
-                match['userId'] = appUtils.toObjectId(params['userId']);
-                match['status'] = config.CONSTANT.STATUS.ACTIVE;
-                // match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
-            } else {
-                match['status'] = config.CONSTANT.STATUS.ACTIVE;
-                match['match'] = appUtils.toObjectId(tokenData['userId']);
-            }
+            // if (params.userId) {
+            //     match['postAnonymous'] = false;
+            // }
+            // if (params.userId) {
+            //     match['userId'] = appUtils.toObjectId(params['userId']);
+            //     match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            //     // match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
+            // } else {
+            //     match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            //     match['match'] = appUtils.toObjectId(tokenData['userId']);
+            // }
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
-
-            // idKey = '$_idd'
-
 
             aggPipe.push({
                 $lookup: {
@@ -127,7 +137,6 @@ export class ForumTopic extends BaseDao {
                     as: "commentData",
                 }
             })
-            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project: {
@@ -141,9 +150,17 @@ export class ForumTopic extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    user: userData[0],
+                    comment: { $ifNull: ["$comments.comment", ""] },
+                    user: {
+                        industryType: "$users.industryType",
+                        myConnection: "$users.myConnection",
+                        experience: "$users.experience",
+                        about: "$users.about",
+                        name: { $ifNull: ["$users.firstName", ""] },
+                        profilePicUrl: "$users.profilePicUrl",
+                        profession: { $ifNull: ["$users.profession", ""] }
+                    },
                     isLike: {
-                        // $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
                     },
                     isComment: {
@@ -151,10 +168,40 @@ export class ForumTopic extends BaseDao {
                     }
                 }
             })
-            const myForumData = await this.paginate('forum_topic', aggPipe, 10, 1, {}, true)
+            const myForumData = await this.paginate('forum', aggPipe, 10, 1, {}, true)
             return myForumData;
         } catch (error) {
             return Promise.reject(error)
+        }
+    }
+    async checkForum(params) {
+		try {
+			return await this.findOne('forum', params, {}, {});
+		} catch (error) {
+			throw error;
+		}
+    }
+    async updateForum(query, params) {
+        try {
+            let update:any = {}
+            if(params && params.postAnonymous) {
+                params['userId'] = query.createrId
+            } else {
+                if(params && params.postAnonymous === false){
+                update["$unset"] = {userId: ""}
+                }
+            }
+            update["$set"] = params
+            return await this.updateOne('forum', query, update, {});
+        } catch (error) {
+            throw error;
+        }
+    }
+    async updateForumLikeAndCommentCount(query, update) {
+        try {
+            return await this.updateOne('forum', query, update, {});
+        } catch (error) {
+            throw error;
         }
     }
 }

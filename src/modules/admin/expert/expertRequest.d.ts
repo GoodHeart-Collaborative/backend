@@ -21,6 +21,7 @@ declare namespace AdminExpertRequest {
         sortBy: string
         sortOrder: number
         categoryId: string
+        status: string;
 
     }
 

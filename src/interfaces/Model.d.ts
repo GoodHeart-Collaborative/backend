@@ -126,4 +126,4 @@ declare type ModelNames =
 	'expert_post' |
 	'event' |
 	'event_interest' |
-	'forum_topic'
+	'forum'

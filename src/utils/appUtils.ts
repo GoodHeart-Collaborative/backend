@@ -41,7 +41,7 @@ const createMembersArray = function (members) {
 	try {
 		let membersMembers = []
 		for (const userId of members) {
-			membersMembers.push({userId: userId})
+			membersMembers.push({ userId: userId })
 		}
 		return membersMembers
 	} catch (error) {
@@ -111,12 +111,12 @@ const genRandomString = function (length) {
 
 const getShoutoutCard = function () {
 	let stringArr = ["Happy Birthday! ", "Congratulations! ", "Way to go! ", "Keep on Shining!", "So proud of you!", "Grateful for your passion!", "You go girl!", "You got this!", "Awesome job!"]
-	let response:any = []
+	let response: any = []
 	for (let i = 0; i < stringArr.length; i++) {
 		response.push({
-			id: i+1,
+			id: i + 1,
 			title: stringArr[i],
-			gif: `${environment.SERVER.SERVER_URL}/images/gif_1.pdf`
+			gif: `${environment.SERVER.SERVER_URL}/images/card_${i + 1}.png`
 		})
 	}
 	return response

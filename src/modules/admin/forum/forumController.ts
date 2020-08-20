@@ -27,7 +27,7 @@ class AdminForumController {
         try {
             params["created"] = new Date().getTime()
 
-            const data = await eventDao.insert("forum_topic", params, {});
+            const data = await eventDao.insert("forum", params, {});
             return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED(data);
         } catch (error) {
             throw error;
@@ -197,7 +197,7 @@ class AdminForumController {
                     }
                 }
             })
-            const data = await eventDao.aggreagtionWithPaginateTotal('forum_topic', aggPipe, limit, page, true);
+            const data = await eventDao.aggreagtionWithPaginateTotal('forum', aggPipe, limit, page, true);
             return data;
 
         } catch (error) {
@@ -213,7 +213,7 @@ class AdminForumController {
             const dataToUpdate = {
                 ...params
             }
-            const data = await eventDao.findOneAndUpdate('forum_topic', criteria, dataToUpdate, { new: true })
+            const data = await eventDao.findOneAndUpdate('forum', criteria, dataToUpdate, { new: true })
             if (!data) {
                 // return forumConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
@@ -236,7 +236,7 @@ class AdminForumController {
             const datatoUpdate = {
                 status: params.status
             };
-            const data = await eventDao.findOneAndUpdate('forum_topic', criteria, datatoUpdate, { new: true })
+            const data = await eventDao.findOneAndUpdate('forum', criteria, datatoUpdate, { new: true })
             return forumConstant.MESSAGES.SUCCESS.FORUM_STATUS_UPDATED(data.status);
 
         } catch (error) {
@@ -306,7 +306,7 @@ class AdminForumController {
 
             }
 
-            const data = await eventDao.aggregate('forum_topic', aggPipe, {})
+            const data = await eventDao.aggregate('forum', aggPipe, {})
             return data[0];
         } catch (error) {
             return Promise.reject(error)

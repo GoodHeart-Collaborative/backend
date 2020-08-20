@@ -4,18 +4,11 @@ import * as config from "@config/index";
 
 export const MESSAGES = {
     ERROR: {
-        GRATITUDE_JOURNAL_NOT_FOUND: {
+        FORUM_NOT_FOUND: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-            "message": "Gratitude journal not found.",
-            "type": "GRATITUDE_JOURNAL_NOT_FOUND"
-        },
-        GRATITUDE_JOURNAL_ALREADY_ADDED: (date) => {
-            return {
-                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-                "message": `Gratitude journal already added on ${date}`,
-                "type": "GRATITUDE_JOURNAL_ALREADY_ADDED"
-            }
-        },
+            "message": "Forum not found.",
+            "type": "FORUM_NOT_FOUND"
+        }
     },
     SUCCESS: {
         FORUM_ADDED: (data) => {
@@ -26,21 +19,13 @@ export const MESSAGES = {
                 "data": data
             };
         },
-        GRATITUDE_JOURNAL_DATA_ADDED: (data) => {
+        FORUM_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Gratitude journal data added successfully.",
-                "type": "GRATITUDE_JOURNAL_DATA_ADDED",
+                "message": `Forum updated successful.`,
+                "type": "FORUM_ADDED",
                 "data": data
             };
-        },
-        GRATITUDE_JOURNAL_DATA_UPDATED: (data) => {
-            return {
-                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Gratitude journal data added successfully.",
-                "type": "GRATITUDE_JOURNAL_DATA_UPDATED",
-                "data": data
-            };
-        },
+        }
     }
 };

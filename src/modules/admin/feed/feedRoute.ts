@@ -56,7 +56,7 @@ export const AdminFeedRoute: ServerRoute[] = [
             try {
                 // payload["userId"] = tokenData.userId
                 const result = await adminFeedController.updateStatus(payload);
-                // return responseHandler.sendSuccess(h, result);
+                return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }

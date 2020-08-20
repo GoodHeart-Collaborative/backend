@@ -7,6 +7,8 @@ import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import * as forumValidator from './forumValidator';
+import { userInfo } from "os";
+import { CONSTANT } from "@config/index";
 export const userForumRoutes: ServerRoute[] = [
     {
         method: "POST",
@@ -15,8 +17,12 @@ export const userForumRoutes: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: AdminForumRequest.AddForum = request.payload;
             try {
-                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await userForumController.addForum(payload);
+                if(payload && payload.postAnonymous) {
+                    payload["userId"] = tokenData.userId
+                }
+                payload["createrId"] = tokenData.userId
+                payload["userType"] = CONSTANT.ACCOUNT_LEVEL.USER 
+                let result = await userForumController.addForum(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -40,70 +46,67 @@ export const userForumRoutes: ServerRoute[] = [
             }
         }
     },
-
-    // {
-    //     method: "GET",
-    //     path: `${config.SERVER.API_BASE_URL}/v1/users/forum`,
-    //     handler: async (request: Request, h: ResponseToolkit) => {
-    //         const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-    //         const payload: any = request.payload;
-    //         try {
-    //             appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-    //             const result = await userForumController.GetFormPosts(payload);
-    //             return responseHandler.sendSuccess(h, result);
-    //         } catch (error) {
-    //             return responseHandler.sendError(error);
-    //         }
-    //     },
-    //     config: {
-    //         tags: ["api", "forum"],
-    //         description: "user add forum",
-    //         auth: {
-    //             strategies: ["UserAuth"]
-    //         },
-    //         validate: {
-    //             headers: validator.userAuthorizationHeaderObj,
-    //             payload: forumValidator.getForum,
-    //             failAction: appUtils.failActionFunction
-    //         },
-    //         plugins: {
-    //             "hapi-swagger": {
-    //                 responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-    //             }
-    //         }
-    //     }
-    // },
-
-    // {
-    //     method: "POST",
-    //     path: `${config.SERVER.API_BASE_URL}/v1/user/forum-like`,
-    //     handler: async (request: Request, h: ResponseToolkit) => {
-    //         const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-    //         const payload: AdminForumRequest.AddForum = request.payload;
-    //         try {
-    //             appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-    //             const result = await userForumController.addForum(payload);
-    //             return responseHandler.sendSuccess(h, result);
-    //         } catch (error) {
-    //             return responseHandler.sendError(error);
-    //         }
-    //     },
-    //     config: {
-    //         tags: ["api", "forum"],
-    //         description: "user add forum",
-    //         auth: {
-    //             strategies: ["UserAuth"]
-    //         },
-    //         validate: {
-    //             headers: validator.userAuthorizationHeaderObj,
-    //             payload: forumValidator.addForum,
-    //             failAction: appUtils.failActionFunction
-    //         },
-    //         plugins: {
-    //             "hapi-swagger": {
-    //                 responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-    //             }
-    //         }
-    //     }
-    // },
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/forum`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            const query: any = request.query;
+            try {
+                query["userId"] = tokenData.userId
+                let result = await userForumController.GetFormPosts(query);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "forum"],
+            description: "user get forum",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                query: forumValidator.getForum,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+    {
+        method: "PATCH",
+        path: `${config.SERVER.API_BASE_URL}/v1/user/forums`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
+            const payload = request.payload
+            try {
+                const result = await userForumController.updateForum(payload, tokenData);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "forum"],
+            description: "update user forums",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                payload: forumValidator.updateForum,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
 ];

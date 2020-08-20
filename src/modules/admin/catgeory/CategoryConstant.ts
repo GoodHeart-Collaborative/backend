@@ -38,7 +38,7 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Category successfully added.",
+            "message": "Category has been added successfully.",
             "type": "SUCCESSFULLY_ADDED"
         }
     }

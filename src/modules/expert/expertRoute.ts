@@ -149,8 +149,8 @@ export const userExpertRoute: ServerRoute[] = [
                     limit: Joi.number(),
                     page: Joi.number(),
                     // searchTerm: Joi.string(),
-                    categoryId: Joi.string().required(),
-                    expertId: Joi.string().required(),
+                    // categoryId: Joi.string().required(),
+                    expertId: Joi.string().trim().required().regex(config.CONSTANT.REGEX.MONGO_ID),
                     posted: Joi.string().allow([
                         'lastWeek', 'lastMonth'
                     ]),

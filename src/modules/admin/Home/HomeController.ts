@@ -24,10 +24,10 @@ class AdminHomeController {
             //     return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
             // }
             if (params.postedAt) {
-                params["postedAt"] = moment(new Date(params.postedAt)).format('YYYY-MM-DD')
+                params["postedAt"] = new Date(params.postedAt)
                 // params.postedAt = new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
             } else {
-                params["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
+                params["postedAt"] = new Date()
                 // params.postedAt = new Date()//moment(new Date()).format('YYYY-MM-DD')
             }
             // if (!params.postedAt) {
