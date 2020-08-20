@@ -149,7 +149,10 @@ class ExpertController {
                 _id: params.expertId,
             };
 
-            const data = await expertDao.updateOne('expert', criteria, params, {})
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await expertDao.updateOne('expert', criteria, dataToUpdate, {})
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }

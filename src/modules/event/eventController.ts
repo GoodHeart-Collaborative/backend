@@ -9,6 +9,7 @@ import { eventDao } from "@modules/event/eventDao";
 import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
+import * as moment from 'moment';
 
 class EventController {
 
@@ -109,15 +110,14 @@ class EventController {
             // else {
             //     // for today only 
             //     match['startDate'] = {
-            //         $gt: new Date()
+            //         // params["postedAt"] = moment(para).format('YYYY-MM-DD')
+            //         $gte: moment(new Date()).format('YYYY-MM-DD')
             //     }
             // }
-            console.log('matchmatchmatch', match);
-            aggPipe.push({
-                $sort: {
-                    _id: -1
-                }
-            })
+            console.log('moment(new Date()).format', moment(new Date()).format('YYYY-MM-DD'));
+
+
+
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
@@ -133,6 +133,33 @@ class EventController {
                     { "$sort": { dist: -1 } }
                 )
             }
+            if (longitude != undefined && latitude != undefined) {
+                // pickupLocation.push(latitude, longitude);
+                console.log('pickupLocationpickupLocation', pickupLocation);
+
+                featureAggPipe.push(
+                    {
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
+                    },
+                    { "$sort": { dist: -1 } }
+                )
+            }
+
+            featureAggPipe.push({ $match: match });
+
+
+            aggPipe.push({ $match: match })
+
+            aggPipe.push({
+                $sort: {
+                    _id: -1
+                }
+            })
 
             featureAggPipe.push(
                 {
@@ -171,7 +198,6 @@ class EventController {
                         interestCount: 1,
                         eventCategory: 1,
                         created: 1,
-                        interestData: 1,
                         "isInterest": {
                             $cond: {
                                 if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
@@ -195,7 +221,6 @@ class EventController {
                 {
                     $limit: 5
                 }
-
             );
 
             aggPipe.push({
@@ -229,7 +254,6 @@ class EventController {
                         interestCount: 1,
                         eventCategory: 1,
                         created: 1,
-                        interestData: 1,
                         "isInterest": {
                             $cond: {
                                 if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
@@ -250,6 +274,9 @@ class EventController {
                         // },
                     },
 
+                },
+                {
+                    $skip: 5
                 },
                 {
                     $limit: 5
@@ -276,7 +303,7 @@ class EventController {
             let aggPipe = [];
 
             match['_id'] = appUtils.toObjectId(payload.eventId)
-
+            aggPipe.push({ $match: match })
             aggPipe.push({
                 $lookup: {
                     from: 'users',
