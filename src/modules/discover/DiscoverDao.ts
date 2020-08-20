@@ -87,11 +87,13 @@ export class DiscoverDao extends BaseDao {
                         user: {
                             $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                                 _id: "$followers._id",
+                                discover_status: "$discover_status",
                                 name: { $ifNull: ["$followers.firstName", ""] },
                                 profilePicUrl: "$followers.profilePicUrl",
                                 profession: { $ifNull: ["$followers.profession", ""] }
                             }, {
                                 _id: "$users._id",
+                                discover_status: "$discover_status",
                                 name: { $ifNull: ["$users.firstName", ""] },
                                 profilePicUrl: "$users.profilePicUrl",
                                 profession: { $ifNull: ["$users.profession", ""] }
@@ -190,6 +192,9 @@ export class DiscoverDao extends BaseDao {
                     },
                     user: {
                         _id: "$_id",
+                        discover_status: {
+                            $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
+                        },
                         name: { $ifNull: ["$firstName", ""] },
                         profilePicUrl: "$profilePicUrl",
                         profession: { $ifNull: ["$profession", ""] }

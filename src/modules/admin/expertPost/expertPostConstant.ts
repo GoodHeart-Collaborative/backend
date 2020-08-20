@@ -41,10 +41,14 @@ export const MESSAGES = {
             "message": "Post has been active successfully",
             "type": "DEFAULT"
         },
-        SUCCESSFULLY_UPDATED: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "post has been updated successfully",
-            "type": "DEFAULT"
+        SUCCESSFULLY_UPDATED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "post has been updated successfully",
+                "type": "DEFAULT",
+                data: data
+            }
+
         },
 
         DEFAULT_WITH_DATA: (data) => {

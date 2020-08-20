@@ -149,7 +149,10 @@ class ExpertController {
                 _id: params.expertId,
             };
 
-            const data = await expertDao.updateOne('expert', criteria, params, {})
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await expertDao.updateOne('expert', criteria, dataToUpdate, {})
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
@@ -181,6 +184,48 @@ class ExpertController {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
             }
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async getExpertDetail(payload: AdminExpertRequest.expertDetail) {
+        try {
+            let aggPipe = [];
+            const match: any = {};
+            match['_id'] = appUtils.toObjectId(payload.expertId);
+
+            aggPipe.push({ $match: match })
+            aggPipe.push({
+                $lookup: {
+                    from: 'categories',
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $in: ['$_id', '$$cId']
+                                },
+                                    // {
+                                    //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    // }
+                                ]
+                            }
+                        }
+                    }]
+                },
+            });
+
+            // aggPipe.push({
+            //     $unwind: {
+            //         path: '$categoryData',
+            //         preserveNullAndEmptyArrays: true,
+            //     }
+            // })
+            const data = await expertDao.aggregate('expert', aggPipe, {});
+
+            return data;
         } catch (error) {
             return Promise.reject(error)
         }

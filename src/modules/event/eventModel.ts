@@ -22,6 +22,7 @@ export interface Ievent extends Document {
     interestCount: number;
     eventCategory: string,
     created: number;
+    isFeatured: boolean;
 }
 
 const eventSchema = new Schema({
@@ -35,6 +36,7 @@ const eventSchema = new Schema({
             config.CONSTANT.PRIVACY_STATUS.PUBLIC
         ]
     },
+    isFeatured: { type: Boolean, default: false },
     startDate: { type: Date },
     endDate: { type: Date },
     location: {
