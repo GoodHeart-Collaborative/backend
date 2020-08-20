@@ -192,6 +192,9 @@ export class DiscoverDao extends BaseDao {
                     },
                     user: {
                         _id: "$_id",
+                        discover_status: {
+                            $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
+                        },
                         name: { $ifNull: ["$firstName", ""] },
                         profilePicUrl: "$profilePicUrl",
                         profession: { $ifNull: ["$profession", ""] }

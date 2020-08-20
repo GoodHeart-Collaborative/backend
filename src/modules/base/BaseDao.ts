@@ -200,7 +200,7 @@ export class BaseDao {
 
 			return {
 				list: data,
-				total: total,
+				totalNoPost: total,
 				// page: page,
 				// total_page: total_page,
 				next_hit: next_hit,
