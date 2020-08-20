@@ -59,7 +59,6 @@ let adminUpdateExpertPostId = Joi.object({
 
 
 let adminUpdateExpertPost = Joi.object({
-    expertId: Joi.string(),
     categoryId: Joi.string(),
     topic: Joi.string().allow(''),
     price: Joi.number(),

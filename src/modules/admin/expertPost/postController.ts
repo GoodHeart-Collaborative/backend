@@ -262,16 +262,19 @@ class ExpertPostController {
 
     async updatePost(params: AdminExpertPostRequest.adminUpdateExpertPost) {
         try {
+            console.log('paramsparamsparams', params);
+
             const criteria = {
                 _id: params.postId
             };
             const datatoUpdate = {
                 ...params
             };
-            const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
+            const data = await expertPostDao.findOneAndUpdate('expert_post', criteria, datatoUpdate, { new: true })
             if (data) {
-                expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+                expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
             }
+            return;
         } catch (error) {
             throw error;
         }

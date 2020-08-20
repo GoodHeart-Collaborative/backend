@@ -9,6 +9,7 @@ import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import * as expertPostValidator from './expertPostValidator'
+import { request } from "http";
 export const expertPostRoute: ServerRoute[] = [
     {
         method: "POST",
@@ -82,7 +83,10 @@ export const expertPostRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: AdminExpertPostRequest.adminUpdateExpertPost = request.params;
+            const payload = {
+                ...request.payload,
+                ...request.params
+            }
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertPostController.updatePost(payload);
