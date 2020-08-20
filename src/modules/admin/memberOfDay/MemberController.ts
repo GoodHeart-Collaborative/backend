@@ -76,18 +76,61 @@ class MemberController {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
-            if (searchTerm) {
-                match["$or"] = [
-                    { "firstName": { "$regex": searchTerm, "$options": "-i" } },
-                    { "lastName": { "$regex": searchTerm, "$options": "-i" } },
-                    { "email": { "$regex": searchTerm, "$options": "-i" } },
+            aggPipe.push({
+                "$project": {
+                    isAppleLogin: 1,
+                    isAppleVerified: 1,
+                    isMobileVerified: 1,
+                    isEmailVerified: 1,
+                    isFacebookLogin: 1,
+                    isGoogleLogin: 1,
+                    firstName: 1,
+                    lastName: 1,
+                    email: 1,
+                    countryCode: 1,
+                    mobileNo: 1,
+                    fullMobileNo: 1,
+                    gender: 1,
+                    dob: 1,
+                    profilePicUrl: 1,
+                    address: 1,
+                    status: 1,
+                    preference: 1,
+                    industryType: 1,
+                    experience: 1,
+                    about: 1,
+                    createdAt: 1,
+                    countMember: 1,
+                    memberCreatedAt: 1,
+                    isMemberOfDay: 1,
+                    likeCount: 1,
+                    commentCount: 1,
+                    adminStatus: 1,
+                    fullName: {
+                        $cond: {
+                            if: {
+                                $eq: ['$lastName', null]
+                            },
+                            then: '$firstName',
+                            else: { $concat: ['$firstName', ' ', '$lastName'] }
+                        }
+                    }
+                }
+            });
 
+            if (searchTerm) {
+                const reg = new RegExp(searchTerm, 'ig');
+                match["$or"] = [
+                    { firstName: reg },
+                    { lastName: reg },
+                    { email: reg },
+                    { fullName: reg }
                 ];
             }
 
-            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
-            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
-            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+            if (fromDate && toDate) { match['memberCreatedAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['memberCreatedAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['memberCreatedAt'] = { $lte: toDate }; }
 
             aggPipe.push({ "$match": match });
 
@@ -95,10 +138,10 @@ class MemberController {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
                 }
-                if(sortBy ==='createdAt'){
+                if (sortBy === 'createdAt') {
                     sort = { "createdAt": sortOrder };
                 }
-                 else {
+                else {
                     sort = { "memberCreatedAt": sortOrder };
                 }
             } else {
