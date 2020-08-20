@@ -195,7 +195,7 @@ class ExpertController {
             aggPipe.push({ $match: match })
             aggPipe.push({
                 $lookup: {
-                    from: 'catgeories',
+                    from: 'categeories',
                     let: { cId: '$categoryId' },
                     as: 'categoryData',
                     pipeline: [{
