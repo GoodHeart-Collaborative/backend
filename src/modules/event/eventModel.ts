@@ -8,7 +8,7 @@ import * as config from "@config/index";
 export interface Ievent extends Document {
     userId: string,
     // categoryId: string;
-    name: string;
+    // name: string;
     location: any;
     title: string,
     privacy: string;
@@ -23,12 +23,15 @@ export interface Ievent extends Document {
     eventCategory: string,
     created: number;
     isFeatured: boolean;
+    eventCategoryType: string;
+    eventCategoryDisplayName: string;
+    eventCategoryId: number;
 }
 
 const eventSchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, required: true, ref: 'users' },
+    userId: { type: Schema.Types.ObjectId, required: true, ref: 'users', index: true },
     // categoryId:{type:Schema.Types.ObjectId },
-    name: { type: String },
+    // name: { type: String, index: true },
     privacy: {
         type: String, enum: [
             config.CONSTANT.PRIVACY_STATUS.PRIVATE,
@@ -36,14 +39,14 @@ const eventSchema = new Schema({
             config.CONSTANT.PRIVACY_STATUS.PUBLIC
         ]
     },
-    isFeatured: { type: Boolean, default: false },
-    startDate: { type: Date },
-    endDate: { type: Date },
+    isFeatured: { type: Boolean, default: false, index: true },
+    startDate: { type: Date, index: true },
+    endDate: { type: Date, indx: true },
     location: {
         type: { type: String, default: "Point" },
         coordinates: [Number],
     },
-    address: { type: String, trim: true, required: true },
+    address: { type: String, trim: true, required: true, index: true },
     price: { type: Number, default: 0 },
     title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
@@ -61,12 +64,29 @@ const eventSchema = new Schema({
     eventUrl: { type: String },
     allowSharing: { type: Boolean },
     goingCount: { type: Number, default: 0 },
-    eventCategory: {
+
+    eventCategoryType: {
         type: String, enum: [
-            config.CONSTANT.EVENT_CATEGORY.CLASSES,
-            config.CONSTANT.EVENT_CATEGORY.EVENTS,
-            config.CONSTANT.EVENT_CATEGORY.MEETUP,
-            config.CONSTANT.EVENT_CATEGORY.TRAINING
+            config.CONSTANT.EVENT_CATEGORY.CLASSES.TYPE,
+            config.CONSTANT.EVENT_CATEGORY.EVENTS.TYPE,
+            config.CONSTANT.EVENT_CATEGORY.MEETUP.TYPE,
+            config.CONSTANT.EVENT_CATEGORY.TRAINING.TYPE
+        ]
+    },
+    eventCategoryDisplayName: {
+        type: String, enum: [
+            config.CONSTANT.EVENT_CATEGORY.CLASSES.DISPLAY_NAME,
+            config.CONSTANT.EVENT_CATEGORY.EVENTS.DISPLAY_NAME,
+            config.CONSTANT.EVENT_CATEGORY.MEETUP.DISPLAY_NAME,
+            config.CONSTANT.EVENT_CATEGORY.TRAINING.DISPLAY_NAME
+        ]
+    },
+    eventCategoryId: {
+        type: Number, index: true, enum: [
+            config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+            config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+            config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+            config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
         ]
     },
     interestCount: { type: Number, default: 0 },

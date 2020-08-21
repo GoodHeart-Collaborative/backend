@@ -45,7 +45,7 @@ let getExpertPosts = Joi.object({
     fromDate: Joi.date(),
     toDate: Joi.date(),
     sortBy: Joi.string().valid([
-        'createdAt'
+        'createdAt', 'topic'
     ]),
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE

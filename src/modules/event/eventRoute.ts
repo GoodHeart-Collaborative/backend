@@ -15,7 +15,7 @@ export const userEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/event`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload: any = request.payload;
+            const payload: UserEventRequest.AddEvent = request.payload;
             payload['userId'] = tokenData['userId']
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
@@ -102,15 +102,15 @@ export const userEventRoutes: ServerRoute[] = [
                 query: {
                     // pageNo: Joi.number().required(),
                     // limit: Joi.number().required(),
-                    searchKey: Joi.string().optional().description("Search by Name"),
+                    searchKey: Joi.string().optional().description("Search by Address"),
                     longitude: Joi.number().optional(),
                     latitude: Joi.number().optional(),
                     distance: Joi.number().optional(),
-                    eventCategory: Joi.number().allow([
-                        config.CONSTANT.EVENT_CATEGORY.CLASSES,
-                        config.CONSTANT.EVENT_CATEGORY.EVENTS,
-                        config.CONSTANT.EVENT_CATEGORY.MEETUP,
-                        config.CONSTANT.EVENT_CATEGORY.TRAINING,
+                    eventCategoryId: Joi.number().allow([
+                        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+                        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+                        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+                        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
                     ]),
                     date: Joi.string().allow([
                         'today', 'tomorrow', 'weekend', 'month'
@@ -132,10 +132,10 @@ export const userEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/events/detail/{eventId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload = request.query;
+            const payload = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await eventController.getEventDetail(payload);
+                const result = await eventController.getEventDetail(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -162,7 +162,43 @@ export const userEventRoutes: ServerRoute[] = [
         }
     },
 
-
+    {
+        method: "PATCH",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/event/{eventId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            const payload = {
+                ...request.payload,
+                ...request.params
+            };
+            payload['userId'] = tokenData['userId']
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await eventController.updateEvent(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "events"],
+            description: "add events",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                params: eventValidator.eventId,
+                payload: eventValidator.addEvents,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
 
 ];
 

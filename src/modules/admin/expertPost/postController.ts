@@ -97,8 +97,8 @@ class ExpertPostController {
     async getExpertPosts(params: AdminExpertPostRequest.getExpert) {
         try {
             const pageNo = params.page;
-            const { expertId, categoryId, limit, contentId, searchTerm, fromDate, toDate } = params;
-
+            const { expertId, categoryId, limit, contentId, searchTerm, fromDate, toDate, sortBy, sortOrder } = params;
+            let sort = {};
             let aggPipe = [];
             const match: any = {};
 
@@ -121,14 +121,25 @@ class ExpertPostController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-            let query;
+            aggPipe.push({ $match: match })
+
+            if (sortBy && sortOrder) {
+                if (sortBy === "topic") {
+                    sort = { "topic": sortOrder };
+                } else {
+                    sort = { "createdAt": sortOrder };
+                }
+            } else {
+                sort = { "createdAt": -1 };
+            }
 
             // if (contentId) {
             //     match.contentId = contentId;
             //     // match.status = config.CONSTANT.STATUS.ACTIVE;
             //     // match.expertId = appUtils.toObjectId(expertId)
             // }
-            aggPipe.push({ $match: match })
+            aggPipe.push({ "$sort": sort });
+
 
             if (!contentId) {
                 aggPipe.push({
