@@ -15,6 +15,7 @@ export interface IExpert extends Document {
     updatedAt: Date
     postedAt: String,
     type: number;
+    created: number;
     mediaType: number,
     // mediaUrl: number,
     // contentId: number
@@ -43,11 +44,11 @@ const expertSchema = new Schema({
             // config.INDUSTRIES.Law_Enforcement,
             // config.INDUSTRIES.Nonprofit,
             // config.INDUSTRIES.Social_And_Community_Services,
-        config.INDUSTRIES.NONPROFIT,
-        config.INDUSTRIES.EMERGENCY_SERVICES,
-        config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
-        config.INDUSTRIES.LAW_ENFORCEMENT,
-        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+            config.INDUSTRIES.NONPROFIT,
+            config.INDUSTRIES.EMERGENCY_SERVICES,
+            config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+            config.INDUSTRIES.LAW_ENFORCEMENT,
+            config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
         ]
     },
     // bio: { type: String },
@@ -56,6 +57,7 @@ const expertSchema = new Schema({
             'Junior', 'Mid', 'Senior',
         ]
     },
+    created: { type: Number },
     categoryId: [{ type: Schema.Types.ObjectId }],
     price: { type: Number, default: 0 },
     // contentId: {
@@ -100,7 +102,7 @@ const expertSchema = new Schema({
     profilePicUrl: [Schema.Types.String],
     // mediaUrl: { type: String },
     // thumbnailUrl: { type: String },
-    created: { type: Number }
+
 }, {
     versionKey: false,
     timestamps: true

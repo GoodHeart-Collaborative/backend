@@ -37,6 +37,7 @@ class ExpertPostController {
             params['contentType'] = result['TYPE']
             params['contentDisplayName'] = result['DISPLAY_NAME'];
 
+            params['created'] = new Date().getTime();
             const data = await expertPostDao.insert("expert_post", params, {});
 
             return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;

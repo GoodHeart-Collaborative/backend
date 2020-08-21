@@ -75,7 +75,7 @@ const expertPostSchema = new Schema({
     postAt: { type: String, trim: true },
     mediaUrl: { type: String },
     thumbnailUrl: { type: String },
-    created: { type: Number, default: new Date() },
+    created: { type: Number },
 
 }, {
     versionKey: false,
