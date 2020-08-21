@@ -457,11 +457,6 @@ export class ExpertDao extends BaseDao {
                     }
                 },
                 {
-                    $sort: {
-                        _id: -1
-                    }
-                },
-                {
                     $lookup: {
                         from: 'categories',
                         let: { cId: '$categoryId' },
@@ -527,6 +522,11 @@ export class ExpertDao extends BaseDao {
             expertPostspipeline = [
                 {
                     $match: match
+                },
+                {
+                    $sort: {
+                        _id: -1
+                    }
                 },
                 {
                     $lookup: {
