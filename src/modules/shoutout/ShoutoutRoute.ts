@@ -69,5 +69,35 @@ export const shoutoutRoute: ServerRoute[] = [
                 }
             }
         }
+    },
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/shoutout/myConnection`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            try {
+                const result = await shoutoutController.getShoutouMyConnection({ userId: tokenData.userId });
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "shoutout"],
+            description: "get shoutout list",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
     }
+    
 ];

@@ -14,6 +14,7 @@ export interface Idiscover extends Document {
 const discoverSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
     followerId: { type: Schema.Types.ObjectId, ref: 'users' },
+    members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
     discover_status: {
         type: Number,
         enum: [

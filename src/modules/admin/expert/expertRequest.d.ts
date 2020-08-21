@@ -21,6 +21,7 @@ declare namespace AdminExpertRequest {
         sortBy: string
         sortOrder: number
         categoryId: string
+        status: string;
 
     }
 
@@ -39,6 +40,10 @@ declare namespace AdminExpertRequest {
     export interface updateStatus {
         expertId: string;
         status: string;
+    }
+
+    export interface expertDetail {
+        expertId: string;
     }
 }
 

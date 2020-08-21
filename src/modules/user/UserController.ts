@@ -18,7 +18,10 @@ import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { Config } from "aws-sdk";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
+// import {} from '@modules/'
+import { forumtopicDao } from '@modules/forum/forumDao';
 import { discoverDao } from "../discover/DiscoverDao";
+import { CONSTANT } from "@config/index";
 
 var ObjectID = require('mongodb').ObjectID;
 export class UserController {
@@ -584,10 +587,18 @@ export class UserController {
 	/**
 	 * @function profile
 	 */
-	async profile(tokenData: TokenData) {
+	async profile(tokenData: TokenData, userId) {
+		console.log('userIduserIduserId', userId);
+
 		try {
-			delete tokenData.deviceId, delete tokenData.deviceToken, delete tokenData.platform, delete tokenData.accountLevel;
-			return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+			if (tokenData.userId === userId || !userId) {
+				delete tokenData.deviceId, delete tokenData.deviceToken, delete tokenData.platform, delete tokenData.accountLevel;
+				return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+			} else {
+				const data = await userDao.findOne('users', { _id: userId }, { deviceId: 0, deviceToken: 0 }, {})
+				return userConstant.MESSAGES.SUCCESS.PROFILE(data);
+			}
+
 		} catch (error) {
 			throw error;
 		}
@@ -892,19 +903,37 @@ export class UserController {
 
 	async getProfileHome(query, tokenData) {
 		try {
-			query['userId'] = query.userId ? query.userId : tokenData['userId'];
-
-
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
-				// getData = {}
-				// for now 
-				getData = await gratitudeJournalDao.userProfileHome(query);
-
+				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
-				getData = await discoverDao.getDiscoverData(query, { userId: query.userId }, true)
+				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
+				if(query && query.userId && getData && getData.data && getData.data.length > 0) {
+					for (let i = 0; i < getData.data.length; i++) {
+						let members = await userDao.getMembers({ followerId: getData.data[i].user._id.toString(), userId: tokenData.userId})
+						if(members) {
+							getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
+							getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
+						} else {
+							let params:any = {}
+							params = {
+								pageNo: 1,
+								limit: 1,
+								followerId: getData.data[i].user._id.toString()
+							}
+							let getDataa = await discoverDao.getDiscoverData(params, {userId: tokenData.userId}, false)
+								if (getDataa && getDataa.total && getDataa.total > 0) {
+									getData.data[i].user.discover_status = getDataa.data[0].user.discover_status
+									getData.data[i].discover_status = getDataa.data[0].user.discover_status
+								} else {
+									getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+									getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+								}
+						}
+					  }
+				}
 			} else {
-				getData = await gratitudeJournalDao.userProfileHome(query)
+				getData = await gratitudeJournalDao.userProfileHome(query, tokenData)
 			}
 			return getData;
 		} catch (error) {

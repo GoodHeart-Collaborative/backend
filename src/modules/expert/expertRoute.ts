@@ -21,6 +21,8 @@ export const userExpertRoute: ServerRoute[] = [
             try {
                 payload["userId"] = tokenData.userId
                 const result = await expertController.getExperts(payload);
+                console.log('resultresultresultresult', result);
+
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -48,10 +50,9 @@ export const userExpertRoute: ServerRoute[] = [
             }
         }
     },
-
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/category`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/categoriesList`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload = request.query;
@@ -74,7 +75,7 @@ export const userExpertRoute: ServerRoute[] = [
                 query: {
                     limit: Joi.number(),
                     page: Joi.number(),
-                    searchTerm: Joi.string()
+                    searchTerm: Joi.string(),
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -85,8 +86,43 @@ export const userExpertRoute: ServerRoute[] = [
             }
         }
     },
-
-
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/category/ExpertsList`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
+            const payload = request.query;
+            try {
+                payload["userId"] = tokenData.userId
+                const result = await expertController.getcategoryExperts(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "experts"],
+            description: "get experts and category",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                query: {
+                    limit: Joi.number(),
+                    page: Joi.number(),
+                    searchTerm: Joi.string(),
+                    categoryId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/users/experts/detail`,
@@ -113,8 +149,17 @@ export const userExpertRoute: ServerRoute[] = [
                     limit: Joi.number(),
                     page: Joi.number(),
                     // searchTerm: Joi.string(),
-                    categoryId: Joi.string().required(),
-                    expertId: Joi.string().required()
+                    // categoryId: Joi.string().required(),
+                    expertId: Joi.string().trim().required().regex(config.CONSTANT.REGEX.MONGO_ID),
+                    posted: Joi.string().allow([
+                        'lastWeek', 'lastMonth'
+                    ]),
+                    contentType: Joi.number().allow([
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE,
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.IMAGE.VALUE,
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.VIDEO.VALUE,
+                        config.CONSTANT.EXPERT_CONTENT_TYPE.VOICE_NOTE.VALUE
+                    ])
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -125,8 +170,6 @@ export const userExpertRoute: ServerRoute[] = [
             }
         }
     },
-
-
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/users/experts-post/detail`,
@@ -152,6 +195,43 @@ export const userExpertRoute: ServerRoute[] = [
                 headers: validator.userAuthorizationHeaderObj,
                 query: {
                     postId: Joi.string().required()
+                },
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/experts-search`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
+            const payload = request.query;
+            try {
+                payload["userId"] = tokenData.userId
+                const result = await expertController.expertsListSearch(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "experts"],
+            description: "get experts and category",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                query: {
+                    searchTerm: Joi.string().required(),
+                    limit: Joi.number(),
+                    page: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
             },

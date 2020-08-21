@@ -17,6 +17,7 @@ export interface IGratitudeJournal extends Document {
     createdAt: Date,
     updatedAt: Date
     postedAt: String,
+    postAt: String,
     type: number;
     mediaType: number,
     mediaUrl: number
@@ -35,8 +36,8 @@ const gratitudeJournalSchema = new Schema({
             config.CONSTANT.STATUS.DELETED
         ],
         default: config.CONSTANT.STATUS.ACTIVE
-	},
-	privacy: {
+    },
+    privacy: {
         type: String,
         enum: [
             config.CONSTANT.PRIVACY_STATUS.PRIVATE,

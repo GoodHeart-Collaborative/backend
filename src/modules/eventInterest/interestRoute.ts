@@ -10,7 +10,7 @@ import * as interestValidator from './interestValidator';
 export const EventInterestRoute: ServerRoute[] = [
     {
         method: "POST",
-        path: `${config.SERVER.API_BASE_URL}/v1/user/event-interest`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/event-interest`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: EventInterest.AddInterest = request.payload;
@@ -18,6 +18,8 @@ export const EventInterestRoute: ServerRoute[] = [
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await interestController.addInterests(payload);
+                console.log('resultresultresult', result);
+
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

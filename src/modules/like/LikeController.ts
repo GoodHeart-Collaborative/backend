@@ -12,6 +12,9 @@ import { userDao } from "../user/UserDao";
 import * as appUtils from '../../utils/appUtils'
 import * as homeConstants from "../home/HomeConstant";
 import { commentDao } from "../comment/CommentDao";
+import { expertDao } from "@modules/admin/expert/expertDao";
+import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
+import { expert } from "@modules/admin/expert/expertModel";
 
 class LikeController {
 
@@ -147,6 +150,7 @@ class LikeController {
     //     }
     async addLike(params: LikeRequest.AddLikeRequest) {
         try {
+
             let getPost: any = {}
             let query: any = {}
             let data: any = {};
@@ -158,7 +162,12 @@ class LikeController {
                 getPost = await userDao.checkUser(query)
             } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                 getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
-            } else {
+            } else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
+                getPost = await expertPostDao.checkExpertPost(query);
+                console.log('getPost,params.type ', params.type, getPost);
+
+            }
+            else {
                 getPost = await homeDao.checkHomePost(query)
             }
             if (getPost) {
@@ -195,7 +204,11 @@ class LikeController {
                     data = await userDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
                 } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                     data = await gratitudeJournalDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
-                } else {
+                }
+                else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
+                    data = await expertPostDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
+                }
+                else {
                     data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })
                 }
             }

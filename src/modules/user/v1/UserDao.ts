@@ -6,6 +6,7 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
 import { ElasticSearch } from "@lib/ElasticSearch";
 import * as appUtils from '@utils/appUtils'
+import * as mongoose from "mongoose";
 
 
 const elasticSearch = new ElasticSearch();
@@ -101,7 +102,46 @@ export class UserDao extends BaseDao {
 					as: "commentData",
 				}
 			})
-            aggPipe.push({ "$addFields": { created: { "$subtract": ["$memberCreatedAt", new Date("1970-01-01")] } } });
+			aggPipe.push({ "$addFields": { created: { "$subtract": ["$memberCreatedAt", new Date("1970-01-01")] } } });
+			aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$_id", "user": mongoose.Types.ObjectId(userId.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                        $and: [
+                                            {
+                                                $eq: ["$followerId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$userId", "$$users"]
+                                            }
+                                        ]
+                                        },
+                                        {
+                                        $and: [
+                                            {
+                                                $eq: ["$userId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$followerId", "$users"]
+                                            }
+                                        ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+			aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+			
 			aggPipe.push({
 				$project:
 				{
@@ -112,9 +152,13 @@ export class UserDao extends BaseDao {
 					createdAt: 1,
 					user : {
 						_id: "$_id",
-						name: { $ifNull:["$firstName", ""]},
+						industryType: "$industryType",
+						myConnection: "$myConnection",
+						experience: "$experience",
+						discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+						name: { $concat: [ { $ifNull: ["$firstName", ""] }, " ",  { $ifNull: ["$lastName", ""]} ]},
 						profilePicUrl: "$profilePicUrl",
-						profession: "$profession",
+						profession: { $ifNull: ["$profession", ""] }
 					},
 					isComment: {
 						$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
@@ -122,7 +166,6 @@ export class UserDao extends BaseDao {
 					isLike:
 					{
 						$cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
-						// $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId.userId)] }, then: true, else: false }
 					}
 				}
 			})

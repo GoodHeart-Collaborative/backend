@@ -119,6 +119,7 @@ const userSchema = new Schema({
 		]
 	}, // Free(Default rakho)
 	memberShipStatus: { type: String },
+	myConnection: { type: Number, default: 0 },
 	emailOtp: { type: Number },
 	preference: { type: String },
 	industryType: {
@@ -134,6 +135,7 @@ const userSchema = new Schema({
 	},
 	// isAdminVerified: { type: Boolean, default: false },
 	// isAdminRejected: { type: Boolean, default: false },
+
 	adminStatus: {
 		type: String, enum: [
 			config.CONSTANT.USER_ADMIN_STATUS.PENDING,
@@ -152,6 +154,7 @@ const userSchema = new Schema({
 	countMember: { type: Number, default: 0 },
 	memberCreatedAt: { type: Date },
 	isMemberOfDay: { type: Boolean, default: false },
+    members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
 	about: { type: String },
 	userPrivacy: {
 

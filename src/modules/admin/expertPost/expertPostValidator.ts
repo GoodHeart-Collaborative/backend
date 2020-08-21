@@ -45,7 +45,7 @@ let getExpertPosts = Joi.object({
     fromDate: Joi.date(),
     toDate: Joi.date(),
     sortBy: Joi.string().valid([
-        'createdAt'
+        'createdAt', 'topic'
     ]),
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
@@ -59,7 +59,6 @@ let adminUpdateExpertPostId = Joi.object({
 
 
 let adminUpdateExpertPost = Joi.object({
-    expertId: Joi.string(),
     categoryId: Joi.string(),
     topic: Joi.string().allow(''),
     price: Joi.number(),

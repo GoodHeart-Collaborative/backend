@@ -103,7 +103,7 @@ export const expertRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 params: expertValidator.validateExpertId,
-                payload: expertValidator.updateExpertPost,
+                payload: expertValidator.updateExpert,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -147,6 +147,41 @@ export const expertRoute: ServerRoute[] = [
             }
         }
     },
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/expert/{expertId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload: AdminExpertRequest.expertDetail = request.params;
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await expertController.getExpertDetail(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "expert"],
+            description: "get expert detail",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: expertValidator.validateExpertId,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
+
 ];
 
 

@@ -18,7 +18,7 @@ import * as randomstring from "randomstring";
 import * as path from "path";
 import * as TinyURL from "tinyurl";
 import * as validator from "validator";
-
+import * as environment from '@config/environment'
 import * as config from "@config/index";
 import { logger } from "@lib/logger";
 const TAG = "rcc-uploads";
@@ -41,7 +41,7 @@ const createMembersArray = function (members) {
 	try {
 		let membersMembers = []
 		for (const userId of members) {
-			membersMembers.push({userId: userId})
+			membersMembers.push({ userId: userId })
 		}
 		return membersMembers
 	} catch (error) {
@@ -107,6 +107,19 @@ const genRandomString = function (length) {
 	return crypto.randomBytes(Math.ceil(length / 2))
 		.toString("hex") /** convert to hexadecimal format */
 		.slice(0, length);   /** return required number of characters */
+};
+
+const getShoutoutCard = function () {
+	let stringArr = ["Happy Birthday! ", "Congratulations! ", "Way to go! ", "Keep on Shining!", "So proud of you!", "Grateful for your passion!", "You go girl!", "You got this!", "Awesome job!"]
+	let response: any = []
+	for (let i = 0; i < stringArr.length; i++) {
+		response.push({
+			id: i + 1,
+			title: stringArr[i],
+			gif: `${environment.SERVER.SERVER_URL}/images/card_${i + 1}.png`
+		})
+	}
+	return response
 };
 
 const encryptHashPassword = function (password: string, salt: string) {
@@ -636,5 +649,6 @@ export {
 	generatePassword,
 	mailAttachments,
 	consolelog,
-	generateOtp
+	generateOtp,
+	getShoutoutCard
 };

@@ -45,6 +45,11 @@ let validateGetExpert = Joi.object({
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
     ]),
+    status: Joi.string().valid([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED,
+    ]),
     categoryId: Joi.string().trim()
 
 }).unknown()
@@ -55,7 +60,7 @@ let validateExpertId = Joi.object({
 }).unknown()
 
 
-let updateExpertPost = Joi.object({
+let updateExpert = Joi.object({
     categoryId: Joi.array().items(Joi.string()).required(),
     name: Joi.string().required(),
     email: Joi.string().required(),
@@ -97,6 +102,6 @@ export {
     validaExpertAdd,
     validateGetExpert,
     validateExpertId,
-    updateExpertPost,
+    updateExpert,
     updateStatus
 };

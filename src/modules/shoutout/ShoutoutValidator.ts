@@ -5,6 +5,11 @@ import * as config from "@config/index";
 let validateAddShoutout = Joi.object({
     description: Joi.string().required(),
     title: Joi.string().required(),
+    gif: Joi.string().optional(),
+    privacy: Joi.string().allow([
+        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+    ]).required(),
     members: Joi.array().items(Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID)).required()
 }).unknown()
 
