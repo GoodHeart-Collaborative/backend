@@ -62,6 +62,11 @@ class ExpertController {
             } else {
                 sort = { "createdAt": -1 };
             }
+            aggPipe.push({
+                $project: {
+
+                }
+            })
             if (searchTerm) {
                 match["$or"] = [
                     { "name": { "$regex": searchTerm, "$options": "-i" } },
@@ -112,7 +117,12 @@ class ExpertController {
                     pipeline: [{
                         $match: {
                             $expr: {
-                                "$eq": ['$expertId', '$$eId'],
+                                $and: [{
+                                    "$eq": ['$expertId', '$$eId'],
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
                             }
                         }
                     }],
