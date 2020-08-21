@@ -221,7 +221,7 @@ const HOME_TYPES = {
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
 		TYPE: 'video',
-		VALUE: 1,
+		VALUE: 2,
 		DISPLAY_NAME: 'VIDEO'
 	},
 	ARTICLE: {
@@ -231,7 +231,7 @@ const EXPERT_CONTENT_TYPE = {
 	},
 	IMAGE: {
 		TYPE: 'image',
-		VALUE: 3,
+		VALUE: 1,
 		DISPLAY_NAME: 'IMAGE'
 	},
 	VOICE_NOTE: {
