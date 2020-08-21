@@ -72,5 +72,13 @@ class ExpertController {
             return Promise.reject(error)
         }
     }
+
+    async expertsListSearch(payload) {
+        try {
+            // const {}
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 }
 export const expertController = new ExpertController();

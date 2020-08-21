@@ -11,6 +11,14 @@ export class DiscoverDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
+            if(user) {
+                match["$nor"] = [
+                    { "userId": await appUtils.toObjectId(userId.userId), "followerId": await appUtils.toObjectId(user) }, 
+                    { "userId": await appUtils.toObjectId(user), "followerId": await appUtils.toObjectId(userId.userId) }
+                ];
+                userId.userId = user
+            }
+
             userId = await appUtils.toObjectId(userId.userId)
             if (_id) {
                 aggPipe.push({ "$match": { "_id": _id } })
@@ -24,11 +32,21 @@ export class DiscoverDao extends BaseDao {
                     ];
                     match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
-                    match["followerId"] = userId
+                    // match["followerId"] = userId
+                    if(followerId) {
+                        match["$or"] = [
+                            { "userId": userId, "followerId": await appUtils.toObjectId(followerId) }, 
+                            { "userId": await appUtils.toObjectId(followerId), "followerId": userId }
+                        ];
+                        // match["userId"] = await appUtils.toObjectId(followerId)
+                    }
                     match['discover_status'] = { $ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT }
                 }
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
+            if(discover_status) {
+                match["discover_status"] = discover_status
+            }
             aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {
@@ -57,12 +75,20 @@ export class DiscoverDao extends BaseDao {
                         user: {
                             $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                                 _id: "$followers._id",
-                                name: { $ifNull: ["$followers.firstName", ""] },
+                                industryType: "$followers.industryType",
+                                myConnection: "$followers.myConnection",
+                                experience: "$followers.experience",
+                                discover_status: "$discover_status",
+                                name: { $concat: [ { $ifNull: ["$followers.firstName", ""] }, " ",  { $ifNull: ["$followers.lastName", ""]} ]},
                                 profilePicUrl: "$followers.profilePicUrl",
                                 profession: { $ifNull: ["$followers.profession", ""] }
                             }, {
                                 _id: "$users._id",
-                                name: { $ifNull: ["$users.firstName", ""] },
+                                industryType: "$users.industryType",
+                                myConnection: "$users.myConnection",
+                                experience: "$users.experience",
+                                discover_status: "$discover_status",
+                                name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
                                 profilePicUrl: "$users.profilePicUrl",
                                 profession: { $ifNull: ["$users.profession", ""] }
                             }]
@@ -73,6 +99,10 @@ export class DiscoverDao extends BaseDao {
                     $project:
                     {
                         _id: "$user._id",
+                        industryType: "$users.industryType",
+                        myConnection: "$users.myConnection",
+                        experience: "$users.experience",
+                        discover_status: "$users.discover_status",
                         name: "$user.name",
                         profilePicUrl: "$user.profilePicUrl",
                         profession: "$user.profession"
@@ -87,20 +117,25 @@ export class DiscoverDao extends BaseDao {
                         user: {
                             $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                                 _id: "$followers._id",
+                                industryType: "$followers.industryType",
+                                myConnection: "$followers.myConnection",
+                                experience: "$followers.experience",
                                 discover_status: "$discover_status",
-                                name: { $ifNull: ["$followers.firstName", ""] },
+                                name: { $concat: [ { $ifNull: ["$followers.firstName", ""] }, " ",  { $ifNull: ["$followers.lastName", ""]} ]},
                                 profilePicUrl: "$followers.profilePicUrl",
                                 profession: { $ifNull: ["$followers.profession", ""] }
                             }, {
                                 _id: "$users._id",
+                                industryType: "$users.industryType",
+                                myConnection: "$users.myConnection",
+                                experience: "$users.experience",
                                 discover_status: "$discover_status",
-                                name: { $ifNull: ["$users.firstName", ""] },
+                                name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
                                 profilePicUrl: "$users.profilePicUrl",
                                 profession: { $ifNull: ["$users.profession", ""] }
                             }]
                         },
                         created: 1
-                        // createdAt: 1,
                     }
                 })
             }
@@ -139,6 +174,7 @@ export class DiscoverDao extends BaseDao {
                 )
             }
             userId = await appUtils.toObjectId(userId.userId)
+            aggPipe.push({ "$match": { userId: { "$ne": userId } } });
             if (_id) {
                 aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
                 pageNo = 1

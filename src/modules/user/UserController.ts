@@ -910,8 +910,6 @@ export class UserController {
 				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
 				if(query && query.userId && getData && getData.data && getData.data.length > 0) {
 					for (let i = 0; i < getData.data.length; i++) {
-						// if(tokenData.userId !== getData.data[i].user._id.toString()) {
-							// let members = await discoverDao.getMembers({_id: getData.data[i]._id, userId: query.userId, followerId: tokenData.userId})
 						let members = await userDao.getMembers({ followerId: getData.data[i].user._id.toString(), userId: tokenData.userId})
 						if(members) {
 							getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
@@ -932,7 +930,6 @@ export class UserController {
 									getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
 								}
 						}
-						// } 
 					  }
 				}
 			} else {

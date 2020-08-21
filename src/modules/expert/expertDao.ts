@@ -524,6 +524,11 @@ export class ExpertDao extends BaseDao {
                     $match: match
                 },
                 {
+                    $sort: {
+                        _id: -1
+                    }
+                },
+                {
                     $lookup: {
                         from: 'likes',
                         let: { pId: '$_id', uId: appUtils.toObjectId(payload.userId), },
@@ -638,6 +643,7 @@ export class ExpertDao extends BaseDao {
                     topic: 1,
                     description: 1,
                     type: 1,
+                    created: 1,
                     contentDisplayName: 1,
                     createdAt: 1,
                     updatedAt: 1,
