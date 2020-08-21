@@ -22,7 +22,7 @@ export interface Iforum extends Document {
 const forumSchema = new Schema({
     categoryId: { type: Schema.Types.ObjectId, required: true },
     commentId: { type: Schema.Types.ObjectId, required: false },
-    categoryName: { type: String }, // only for searching commentId
+    // categoryName: { type: String }, // only for searching commentId
     userId: { type: Schema.Types.ObjectId, required: false },
     userType: {
         type: String, enum: [

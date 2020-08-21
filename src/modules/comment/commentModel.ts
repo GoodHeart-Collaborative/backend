@@ -39,7 +39,8 @@ const commentSchema = new Schema({
             config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
             config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
             config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY,
-            config.CONSTANT.HOME_TYPE.FORUM_TOPIC
+            config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
+            config.CONSTANT.HOME_TYPE.EXPERTS_POST
         ],
         default: config.CONSTANT.HOME_TYPE.UNICORN
     },

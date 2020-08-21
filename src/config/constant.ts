@@ -204,9 +204,10 @@ const HOME_TYPE = {
 	DAILY_ADVICE: 3,
 	GENERAL_GRATITUDE: 4,
 	MEMBER_OF_DAY: 5,
-	FORUM_TOPIC: 6,
+	CONGRATS: 6,
 	EXPERTS_POST: 7,
-	SHOUTOUT: 8
+	SHOUTOUT: 8,
+	FORUM_TOPIC: 9,
 };
 
 const HOME_TYPES = {
@@ -221,17 +222,17 @@ const HOME_TYPES = {
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
 		TYPE: 'video',
-		VALUE: 1,
+		VALUE: 2,
 		DISPLAY_NAME: 'VIDEO'
 	},
 	ARTICLE: {
 		TYPE: 'article',
-		VALUE: 2,
+		VALUE: 3,
 		DISPLAY_NAME: 'ARTICLE'
 	},
 	IMAGE: {
 		TYPE: 'image',
-		VALUE: 3,
+		VALUE: 1,
 		DISPLAY_NAME: 'IMAGE'
 	},
 	VOICE_NOTE: {
@@ -252,11 +253,34 @@ const PRIVACY_STATUS = {
 };
 
 const EVENT_CATEGORY = {
-	EVENTS: 'events',
-	CLASSES: 'classes',
-	TRAINING: 'training',
-	MEETUP: 'meetup'
+	EVENTS: {
+		TYPE: 'events',
+		VALUE: 1,
+		DISPLAY_NAME: 'EVENTS'
+	},
+	CLASSES: {
+		TYPE: 'classes',
+		VALUE: 2,
+		DISPLAY_NAME: 'CLASSES'
+	},
+	TRAINING: {
+		TYPE: 'training',
+		VALUE: 3,
+		DISPLAY_NAME: 'TRAINING'
+	},
+	MEETUP: {
+		TYPE: 'meetup',
+		VALUE: 4,
+		DISPLAY_NAME: 'MEETUP'
+	}
 }
+
+// const EVENT_CATEGORY = {
+// 	EVENTS: 'events',
+// 	CLASSES: 'classes',
+// 	TRAINING: 'training',
+// 	MEETUP: 'meetup'
+// }
 const VALIDATION_CRITERIA = {
 	FIRST_NAME_MIN_LENGTH: 3,
 	FIRST_NAME_MAX_LENGTH: 20,

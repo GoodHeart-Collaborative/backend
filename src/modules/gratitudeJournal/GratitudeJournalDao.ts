@@ -252,7 +252,6 @@ export class GratitudeJournalDao extends BaseDao {
             //     match['_id'] = appUtils.toObjectId(tokenData['userId']);
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             // }
-
             const _id = params.userId ? appUtils.toObjectId(params.userId) : appUtils.toObjectId(tokenData.userId)
 
             // let idKey: string = '$_id'
@@ -298,6 +297,7 @@ export class GratitudeJournalDao extends BaseDao {
             match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
             if (params.userId) {
                 match['userId'] = appUtils.toObjectId(params['userId']);
+                match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC;
             } else {
                 match['userId'] = appUtils.toObjectId(tokenData['userId']);
             }

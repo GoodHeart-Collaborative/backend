@@ -70,7 +70,12 @@ export class ExpertDao extends BaseDao {
                         {
                             $match: {
                                 $expr: {
-                                    $in: ['$$cId', '$categoryId'],
+                                    $and: [{
+                                        $in: ['$$cId', '$categoryId'],
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }]
                                 }
                             }
                         },
@@ -108,46 +113,51 @@ export class ExpertDao extends BaseDao {
             // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
 
 
-            const newlyAdded = [{
-                $lookup: {
-                    from: 'categories',
-                    let: { cId: '$categoryId' },
-                    as: 'categoryData',
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [{
-                                        $in: ['$_id', '$$cId'],
-                                    },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    }]
+            const newlyAdded = [
+                {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE
+                    }
+                }, {
+                    $lookup: {
+                        from: 'categories',
+                        let: { cId: '$categoryId' },
+                        as: 'categoryData',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [{
+                                            $in: ['$_id', '$$cId'],
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }]
+                                    }
                                 }
                             }
-                        }
-                    ],
+                        ],
+                    },
                 },
-            },
-            {
-                $sort: {
-                    _id: -1
-                }
-            },
-            {
-                $match: {
-                    categoryData: { $ne: [] }
-                }
-            },
-            {
-                $project: {
-                    categoryId: 0,
-                    status: 0,
-                    createdAt: 0,
-                    updatedAt: 0
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                },
+                {
+                    $match: {
+                        categoryData: { $ne: [] }
+                    }
+                },
+                {
+                    $project: {
+                        categoryId: 0,
+                        status: 0,
+                        createdAt: 0,
+                        updatedAt: 0
 
-                }
-            },
+                    }
+                },
                 // {
                 //     $limit: 5
                 // }
@@ -177,9 +187,9 @@ export class ExpertDao extends BaseDao {
                                         $and: [{
                                             $in: ['$$cId', '$categoryId'],
                                         },
-                                            // {
-                                            //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                            // }
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }
                                         ]
                                     }
                                 }
@@ -373,6 +383,11 @@ export class ExpertDao extends BaseDao {
                         status: 0,
                         expertData: 0
                     }
+                },
+                {
+                    $sort: {
+                        _id: -1
+                    }
                 }
             ];
 
@@ -433,6 +448,7 @@ export class ExpertDao extends BaseDao {
             //     })
             // }
             // console.log('postConditionspostConditions', postConditions);
+            console.log('payload.userIdpayload.userId', payload.userId);
 
             const pipeline = [
                 {
@@ -509,6 +525,58 @@ export class ExpertDao extends BaseDao {
                 },
                 {
                     $lookup: {
+                        from: 'likes',
+                        let: { pId: '$_id', uId: appUtils.toObjectId(payload.userId), },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [{
+                                        $eq: ['$userId', '$$uId']
+                                    },
+                                    {
+                                        $eq: ['$postId', '$$pId']
+                                    },
+                                    {
+                                        $eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+                                    },
+                                    {
+                                        $eq: ["$type", config.CONSTANT.HOME_TYPE.EXPERTS_POST]
+                                    }
+                                    ]
+                                }
+                            }
+                        }],
+                        as: 'likeData'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "comments",
+                        let: { "post": "$_id", "user": await appUtils.toObjectId(payload.userId) },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$postId", "$$post"]
+                                        },
+                                        {
+                                            $eq: ["$userId", "$$user"]
+                                        },
+                                        {
+                                            $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+                                        }
+                                    ]
+                                }
+                            }
+
+                        }],
+                        as: "commentData",
+                    }
+                },
+                // { '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
                         from: 'categories',
                         let: { cId: '$categoryId' },
                         as: 'categoryData',
@@ -551,8 +619,47 @@ export class ExpertDao extends BaseDao {
                         privacy: 0,
                     }
                 },
-
-            ]
+            ];
+            expertPostspipeline.push({
+                $project: {
+                    // _id: 1,
+                    price: 1,
+                    contentId: 1,
+                    likeCount: 1,
+                    commentCount: 1,
+                    status: 1,
+                    privacy: 1,
+                    mediaType: 1,
+                    categoryId: 1,
+                    mediaUrl: 1,
+                    expertId: 1,
+                    contentType: 1,
+                    thumbnailUrl: 1,
+                    topic: 1,
+                    description: 1,
+                    type: 1,
+                    contentDisplayName: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    isLike: {
+                        $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
+                    },
+                    isComment: {
+                        $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                    },
+                    // likdeta: '$likeData',
+                    // commentData: '$commentData'
+                    // isLike: { likeData: { $size: { $gt: 0 } }, then: true, else: false }
+                    // isLike: {
+                    //     $cond: {
+                    //         if: {
+                    //             $eq: ["$likeData.userId", appUtils.toObjectId(payload.userId)],
+                    //             then: true, else: false
+                    //         }
+                    //     }
+                    // }
+                }
+            });
             expertPostspipeline = [...expertPostspipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             let EXPERTPOST = await this.aggregateWithPagination1("expert_post", expertPostspipeline);
             console.log('resultresultresult', EXPERTPOST);
