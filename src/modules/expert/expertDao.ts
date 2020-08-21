@@ -622,6 +622,7 @@ export class ExpertDao extends BaseDao {
                     contentType: 1,
                     thumbnailUrl: 1,
                     topic: 1,
+                    description: 1,
                     type: 1,
                     contentDisplayName: 1,
                     createdAt: 1,
