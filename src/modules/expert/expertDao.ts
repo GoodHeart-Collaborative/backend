@@ -108,46 +108,51 @@ export class ExpertDao extends BaseDao {
             // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
 
 
-            const newlyAdded = [{
-                $lookup: {
-                    from: 'categories',
-                    let: { cId: '$categoryId' },
-                    as: 'categoryData',
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [{
-                                        $in: ['$_id', '$$cId'],
-                                    },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    }]
+            const newlyAdded = [
+                {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE
+                    }
+                }, {
+                    $lookup: {
+                        from: 'categories',
+                        let: { cId: '$categoryId' },
+                        as: 'categoryData',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [{
+                                            $in: ['$_id', '$$cId'],
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }]
+                                    }
                                 }
                             }
-                        }
-                    ],
+                        ],
+                    },
                 },
-            },
-            {
-                $sort: {
-                    _id: -1
-                }
-            },
-            {
-                $match: {
-                    categoryData: { $ne: [] }
-                }
-            },
-            {
-                $project: {
-                    categoryId: 0,
-                    status: 0,
-                    createdAt: 0,
-                    updatedAt: 0
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                },
+                {
+                    $match: {
+                        categoryData: { $ne: [] }
+                    }
+                },
+                {
+                    $project: {
+                        categoryId: 0,
+                        status: 0,
+                        createdAt: 0,
+                        updatedAt: 0
 
-                }
-            },
+                    }
+                },
                 // {
                 //     $limit: 5
                 // }
@@ -177,9 +182,9 @@ export class ExpertDao extends BaseDao {
                                         $and: [{
                                             $in: ['$$cId', '$categoryId'],
                                         },
-                                            // {
-                                            //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                            // }
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }
                                         ]
                                     }
                                 }
@@ -508,7 +513,6 @@ export class ExpertDao extends BaseDao {
                 {
                     $match: match
                 },
-
                 {
                     $lookup: {
                         from: 'likes',
