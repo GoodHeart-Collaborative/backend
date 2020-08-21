@@ -70,7 +70,12 @@ export class ExpertDao extends BaseDao {
                         {
                             $match: {
                                 $expr: {
-                                    $in: ['$$cId', '$categoryId'],
+                                    $and: [{
+                                        $in: ['$$cId', '$categoryId'],
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }]
                                 }
                             }
                         },
@@ -95,9 +100,9 @@ export class ExpertDao extends BaseDao {
                     status: 0,
                 }
             },
-                // {
-                //     $limit: 5
-                // }
+            {
+                $limit: 5
+            }
             ];
             const CategoryLIST = await expertDao.aggregate('categories', categoryPipeline, {})
 
@@ -148,9 +153,9 @@ export class ExpertDao extends BaseDao {
 
                 }
             },
-                // {
-                //     $limit: 5
-                // }
+            {
+                $limit: 5
+            }
             ]
             const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {})
 
@@ -177,9 +182,9 @@ export class ExpertDao extends BaseDao {
                                         $and: [{
                                             $in: ['$$cId', '$categoryId'],
                                         },
-                                            // {
-                                            //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                            // }
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }
                                         ]
                                     }
                                 }

@@ -44,7 +44,7 @@ const forumSchema = new Schema({
     likeCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
     topic: { type: String },
-    mediaUrl: { type: String, required: true },
+    mediaUrl: { type: String },
     description: { type: String, required: true },
     postAnonymous: { type: Boolean },
     created: { type: Number },
