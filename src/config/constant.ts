@@ -227,7 +227,7 @@ const EXPERT_CONTENT_TYPE = {
 	},
 	ARTICLE: {
 		TYPE: 'article',
-		VALUE: 2,
+		VALUE: 3,
 		DISPLAY_NAME: 'ARTICLE'
 	},
 	IMAGE: {
