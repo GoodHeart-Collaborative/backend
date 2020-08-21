@@ -61,7 +61,7 @@ let addEvents = Joi.object({
         coordinates: Joi.array().items(Joi.number())
     }),
     address: Joi.string().required().trim(),
-    eventCategory: Joi.string().allow([
+    eventCategoryId: Joi.string().allow([
         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
         config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
         config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
@@ -95,7 +95,7 @@ let updateEvent = Joi.object({
         // }]
     }),
     address: Joi.string().trim(),
-    eventCategory: Joi.string().allow([
+    eventCategoryId: Joi.string().allow([
         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
         config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
         config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
