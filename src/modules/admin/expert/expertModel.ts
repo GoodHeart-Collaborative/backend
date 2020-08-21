@@ -15,6 +15,7 @@ export interface IExpert extends Document {
     updatedAt: Date
     postedAt: String,
     type: number;
+    created: number;
     mediaType: number,
     // mediaUrl: number,
     // contentId: number
@@ -56,6 +57,7 @@ const expertSchema = new Schema({
             'Junior', 'Mid', 'Senior',
         ]
     },
+    created: { type: Number },
     categoryId: [{ type: Schema.Types.ObjectId }],
     price: { type: Number, default: 0 },
     // contentId: {
@@ -100,7 +102,7 @@ const expertSchema = new Schema({
     profilePicUrl: [Schema.Types.String],
     // mediaUrl: { type: String },
     // thumbnailUrl: { type: String },
-    created: { type: Number }
+
 }, {
     versionKey: false,
     timestamps: true
