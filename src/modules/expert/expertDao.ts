@@ -378,6 +378,11 @@ export class ExpertDao extends BaseDao {
                         status: 0,
                         expertData: 0
                     }
+                },
+                {
+                    $sort: {
+                        _id: -1
+                    }
                 }
             ];
 
