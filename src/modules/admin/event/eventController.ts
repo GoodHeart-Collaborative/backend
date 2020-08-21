@@ -27,9 +27,12 @@ class EventController {
    */
     async addEvent(params) {
         try {
-            console.log('paramsparams', params.location);
+            const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
+            console.log('data1data1data1data1data1', result);
+            params.eventCategoryType = result['TYPE'];
+            params.eventCategoryDisplayName = result['DISPLAY_NAME'];
+            params.created = new Date().getTime();
 
-            params["created"] = new Date().getTime()
             const data = await eventDao.insert("event", params, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -179,6 +182,13 @@ class EventController {
             const criteria = {
                 _id: params.eventId
             }
+            const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
+            console.log('data1data1data1data1data1', result);
+            params['eventCategoryType'] = result['TYPE'];
+            params['eventCategoryDisplayName'] = result['DISPLAY_NAME'];
+            params['created'] = new Date().getTime();
+
+
             const dataToUpdate = {
                 ...params
             }

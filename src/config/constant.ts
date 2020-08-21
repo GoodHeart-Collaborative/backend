@@ -252,11 +252,34 @@ const PRIVACY_STATUS = {
 };
 
 const EVENT_CATEGORY = {
-	EVENTS: 'events',
-	CLASSES: 'classes',
-	TRAINING: 'training',
-	MEETUP: 'meetup'
+	EVENTS: {
+		TYPE: 'events',
+		VALUE: 1,
+		DISPLAY_NAME: 'EVENTS'
+	},
+	CLASSES: {
+		TYPE: 'classes',
+		VALUE: 2,
+		DISPLAY_NAME: 'CLASSES'
+	},
+	TRAINING: {
+		TYPE: 'training',
+		VALUE: 3,
+		DISPLAY_NAME: 'TRAINING'
+	},
+	MEETUP: {
+		TYPE: 'meetup',
+		VALUE: 4,
+		DISPLAY_NAME: 'MEETUP'
+	}
 }
+
+// const EVENT_CATEGORY = {
+// 	EVENTS: 'events',
+// 	CLASSES: 'classes',
+// 	TRAINING: 'training',
+// 	MEETUP: 'meetup'
+// }
 const VALIDATION_CRITERIA = {
 	FIRST_NAME_MIN_LENGTH: 3,
 	FIRST_NAME_MAX_LENGTH: 20,
