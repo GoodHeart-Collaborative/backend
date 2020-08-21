@@ -4,6 +4,8 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
 import { DataSync } from "aws-sdk";
+import * as mongoose from "mongoose";
+
 
 export class GratitudeJournalDao extends BaseDao {
 
@@ -125,6 +127,45 @@ export class GratitudeJournalDao extends BaseDao {
             })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$userId", "user": mongoose.Types.ObjectId(userId.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                        $and: [
+                                            {
+                                                $eq: ["$followerId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$userId", "$$users"]
+                                            }
+                                        ]
+                                        },
+                                        {
+                                        $and: [
+                                            {
+                                                $eq: ["$userId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$followerId", "$users"]
+                                            }
+                                        ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+
+            aggPipe.push({
                 $project:
                 {
                     _id: 1,
@@ -140,7 +181,11 @@ export class GratitudeJournalDao extends BaseDao {
                     createdAt: 1,
                     user: {
                         _id: "$users._id",
-                        name: { $ifNull: ["$users.firstName", ""] },
+                        industryType: "$users.industryType",
+                        myConnection: "$users.myConnection",
+                        experience: "$users.experience",
+                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                        name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] }
                     },
@@ -198,6 +243,7 @@ export class GratitudeJournalDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             let criteria: any = {};
+            let discover:any = {}
             // if (params.userId) {
             //     match['status'] = config.CONSTANT.STATUS.ACTIVE;
             //     match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
@@ -210,6 +256,20 @@ export class GratitudeJournalDao extends BaseDao {
             const _id = params.userId ? appUtils.toObjectId(params.userId) : appUtils.toObjectId(tokenData.userId)
 
             // let idKey: string = '$_id'
+            if(params && params.userId) {
+                let query:any = {}
+                query = {
+                    $or: [
+                        { userId: appUtils.toObjectId(params.userId), followerId: appUtils.toObjectId(tokenData.userId) }, 
+                        { userId: appUtils.toObjectId(tokenData.userId), followerId: appUtils.toObjectId(params.userId) } 
+                    ]
+                }
+                discover = await this.findOne('discover', query, {}, {})
+                // if(!discover) {
+                //     discover["discover_status"] = 4
+                // }
+            }
+
             const userDataCriteria = [
                 {
                     $match: {
@@ -220,22 +280,19 @@ export class GratitudeJournalDao extends BaseDao {
                 {
                     $project: {
                         _id: 1,
-                        name: {
-                            $cond: {
-                                if: {
-                                    $eq: ['$lastName', null]
-                                },
-                                then: '$firstName',
-                                else: { $concat: ['$firstName', ' ', '$lastName'] }
-                            }
-                        },
-                        profilePicUrl: 1,
-                        profession: 1
+                        industryType: 1,
+                        myConnection: 1,
+                        experience: 1,
+                        discover_status: { $ifNull: [discover.discover_status, 4] },
+                        name: { $concat: [ { $ifNull: ["$firstName", ""] }, " ",  { $ifNull: ["$lastName", ""]} ]},
+                        profilePicUrl: "$profilePicUrl",
+                        profession: { $ifNull: ["$profession", ""] }
                     }
                 }
             ]
-            const userData = await this.aggregate('users', userDataCriteria, {})
-            console.log('userDatauserDatauserData', userData);
+            let userData = await this.aggregate('users', userDataCriteria, {})
+            // userData = userData[0]
+            // console.log('userDatauserDatauserData', userData);
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
@@ -300,7 +357,7 @@ export class GratitudeJournalDao extends BaseDao {
                     as: "commentData",
                 }
             })
-            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: "$userData", preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project: {
@@ -314,7 +371,7 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    user: userData[0],
+                    user: userData,
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
                     },
