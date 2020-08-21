@@ -206,7 +206,7 @@ const HOME_TYPE = {
 	MEMBER_OF_DAY: 5,
 	FORUM_TOPIC: 6,
 	EXPERTS_POST: 7,
-	SHOUTOUT: 8
+	SHOUTOUT: 8,
 };
 
 const HOME_TYPES = {
@@ -221,7 +221,7 @@ const HOME_TYPES = {
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
 		TYPE: 'video',
-		VALUE: 2,
+		VALUE: 1,
 		DISPLAY_NAME: 'VIDEO'
 	},
 	ARTICLE: {
@@ -231,7 +231,7 @@ const EXPERT_CONTENT_TYPE = {
 	},
 	IMAGE: {
 		TYPE: 'image',
-		VALUE: 1,
+		VALUE: 3,
 		DISPLAY_NAME: 'IMAGE'
 	},
 	VOICE_NOTE: {
