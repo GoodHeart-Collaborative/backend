@@ -255,19 +255,28 @@ export class GratitudeJournalDao extends BaseDao {
             const _id = params.userId ? appUtils.toObjectId(params.userId) : appUtils.toObjectId(tokenData.userId)
 
             // let idKey: string = '$_id'
+            let query:any = {}
             if(params && params.userId) {
-                let query:any = {}
                 query = {
                     $or: [
                         { userId: appUtils.toObjectId(params.userId), followerId: appUtils.toObjectId(tokenData.userId) }, 
                         { userId: appUtils.toObjectId(tokenData.userId), followerId: appUtils.toObjectId(params.userId) } 
                     ]
                 }
-                discover = await this.findOne('discover', query, {}, {})
-                // if(!discover) {
-                //     discover["discover_status"] = 4
-                // }
+                
+            } else {
+                query = {
+                    $or: [
+                        { userId: appUtils.toObjectId(tokenData.userId)}, {followerId: appUtils.toObjectId(tokenData.userId) }
+                    ]
+                }
             }
+            discover = await this.findOne('discover', query, {}, {})
+                if(!discover) {
+                    discover = {
+                        discover_status: 4
+                    }
+                }
 
             const userDataCriteria = [
                 {
@@ -282,7 +291,7 @@ export class GratitudeJournalDao extends BaseDao {
                         industryType: 1,
                         myConnection: 1,
                         experience: 1,
-                        discover_status: { $ifNull: [discover.discover_status, 4] },
+                        discover_status: discover.discover_status,
                         name: { $concat: [ { $ifNull: ["$firstName", ""] }, " ",  { $ifNull: ["$lastName", ""]} ]},
                         profilePicUrl: "$profilePicUrl",
                         profession: { $ifNull: ["$profession", ""] }
@@ -290,7 +299,7 @@ export class GratitudeJournalDao extends BaseDao {
                 }
             ]
             let userData = await this.aggregate('users', userDataCriteria, {})
-            // userData = userData[0]
+            userData[0].discover_status = discover.discover_status
             // console.log('userDatauserDatauserData', userData);
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;

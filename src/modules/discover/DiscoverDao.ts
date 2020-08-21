@@ -11,6 +11,14 @@ export class DiscoverDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
+            if(user) {
+                match["$nor"] = [
+                    { "userId": await appUtils.toObjectId(userId.userId), "followerId": await appUtils.toObjectId(user) }, 
+                    { "userId": await appUtils.toObjectId(user), "followerId": await appUtils.toObjectId(userId.userId) }
+                ];
+                userId.userId = user
+            }
+
             userId = await appUtils.toObjectId(userId.userId)
             if (_id) {
                 aggPipe.push({ "$match": { "_id": _id } })
@@ -24,11 +32,21 @@ export class DiscoverDao extends BaseDao {
                     ];
                     match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
-                    match["followerId"] = userId
+                    // match["followerId"] = userId
+                    if(followerId) {
+                        match["$or"] = [
+                            { "userId": userId, "followerId": await appUtils.toObjectId(followerId) }, 
+                            { "userId": await appUtils.toObjectId(followerId), "followerId": userId }
+                        ];
+                        // match["userId"] = await appUtils.toObjectId(followerId)
+                    }
                     match['discover_status'] = { $ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT }
                 }
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
+            if(discover_status) {
+                match["discover_status"] = discover_status
+            }
             aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {
@@ -118,7 +136,6 @@ export class DiscoverDao extends BaseDao {
                             }]
                         },
                         created: 1
-                        // createdAt: 1,
                     }
                 })
             }
