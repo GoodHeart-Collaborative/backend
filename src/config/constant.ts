@@ -204,9 +204,10 @@ const HOME_TYPE = {
 	DAILY_ADVICE: 3,
 	GENERAL_GRATITUDE: 4,
 	MEMBER_OF_DAY: 5,
-	FORUM_TOPIC: 6,
+	CONGRATS: 6,
 	EXPERTS_POST: 7,
 	SHOUTOUT: 8,
+	FORUM_TOPIC: 9,
 };
 
 const HOME_TYPES = {
@@ -221,7 +222,7 @@ const HOME_TYPES = {
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
 		TYPE: 'video',
-		VALUE: 1,
+		VALUE: 2,
 		DISPLAY_NAME: 'VIDEO'
 	},
 	ARTICLE: {
@@ -231,7 +232,7 @@ const EXPERT_CONTENT_TYPE = {
 	},
 	IMAGE: {
 		TYPE: 'image',
-		VALUE: 3,
+		VALUE: 1,
 		DISPLAY_NAME: 'IMAGE'
 	},
 	VOICE_NOTE: {
