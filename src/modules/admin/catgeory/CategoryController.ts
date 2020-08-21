@@ -62,10 +62,10 @@ class CategoryController {
                 if (sortBy === "title") {
                     sort = { "title": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "createdAt": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "createdAt": -1 };
             }
             aggPipe.push({ "$sort": sort });
 
