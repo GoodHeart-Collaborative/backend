@@ -357,7 +357,8 @@ export class GratitudeJournalDao extends BaseDao {
                     as: "commentData",
                 }
             })
-            aggPipe.push({ '$unwind': { path: "$userData", preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ "$addFields": { userDataa: userData } });
+             aggPipe.push({ '$unwind': { path: "$userDataa", preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project: {
@@ -371,7 +372,7 @@ export class GratitudeJournalDao extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    user: userData,
+                    user: "$userDataa",
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
                     },
