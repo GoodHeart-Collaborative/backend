@@ -196,7 +196,6 @@ class CommentController {
                 else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
                     data = await expertPostDao.updateLikeAndCommentCount(query, { "$inc": { commentCount: 1 } })
                 }
-
                 else {
                     data = await homeDao.updateHomePost(query, { $inc: { commentCount: 1 } })
                 }
