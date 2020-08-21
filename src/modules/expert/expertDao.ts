@@ -70,6 +70,7 @@ export class ExpertDao extends BaseDao {
                         {
                             $match: {
                                 $expr: {
+<<<<<<< HEAD
                                     $in: ['$$cId', '$categoryId'],
                                     // $and: [{
                                     //     $in: ['$$cId', '$categoryId'],
@@ -77,6 +78,14 @@ export class ExpertDao extends BaseDao {
                                     // {
                                     //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
                                     // }]
+=======
+                                    $and: [{
+                                        $in: ['$$cId', '$categoryId'],
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }]
+>>>>>>> development
                                 }
                             }
                         },
