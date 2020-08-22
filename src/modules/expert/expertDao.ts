@@ -870,11 +870,76 @@ export class ExpertDao extends BaseDao {
     async getExpertListBySearch(payload) {
         try {
             const { limit, page, searchTerm } = payload;
+            const paginateOptions = {
+                limit: limit || 10,
+                page: page || 1
+            }
+
             let match: any = {};
             let aggPipe = []
             match['status'] = config.CONSTANT.STATUS.ACTIVE
 
+            if (searchTerm) {
+                match["$or"] = [
+                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
+                    { name: { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
+            aggPipe.push({ $match: match })
 
+            aggPipe.push({
+                $sort: {
+                    _id: -1
+                }
+            })
+
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'categories',
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [{
+                                        $in: ['$_id', '$$cId'],
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1, name: 1, title: 1, imageUrl: 1
+                            }
+                        }
+                    ],
+                },
+            },
+                {
+                    $match: {
+                        expertData: { $ne: [] }
+                    }
+                },
+                {
+                    $project: {
+                        categoryId: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        status: 0,
+                    }
+                },
+            )
+
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            let result = await this.aggregateWithPagination("expert", aggPipe)
+            console.log('resultresultresult', result);
+            return result;
         } catch (error) {
             return Promise.reject(error)
         }

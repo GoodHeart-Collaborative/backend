@@ -75,7 +75,8 @@ class ExpertController {
 
     async expertsListSearch(payload) {
         try {
-            // const {}
+            const data = await expertDao.getExpertListBySearch(payload);
+            return data;
         } catch (error) {
             return Promise.reject(error)
         }
