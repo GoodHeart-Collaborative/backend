@@ -506,7 +506,7 @@ export class ExpertDao extends BaseDao {
             let expertPostspipeline = []
             match['expertId'] = appUtils.toObjectId(payload.expertId);
 
-            match['status'] == config.CONSTANT.STATUS.ACTIVE;
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
             if (payload.postedBy == 'lastWeek') {
                 console.log('LLLLLLLLLLLLLL');
                 match['createdAt'] = {
@@ -864,6 +864,19 @@ export class ExpertDao extends BaseDao {
             return result;
         } catch (error) {
             return Promise.reject(error);
+        }
+    }
+
+    async getExpertListBySearch(payload) {
+        try {
+            const { limit, page, searchTerm } = payload;
+            let match: any = {};
+            let aggPipe = []
+            match['status'] = config.CONSTANT.STATUS.ACTIVE
+
+
+        } catch (error) {
+            return Promise.reject(error)
         }
     }
 }
