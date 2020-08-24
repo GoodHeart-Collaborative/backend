@@ -77,8 +77,8 @@ export class ForumTopic extends BaseDao {
                     $limit: 5
                 }
             ];
-            const categoryList: any = await this.aggregate('categories', categoryPipe, {})
-            console.log('getCategorygetCategory', categoryList);
+            const data: any = await this.aggregate('categories', categoryPipe, {})
+            console.log('getCategorygetCategory', data);
 
             const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
             console.log('getAdminNamegetAdminName', getAdminName);
@@ -252,12 +252,12 @@ export class ForumTopic extends BaseDao {
 
 
             const CATEGORIES = {
-                categoryList,
+                data,
                 type: 0
             }
 
             console.log('myForumDatamyForumData', CATEGORIES);
-            let data = []
+            // let data = []
             // const arr = [CATEGORIES, forumData1];
             // const aa = JSON.parse(JSON.stringify(myForumData));
             // aa.type = 1
@@ -267,7 +267,7 @@ export class ForumTopic extends BaseDao {
             console.log('.myForumData.list', myForumData);
 
             const categories = {
-                categoryList,
+                data,
                 type: 0
             };
             // categoryList['type'] = 0
