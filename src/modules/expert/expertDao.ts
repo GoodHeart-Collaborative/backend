@@ -869,20 +869,20 @@ export class ExpertDao extends BaseDao {
 
     async getExpertListBySearch(payload) {
         try {
-            const { limit, page, searchTerm } = payload;
+            const { limit, pageNo, searchKey } = payload;
             const paginateOptions = {
                 limit: limit || 10,
-                page: page || 1
+                page: pageNo || 1
             }
 
             let match: any = {};
             let aggPipe = []
             match['status'] = config.CONSTANT.STATUS.ACTIVE
 
-            if (searchTerm) {
+            if (searchKey) {
                 match["$or"] = [
-                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
-                    { name: { "$regex": searchTerm, "$options": "-i" } },
+                    { "topic": { "$regex": searchKey, "$options": "-i" } },
+                    { name: { "$regex": searchKey, "$options": "-i" } },
                 ];
             }
             aggPipe.push({ $match: match })
