@@ -20,13 +20,13 @@ export class ForumTopic extends BaseDao {
             const { page, limit } = params;
             let aggPipe = [];
             let match: any = {};
-            let criteria: any = {};
+            let categoryMatch: any = {};
 
             const paginateOptions = {
                 page: page || 1,
                 limit: limit || 10
-            }
-            let categoryMatch: any = {};
+            };
+
             categoryMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
 
             let categoryPipe = [
@@ -83,6 +83,38 @@ export class ForumTopic extends BaseDao {
             const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
             console.log('getAdminNamegetAdminName', getAdminName);
 
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+            aggPipe.push({ $match: match });
+
+
+            aggPipe.push({
+                $lookup: {
+                    "from": "categories",
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE],
+                                },
+                                {
+                                    $eq: ['$_id', '$$cId']
+                                }]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            name: 1,
+                            title: 1,
+                            imageUrl: 1
+                        }
+                    }]
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: false } })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
@@ -134,7 +166,7 @@ export class ForumTopic extends BaseDao {
             // const userData = await this.aggregate('users', userDataCriteria, {})
             // console.log('userDatauserDatauserData', userData);
 
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
             // if (params.userId) {
             //     match['postAnonymous'] = false;
             // }
@@ -210,9 +242,11 @@ export class ForumTopic extends BaseDao {
                     thumbnailUrl: 1,
                     description: 1,
                     created: 1,
+
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
+                    categoryData: 1,
                     comment: { $ifNull: ["$comments.comment", ""] },
                     user: {
                         industryType: "$users.industryType",
@@ -226,11 +260,10 @@ export class ForumTopic extends BaseDao {
                         // name: {
                         //     $cond: {
                         //         if: {
-                        //             $$ROOT.postAnonymous
+                        //               $expr'$postAnonymous
                         //         }
                         //     }
                         // },
-
                     },
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }

@@ -17,6 +17,11 @@ export interface Iforum extends Document {
     commentCount: number;
     created: number;
 
+    createrId: string;
+    // topic: string;
+    thumbnailUrl: string;
+    mediaUrl: string;
+    mediaType: number;
 }
 
 const forumSchema = new Schema({
@@ -44,10 +49,21 @@ const forumSchema = new Schema({
     likeCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
     topic: { type: String },
-    mediaUrl: { type: String },
+
     description: { type: String, required: true },
     postAnonymous: { type: Boolean },
     created: { type: Number },
+    mediaType: {
+        type: Number,
+        enum: [
+            config.CONSTANT.MEDIA_TYPE.IMAGE,
+            config.CONSTANT.MEDIA_TYPE.VIDEO
+        ],
+        default: config.CONSTANT.MEDIA_TYPE.IMAGE
+    },
+    thumbnailUrl: { type: String },
+    mediaUrl: { type: String },
+
 
 }, {
     versionKey: false,
