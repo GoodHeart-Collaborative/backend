@@ -18,7 +18,7 @@ let addForum = Joi.object({
 }).unknown()
 
 let getForum = Joi.object({
-    categoryId: Joi.string().optional(),
+    // categoryId: Joi.string().optional(),
     searchTerm: Joi.string(),
     limit: Joi.number().required(),
     page: Joi.number().required(),

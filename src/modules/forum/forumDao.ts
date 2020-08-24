@@ -77,8 +77,8 @@ export class ForumTopic extends BaseDao {
                     $limit: 5
                 }
             ];
-            const CategoryLIST = await this.aggregate('categories', categoryPipe, {})
-            console.log('getCategorygetCategory', CategoryLIST);
+            const categoryList: any = await this.aggregate('categories', categoryPipe, {})
+            console.log('getCategorygetCategory', categoryList);
 
             const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
             console.log('getAdminNamegetAdminName', getAdminName);
@@ -244,29 +244,79 @@ export class ForumTopic extends BaseDao {
             aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             // let EXPERTPOST = await this.aggregateWithPagination1("expert_post", expertPostspipeline);
 
-            const myForumData: any = await this.aggregateWithPagination1('forum', aggPipe)
-            console.log('myForumDatamyForumData', myForumData);
+            const myForumData: any = await this.aggregateWithPagination('forum', aggPipe)
 
-            const CATEGORIES = {
-                CategoryLIST,
-                type: 0,
+            for (var key of myForumData.list) {
+                key['type'] = 1
             }
 
 
-            // myForumData.unshift({
-            //     data: myForumData,
-            //     type: 1
+            const CATEGORIES = {
+                categoryList,
+                type: 0
+            }
+
+            console.log('myForumDatamyForumData', CATEGORIES);
+            let data = []
+            // const arr = [CATEGORIES, forumData1];
+            // const aa = JSON.parse(JSON.stringify(myForumData));
+            // aa.type = 1
+            // arr.unshift({
+            //     forumData: aa,
             // })
-            // myForumData.unshift({
-            //     data: CATEGORIES.CategoryLIST,
-            //     type: 0
-            // });
+            console.log('.myForumData.list', myForumData);
 
-            return myForumData;
+            const categories = {
+                categoryList,
+                type: 0
+            };
+            // categoryList['type'] = 0
+            // data.push({ categoryList: categories.categoryList })
+            // data.push({ type: categories.type })
 
-            //     CATEGORIES,
-            //     myForumData
-            // };
+            // let arr2=[
+            //     total= myForumData.total,
+            //     next_hit: myForumData.next_hit,
+            //     type: 1
+
+            // ]
+            const arr1: any = {
+                total: myForumData.total,
+                next_hit: myForumData.next_hit,
+                type: 1
+            }
+            let arr = [categories, ...myForumData.list,]
+            return {
+                data: arr,
+                total: myForumData.total,
+                next_hit: myForumData.next_hit,
+                type: 1
+                // return arr;
+            }
+            // data: {
+            //     data:[
+
+            //     {
+            //     categoryList: [{}, {}]
+            //     type:0
+            //     },
+
+            //     {
+            //     type	:	1
+            //     },
+
+            //     {
+            //     type	:	1
+            //     }
+
+            //     ],
+            //     total	:	4
+            //     next_hit	:	0
+            //     type	:	1
+
+            //     }
+
+            // ;
         } catch (error) {
             return Promise.reject(error)
         }
