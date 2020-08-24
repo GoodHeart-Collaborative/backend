@@ -17,9 +17,72 @@ export class ForumTopic extends BaseDao {
 
     async getFormPosts(params) {
         try {
+            const { page, limit } = params;
             let aggPipe = [];
             let match: any = {};
             let criteria: any = {};
+
+            const paginateOptions = {
+                page: page || 1,
+                limit: limit || 10
+            }
+            let categoryMatch: any = {};
+            categoryMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+            let categoryPipe = [
+                {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE,
+                    }
+                }, {
+                    $lookup: {
+                        from: 'forums',
+                        let: { cId: '$_id' },
+                        as: 'forumData',
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [{
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                    {
+                                        $eq: ['$categoryId', '$$cId']
+                                    }
+                                    ]
+                                }
+                            }
+                        },
+                            // {
+                            //     $project: {
+                            //         created: 1,
+                            //         imageUrl: 1,
+                            //         title: 1,
+                            //         name: 1,
+                            //     }
+                            // }
+                        ]
+                    }
+                },
+                {
+                    $match: {
+                        forumData: { $ne: [] }
+                    }
+                },
+                {
+                    $project: {
+                        forumData: 0
+                    }
+                },
+                {
+                    $limit: 5
+                }
+            ];
+            const CategoryLIST = await this.aggregate('categories', categoryPipe, {})
+            console.log('getCategorygetCategory', CategoryLIST);
+
+            const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
+            console.log('getAdminNamegetAdminName', getAdminName);
+
             aggPipe.push({
                 $lookup: {
                     "from": "users",
@@ -158,7 +221,16 @@ export class ForumTopic extends BaseDao {
                         about: "$users.about",
                         name: { $ifNull: ["$users.firstName", ""] },
                         profilePicUrl: "$users.profilePicUrl",
-                        profession: { $ifNull: ["$users.profession", ""] }
+                        profession: { $ifNull: ["$users.profession", ""] },
+
+                        // name: {
+                        //     $cond: {
+                        //         if: {
+                        //             $$ROOT.postAnonymous
+                        //         }
+                        //     }
+                        // },
+
                     },
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
@@ -168,27 +240,52 @@ export class ForumTopic extends BaseDao {
                     }
                 }
             })
-            const myForumData = await this.paginate('forum', aggPipe, 10, 1, {}, true)
+
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            // let EXPERTPOST = await this.aggregateWithPagination1("expert_post", expertPostspipeline);
+
+            const myForumData: any = await this.aggregateWithPagination1('forum', aggPipe)
+            console.log('myForumDatamyForumData', myForumData);
+
+            const CATEGORIES = {
+                CategoryLIST,
+                type: 0,
+            }
+
+
+            // myForumData.unshift({
+            //     data: myForumData,
+            //     type: 1
+            // })
+            // myForumData.unshift({
+            //     data: CATEGORIES.CategoryLIST,
+            //     type: 0
+            // });
+
             return myForumData;
+
+            //     CATEGORIES,
+            //     myForumData
+            // };
         } catch (error) {
             return Promise.reject(error)
         }
     }
     async checkForum(params) {
-		try {
-			return await this.findOne('forum', params, {}, {});
-		} catch (error) {
-			throw error;
-		}
+        try {
+            return await this.findOne('forum', params, {}, {});
+        } catch (error) {
+            throw error;
+        }
     }
     async updateForum(query, params) {
         try {
-            let update:any = {}
-            if(params && params.postAnonymous) {
+            let update: any = {}
+            if (params && params.postAnonymous) {
                 params['userId'] = query.createrId
             } else {
-                if(params && params.postAnonymous === false){
-                update["$unset"] = {userId: ""}
+                if (params && params.postAnonymous === false) {
+                    update["$unset"] = { userId: "" }
                 }
             }
             update["$set"] = params

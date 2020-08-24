@@ -23,12 +23,12 @@ class forumController {
 	 */
     async updateForum(params: AdminForumRequest.EditForum, userId) {
         try {
-            const criteria = {_id: params.postId, createrId: userId.userId};
+            const criteria = { _id: params.postId, createrId: userId.userId };
             delete params.postId
             // const dataToUpdate = {...params}
-            let checkForum  = await forumtopicDao.checkForum(criteria)
-            if(checkForum) {
-                let updateForum  = await forumtopicDao.updateForum(criteria, params)
+            let checkForum = await forumtopicDao.checkForum(criteria)
+            if (checkForum) {
+                let updateForum = await forumtopicDao.updateForum(criteria, params)
                 return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(updateForum);
             } else {
                 return forumConstant.MESSAGES.ERROR.FORUM_NOT_FOUND;
@@ -50,7 +50,7 @@ class forumController {
     async GetFormPosts(params) {
         try {
             let data = await forumtopicDao.getFormPosts(params);
-            return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED(data);
+            return forumConstant.MESSAGES.SUCCESS.DEFAULT_SUCCESS(data);
         } catch (error) {
             return Promise.reject(error);
         }

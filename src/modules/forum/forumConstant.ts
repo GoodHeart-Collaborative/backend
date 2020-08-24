@@ -26,6 +26,14 @@ export const MESSAGES = {
                 "type": "FORUM_ADDED",
                 "data": data
             };
-        }
+        },
+        DEFAULT_SUCCESS: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "Success",
+                "type": "FORUM_LIST",
+                "data": data
+            };
+        },
     }
 };
