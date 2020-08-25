@@ -314,7 +314,7 @@ export class ForumTopic extends BaseDao {
             }
 
             const categories = {
-                data,
+                categoryData:  data,
                 type: 0
             };
             const arr1: any = {
