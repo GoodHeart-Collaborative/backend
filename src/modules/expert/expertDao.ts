@@ -306,11 +306,11 @@ export class ExpertDao extends BaseDao {
             //     // EXPERT_LIST
             // };
             EXPERTS1.unshift({
-                data: getNewlyAddedExperts,
+                onBoardData: getNewlyAddedExperts,
                 type: 1
             })
             EXPERTS1.unshift({
-                data: CATEGORIES.CategoryLIST,
+                categoryData: CATEGORIES.CategoryLIST,
                 type: 0
             })
             // const EXPERTS = data[0].EXPERT_LIST
