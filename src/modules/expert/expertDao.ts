@@ -447,22 +447,19 @@ export class ExpertDao extends BaseDao {
             //         $eq: ['$status', 'active']
             //     },
             // ];
-            // if (payload.postedBy == 'lastWeek') {
+
+            // if (payload.postedBy === 1) {
             //     console.log('LLLLLLLLLLLLLL');
             //     postConditions.push({
             //         $gt: ['$createdAt', '2020-07-24']
             //     })
-            // } else if (payload.postedBy == 'lastMonth') {
+            // } else if (payload.postedBy == 2) {
             //     console.log('LLLLLLLLLLLLLL');
             //     postConditions.push({
             //         $gt: ['$createdAt',]
             //     })
             // }
-            // if (payload.contentType) {
-            //     postConditions.push({
-            //         $eq: ['$contentId', payload.contentType]
-            //     })
-            // }
+
             // console.log('postConditionspostConditions', postConditions);
             console.log('payload.userIdpayload.userId', payload.userId);
 
@@ -523,16 +520,63 @@ export class ExpertDao extends BaseDao {
             match['expertId'] = appUtils.toObjectId(payload.expertId);
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            if (payload.postedBy == 'lastWeek') {
-                console.log('LLLLLLLLLLLLLL');
+
+
+            if (payload.posted === 1) {
+                console.log('last week');
+                // match['createdAt'] = {
+                //     $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000))
+                // }
+            }
+            else if (payload.posted == 2) {
+                var date = new Date(), y = date.getFullYear(), m = date.getMonth() - 1;
+                var firstDay = new Date(y, m, 1);
+                console.log('firstDay', firstDay);
+                var lastDay = new Date(y, m + 1, 0);
+                console.log('lastDaylastDay', lastDay);
+
+                console.log('last month');
                 match['createdAt'] = {
-                    $gt: '2020-07-24'
+                    $gt: firstDay,
+                    $lt: lastDay
                 }
             }
-            if (payload.contentType) {
-                match['contentId'] = payload.contentType;
+            // if (payload.postedBy === 1) {
+            //     console.log('LLLLLLLLLLLLLL');
+            //     postConditions.push({
+            //         $gt: ['$createdAt', '2020-07-24']
+            //     })
+            // } else if (payload.postedBy == 2) {
+            //     console.log('LLLLLLLLLLLLLL');
+            //     postConditions.push({
+            //         $gt: ['$createdAt',]
+            //     })
+            // }
 
-            }
+
+            if (payload.contentType) {
+                let aa = [];
+                let bb = payload.contentType.split(',')
+                for (var i = 0; i < bb.length; i++) {
+                    aa.push(parseInt(bb[i]))
+                }
+                match['contentId'] = {
+                    $in: aa
+                }
+            };
+            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE) {
+            //     match['contentId'] = payload.contentType;
+            // }
+            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.IMAGE.VALUE) {
+            //     match['contentId'] = payload.contentType;
+            // }
+            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.VIDEO.VALUE) {
+            //     match['contentId'] = payload.contentType;
+            // }
+            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.VOICE_NOTE.VALUE) {
+            //     match['contentId'] = payload.contentType;
+            // }
+
             console.log('match', match);
 
             expertPostspipeline = [
