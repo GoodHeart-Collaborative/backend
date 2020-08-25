@@ -249,7 +249,7 @@ export class ForumTopic extends BaseDao {
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
-                        $cond: { if: { "$eq": [ "$users._id", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
+                        $cond: { if: { "$eq": [ "$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
                     },
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
