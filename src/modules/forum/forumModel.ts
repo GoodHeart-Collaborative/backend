@@ -43,7 +43,6 @@ const forumSchema = new Schema({
             config.CONSTANT.STATUS.DELETED,
         ],
         default: config.CONSTANT.STATUS.ACTIVE,
-
     },
     createrId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Number, default: 0 },

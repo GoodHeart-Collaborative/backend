@@ -77,19 +77,22 @@ class forumController {
      * @description admin update status active ,block ,delete
      */
 
-    // async updateStatus(params: AdminExpertRequest.updateStatus) {
-    //     try {
-    //         const criteria = {
-    //             _id: params.expertId
-    //         };
-    //         const datatoUpdate = {
-    //             status: params.status
-    //         };
-    //         const data = await eventDao.updateOne('expert', criteria, datatoUpdate, {})
-    //         return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
-    //     } catch (error) {
-    //         return Promise.reject(error)
-    //     }
-    // }
+    async updateForumStatus(params) {
+        try {
+            const criteria = {
+                _id: params.postId,
+                createrId: params.userId
+            };
+            const datatoUpdate = {
+                status: params.status
+            };
+            const data = await eventDao.findByIdAndUpdate('forum', criteria, datatoUpdate, { new: true })
+            console.log('datadata', data);
+
+            return forumConstant.MESSAGES.SUCCESS.FORUM_STATUS_UPDATED(data.status);
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 }
 export const userForumController = new forumController();

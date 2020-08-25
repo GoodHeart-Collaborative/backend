@@ -100,9 +100,9 @@ export class ExpertDao extends BaseDao {
                     status: 0,
                 }
             },
-                // {
-                //     $limit: 5
-                // }
+            {
+                $limit: 5
+            }
             ];
             const CategoryLIST = await expertDao.aggregate('categories', categoryPipeline, {})
 
@@ -158,9 +158,9 @@ export class ExpertDao extends BaseDao {
 
                     }
                 },
-                // {
-                //     $limit: 5
-                // }
+                {
+                    $limit: 5
+                }
             ]
             const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {})
 
@@ -248,6 +248,9 @@ export class ExpertDao extends BaseDao {
                     $match: {
                         expertData: { $ne: [] }
                     }
+                },
+                {
+                    $limit: 5
                 }
             ];
 

@@ -13,13 +13,12 @@ let addForum = Joi.object({
     // ]),
     // topic: Joi.string().optional(),
     mediaUrl: Joi.string(),
-    description: Joi.string().required(),
+    description: Joi.string().optional(),
     thumbnailUrl: Joi.string(),
-    medianType: Joi.string().allow([
+    mediaType: Joi.number().allow([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
         config.CONSTANT.MEDIA_TYPE.VIDEO
-    ]),
-
+    ]).required(),
     postAnonymous: Joi.boolean().default(false),
 }).unknown();
 
@@ -32,15 +31,28 @@ let getForum = Joi.object({
 let updateForum = Joi.object({
     postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     categoryId: Joi.string().optional(),
-    topic: Joi.string().optional(),
+    // topic: Joi.string().optional(),
     mediaUrl: Joi.string().optional(),
+    mediaType: Joi.number().allow([
+        config.CONSTANT.MEDIA_TYPE.IMAGE,
+        config.CONSTANT.MEDIA_TYPE.VIDEO,
+    ]).required(),
+    thumbnailUrl: Joi.string().allow(''),
     description: Joi.string().optional(),
     postAnonymous: Joi.boolean().optional(),
 }).unknown()
 
-
+let updateForumStatus = Joi.object({
+    postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
+    status: Joi.string().allow([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED,
+    ])
+})
 export {
     addForum,
     updateForum,
-    getForum
+    getForum,
+    updateForumStatus
 };

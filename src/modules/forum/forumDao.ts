@@ -114,11 +114,11 @@ export class ForumTopic extends BaseDao {
                     }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: false } })
+            aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "userId",
+                    "localField": "createrId",
                     "foreignField": "_id",
                     "as": "users"
                 }
@@ -230,8 +230,13 @@ export class ForumTopic extends BaseDao {
 
                     }],
                     as: "commentData",
-                }
-            })
+                },
+            },
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                })
 
             aggPipe.push({
                 $project: {
@@ -242,28 +247,54 @@ export class ForumTopic extends BaseDao {
                     thumbnailUrl: 1,
                     description: 1,
                     created: 1,
-
+                    userId: 1,
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
                     categoryData: 1,
                     comment: { $ifNull: ["$comments.comment", ""] },
+                    commentCreated: { $ifNull: ["$comments.created", ''] },
                     user: {
+                        _id: "$users._id",
                         industryType: "$users.industryType",
                         myConnection: "$users.myConnection",
                         experience: "$users.experience",
                         about: "$users.about",
-                        name: { $ifNull: ["$users.firstName", ""] },
+                        // name: { $ifNull: ["$users.firstName", ""] },
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] },
-
-                        // name: {
-                        //     $cond: {
-                        //         if: {
-                        //               $expr'$postAnonymous
-                        //         }
-                        //     }
-                        // },
+                        name: {
+                            $cond: {
+                                if: {
+                                    // $expr: {
+                                    $and: [
+                                        {
+                                            $ifNull: ['$userId', false],
+                                        },
+                                        {
+                                            $eq: ['$userType', 'user']
+                                        }
+                                    ]
+                                },
+                                then: 'Anonymous',
+                                else: {
+                                    $cond: {
+                                        if: {
+                                            $and: [
+                                                {
+                                                    $ifNull: ['$userId', true],
+                                                },
+                                                {
+                                                    $eq: ['$userType', 'user']
+                                                }
+                                            ]
+                                        }, then: "$users.firstName",
+                                        else: 'Good heart team'
+                                    }
+                                }
+                                // else: 'Good Heart Team'
+                            }
+                        },
                     },
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
@@ -271,7 +302,8 @@ export class ForumTopic extends BaseDao {
                     isComment: {
                         $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                     }
-                }
+                },
+
             })
 
             aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
@@ -282,7 +314,6 @@ export class ForumTopic extends BaseDao {
             for (var key of myForumData.list) {
                 key['type'] = 1
             }
-
 
             const CATEGORIES = {
                 data,
@@ -319,6 +350,8 @@ export class ForumTopic extends BaseDao {
                 type: 1
             }
             let arr = [categories, ...myForumData.list,]
+            // let arr = [...myForumData.list,]
+
             return {
                 data: arr,
                 total: myForumData.total,
@@ -326,30 +359,6 @@ export class ForumTopic extends BaseDao {
                 type: 1
                 // return arr;
             }
-            // data: {
-            //     data:[
-
-            //     {
-            //     categoryList: [{}, {}]
-            //     type:0
-            //     },
-
-            //     {
-            //     type	:	1
-            //     },
-
-            //     {
-            //     type	:	1
-            //     }
-
-            //     ],
-            //     total	:	4
-            //     next_hit	:	0
-            //     type	:	1
-
-            //     }
-
-            // ;
         } catch (error) {
             return Promise.reject(error)
         }
