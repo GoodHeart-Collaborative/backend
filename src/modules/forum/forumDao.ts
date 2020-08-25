@@ -21,13 +21,16 @@ export class ForumTopic extends BaseDao {
             let aggPipe = [];
             let match: any = {};
             let categoryMatch: any = {};
-
+            let data: any = {}
             const paginateOptions = {
                 page: page || 1,
                 limit: limit || 10
             };
 
             categoryMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
+            if(postId) {
+                match['_id'] = postId;
+            } else {
 
             let categoryPipe = [
                 {
@@ -51,15 +54,7 @@ export class ForumTopic extends BaseDao {
                                     ]
                                 }
                             }
-                        },
-                            // {
-                            //     $project: {
-                            //         created: 1,
-                            //         imageUrl: 1,
-                            //         title: 1,
-                            //         name: 1,
-                            //     }
-                            // }
+                        }
                         ]
                     }
                 },
@@ -77,12 +72,13 @@ export class ForumTopic extends BaseDao {
                     $limit: 5
                 }
             ];
-            const data: any = await this.aggregate('categories', categoryPipe, {})
+            data = await this.aggregate('categories', categoryPipe, {})
+            }
 
             // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
-            if (postId) {
-                match['_id'] = appUtils.toObjectId(postId);
-            }
+            // if (postId) {
+            //     match['_id'] = appUtils.toObjectId(postId);
+            // }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             aggPipe.push({ $match: match });
             aggPipe.push({
@@ -252,11 +248,7 @@ export class ForumTopic extends BaseDao {
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
-<<<<<<< HEAD
-                        $cond: { if: { "$eq": ["$users._id", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
-=======
                         $cond: { if: { "$eq": [ "$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
->>>>>>> af7fb902288f08d127d999a0e4e25210b5c51667
                     },
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
@@ -330,8 +322,6 @@ export class ForumTopic extends BaseDao {
                 next_hit: myForumData.next_hit,
                 // type: 1
             }
-            console.log('myForumDatamyForumDatamyForumData', myForumData);
-
 
             if (params.postId) {
                 return myForumData[0] ? myForumData[0] : {};
@@ -341,8 +331,7 @@ export class ForumTopic extends BaseDao {
                 return {
                     data: arr,
                     total: myForumData.total,
-                    next_hit: myForumData.next_hit,
-                    // type: 1
+                    next_hit: myForumData.next_hit
                 }
             }
 
