@@ -6,7 +6,7 @@ import * as config from "@config/index";
 let validaExpertAdd = Joi.object({
     categoryId: Joi.array().items(Joi.string()),
     name: Joi.string().required(),
-    email: Joi.string().email().required(),
+    email: Joi.string().email().trim().lowercase().required(),
     profession: Joi.string().required(),
     industry: Joi.number().valid([
         // config.INDUSTRIES.Compassion_Fatigue,

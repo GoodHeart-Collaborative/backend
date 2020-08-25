@@ -21,6 +21,11 @@ export const MESSAGES = {
             "message": "SUCCESS",
             "type": "DEFAULT"
         },
+        ALREADY_EXIST: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Expert with this email already registered",
+            "type": "DEFAULT"
+        },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
             "message": "Expert has been added successfully",
