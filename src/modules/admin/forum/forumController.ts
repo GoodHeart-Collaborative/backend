@@ -215,7 +215,7 @@ class AdminForumController {
             }
             const data = await eventDao.findOneAndUpdate('forum', criteria, dataToUpdate, { new: true })
             if (!data) {
-                // return forumConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
+                return forumConstant.MESSAGES.ERROR.INVALID_ID;
             }
             return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
         } catch (error) {
@@ -255,7 +255,6 @@ class AdminForumController {
                 $match: match
             })
             if (params.userType == config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-
                 aggPipe.push({
                     $lookup: {
                         from: 'admin',
