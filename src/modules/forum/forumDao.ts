@@ -17,7 +17,7 @@ export class ForumTopic extends BaseDao {
 
     async getFormPosts(params) {
         try {
-            const { page, limit, _id } = params;
+            const { page, limit, postId } = params;
             let aggPipe = [];
             let match: any = {};
             let categoryMatch: any = {};
@@ -80,6 +80,9 @@ export class ForumTopic extends BaseDao {
             const data: any = await this.aggregate('categories', categoryPipe, {})
 
             // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
+            if (postId) {
+                match['_id'] = appUtils.toObjectId(postId);
+            }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             aggPipe.push({ $match: match });
             aggPipe.push({
@@ -249,7 +252,7 @@ export class ForumTopic extends BaseDao {
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
-                        $cond: { if: { "$eq": [ "$users._id", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
+                        $cond: { if: { "$eq": ["$users._id", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
                     },
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
@@ -261,7 +264,7 @@ export class ForumTopic extends BaseDao {
                         about: "$users.about",
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] },
-                        name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
+                        name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                         // name: {
                         //     $cond: {
                         //         if: {
@@ -299,14 +302,20 @@ export class ForumTopic extends BaseDao {
                     isComment: {
                         $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                     },
-                    type:1
+                    type: 1
                 },
 
             })
 
-            aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
-            const myForumData: any = await this.aggregateWithPagination('forum', aggPipe)
+            let myForumData;
+            if (!params.postId) {
+                aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+                myForumData = await this.aggregateWithPagination('forum', aggPipe)
+            }
 
+            if (params.postId) {
+                myForumData = await this.aggregate('forum', aggPipe, {})
+            }
 
             const categories = {
                 data,
@@ -317,14 +326,22 @@ export class ForumTopic extends BaseDao {
                 next_hit: myForumData.next_hit,
                 // type: 1
             }
-            let arr = [categories, ...myForumData.list]
+            console.log('myForumDatamyForumDatamyForumData', myForumData);
 
-            return {
-                data: arr,
-                total: myForumData.total,
-                next_hit: myForumData.next_hit,
-                // type: 1
+
+            if (params.postId) {
+                return myForumData[0] ? myForumData[0] : {};
             }
+            let arr = [categories, ...myForumData.list]
+            if (!params.postId) {
+                return {
+                    data: arr,
+                    total: myForumData.total,
+                    next_hit: myForumData.next_hit,
+                    // type: 1
+                }
+            }
+
         } catch (error) {
             return Promise.reject(error)
         }
@@ -347,7 +364,7 @@ export class ForumTopic extends BaseDao {
                 }
             }
             update["$set"] = params
-            return await this.updateOne('forum', query, update, {});
+            return await this.findOneAndUpdate('forum', query, update, {});
         } catch (error) {
             throw error;
         }
