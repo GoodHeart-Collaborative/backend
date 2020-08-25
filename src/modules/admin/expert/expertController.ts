@@ -27,6 +27,11 @@ class ExpertController {
     async addExpert(params: AdminExpertRequest.expertAdd) {
         try {
             params['created'] = new Date().getTime()
+
+            const findEmail = await expertDao.findOne('expert', { email: params.email }, {}, {});
+            if (findEmail) {
+                return expertConstant.MESSAGES.SUCCESS.ALREADY_EXIST;
+            }
             const data = await expertDao.insert("expert", params, {});
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
