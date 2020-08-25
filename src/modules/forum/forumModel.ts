@@ -27,7 +27,7 @@ export interface Iforum extends Document {
 const forumSchema = new Schema({
     categoryId: { type: Schema.Types.ObjectId, required: true },
     commentId: { type: Schema.Types.ObjectId, required: false },
-    // categoryName: { type: String }, // only for searching commentId
+    type: { type: Number, default: 1 },
     userId: { type: Schema.Types.ObjectId, required: false },
     userType: {
         type: String, enum: [

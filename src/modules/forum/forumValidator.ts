@@ -24,9 +24,10 @@ let addForum = Joi.object({
 
 let getForum = Joi.object({
     // categoryId: Joi.string().optional(),
+    postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID),
     searchTerm: Joi.string(),
-    limit: Joi.number().required(),
-    page: Joi.number().required(),
+    limit: Joi.number(),
+    page: Joi.number(),
 })
 let updateForum = Joi.object({
     postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),

@@ -17,7 +17,7 @@ export const userForumRoutes: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: AdminForumRequest.AddForum = request.payload;
             try {
-                if (payload && payload.postAnonymous) {
+                if (payload && payload.postAnonymous === false) {
                     payload["userId"] = tokenData.userId
                 }
                 payload["createrId"] = tokenData.userId

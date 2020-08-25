@@ -16,7 +16,11 @@ export const AdminForumRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload: AdminForumRequest.AddForum = request.payload;
-            payload['userId'] = tokenData['userId']
+            // payload['userId'] = tokenData['userId']
+
+            payload["createrId"] = tokenData.userId;
+            payload["userType"] = config.CONSTANT.ACCOUNT_LEVEL.ADMIN;
+
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await adminForumController.addForum(payload);
