@@ -17,13 +17,108 @@ export class ForumTopic extends BaseDao {
 
     async getFormPosts(params) {
         try {
+            const { page, limit } = params;
             let aggPipe = [];
             let match: any = {};
-            let criteria: any = {};
+            let categoryMatch: any = {};
+
+            const paginateOptions = {
+                page: page || 1,
+                limit: limit || 10
+            };
+
+            categoryMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+            let categoryPipe = [
+                {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE,
+                    }
+                }, {
+                    $lookup: {
+                        from: 'forums',
+                        let: { cId: '$_id' },
+                        as: 'forumData',
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [{
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                    {
+                                        $eq: ['$categoryId', '$$cId']
+                                    }
+                                    ]
+                                }
+                            }
+                        },
+                            // {
+                            //     $project: {
+                            //         created: 1,
+                            //         imageUrl: 1,
+                            //         title: 1,
+                            //         name: 1,
+                            //     }
+                            // }
+                        ]
+                    }
+                },
+                {
+                    $match: {
+                        forumData: { $ne: [] }
+                    }
+                },
+                {
+                    $project: {
+                        forumData: 0
+                    }
+                },
+                {
+                    $limit: 5
+                }
+            ];
+            const data: any = await this.aggregate('categories', categoryPipe, {})
+            console.log('getCategorygetCategory', data);
+
+            const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
+            console.log('getAdminNamegetAdminName', getAdminName);
+
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+            aggPipe.push({ $match: match });
+
+
+            aggPipe.push({
+                $lookup: {
+                    "from": "categories",
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE],
+                                },
+                                {
+                                    $eq: ['$_id', '$$cId']
+                                }]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            name: 1,
+                            title: 1,
+                            imageUrl: 1
+                        }
+                    }]
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "userId",
+                    "localField": "createrId",
                     "foreignField": "_id",
                     "as": "users"
                 }
@@ -71,7 +166,7 @@ export class ForumTopic extends BaseDao {
             // const userData = await this.aggregate('users', userDataCriteria, {})
             // console.log('userDatauserDatauserData', userData);
 
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
             // if (params.userId) {
             //     match['postAnonymous'] = false;
             // }
@@ -135,8 +230,13 @@ export class ForumTopic extends BaseDao {
 
                     }],
                     as: "commentData",
-                }
-            })
+                },
+            },
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                })
 
             aggPipe.push({
                 $project: {
@@ -147,18 +247,54 @@ export class ForumTopic extends BaseDao {
                     thumbnailUrl: 1,
                     description: 1,
                     created: 1,
+                    userId: 1,
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
+                    categoryData: 1,
                     comment: { $ifNull: ["$comments.comment", ""] },
+                    commentCreated: { $ifNull: ["$comments.created", ''] },
                     user: {
+                        _id: "$users._id",
                         industryType: "$users.industryType",
                         myConnection: "$users.myConnection",
                         experience: "$users.experience",
                         about: "$users.about",
-                        name: { $ifNull: ["$users.firstName", ""] },
+                        // name: { $ifNull: ["$users.firstName", ""] },
                         profilePicUrl: "$users.profilePicUrl",
-                        profession: { $ifNull: ["$users.profession", ""] }
+                        profession: { $ifNull: ["$users.profession", ""] },
+                        name: {
+                            $cond: {
+                                if: {
+                                    // $expr: {
+                                    $and: [
+                                        {
+                                            $ifNull: ['$userId', false],
+                                        },
+                                        {
+                                            $eq: ['$userType', 'user']
+                                        }
+                                    ]
+                                },
+                                then: 'Anonymous',
+                                else: {
+                                    $cond: {
+                                        if: {
+                                            $and: [
+                                                {
+                                                    $ifNull: ['$userId', true],
+                                                },
+                                                {
+                                                    $eq: ['$userType', 'user']
+                                                }
+                                            ]
+                                        }, then: "$users.firstName",
+                                        else: 'Good heart team'
+                                    }
+                                }
+                                // else: 'Good Heart Team'
+                            }
+                        },
                     },
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
@@ -166,29 +302,82 @@ export class ForumTopic extends BaseDao {
                     isComment: {
                         $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                     }
-                }
+                },
+
             })
-            const myForumData = await this.paginate('forum', aggPipe, 10, 1, {}, true)
-            return myForumData;
+
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            // let EXPERTPOST = await this.aggregateWithPagination1("expert_post", expertPostspipeline);
+
+            const myForumData: any = await this.aggregateWithPagination('forum', aggPipe)
+
+            for (var key of myForumData.list) {
+                key['type'] = 1
+            }
+
+            const CATEGORIES = {
+                data,
+                type: 0
+            }
+
+            console.log('myForumDatamyForumData', CATEGORIES);
+            // let data = []
+            // const arr = [CATEGORIES, forumData1];
+            // const aa = JSON.parse(JSON.stringify(myForumData));
+            // aa.type = 1
+            // arr.unshift({
+            //     forumData: aa,
+            // })
+            console.log('.myForumData.list', myForumData);
+
+            const categories = {
+                data,
+                type: 0
+            };
+            // categoryList['type'] = 0
+            // data.push({ categoryList: categories.categoryList })
+            // data.push({ type: categories.type })
+
+            // let arr2=[
+            //     total= myForumData.total,
+            //     next_hit: myForumData.next_hit,
+            //     type: 1
+
+            // ]
+            const arr1: any = {
+                total: myForumData.total,
+                next_hit: myForumData.next_hit,
+                type: 1
+            }
+            let arr = [categories, ...myForumData.list,]
+            // let arr = [...myForumData.list,]
+
+            return {
+                data: arr,
+                total: myForumData.total,
+                next_hit: myForumData.next_hit,
+                type: 1
+                // return arr;
+            }
         } catch (error) {
             return Promise.reject(error)
         }
     }
     async checkForum(params) {
-		try {
-			return await this.findOne('forum', params, {}, {});
-		} catch (error) {
-			throw error;
-		}
+        try {
+            return await this.findOne('forum', params, {}, {});
+        } catch (error) {
+            throw error;
+        }
     }
     async updateForum(query, params) {
         try {
-            let update:any = {}
-            if(params && params.postAnonymous) {
+            let update: any = {}
+            if (params && params.postAnonymous) {
                 params['userId'] = query.createrId
             } else {
-                if(params && params.postAnonymous === false){
-                update["$unset"] = {userId: ""}
+                if (params && params.postAnonymous === false) {
+                    update["$unset"] = { userId: "" }
                 }
             }
             update["$set"] = params

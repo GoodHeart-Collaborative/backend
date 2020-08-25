@@ -41,7 +41,14 @@ export const MESSAGES = {
             "message": "Expert has been active successfully",
             "type": "DEFAULT"
         },
-
+        SUCCESSFULLY_UPDATED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "Expert has been updated successfully",
+                "type": "DEFAULT",
+                data: data
+            }
+        },
         DEFAULT_WITH_DATA: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,

@@ -229,9 +229,9 @@ export const userExpertRoute: ServerRoute[] = [
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
                 query: {
-                    searchTerm: Joi.string().required(),
+                    searchKey: Joi.string(),
                     limit: Joi.number(),
-                    page: Joi.number()
+                    pageNo: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
             },

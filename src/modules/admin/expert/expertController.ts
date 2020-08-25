@@ -162,7 +162,7 @@ class ExpertController {
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
         } catch (error) {
             throw error;
         }
