@@ -106,6 +106,18 @@ export class ExpertDao extends BaseDao {
             ];
             const CategoryLIST = await expertDao.aggregate('categories', categoryPipeline, {})
 
+            // console.log('CategoryLISTCategoryLISTCategoryLIST', CategoryLIST);
+
+            // let aa = [];
+
+            // for (var i = 0; i < CategoryLIST.length; i++) {
+            //     for (var key1 in CategoryLIST[i]._id) {
+            //         aa.push(key1);
+            //     }
+            // }
+            // // aa.push(CategoryLIST.data._id)
+            // console.log('aaaaaaaaaaaa', aa);
+
             let CATEGORIES = {
                 CategoryLIST,
                 type: 1,
@@ -193,7 +205,7 @@ export class ExpertDao extends BaseDao {
                                         ]
                                     }
                                 }
-                            }
+                            },
                         ],
                     },
                 },
@@ -240,7 +252,8 @@ export class ExpertDao extends BaseDao {
                                         }]
                                     }
                                 }
-                            }
+                            },
+                            { $limit: 5 }
                         ],
                     },
                 },
