@@ -147,10 +147,10 @@ export const userForumRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/forum`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload = request.payload;
-            payload['userId'] = tokenData.userId;
+            const query = request.query;
+            query['userId'] = tokenData.userId;
             try {
-                const result = await userForumController.deleteForum(payload);
+                const result = await userForumController.deleteForum(query);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -164,7 +164,7 @@ export const userForumRoutes: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                payload: forumValidator.deleteForum,
+                query: forumValidator.deleteForum,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
