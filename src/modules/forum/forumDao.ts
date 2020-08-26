@@ -29,9 +29,9 @@ export class ForumTopic extends BaseDao {
 
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            if (categoryId) {
-                match['categoryId'] = appUtils.toObjectId(categoryId)
-            }
+            // if (categoryId) {
+            //     match['categoryId'] = appUtils.toObjectId(categoryId)
+            // }
             if (postId) {
                 match['_id'] = postId;
             } else {
@@ -180,7 +180,6 @@ export class ForumTopic extends BaseDao {
                                 ]
                             }
                         }
-
                     }],
                     as: "commentData",
                 },
