@@ -259,7 +259,7 @@ class AdminForumController {
                 aggPipe.push({
                     $lookup: {
                         from: 'admin',
-                        let: { aId: '$userId' },
+                        let: { aId: '$createrId' },
                         pipeline: [{
                             $match: {
                                 $expr: {
@@ -276,7 +276,7 @@ class AdminForumController {
                 aggPipe.push({
                     $lookup: {
                         from: 'users',
-                        let: { uId: '$userId' },
+                        let: { uId: '$createrId' },
                         pipeline: [{
                             $match: {
                                 $expr: {
