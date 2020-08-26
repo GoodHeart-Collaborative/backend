@@ -109,6 +109,7 @@ class EventController {
             let aggPipe = [];
             let featureAggPipe = [];
             let match: any = {}
+
             let searchDistance = distance ? distance * 1000 : 200 * 1000// Default value is 10 km.
 
             if (eventCategoryId) {
@@ -142,7 +143,6 @@ class EventController {
                     { address: reg },
                     { title: reg },
                 ];
-
             }
             console.log('moment(new Date()).format', moment(new Date()).format('YYYY-MM-DD'));
 
@@ -163,12 +163,36 @@ class EventController {
             }
             const unwind = {
                 '$unwind': { path: '$interestData', preserveNullAndEmptyArrays: true },
-
             }
+
+            const interesetData = {
+                $lookup: {
+                    from: 'event_interests',
+                    let: { userId: '$userId', eId: '$_id' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$userId', '$$userId']
+                                    },
+                                    {
+                                        $eq: ['$eventId', '$$eId']
+                                    },
+                                    {
+                                        $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
+                                    }
+                                ]
+                            }
+                        }
+                    }],
+                    as: 'interestData',
+                }
+            }
+
             const projection = {
                 "$project": {
                     name: 1,
-                    location: 1,
                     title: 1,
                     privacy: 1,
                     startDate: 1,
@@ -192,14 +216,17 @@ class EventController {
                 }
             };
 
-            aggPipe.push({ $match: match })
-            aggPipe.push({
-                $sort: {
-                    _id: -1
+            aggPipe.push({ $match: match }, { $match: { isFeatured: false } })
+            aggPipe.push(
+                {
+                    $sort: {
+                        _id: -1
+                    },
                 },
-            },
+                {
+                    $limit: 5
+                }
             )
-
             console.log('tokenData.userIdtokenData.userId', tokenData.userId);
 
             featureAggPipe.push(
@@ -207,54 +234,95 @@ class EventController {
                     $match: match
                 },
                 {
-                    $sort: {
-                        isFeatured: 1,
-                    },
+                    $match: {
+                        isFeatured: true
+                    }
                 },
                 {
                     $limit: 5
                 },
-                {
-                    $lookup: {
-                        from: 'event_interests',
-                        let: { userId: '$userId', eId: '$_id' },
-                        pipeline: [{
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ['$userId', '$$userId']
-                                        },
-                                        {
-                                            $eq: ['$eventId', '$$eId']
-                                        },
-                                        {
-                                            $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
-                                        }
-                                    ]
-                                }
-                            }
-                        }],
-                        as: 'interestData',
-                    }
-                })
-            featureAggPipe.push(unwind)
-
+            )
+            featureAggPipe.push(interesetData);
+            featureAggPipe.push(unwind);
+            console.log('featureAggPipefeatureAggPipefeatureAggPipe', featureAggPipe);
             featureAggPipe.push(projection)
 
-            aggPipe.push(unwind),
-                aggPipe.push(projection)
+            aggPipe.push(interesetData);
+            aggPipe.push(unwind);
+            aggPipe.push(projection);
+
+            const getEventCategory = [
+                {
+                    $match: {
+                        status: 'active',
+                        // createdAt: {
+                        //     $gte: new Date()
+                        // }
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$eventCategoryId',
+                        description: { $first: "$eventCategoryDisplayName" },
+                    }
+                }
+            ]
+            console.log('getEventCategorygetEventCategory', getEventCategory);
+            const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
+            console.log('eventCategoryList1eventCategoryList1', eventCategoryListName);
+
+
             const FeaturedEvent = await eventDao.aggregate('event', featureAggPipe, {})
-            const EVENT = await eventDao.aggregate('event', aggPipe, {});            // console.log('datadata', EVENT);
-            return {
+            const EVENT = await eventDao.aggregate('event', aggPipe, {});
+            const TIME = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
+            const TIMES = {
+                TIME,
+                type: 2
+            }
+            const category = {
+                eventCategoryListName,
+                type: 0
+            }
+            const FEATURED = {
                 FeaturedEvent,
-                EVENT
-            };
+                type: 1
+            }
+            const EVENTS = {
+                EVENT,
+                type: 3
+            }
+            const a = []
+            return [
+                category,
+                FEATURED,
+                TIMES,
+                EVENTS,
+            ]
         } catch (error) {
             return Promise.reject(error)
         }
     }
+    // {
+    // data: [
+    //     {
+    //         categories: [{}, {}, {}],  // or ['','']
+    //         type: 0,
+    //     },
+    //     {
+    //         FeaturedData: [{}, {}],
+    //         type: 1
+    //     },
+    //     {
+    //         dates: [{}, {}]  // or array ['','']    
+    //         type: 2
+    //     },
+    //     {
+    //         events: [{}, {}],
+    //         type: 3
+    //     } 
+    //     }]
 
+    //     }
     async getEventDetail(payload, tokenData) {
         try {
             console.log('payloadpayload', payload);
