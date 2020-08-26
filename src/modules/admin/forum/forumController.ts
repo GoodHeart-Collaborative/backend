@@ -258,7 +258,7 @@ class AdminForumController {
                 aggPipe.push({
                     $lookup: {
                         from: 'admin',
-                        let: { aId: '$userId' },
+                        let: { aId: '$createrId' },
                         pipeline: [{
                             $match: {
                                 $expr: {
@@ -275,7 +275,7 @@ class AdminForumController {
                 aggPipe.push({
                     $lookup: {
                         from: 'users',
-                        let: { uId: '$userId' },
+                        let: { uId: '$createrId' },
                         pipeline: [{
                             $match: {
                                 $expr: {
@@ -306,7 +306,9 @@ class AdminForumController {
             }
 
             const data = await eventDao.aggregate('forum', aggPipe, {})
-            return data[0];
+            console.log('datadatadatadata', data);
+
+            return data[0] ? data[0] : {};
         } catch (error) {
             return Promise.reject(error)
         }

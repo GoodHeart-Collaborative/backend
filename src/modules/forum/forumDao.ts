@@ -15,7 +15,7 @@ export class ForumTopic extends BaseDao {
         }
     }
 
-    async getFormPosts(params) {
+    async getFormPosts(params, tokenData?) {
         try {
             const { page, limit, postId } = params;
             let aggPipe = [];
@@ -28,51 +28,51 @@ export class ForumTopic extends BaseDao {
             };
 
             categoryMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
-            if(postId) {
+            if (postId) {
                 match['_id'] = postId;
             } else {
 
-            let categoryPipe = [
-                {
-                    $match: {
-                        status: config.CONSTANT.STATUS.ACTIVE,
-                    }
-                }, {
-                    $lookup: {
-                        from: 'forums',
-                        let: { cId: '$_id' },
-                        as: 'forumData',
-                        pipeline: [{
-                            $match: {
-                                $expr: {
-                                    $and: [{
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    },
-                                    {
-                                        $eq: ['$categoryId', '$$cId']
+                let categoryPipe = [
+                    {
+                        $match: {
+                            status: config.CONSTANT.STATUS.ACTIVE,
+                        }
+                    }, {
+                        $lookup: {
+                            from: 'forums',
+                            let: { cId: '$_id' },
+                            as: 'forumData',
+                            pipeline: [{
+                                $match: {
+                                    $expr: {
+                                        $and: [{
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        },
+                                        {
+                                            $eq: ['$categoryId', '$$cId']
+                                        }
+                                        ]
                                     }
-                                    ]
                                 }
                             }
+                            ]
                         }
-                        ]
+                    },
+                    {
+                        $match: {
+                            forumData: { $ne: [] }
+                        }
+                    },
+                    {
+                        $project: {
+                            forumData: 0
+                        }
+                    },
+                    {
+                        $limit: 5
                     }
-                },
-                {
-                    $match: {
-                        forumData: { $ne: [] }
-                    }
-                },
-                {
-                    $project: {
-                        forumData: 0
-                    }
-                },
-                {
-                    $limit: 5
-                }
-            ];
-            data = await this.aggregate('categories', categoryPipe, {})
+                ];
+                data = await this.aggregate('categories', categoryPipe, {})
             }
 
             // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
@@ -248,7 +248,7 @@ export class ForumTopic extends BaseDao {
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
-                        $cond: { if: { "$eq": [ "$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
+                        $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
                     },
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
@@ -314,7 +314,7 @@ export class ForumTopic extends BaseDao {
             }
 
             const categories = {
-                categoryData:  data,
+                categoryData: data,
                 type: 0
             };
             const arr1: any = {
