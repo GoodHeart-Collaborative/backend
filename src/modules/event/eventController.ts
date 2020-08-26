@@ -196,7 +196,7 @@ class EventController {
                     title: 1,
                     privacy: 1,
                     startDate: 1,
-                    endDate: Date,
+                    endDate: 1,
                     price: 1,
                     url: 1,
                     imageUrl: 1,
