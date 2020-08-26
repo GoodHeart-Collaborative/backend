@@ -29,6 +29,9 @@ export class ForumTopic extends BaseDao {
 
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            if(categoryId) {
+                match['categoryId'] = await appUtils.toObjectId(categoryId);
+            }
             // if (categoryId) {
             //     match['categoryId'] = appUtils.toObjectId(categoryId)
             // }
@@ -285,7 +288,12 @@ export class ForumTopic extends BaseDao {
             if (params.postId) {
                 return myForumData[0] ? myForumData[0] : {};
             }
-            let arr = [categories, ...myForumData.list]
+            let arr:any = []
+            if(categoryId) {
+                arr = [...myForumData.list]
+            } else {
+                arr = [categories, ...myForumData.list]
+            }
             if (!params.postId) {
                 return {
                     data: arr,
