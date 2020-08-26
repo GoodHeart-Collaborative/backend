@@ -44,9 +44,15 @@ let updateForumStatus = Joi.object({
         config.CONSTANT.STATUS.DELETED,
     ])
 })
+
+let deleteForum = Joi.object({
+    postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+})
+
 export {
     addForum,
     updateForum,
     getForum,
+    deleteForum,
     updateForumStatus
 };
