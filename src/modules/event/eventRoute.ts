@@ -111,7 +111,8 @@ export const userEventRoutes: ServerRoute[] = [
                         config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
                         config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
                         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
-                    ]),
+                        5
+                    ]).description('5-All'),
                     date: Joi.string().allow([
                         'today', 'tomorrow', 'weekend', 'month'
                     ])
