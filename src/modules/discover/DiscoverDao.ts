@@ -82,6 +82,7 @@ export class DiscoverDao extends BaseDao {
                                 name: { $concat: [{ $ifNull: ["$followers.firstName", ""] }, " ", { $ifNull: ["$followers.lastName", ""] }] },
                                 profilePicUrl: "$followers.profilePicUrl",
                                 profession: { $ifNull: ["$followers.profession", ""] },
+                                about: { $ifNull: ["$followers.about", ""] },
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
@@ -127,6 +128,7 @@ export class DiscoverDao extends BaseDao {
                                 name: { $concat: [{ $ifNull: ["$followers.firstName", ""] }, " ", { $ifNull: ["$followers.lastName", ""] }] },
                                 profilePicUrl: "$followers.profilePicUrl",
                                 profession: { $ifNull: ["$followers.profession", ""] },
+                                about: { $ifNull: ["$followers.about", ""] },
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
