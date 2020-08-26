@@ -144,7 +144,7 @@ export const userForumRoutes: ServerRoute[] = [
     },
     {
         method: "DELETE",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/forums`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/forum`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload = request.payload;
