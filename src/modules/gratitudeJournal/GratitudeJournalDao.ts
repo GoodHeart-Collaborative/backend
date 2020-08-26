@@ -294,7 +294,8 @@ export class GratitudeJournalDao extends BaseDao {
                         discover_status: discover.discover_status,
                         name: { $concat: [ { $ifNull: ["$firstName", ""] }, " ",  { $ifNull: ["$lastName", ""]} ]},
                         profilePicUrl: "$profilePicUrl",
-                        profession: { $ifNull: ["$profession", ""] }
+                        profession: { $ifNull: ["$profession", ""] },
+                        about:{ $ifNull: ["$about", ""]}
                     }
                 }
             ]
