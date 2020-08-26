@@ -34,6 +34,11 @@ export const MESSAGES = {
                 "type": "FORUM_UPDATED_STATUS",
             };
         },
+        FORUM_DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Forum deleted successfully.",
+            "type": "FORUM_DELETED"
+        },
 
         DEFAULT_SUCCESS: (data) => {
             return {

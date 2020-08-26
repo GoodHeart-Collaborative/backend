@@ -99,5 +99,20 @@ class forumController {
             return Promise.reject(error)
         }
     }
+
+    async deleteForum(params) {
+        try {
+            const criteria = {_id: params.postId, createrId: params.userId, userType: config.CONSTANT.ACCOUNT_LEVEL.USER};
+            const datatoUpdate = { status: config.CONSTANT.STATUS.DELETED };
+            let data = await eventDao.findByIdAndUpdate('forum', criteria, datatoUpdate, { new: true })
+            if(data) {
+                return forumConstant.MESSAGES.SUCCESS.FORUM_DELETED
+            } else {
+                return forumConstant.MESSAGES.ERROR.FORUM_NOT_FOUND
+            }
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 }
 export const userForumController = new forumController();

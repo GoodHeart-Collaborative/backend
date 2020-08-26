@@ -110,7 +110,6 @@ export const userForumRoutes: ServerRoute[] = [
             }
         }
     },
-
     {
         method: "PATCH",
         path: `${config.SERVER.API_BASE_URL}/v1/users/forums/{postId}/status/{status}`,
@@ -134,6 +133,38 @@ export const userForumRoutes: ServerRoute[] = [
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
                 params: forumValidator.updateForumStatus,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+    {
+        method: "DELETE",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/forums/{postId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
+            const params = request.params;
+            params['userId'] = tokenData.userId;
+            try {
+                const result = await userForumController.deleteForum(params);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "forum"],
+            description: "update user forums status",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                params: forumValidator.deleteForum,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
