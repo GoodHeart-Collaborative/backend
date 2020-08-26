@@ -3,7 +3,7 @@ declare namespace DiscoverRequest {
         followerId: string
     }
     export interface DiscoverRequestEditParams {
-        discoverId: string
+        followerId: string
     }
     export interface DiscoverRequestEdit extends Device, DiscoverRequestEditParams {
         discover_status: number

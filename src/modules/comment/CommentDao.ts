@@ -3,6 +3,7 @@ import { BaseDao } from "../base/BaseDao";
 import * as appUtils from '../../utils/appUtils'
 import { config } from "aws-sdk";
 import { CONSTANT } from "@config/index";
+import * as mongoose from "mongoose";
 
 
 export class CommentDao extends BaseDao {
@@ -52,7 +53,6 @@ export class CommentDao extends BaseDao {
                 limit = 1
                 isPaginationEnable = false
             } else {
-                // match["userId"] = appUtils.toObjectId(userId)
                 match["postId"] = appUtils.toObjectId(postId)
                 aggPipe.push({ "$sort": { "createdAt": -1 } });
             }
@@ -100,6 +100,44 @@ export class CommentDao extends BaseDao {
                     as: "likeData"
                 }
             })
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$userId", "user": mongoose.Types.ObjectId(userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                        $and: [
+                                            {
+                                                $eq: ["$followerId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$userId", "$$users"]
+                                            }
+                                        ]
+                                        },
+                                        {
+                                        $and: [
+                                            {
+                                                $eq: ["$userId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$followerId", "$users"]
+                                            }
+                                        ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
@@ -121,9 +159,6 @@ export class CommentDao extends BaseDao {
                                     {
                                         $eq: ['$category', CONSTANT.COMMENT_CATEGORY.COMMENT]
                                     }
-                                    // {
-                                    //     $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
-                                    // }
                                 ]
                             }
                         }
@@ -147,11 +182,14 @@ export class CommentDao extends BaseDao {
                         "createdAt": 1,
                         user: {
                             _id: "$users._id",
-                            name: { $ifNull: ["$users.firstName", ""] },
+                            industryType: "$users.industryType",
+                            myConnection: "$users.myConnection",
+                            experience: "$users.experience",
+                            discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                            name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
                             profilePicUrl: "$users.profilePicUrl",
                             profession: { $ifNull: ["$users.profession", ""] }
                         },
-                        // commentData:1
                         isComment: {
                             $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                         },

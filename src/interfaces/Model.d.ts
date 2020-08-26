@@ -125,4 +125,5 @@ declare type ModelNames =
 	'shoutout' |
 	'expert_post' |
 	'event' |
-	'event_interest';
+	'event_interest' |
+	'forum'

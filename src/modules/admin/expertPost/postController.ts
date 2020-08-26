@@ -37,6 +37,7 @@ class ExpertPostController {
             params['contentType'] = result['TYPE']
             params['contentDisplayName'] = result['DISPLAY_NAME'];
 
+            params['created'] = new Date().getTime();
             const data = await expertPostDao.insert("expert_post", params, {});
 
             return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
@@ -51,19 +52,39 @@ class ExpertPostController {
      * @description admin get postDetails
      * /
      **/
-    async getPostById(params: InspirationRequest.IGetInspirationById) {
+    async getPostById(params) {
         try {
-            const criteria = {
-                _id: params.Id,
-            };
-
-            const data = await expertPostDao.findOne('expert_post', criteria, {}, {})
+            const match: any = {}
+            const aggPipe = [];
+            match['_id'] = appUtils.toObjectId(params.postId);
+            aggPipe.push({ $match: match })
+            aggPipe.push({
+                $lookup: {
+                    from: 'categories',
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$cId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+                            }
+                        }
+                    }]
+                }
+            })
+            aggPipe.push({
+                $unwind: '$categoryData'
+            })
+            const data = await expertPostDao.aggregate('expert_post', aggPipe, {})
             if (!data) {
                 return expertPostConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
             return expertPostConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-
-            // return data;
         } catch (error) {
             throw error;
         }
@@ -77,8 +98,8 @@ class ExpertPostController {
     async getExpertPosts(params: AdminExpertPostRequest.getExpert) {
         try {
             const pageNo = params.page;
-            const { expertId, categoryId, limit, contentId, searchTerm, fromDate, toDate } = params;
-
+            const { expertId, categoryId, limit, contentId, searchTerm, fromDate, toDate, sortBy, sortOrder } = params;
+            let sort = {};
             let aggPipe = [];
             const match: any = {};
 
@@ -101,14 +122,25 @@ class ExpertPostController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-            let query;
+            aggPipe.push({ $match: match })
+
+            if (sortBy && sortOrder) {
+                if (sortBy === "topic") {
+                    sort = { "topic": sortOrder };
+                } else {
+                    sort = { "createdAt": sortOrder };
+                }
+            } else {
+                sort = { "createdAt": -1 };
+            }
 
             // if (contentId) {
             //     match.contentId = contentId;
             //     // match.status = config.CONSTANT.STATUS.ACTIVE;
             //     // match.expertId = appUtils.toObjectId(expertId)
             // }
-            aggPipe.push({ $match: match })
+            aggPipe.push({ "$sort": sort });
+
 
             if (!contentId) {
                 aggPipe.push({
@@ -242,16 +274,19 @@ class ExpertPostController {
 
     async updatePost(params: AdminExpertPostRequest.adminUpdateExpertPost) {
         try {
+            console.log('paramsparamsparams', params);
+
             const criteria = {
                 _id: params.postId
             };
             const datatoUpdate = {
                 ...params
             };
-            const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
+            const data = await expertPostDao.findOneAndUpdate('expert_post', criteria, datatoUpdate, { new: true })
             if (data) {
-                expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
+                expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
             }
+            return;
         } catch (error) {
             throw error;
         }

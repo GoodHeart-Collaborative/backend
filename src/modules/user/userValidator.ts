@@ -229,7 +229,7 @@ let updateProfile = Joi.object({
         config.CONSTANT.EXPERIENCE_LEVEL.MID,
         config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
     ]),
-    about: Joi.string().allow('')
+    about: Joi.string().allow('').default('')
 }).unknown()
 
 
@@ -265,7 +265,7 @@ let updateProfileUser = Joi.object({
         config.CONSTANT.EXPERIENCE_LEVEL.MID,
         config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
     ]).required(),
-    about: Joi.string().allow('')
+    about: Joi.string().allow('').default('')
 }).unknown()
 
 

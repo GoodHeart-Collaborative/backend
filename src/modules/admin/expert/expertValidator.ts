@@ -6,7 +6,7 @@ import * as config from "@config/index";
 let validaExpertAdd = Joi.object({
     categoryId: Joi.array().items(Joi.string()),
     name: Joi.string().required(),
-    email: Joi.string().email().required(),
+    email: Joi.string().email().trim().lowercase().required(),
     profession: Joi.string().required(),
     industry: Joi.number().valid([
         // config.INDUSTRIES.Compassion_Fatigue,
@@ -45,6 +45,11 @@ let validateGetExpert = Joi.object({
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
     ]),
+    status: Joi.string().valid([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED,
+    ]),
     categoryId: Joi.string().trim()
 
 }).unknown()
@@ -55,10 +60,9 @@ let validateExpertId = Joi.object({
 }).unknown()
 
 
-let updateExpertPost = Joi.object({
+let updateExpert = Joi.object({
     categoryId: Joi.array().items(Joi.string()).required(),
     name: Joi.string().required(),
-    email: Joi.string().required(),
     profession: Joi.string().required(),
     industry: Joi.number().valid([
         // config.INDUSTRIES.Compassion_Fatigue,
@@ -97,6 +101,6 @@ export {
     validaExpertAdd,
     validateGetExpert,
     validateExpertId,
-    updateExpertPost,
+    updateExpert,
     updateStatus
 };

@@ -61,14 +61,15 @@ let addEvents = Joi.object({
         coordinates: Joi.array().items(Joi.number())
     }),
     address: Joi.string().required().trim(),
-    eventCategory: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING
+    eventCategoryId: Joi.string().allow([
+        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
     ]).required(),
     allowSharing: Joi.boolean().default(true),
     description: Joi.string().allow('').required(),
+    isFeatured: Joi.boolean().default(false),
 })
 
 let updateEvent = Joi.object({
@@ -94,14 +95,15 @@ let updateEvent = Joi.object({
         // }]
     }),
     address: Joi.string().trim(),
-    eventCategory: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING
+    eventCategoryId: Joi.string().allow([
+        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
     ]),
     allowSharing: Joi.boolean().default(true),
     description: Joi.string(),
+    isFeatured: Joi.boolean()
 })
 
 export {

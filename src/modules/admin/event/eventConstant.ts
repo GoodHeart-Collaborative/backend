@@ -21,10 +21,13 @@ export const MESSAGES = {
             "message": "SUCCESS",
             "type": "DEFAULT"
         },
-        SUCCESSFULLY_ADDED: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Event added successfully",
-            "type": "DEFAULT"
+        SUCCESSFULLY_ADDED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "Event added successfully",
+                "type": "DEFAULT",
+                data: data,
+            }
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
