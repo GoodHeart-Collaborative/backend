@@ -11,9 +11,9 @@ export class DiscoverDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            if(user) {
+            if (user) {
                 match["$nor"] = [
-                    { "userId": await appUtils.toObjectId(userId.userId), "followerId": await appUtils.toObjectId(user) }, 
+                    { "userId": await appUtils.toObjectId(userId.userId), "followerId": await appUtils.toObjectId(user) },
                     { "userId": await appUtils.toObjectId(user), "followerId": await appUtils.toObjectId(userId.userId) }
                 ];
                 userId.userId = user
@@ -33,9 +33,9 @@ export class DiscoverDao extends BaseDao {
                     match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
                     // match["followerId"] = userId
-                    if(followerId) {
+                    if (followerId) {
                         match["$or"] = [
-                            { "userId": userId, "followerId": await appUtils.toObjectId(followerId) }, 
+                            { "userId": userId, "followerId": await appUtils.toObjectId(followerId) },
                             { "userId": await appUtils.toObjectId(followerId), "followerId": userId }
                         ];
                         // match["userId"] = await appUtils.toObjectId(followerId)
@@ -44,7 +44,7 @@ export class DiscoverDao extends BaseDao {
                 }
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
-            if(discover_status) {
+            if (discover_status) {
                 match["discover_status"] = discover_status
             }
             aggPipe.push({ "$match": match })
@@ -71,7 +71,7 @@ export class DiscoverDao extends BaseDao {
                 aggPipe.push({
                     $project:
                     {
-                        _id : 0,
+                        _id: 0,
                         user: {
                             $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                                 _id: "$followers._id",
@@ -79,18 +79,23 @@ export class DiscoverDao extends BaseDao {
                                 myConnection: "$followers.myConnection",
                                 experience: "$followers.experience",
                                 discover_status: "$discover_status",
-                                name: { $concat: [ { $ifNull: ["$followers.firstName", ""] }, " ",  { $ifNull: ["$followers.lastName", ""]} ]},
+                                name: { $concat: [{ $ifNull: ["$followers.firstName", ""] }, " ", { $ifNull: ["$followers.lastName", ""] }] },
                                 profilePicUrl: "$followers.profilePicUrl",
-                                profession: { $ifNull: ["$followers.profession", ""] }
+                                profession: { $ifNull: ["$followers.profession", ""] },
+<<<<<<< HEAD
+                                about: { $ifNull: ["$followers.about", ""] },
+=======
+>>>>>>> development
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
                                 myConnection: "$users.myConnection",
                                 experience: "$users.experience",
                                 discover_status: "$discover_status",
-                                name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
+                                name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                                 profilePicUrl: "$users.profilePicUrl",
-                                profession: { $ifNull: ["$users.profession", ""] }
+                                profession: { $ifNull: ["$users.profession", ""] },
+                                about: { $ifNull: ["$users.about", ""] },
                             }]
                         }
                     }
@@ -105,7 +110,9 @@ export class DiscoverDao extends BaseDao {
                         discover_status: "$users.discover_status",
                         name: "$user.name",
                         profilePicUrl: "$user.profilePicUrl",
-                        profession: "$user.profession"
+                        profession: "$user.profession",
+                        about: "$users.about",
+
                     }
                 })
             } else {
@@ -121,18 +128,23 @@ export class DiscoverDao extends BaseDao {
                                 myConnection: "$followers.myConnection",
                                 experience: "$followers.experience",
                                 discover_status: "$discover_status",
-                                name: { $concat: [ { $ifNull: ["$followers.firstName", ""] }, " ",  { $ifNull: ["$followers.lastName", ""]} ]},
+                                name: { $concat: [{ $ifNull: ["$followers.firstName", ""] }, " ", { $ifNull: ["$followers.lastName", ""] }] },
                                 profilePicUrl: "$followers.profilePicUrl",
-                                profession: { $ifNull: ["$followers.profession", ""] }
+                                profession: { $ifNull: ["$followers.profession", ""] },
+<<<<<<< HEAD
+                                about: { $ifNull: ["$followers.about", ""] },
+=======
+>>>>>>> development
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
                                 myConnection: "$users.myConnection",
                                 experience: "$users.experience",
                                 discover_status: "$discover_status",
-                                name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
+                                name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                                 profilePicUrl: "$users.profilePicUrl",
-                                profession: { $ifNull: ["$users.profession", ""] }
+                                profession: { $ifNull: ["$users.profession", ""] },
+                                about: { $ifNull: ["$users.about", ""] },
                             }]
                         },
                         created: 1

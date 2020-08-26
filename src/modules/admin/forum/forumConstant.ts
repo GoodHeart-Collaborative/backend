@@ -16,6 +16,11 @@ export const MESSAGES = {
                 "type": "GRATITUDE_JOURNAL_ALREADY_ADDED"
             }
         },
+        INVALID_ID: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Forum not found",
+            "type": "INVALID_ID"
+        },
     },
     SUCCESS: {
         FORUM_ADDED: (data) => {

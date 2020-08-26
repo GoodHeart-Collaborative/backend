@@ -17,7 +17,7 @@ export class ShoutoutDao extends BaseDao {
                 { "membersDetail": { $elemMatch: { userId: userId }} },
                 { "userId": userId }
             ];
-            aggPipe.push({ "$sort": { "createdAt": 1 } })
+            aggPipe.push({ "$sort": { "_id": -1 } })
             aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {

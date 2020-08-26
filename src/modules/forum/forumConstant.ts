@@ -14,7 +14,7 @@ export const MESSAGES = {
         FORUM_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Forum added successful.",
+                "message": "Forum added successfully.",
                 "type": "FORUM_ADDED",
                 "data": data
             };
@@ -22,10 +22,31 @@ export const MESSAGES = {
         FORUM_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": `Forum updated successful.`,
-                "type": "FORUM_ADDED",
+                "message": `Forum updated successfully.`,
+                "type": "FORUM_UPDATED",
                 "data": data
             };
-        }
+        },
+        FORUM_STATUS_UPDATED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": `Forum ${data} successfully.`,
+                "type": "FORUM_UPDATED_STATUS",
+            };
+        },
+        FORUM_DELETED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+            "message": "Forum deleted successfully.",
+            "type": "FORUM_DELETED"
+        },
+
+        DEFAULT_SUCCESS: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "Success",
+                "type": "FORUM_LIST",
+                "data": data
+            };
+        },
     }
 };

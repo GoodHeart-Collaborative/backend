@@ -151,15 +151,17 @@ export const userExpertRoute: ServerRoute[] = [
                     // searchTerm: Joi.string(),
                     // categoryId: Joi.string().required(),
                     expertId: Joi.string().trim().required().regex(config.CONSTANT.REGEX.MONGO_ID),
-                    posted: Joi.string().allow([
-                        'lastWeek', 'lastMonth'
-                    ]),
-                    contentType: Joi.number().allow([
-                        config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE,
-                        config.CONSTANT.EXPERT_CONTENT_TYPE.IMAGE.VALUE,
-                        config.CONSTANT.EXPERT_CONTENT_TYPE.VIDEO.VALUE,
-                        config.CONSTANT.EXPERT_CONTENT_TYPE.VOICE_NOTE.VALUE
-                    ])
+                    posted: Joi.number().allow([
+                        1, 2
+                    ]).description('1-lastWeek, 2-lastMonth'),
+
+                    contentType: Joi.string()
+                    // .allow([
+                    // config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE,
+                    //     config.CONSTANT.EXPERT_CONTENT_TYPE.IMAGE.VALUE,
+                    //     config.CONSTANT.EXPERT_CONTENT_TYPE.VIDEO.VALUE,
+                    //     config.CONSTANT.EXPERT_CONTENT_TYPE.VOICE_NOTE.VALUE
+                    // ])
                 },
                 failAction: appUtils.failActionFunction
             },
@@ -229,9 +231,9 @@ export const userExpertRoute: ServerRoute[] = [
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
                 query: {
-                    searchTerm: Joi.string().required(),
+                    searchKey: Joi.string(),
                     limit: Joi.number(),
-                    page: Joi.number()
+                    pageNo: Joi.number()
                 },
                 failAction: appUtils.failActionFunction
             },

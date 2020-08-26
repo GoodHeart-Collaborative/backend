@@ -136,24 +136,24 @@ export class GratitudeJournalDao extends BaseDao {
                                 $expr: {
                                     $or: [
                                         {
-                                        $and: [
-                                            {
-                                                $eq: ["$followerId", "$$user"]
-                                            },
-                                            {
-                                                $eq: ["$userId", "$$users"]
-                                            }
-                                        ]
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
                                         },
                                         {
-                                        $and: [
-                                            {
-                                                $eq: ["$userId", "$$user"]
-                                            },
-                                            {
-                                                $eq: ["$followerId", "$users"]
-                                            }
-                                        ]
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$users"]
+                                                }
+                                            ]
                                         }
                                     ]
                                 }
@@ -185,7 +185,7 @@ export class GratitudeJournalDao extends BaseDao {
                         myConnection: "$users.myConnection",
                         experience: "$users.experience",
                         discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
-                        name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
+                        name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] }
                     },
@@ -243,7 +243,7 @@ export class GratitudeJournalDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             let criteria: any = {};
-            let discover:any = {}
+            let discover: any = {}
             // if (params.userId) {
             //     match['status'] = config.CONSTANT.STATUS.ACTIVE;
             //     match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
@@ -255,28 +255,28 @@ export class GratitudeJournalDao extends BaseDao {
             const _id = params.userId ? appUtils.toObjectId(params.userId) : appUtils.toObjectId(tokenData.userId)
 
             // let idKey: string = '$_id'
-            let query:any = {}
-            if(params && params.userId) {
+            let query: any = {}
+            if (params && params.userId) {
                 query = {
                     $or: [
-                        { userId: appUtils.toObjectId(params.userId), followerId: appUtils.toObjectId(tokenData.userId) }, 
-                        { userId: appUtils.toObjectId(tokenData.userId), followerId: appUtils.toObjectId(params.userId) } 
+                        { userId: appUtils.toObjectId(params.userId), followerId: appUtils.toObjectId(tokenData.userId) },
+                        { userId: appUtils.toObjectId(tokenData.userId), followerId: appUtils.toObjectId(params.userId) }
                     ]
                 }
-                
+
             } else {
                 query = {
                     $or: [
-                        { userId: appUtils.toObjectId(tokenData.userId)}, {followerId: appUtils.toObjectId(tokenData.userId) }
+                        { userId: appUtils.toObjectId(tokenData.userId) }, { followerId: appUtils.toObjectId(tokenData.userId) }
                     ]
                 }
             }
             discover = await this.findOne('discover', query, {}, {})
-                if(!discover) {
-                    discover = {
-                        discover_status: 4
-                    }
+            if (!discover) {
+                discover = {
+                    discover_status: 4
                 }
+            }
 
             const userDataCriteria = [
                 {
@@ -292,9 +292,10 @@ export class GratitudeJournalDao extends BaseDao {
                         myConnection: 1,
                         experience: 1,
                         discover_status: discover.discover_status,
-                        name: { $concat: [ { $ifNull: ["$firstName", ""] }, " ",  { $ifNull: ["$lastName", ""]} ]},
+                        name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                         profilePicUrl: "$profilePicUrl",
-                        profession: { $ifNull: ["$profession", ""] }
+                        profession: { $ifNull: ["$profession", ""] },
+                        about: { $ifNull: ["$about", ""] }
                     }
                 }
             ]
@@ -367,7 +368,7 @@ export class GratitudeJournalDao extends BaseDao {
                 }
             })
             aggPipe.push({ "$addFields": { userDataa: userData } });
-             aggPipe.push({ '$unwind': { path: "$userDataa", preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: "$userDataa", preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project: {
@@ -379,6 +380,7 @@ export class GratitudeJournalDao extends BaseDao {
                     description: 1,
                     created: 1,
                     postAt: 1,
+                    about: 1,
                     postedAt: 1,
                     createdAt: 1,
                     user: "$userDataa",

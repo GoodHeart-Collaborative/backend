@@ -17,12 +17,17 @@ export interface Iforum extends Document {
     commentCount: number;
     created: number;
 
+    createrId: string;
+    // topic: string;
+    thumbnailUrl: string;
+    mediaUrl: string;
+    mediaType: number;
 }
 
 const forumSchema = new Schema({
     categoryId: { type: Schema.Types.ObjectId, required: true },
     commentId: { type: Schema.Types.ObjectId, required: false },
-    // categoryName: { type: String }, // only for searching commentId
+    type: { type: Number, default: 1 },
     userId: { type: Schema.Types.ObjectId, required: false },
     userType: {
         type: String, enum: [
@@ -38,16 +43,25 @@ const forumSchema = new Schema({
             config.CONSTANT.STATUS.DELETED,
         ],
         default: config.CONSTANT.STATUS.ACTIVE,
-
     },
     createrId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
     topic: { type: String },
-    mediaUrl: { type: String },
     description: { type: String, required: true },
     postAnonymous: { type: Boolean },
     created: { type: Number },
+    mediaType: {
+        type: Number,
+        enum: [
+            config.CONSTANT.MEDIA_TYPE.IMAGE,
+            config.CONSTANT.MEDIA_TYPE.VIDEO
+        ],
+        default: config.CONSTANT.MEDIA_TYPE.IMAGE
+    },
+    thumbnailUrl: { type: String },
+    mediaUrl: { type: String },
+
 
 }, {
     versionKey: false,

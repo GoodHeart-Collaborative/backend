@@ -27,6 +27,11 @@ class ExpertController {
     async addExpert(params: AdminExpertRequest.expertAdd) {
         try {
             params['created'] = new Date().getTime()
+
+            const findEmail = await expertDao.findOne('expert', { email: params.email }, {}, {});
+            if (findEmail) {
+                return expertConstant.MESSAGES.SUCCESS.ALREADY_EXIST;
+            }
             const data = await expertDao.insert("expert", params, {});
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -162,7 +167,7 @@ class ExpertController {
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
         } catch (error) {
             throw error;
         }
