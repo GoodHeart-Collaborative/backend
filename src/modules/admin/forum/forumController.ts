@@ -307,7 +307,9 @@ class AdminForumController {
             }
 
             const data = await eventDao.aggregate('forum', aggPipe, {})
-            return data[0];
+            console.log('datadatadatadata', data);
+
+            return data[0] ? data[0] : {};
         } catch (error) {
             return Promise.reject(error)
         }
