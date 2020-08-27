@@ -152,10 +152,10 @@ export const userExpertRoute: ServerRoute[] = [
                     // categoryId: Joi.string().required(),
                     expertId: Joi.string().trim().required().regex(config.CONSTANT.REGEX.MONGO_ID),
                     posted: Joi.number().allow([
-                        1, 2
+                        config.CONSTANT.DATE_FILTER.LAST_MONTH,
+                        config.CONSTANT.DATE_FILTER.LAST_WEEK
                     ]).description('1-lastWeek, 2-lastMonth'),
-
-                    contentType: Joi.string()
+                    contentType: Joi.string().description('1-image ,2- video ,3- article')
                     // .allow([
                     // config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE,
                     //     config.CONSTANT.EXPERT_CONTENT_TYPE.IMAGE.VALUE,

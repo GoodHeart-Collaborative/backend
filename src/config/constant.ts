@@ -70,6 +70,14 @@ const ACCOUNT_LEVEL = {
 	USER: "user"
 };
 
+const DATE_FILTER = {
+	LAST_WEEK: 1,
+	LAST_MONTH: 2,
+	TODAY: 3,
+	TOMORROW: 4,
+	WEEKEND: 5,
+}
+
 const DB_MODEL_REF = {
 	ADMIN: "admin",
 	ADMIN_NOTIFICATION: "admin_notification",
@@ -194,10 +202,15 @@ const USER_PROFILE_TYPE = {
 // const COMMENT_TYPE = {
 // 	UNICORN: 1,
 // 	INSPIRATION: 2,
-// 	DAILY_ADVICE: 3,
+// 	DAILY_ADVICE: 3,nnec
 // 	GENERAL_GRATITUDE: 4,
 // 	MEMBER_OF_DAY: 5
 // };
+
+const REQUEST_TYPE = {
+	RECEIVED_REQUEST: 0,
+	SEND_REQUEST: 1
+}
 const HOME_TYPE = {
 	UNICORN: 1,
 	INSPIRATION: 2,
@@ -310,8 +323,8 @@ const MESSAGES = {
 			"type": "INTERNAL_SERVER_ERROR"
 		},
 		INVALID_TOKEN: {
-			// "statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
+			// "statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
 			"message": "Token is invalid.",
 			"type": "INVALID_TOKEN"
 		},
@@ -820,5 +833,7 @@ export const CONSTANT = Object.freeze({
 	EVENT_CATEGORY,
 	HOME_TYPES,
 	EVENT_INTEREST,
-	EXPERIENCE_LEVEL
+	EXPERIENCE_LEVEL,
+	DATE_FILTER,
+	REQUEST_TYPE
 });

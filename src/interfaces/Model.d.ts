@@ -79,7 +79,9 @@ declare interface Address {
 	coordinates: number[];
 }
 
-declare interface ListingRequest extends Pagination, Filter { }
+declare interface ListingRequest extends Pagination, Filter { 
+	request_type ?: number
+ }
 
 declare interface BlockRequest {
 	status: string;

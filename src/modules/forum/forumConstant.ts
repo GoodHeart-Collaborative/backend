@@ -6,7 +6,7 @@ export const MESSAGES = {
     ERROR: {
         FORUM_NOT_FOUND: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-            "message": "Forum not found.",
+            "message": "Post not found.",
             "type": "FORUM_NOT_FOUND"
         }
     },
@@ -14,7 +14,7 @@ export const MESSAGES = {
         FORUM_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Forum added successfully.",
+                "message": "Post added successfully.",
                 "type": "FORUM_ADDED",
                 "data": data
             };
@@ -22,7 +22,7 @@ export const MESSAGES = {
         FORUM_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": `Forum updated successfully.`,
+                "message": `Post updated successfully.`,
                 "type": "FORUM_UPDATED",
                 "data": data
             };
@@ -30,13 +30,13 @@ export const MESSAGES = {
         FORUM_STATUS_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": `Forum ${data} successfully.`,
+                "message": `Post ${data} successfully.`,
                 "type": "FORUM_UPDATED_STATUS",
             };
         },
         FORUM_DELETED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Forum deleted successfully.",
+            "message": "Post deleted successfully.",
             "type": "FORUM_DELETED"
         },
 

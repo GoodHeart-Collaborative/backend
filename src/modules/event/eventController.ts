@@ -10,9 +10,7 @@ import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
 import * as moment from 'moment';
-import { Config } from "aws-sdk";
-import { unwatchFile } from "fs";
-
+import * as weekend from '@utils/dateManager'
 class EventController {
 
     getTypeAndDisplayName(findObj, num: number) {
@@ -109,9 +107,10 @@ class EventController {
             let aggPipe = [];
             let featureAggPipe = [];
             let match: any = {}
-            let searchDistance = distance ? distance * 1000 : 200 * 1000// Default value is 10 km.
 
-            if (eventCategoryId) {
+            let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
+
+            if (eventCategoryId && eventCategoryId != 5) {
                 match['eventCategory'] = eventCategoryId;
             }
             const start = new Date();
@@ -119,18 +118,23 @@ class EventController {
             const end = new Date();
             end.setHours(23, 59, 59, 999);
 
-            if (date == 'tomorrow') {
-                match['startDate'] = ''
+            if (date === config.CONSTANT.DATE_FILTER.TOMORROW) {
+                const tomorrowStart = moment().add(1, 'days').startOf('day');
+                const tomorrowEnd = moment(tomorrowStart).endOf('day');
+                match['startDate'] = {
+                    $gte: tomorrowStart.toISOString(),
+                    $lte: tomorrowEnd.toISOString()
+                }
             }
-            else if (date == 'weekend') {
-                match['startDate'] = ''
-            } else if (date == 'month') {
-                match['startDate'] = ''
+            else if (date == config.CONSTANT.DATE_FILTER.WEEKEND) {
+                const dates = await weekend.getWeekendDates()
+                match['startDate'] = {
+                    $gte: dates.fridayDate,
+                    $lte: dates.sundayEndDate
+                };
             }
             // else {
-            //     // for today only 
             //     match['startDate'] = {
-            //         // params["postedAt"] = moment(para).format('YYYY-MM-DD')
             //         $gte: start,
             //         $lte: end
             //     }
@@ -142,10 +146,7 @@ class EventController {
                     { address: reg },
                     { title: reg },
                 ];
-
             }
-            console.log('moment(new Date()).format', moment(new Date()).format('YYYY-MM-DD'));
-
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
@@ -160,23 +161,80 @@ class EventController {
                     },
                     { "$sort": { dist: -1 } }
                 )
+                featureAggPipe.push(
+                    {
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
+                    },
+                    { "$sort": { dist: -1 } }
+                )
             }
+            else {
+                aggPipe.push(
+                    {
+                        $sort: {
+                            _id: -1
+                        },
+                    }
+                );
+                featureAggPipe.push(
+                    {
+                        $sort: {
+                            _id: -1
+                        },
+                    },
+                );
+            }
+            aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
+            featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
+
             const unwind = {
                 '$unwind': { path: '$interestData', preserveNullAndEmptyArrays: true },
-
             }
+
+            const interesetData = {
+                $lookup: {
+                    from: 'event_interests',
+                    let: { userId: '$userId', eId: '$_id' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$userId', '$$userId']
+                                    },
+                                    {
+                                        $eq: ['$eventId', '$$eId']
+                                    },
+                                    {
+                                        $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
+                                    }
+                                ]
+                            }
+                        }
+                    }],
+                    as: 'interestData',
+                }
+            }
+
             const projection = {
                 "$project": {
                     name: 1,
-                    location: 1,
                     title: 1,
                     privacy: 1,
                     startDate: 1,
-                    endDate: Date,
+                    endDate: 1,
                     price: 1,
                     url: 1,
+                    imageUrl: 1,
+                    eventUrl: 1,
                     allowSharing: 1,
                     description: 1,
+                    address: 1,
                     goingCount: 1,
                     interestCount: 1,
                     eventCategory: 1,
@@ -192,64 +250,60 @@ class EventController {
                 }
             };
 
-            aggPipe.push({ $match: match })
-            aggPipe.push({
-                $sort: {
-                    _id: -1
-                },
-            },
-            )
-
-            console.log('tokenData.userIdtokenData.userId', tokenData.userId);
-
-            featureAggPipe.push(
-                {
-                    $match: match
-                },
-                {
-                    $sort: {
-                        isFeatured: 1,
-                    },
-                },
-                {
-                    $limit: 5
-                },
-                {
-                    $lookup: {
-                        from: 'event_interests',
-                        let: { userId: '$userId', eId: '$_id' },
-                        pipeline: [{
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ['$userId', '$$userId']
-                                        },
-                                        {
-                                            $eq: ['$eventId', '$$eId']
-                                        },
-                                        {
-                                            $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
-                                        }
-                                    ]
-                                }
-                            }
-                        }],
-                        as: 'interestData',
-                    }
-                })
-            featureAggPipe.push(unwind)
-
+            featureAggPipe.push(interesetData);
+            featureAggPipe.push(unwind);
+            console.log('featureAggPipefeatureAggPipefeatureAggPipe', featureAggPipe);
             featureAggPipe.push(projection)
 
-            aggPipe.push(unwind),
-                aggPipe.push(projection)
+            aggPipe.push(interesetData);
+            aggPipe.push(unwind);
+            aggPipe.push(projection);
+
+            const getEventCategory = [
+                {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE,
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$eventCategoryId',
+                        description: { $first: "$eventCategoryDisplayName" },
+                    }
+                }
+            ];
+            console.log('getEventCategorygetEventCategory', getEventCategory);
+            const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
+            eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
+            // eventCategoryListName[0][;
+
+            console.log('eventCategoryList1eventCategoryList1', eventCategoryListName);
+
             const FeaturedEvent = await eventDao.aggregate('event', featureAggPipe, {})
-            const EVENT = await eventDao.aggregate('event', aggPipe, {});            // console.log('datadata', EVENT);
-            return {
+            const event = await eventDao.aggregate('event', aggPipe, {});
+            const time = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
+            const TIMES = {
+                time,
+                type: 2
+            }
+            const category = {
+                eventCategoryListName,
+                type: 0
+            }
+            const FEATURED = {
                 FeaturedEvent,
-                EVENT
-            };
+                type: 1
+            }
+            const EVENTS = {
+                event,
+                type: 3
+            }
+            return [
+                category,
+                FEATURED,
+                TIMES,
+                EVENTS,
+            ]
         } catch (error) {
             return Promise.reject(error)
         }
@@ -425,6 +479,15 @@ class EventController {
         }
     }
 
+
+    async getEventList(params, tokenData) {
+        try {
+            const data = await eventDao.getEventList(params, tokenData);
+            return data;
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
 
     async updateEvent(payload) {
         try {

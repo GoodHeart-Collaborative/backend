@@ -253,6 +253,11 @@ export class ExpertDao extends BaseDao {
                                     }
                                 }
                             },
+                            {
+                                $sort: {
+                                    _id: -1
+                                }
+                            },
                             { $limit: 5 }
                         ],
                     },
@@ -690,8 +695,8 @@ export class ExpertDao extends BaseDao {
                     // _id: 1,
                     price: 1,
                     contentId: 1,
-                    likeCount: 1,
-                    commentCount: 1,
+                    // likeCount: 1,
+                    // commentCount: 1,
                     status: 1,
                     privacy: 1,
                     mediaType: 1,

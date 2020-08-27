@@ -104,44 +104,44 @@ export class UserDao extends BaseDao {
 			})
 			aggPipe.push({ "$addFields": { created: { "$subtract": ["$memberCreatedAt", new Date("1970-01-01")] } } });
 			aggPipe.push({
-                $lookup: {
-                    from: "discovers",
-                    let: { "users": "$_id", "user": mongoose.Types.ObjectId(userId.userId) },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $or: [
-                                        {
-                                        $and: [
-                                            {
-                                                $eq: ["$followerId", "$$user"]
-                                            },
-                                            {
-                                                $eq: ["$userId", "$$users"]
-                                            }
-                                        ]
-                                        },
-                                        {
-                                        $and: [
-                                            {
-                                                $eq: ["$userId", "$$user"]
-                                            },
-                                            {
-                                                $eq: ["$followerId", "$users"]
-                                            }
-                                        ]
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    ],
-                    as: "DiscoverData"
-                }
-            })
+				$lookup: {
+					from: "discovers",
+					let: { "users": "$_id", "user": mongoose.Types.ObjectId(userId.userId) },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$or: [
+										{
+											$and: [
+												{
+													$eq: ["$followerId", "$$user"]
+												},
+												{
+													$eq: ["$userId", "$$users"]
+												}
+											]
+										},
+										{
+											$and: [
+												{
+													$eq: ["$userId", "$$user"]
+												},
+												{
+													$eq: ["$followerId", "$users"]
+												}
+											]
+										}
+									]
+								}
+							}
+						}
+					],
+					as: "DiscoverData"
+				}
+			})
 			aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
-			
+
 			aggPipe.push({
 				$project:
 				{
@@ -150,15 +150,16 @@ export class UserDao extends BaseDao {
 					commentCount: 1,
 					created: 1,
 					createdAt: 1,
-					user : {
+					user: {
 						_id: "$_id",
 						industryType: "$industryType",
 						myConnection: "$myConnection",
 						experience: "$experience",
 						discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
-						name: { $concat: [ { $ifNull: ["$firstName", ""] }, " ",  { $ifNull: ["$lastName", ""]} ]},
+						name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
 						profilePicUrl: "$profilePicUrl",
-						profession: { $ifNull: ["$profession", ""] }
+						profession: { $ifNull: ["$profession", ""] },
+						about: { $ifNull: ["$about", ""] }
 					},
 					isComment: {
 						$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }

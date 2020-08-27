@@ -29,7 +29,7 @@ export const discoverRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                query: discoverValidator.validateListDiscover,
+                query: discoverValidator.validateListUsers,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

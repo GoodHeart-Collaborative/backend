@@ -79,12 +79,11 @@ export const userForumRoutes: ServerRoute[] = [
         }
     },
     {
-        method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/forums`,
+        method: "PUT",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/forum`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload = request.payload;
-
             try {
                 const result = await userForumController.updateForum(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
@@ -143,14 +142,14 @@ export const userForumRoutes: ServerRoute[] = [
         }
     },
     {
-        method: "DELETE",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/forums/{postId}`,
+        method: "PUT",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/delete/forum`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const params = request.params;
-            params['userId'] = tokenData.userId;
+            const payload = request.payload;
+            payload['userId'] = tokenData.userId;
             try {
-                const result = await userForumController.deleteForum(params);
+                const result = await userForumController.deleteForum(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -164,7 +163,7 @@ export const userForumRoutes: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                params: forumValidator.deleteForum,
+                payload: forumValidator.deleteForum,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
