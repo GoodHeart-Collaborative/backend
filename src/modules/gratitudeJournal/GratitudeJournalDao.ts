@@ -238,8 +238,13 @@ export class GratitudeJournalDao extends BaseDao {
 
     async userProfileHome(params, tokenData) {
         try {
-
             // query['userId'] = query.userId ? query.userId : tokenData['userId'];
+
+            const paginateOptions = {
+                page: params.page || 1,
+                limit: params.limit || 10,
+            }
+
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
@@ -393,7 +398,7 @@ export class GratitudeJournalDao extends BaseDao {
                     }
                 }
             })
-            const myGratitude = await this.paginate('gratitude_journals', aggPipe, 10, 1, {}, true)
+            const myGratitude = await this.paginate('gratitude_journals', aggPipe, paginateOptions.limit, paginateOptions.page, {}, true)
             return myGratitude;
 
         } catch (error) {
