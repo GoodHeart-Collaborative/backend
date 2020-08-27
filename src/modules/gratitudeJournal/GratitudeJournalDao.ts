@@ -187,7 +187,8 @@ export class GratitudeJournalDao extends BaseDao {
                         discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
                         name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                         profilePicUrl: "$users.profilePicUrl",
-                        profession: { $ifNull: ["$users.profession", ""] }
+                        profession: { $ifNull: ["$users.profession", ""] },
+                        about: { $ifNull: ["$about", ""] }
                     },
                     isComment: {
                         $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
