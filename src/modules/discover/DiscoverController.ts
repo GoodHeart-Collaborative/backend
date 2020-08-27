@@ -48,6 +48,9 @@ class DiscoverController {
             checkQuery["$or"] = [{userId: userId.userId, followerId: params.followerId}, {followerId: userId.userId, userId: params.followerId}] 
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
             if(checkDiscover) {
+                if(userId.userId.toString() === checkDiscover.userId.toString() && params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                    return homeConstants.MESSAGES.ERROR.PERMISSION_DENIED 
+                }
                 query = {_id: checkDiscover._id}
                 if(params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     // push

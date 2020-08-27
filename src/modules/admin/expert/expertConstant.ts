@@ -6,8 +6,13 @@ export const MESSAGES = {
     ERROR: {
         EMAIL_ALREADY_EXIST: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-            "message": "User with this email is already registered.",
+            "message": "Expert with this email is already registered.",
             "type": "EMAIL_ALREADY_EXIST"
+        },
+        ALREADY_EXIST: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Expert with this email already registered",
+            "type": "DEFAULT"
         },
     },
     SUCCESS: {

@@ -7,6 +7,11 @@ export const MESSAGES = {
             "message": "Discover not found.",
             "type": "DISCOVER_NOT_FOUND"
         },
+        PERMISSION_DENIED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Permission denied.",
+            "type": "PERMISSION_DENIED"
+        },
         DISCOVER_ALREADY_EXIST: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
             "message": "User with follower already added.",

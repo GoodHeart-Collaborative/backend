@@ -38,7 +38,7 @@ export class ForumTopic extends BaseDao {
             if (postId) {
                 match['_id'] = postId;
             } else {
-
+                if(page === 1) {
                 let categoryPipe = [
                     {
                         $match: {
@@ -80,6 +80,7 @@ export class ForumTopic extends BaseDao {
                     }
                 ];
                 data = await this.aggregate('categories', categoryPipe, {})
+            }
             }
 
             // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
@@ -292,7 +293,11 @@ export class ForumTopic extends BaseDao {
             if (categoryId) {
                 arr = [...myForumData.list]
             } else {
-                arr = [categories, ...myForumData.list]
+                if(data && data.length > 0) {
+                    arr = [categories, ...myForumData.list]
+                } else {
+                    arr = [...myForumData.list]
+                }   
             }
             if (!params.postId) {
                 return {
