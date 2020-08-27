@@ -2,12 +2,13 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
+import { CONSTANT } from "@config/index";
 
 
 export class DiscoverDao extends BaseDao {
     async getDiscoverData(params, userId, isMyConnection) {
         try {
-            let { pageNo, limit, user, searchKey, _id, followerId, discover_status, ShoutoutConnection } = params
+            let { pageNo, limit, user, searchKey, _id, followerId, discover_status, ShoutoutConnection, request_type } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
@@ -32,13 +33,17 @@ export class DiscoverDao extends BaseDao {
                     ];
                     match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
-                    // match["followerId"] = userId
+                        if(request_type === CONSTANT.REQUEST_TYPE.RECEIVED_REQUEST) {
+                            match["followerId"] = userId
+                        } 
+                        if(request_type === CONSTANT.REQUEST_TYPE.SEND_REQUEST) {
+                            match["userId"] = userId
+                        }
                     if (followerId) {
                         match["$or"] = [
                             { "userId": userId, "followerId": await appUtils.toObjectId(followerId) },
                             { "userId": await appUtils.toObjectId(followerId), "followerId": userId }
                         ];
-                        // match["userId"] = await appUtils.toObjectId(followerId)
                     }
                     match['discover_status'] = { $ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT }
                 }
