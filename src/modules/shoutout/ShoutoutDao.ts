@@ -104,7 +104,7 @@ export class ShoutoutDao extends BaseDao {
                 { "senderId": userId },
                 { "receiverId": userId }
             ];
-            aggPipe.push({ "$sort": { "createdAt": 1 } })
+            aggPipe.push({ "$sort": { "createdAt": -1 } })
             aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {
