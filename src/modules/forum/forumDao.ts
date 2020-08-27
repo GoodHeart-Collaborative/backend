@@ -17,7 +17,7 @@ export class ForumTopic extends BaseDao {
 
     async getFormPosts(params, tokenData?) {
         try {
-            const { page, limit, postId } = params;
+            const { page, limit, postId, categoryId } = params;
             let aggPipe = [];
             let match: any = {};
             let categoryMatch: any = {};
@@ -27,7 +27,14 @@ export class ForumTopic extends BaseDao {
                 limit: limit || 10
             };
 
-            categoryMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            if (categoryId) {
+                match['categoryId'] = await appUtils.toObjectId(categoryId);
+            }
+            // if (categoryId) {
+            //     match['categoryId'] = appUtils.toObjectId(categoryId)
+            // }
             if (postId) {
                 match['_id'] = postId;
             } else {
@@ -126,51 +133,7 @@ export class ForumTopic extends BaseDao {
             //     }
             // })
             // aggPipe.push({ '$unwind': { path: '$comments', preserveNullAndEmptyArrays: true } })
-            // if (params.userId) {
-            //     criteria['_id'] = appUtils.toObjectId(params['userId']);
-            //     criteria['status'] = config.CONSTANT.STATUS.ACTIVE;
-            //     // criteria['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
-            // } else {
-            //     criteria['status'] = config.CONSTANT.STATUS.ACTIVE;
-            //     criteria['_id'] = appUtils.toObjectId(tokenData['userId']);
-            // }
-            // let idKey: string = '$_id'
-            // const userDataCriteria = [
-            //     {
-            //         $match: criteria
-            //     },
-            //     {
-            //         $project: {
-            //             _id: 1,
-            //             name: {
-            //                 $cond: {
-            //                     if: {
-            //                         $eq: ['$lastName', null]
-            //                     },
-            //                     then: '$firstName',
-            //                     else: { $concat: ['$firstName', ' ', '$lastName'] }
-            //                 }
-            //             },
-            //             profilePicUrl: 1,
-            //             profession: 1
-            //         }
-            //     }
-            // ]
-            // const userData = await this.aggregate('users', userDataCriteria, {})
-            // console.log('userDatauserDatauserData', userData);
 
-            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            // if (params.userId) {
-            //     match['postAnonymous'] = false;
-            // }
-            // if (params.userId) {
-            //     match['userId'] = appUtils.toObjectId(params['userId']);
-            //     match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            //     // match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
-            // } else {
-            //     match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            //     match['match'] = appUtils.toObjectId(tokenData['userId']);
-            // }
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
 
@@ -220,7 +183,6 @@ export class ForumTopic extends BaseDao {
                                 ]
                             }
                         }
-
                     }],
                     as: "commentData",
                 },
@@ -326,7 +288,12 @@ export class ForumTopic extends BaseDao {
             if (params.postId) {
                 return myForumData[0] ? myForumData[0] : {};
             }
-            let arr = [categories, ...myForumData.list]
+            let arr: any = []
+            if (categoryId) {
+                arr = [...myForumData.list]
+            } else {
+                arr = [categories, ...myForumData.list]
+            }
             if (!params.postId) {
                 return {
                     data: arr,

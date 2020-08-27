@@ -110,24 +110,24 @@ export class CommentDao extends BaseDao {
                                 $expr: {
                                     $or: [
                                         {
-                                        $and: [
-                                            {
-                                                $eq: ["$followerId", "$$user"]
-                                            },
-                                            {
-                                                $eq: ["$userId", "$$users"]
-                                            }
-                                        ]
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
                                         },
                                         {
-                                        $and: [
-                                            {
-                                                $eq: ["$userId", "$$user"]
-                                            },
-                                            {
-                                                $eq: ["$followerId", "$users"]
-                                            }
-                                        ]
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$users"]
+                                                }
+                                            ]
                                         }
                                     ]
                                 }
@@ -186,9 +186,10 @@ export class CommentDao extends BaseDao {
                             myConnection: "$users.myConnection",
                             experience: "$users.experience",
                             discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
-                            name: { $concat: [ { $ifNull: ["$users.firstName", ""] }, " ",  { $ifNull: ["$users.lastName", ""]} ]},
+                            name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                             profilePicUrl: "$users.profilePicUrl",
-                            profession: { $ifNull: ["$users.profession", ""] }
+                            profession: { $ifNull: ["$users.profession", ""] },
+                            about: { $ifNull: ["$users.about", ""] },
                         },
                         isComment: {
                             $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }

@@ -70,6 +70,14 @@ const ACCOUNT_LEVEL = {
 	USER: "user"
 };
 
+const DATE_FILTER = {
+	LAST_WEEK: 1,
+	LAST_MONTH: 2,
+	TODAY: 3,
+	TOMORROW: 4,
+	WEEKEND: 5,
+}
+
 const DB_MODEL_REF = {
 	ADMIN: "admin",
 	ADMIN_NOTIFICATION: "admin_notification",
@@ -820,5 +828,6 @@ export const CONSTANT = Object.freeze({
 	EVENT_CATEGORY,
 	HOME_TYPES,
 	EVENT_INTEREST,
-	EXPERIENCE_LEVEL
+	EXPERIENCE_LEVEL,
+	DATE_FILTER
 });

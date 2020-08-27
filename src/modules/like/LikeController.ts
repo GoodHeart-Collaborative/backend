@@ -15,6 +15,7 @@ import { commentDao } from "../comment/CommentDao";
 import { expertDao } from "@modules/admin/expert/expertDao";
 import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
 import { expert } from "@modules/admin/expert/expertModel";
+import { forumtopicDao } from "@modules/forum/forumDao";
 
 class LikeController {
 
@@ -165,7 +166,9 @@ class LikeController {
             } else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
                 getPost = await expertPostDao.checkExpertPost(query);
                 console.log('getPost,params.type ', params.type, getPost);
-
+            }
+            else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                getPost = await forumtopicDao.checkForum(query);
             }
             else {
                 getPost = await homeDao.checkHomePost(query)
@@ -207,6 +210,9 @@ class LikeController {
                 }
                 else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
                     data = await expertPostDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
+                }
+                else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                    data = await forumtopicDao.updateForumLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
                 }
                 else {
                     data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })

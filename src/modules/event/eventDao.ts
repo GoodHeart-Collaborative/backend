@@ -3,17 +3,177 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
-import { DataSync } from "aws-sdk";
-import { categoryDao } from "@modules/admin/catgeory";
-import { expert } from "@modules/admin/expert/expertModel";
-import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
-
+import * as moment from 'moment';
+import * as weekend from '@utils/dateManager';
 export class EventDao extends BaseDao {
 
     async getGratitudeJournalData(params) {
         try {
         } catch (error) {
             return Promise.reject(error);
+        }
+    }
+
+
+    async getEventList(params, tokenData) {
+        try {
+            const { pageNo, limit, date, searchKey, longitude, latitude, distance, eventCategoryId, isFeaturedEvent } = params;
+
+            const paginateOptions = {
+                limit: limit || 10,
+                pageNo: pageNo || 1
+            };
+
+            let pickupLocation = [];
+            let aggPipe = [];
+            let match: any = {}
+
+            let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
+
+            if (eventCategoryId) {
+                match['eventCategory'] = eventCategoryId;
+            }
+
+            if (isFeaturedEvent) {
+                match['isFeatured'] = true;
+            } else {
+                match['isFeatured'] = false;
+            }
+
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            const end = new Date();
+            end.setHours(23, 59, 59, 999);
+
+            if (date === config.CONSTANT.DATE_FILTER.TOMORROW) {
+                const tomorrowStart = moment().add(1, 'days').startOf('day');
+                const tomorrowEnd = moment(tomorrowStart).endOf('day');
+                match['startDate'] = {
+                    $gte: tomorrowStart.toISOString(),
+                    $lte: tomorrowEnd.toISOString()
+                }
+            }
+            else if (date == config.CONSTANT.DATE_FILTER.WEEKEND) {
+                const dates = await weekend.getWeekendDates()
+                match['startDate'] = {
+                    $gte: dates.fridayDate,
+                    $lte: dates.sundayEndDate
+                };
+            }
+            // else {
+            //     match['startDate'] = {
+            //         $gte: start,
+            //         $lte: end
+            //     }
+            // }
+
+            if (searchKey) {
+                const reg = new RegExp(searchKey, 'ig');
+                match["$or"] = [
+                    { address: reg },
+                    { title: reg },
+                ];
+            }
+
+            if (longitude != undefined && latitude != undefined) {
+                pickupLocation.push(latitude, longitude);
+                aggPipe.push(
+                    {
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
+                    },
+                    { "$sort": { dist: -1 } }
+                )
+            }
+            else {
+                aggPipe.push(
+                    {
+                        $sort: {
+                            _id: -1
+                        },
+                    }
+                );
+            }
+            aggPipe.push({ $match: match })
+
+            const unwind = {
+                '$unwind': { path: '$interestData', preserveNullAndEmptyArrays: true },
+            }
+
+            const interesetData = {
+                $lookup: {
+                    from: 'event_interests',
+                    let: { userId: '$userId', eId: '$_id' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$userId', '$$userId']
+                                    },
+                                    {
+                                        $eq: ['$eventId', '$$eId']
+                                    },
+                                    {
+                                        $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
+                                    }
+                                ]
+                            }
+                        }
+                    }],
+                    as: 'interestData',
+                }
+            }
+
+            const projection = {
+                "$project": {
+                    name: 1,
+                    title: 1,
+                    privacy: 1,
+                    startDate: 1,
+                    endDate: 1,
+                    price: 1,
+                    url: 1,
+                    imageUrl: 1,
+                    eventUrl: 1,
+                    allowSharing: 1,
+                    description: 1,
+                    address: 1,
+                    goingCount: 1,
+                    interestCount: 1,
+                    eventCategory: 1,
+                    created: 1,
+                    "isInterest": {
+                        $cond: {
+                            if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        }
+                    },
+                    users: 1,
+                }
+            };
+
+            aggPipe.push(interesetData);
+            aggPipe.push(unwind);
+            aggPipe.push(projection);
+
+            aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
+            const EVENT = await eventDao.aggregateWithPagination('event', aggPipe);
+
+            const EVENTS = {
+                EVENT,
+                // type: 4
+            }
+            return [
+                EVENTS,
+            ]
+        } catch (error) {
+            return Promise.reject(error)
         }
     }
 }
