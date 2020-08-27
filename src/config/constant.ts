@@ -325,7 +325,8 @@ const MESSAGES = {
 		INVALID_TOKEN: {
 			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
 			// "statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Token is invalid.",
+			// "message": "Token is invalid.",
+			"message": "Your login session has expired. Please login again",
 			"type": "INVALID_TOKEN"
 		},
 		TOKEN_EXPIRED: {
