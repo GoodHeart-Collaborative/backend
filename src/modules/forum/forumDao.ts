@@ -316,7 +316,7 @@ export class ForumTopic extends BaseDao {
     async updateForum(query, params) {
         try {
             let update: any = {}
-            if (params && params.postAnonymous) {
+            if (params && params.postAnonymous === false) {
                 params['userId'] = query.createrId
             } else {
                 if (params && params.postAnonymous === false) {
