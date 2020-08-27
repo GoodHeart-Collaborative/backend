@@ -29,7 +29,7 @@ export class ForumTopic extends BaseDao {
 
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            if(categoryId) {
+            if (categoryId) {
                 match['categoryId'] = await appUtils.toObjectId(categoryId);
             }
             // if (categoryId) {
@@ -288,8 +288,8 @@ export class ForumTopic extends BaseDao {
             if (params.postId) {
                 return myForumData[0] ? myForumData[0] : {};
             }
-            let arr:any = []
-            if(categoryId) {
+            let arr: any = []
+            if (categoryId) {
                 arr = [...myForumData.list]
             } else {
                 arr = [categories, ...myForumData.list]

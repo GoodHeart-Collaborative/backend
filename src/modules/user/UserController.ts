@@ -592,8 +592,8 @@ export class UserController {
 
 		try {
 			if (tokenData.userId === userId || !userId) {
-				delete tokenData.deviceId, delete tokenData.deviceToken, delete tokenData.platform, delete tokenData.accountLevel;
-				return userConstant.MESSAGES.SUCCESS.PROFILE(tokenData);
+				const data = await userDao.findOne('users', { _id: tokenData.userId }, { deviceId: 0, deviceToken: 0 }, {})
+				return data;
 			} else {
 				const data = await userDao.findOne('users', { _id: userId }, { deviceId: 0, deviceToken: 0 }, {})
 				return userConstant.MESSAGES.SUCCESS.PROFILE(data);
@@ -908,29 +908,29 @@ export class UserController {
 				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
-				if(query && query.userId && getData && getData.data && getData.data.length > 0) {
+				if (query && query.userId && getData && getData.data && getData.data.length > 0) {
 					for (let i = 0; i < getData.data.length; i++) {
-						let members = await userDao.getMembers({ followerId: getData.data[i].user._id.toString(), userId: tokenData.userId})
-						if(members) {
+						let members = await userDao.getMembers({ followerId: getData.data[i].user._id.toString(), userId: tokenData.userId })
+						if (members) {
 							getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
 							getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.ACCEPT
 						} else {
-							let params:any = {}
+							let params: any = {}
 							params = {
 								pageNo: 1,
 								limit: 1,
 								followerId: getData.data[i].user._id.toString()
 							}
-							let getDataa = await discoverDao.getDiscoverData(params, {userId: tokenData.userId}, false)
-								if (getDataa && getDataa.total && getDataa.total > 0) {
-									getData.data[i].user.discover_status = getDataa.data[0].user.discover_status
-									getData.data[i].discover_status = getDataa.data[0].user.discover_status
-								} else {
-									getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
-									getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
-								}
+							let getDataa = await discoverDao.getDiscoverData(params, { userId: tokenData.userId }, false)
+							if (getDataa && getDataa.total && getDataa.total > 0) {
+								getData.data[i].user.discover_status = getDataa.data[0].user.discover_status
+								getData.data[i].discover_status = getDataa.data[0].user.discover_status
+							} else {
+								getData.data[i].user.discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+								getData.data[i].discover_status = CONSTANT.DISCOVER_STATUS.NO_ACTION
+							}
 						}
-					  }
+					}
 				}
 			} else {
 				getData = await gratitudeJournalDao.userProfileHome(query, tokenData)
