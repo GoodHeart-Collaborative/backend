@@ -38,7 +38,7 @@ export class ForumTopic extends BaseDao {
             if (postId) {
                 match['_id'] = postId;
             } else {
-
+                if(page === 1) {
                 let categoryPipe = [
                     {
                         $match: {
@@ -80,6 +80,7 @@ export class ForumTopic extends BaseDao {
                     }
                 ];
                 data = await this.aggregate('categories', categoryPipe, {})
+            }
             }
 
             // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
@@ -316,7 +317,7 @@ export class ForumTopic extends BaseDao {
     async updateForum(query, params) {
         try {
             let update: any = {}
-            if (params && params.postAnonymous) {
+            if (params && params.postAnonymous === false) {
                 params['userId'] = query.createrId
             } else {
                 if (params && params.postAnonymous === false) {

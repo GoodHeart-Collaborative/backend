@@ -202,10 +202,15 @@ const USER_PROFILE_TYPE = {
 // const COMMENT_TYPE = {
 // 	UNICORN: 1,
 // 	INSPIRATION: 2,
-// 	DAILY_ADVICE: 3,
+// 	DAILY_ADVICE: 3,nnec
 // 	GENERAL_GRATITUDE: 4,
 // 	MEMBER_OF_DAY: 5
 // };
+
+const REQUEST_TYPE = {
+	RECEIVED_REQUEST: 0,
+	SEND_REQUEST: 1
+}
 const HOME_TYPE = {
 	UNICORN: 1,
 	INSPIRATION: 2,
@@ -318,8 +323,8 @@ const MESSAGES = {
 			"type": "INTERNAL_SERVER_ERROR"
 		},
 		INVALID_TOKEN: {
-			// "statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
+			// "statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
 			"message": "Token is invalid.",
 			"type": "INVALID_TOKEN"
 		},
@@ -829,5 +834,6 @@ export const CONSTANT = Object.freeze({
 	HOME_TYPES,
 	EVENT_INTEREST,
 	EXPERIENCE_LEVEL,
-	DATE_FILTER
+	DATE_FILTER,
+	REQUEST_TYPE
 });

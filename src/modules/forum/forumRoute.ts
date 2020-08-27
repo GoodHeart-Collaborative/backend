@@ -84,7 +84,6 @@ export const userForumRoutes: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload = request.payload;
-
             try {
                 const result = await userForumController.updateForum(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
