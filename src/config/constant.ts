@@ -323,8 +323,8 @@ const MESSAGES = {
 			"type": "INTERNAL_SERVER_ERROR"
 		},
 		INVALID_TOKEN: {
-			// "statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
+			// "statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
 			"message": "Token is invalid.",
 			"type": "INVALID_TOKEN"
 		},

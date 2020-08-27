@@ -110,7 +110,7 @@ class EventController {
 
             let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
 
-            if (eventCategoryId) {
+            if (eventCategoryId && eventCategoryId != 5) {
                 match['eventCategory'] = eventCategoryId;
             }
             const start = new Date();
@@ -274,14 +274,16 @@ class EventController {
             ];
             console.log('getEventCategorygetEventCategory', getEventCategory);
             const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
+            eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
+            // eventCategoryListName[0][;
+
             console.log('eventCategoryList1eventCategoryList1', eventCategoryListName);
 
-
             const FeaturedEvent = await eventDao.aggregate('event', featureAggPipe, {})
-            const EVENT = await eventDao.aggregate('event', aggPipe, {});
-            const TIME = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
+            const event = await eventDao.aggregate('event', aggPipe, {});
+            const time = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
             const TIMES = {
-                TIME,
+                time,
                 type: 2
             }
             const category = {
@@ -293,7 +295,7 @@ class EventController {
                 type: 1
             }
             const EVENTS = {
-                EVENT,
+                event,
                 type: 3
             }
             return [
