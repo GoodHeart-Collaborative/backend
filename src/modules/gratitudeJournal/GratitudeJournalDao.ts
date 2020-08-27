@@ -273,6 +273,7 @@ export class GratitudeJournalDao extends BaseDao {
             } else {
                 query = {
                     $or: [
+
                         { userId: appUtils.toObjectId(tokenData.userId) }, { followerId: appUtils.toObjectId(tokenData.userId) }
                     ]
                 }
@@ -309,8 +310,8 @@ export class GratitudeJournalDao extends BaseDao {
             userData[0].discover_status = discover.discover_status
             // console.log('userDatauserDatauserData', userData);
 
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
+            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            // match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
             if (params.userId) {
                 match['userId'] = appUtils.toObjectId(params['userId']);
                 match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC;
