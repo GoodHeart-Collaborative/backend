@@ -293,7 +293,11 @@ export class ForumTopic extends BaseDao {
             if (categoryId) {
                 arr = [...myForumData.list]
             } else {
-                arr = [categories, ...myForumData.list]
+                if(data && data.length > 0) {
+                    arr = [categories, ...myForumData.list]
+                } else {
+                    arr = [...myForumData.list]
+                }   
             }
             if (!params.postId) {
                 return {
