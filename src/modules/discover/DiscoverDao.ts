@@ -184,7 +184,7 @@ export class DiscoverDao extends BaseDao {
                 )
             }
             userId = await appUtils.toObjectId(userId.userId)
-            aggPipe.push({ "$match": { userId: { "$ne": userId } } });
+            aggPipe.push({ "$match": { _id: { "$ne": userId } } });
             if (_id) {
                 aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
                 pageNo = 1
