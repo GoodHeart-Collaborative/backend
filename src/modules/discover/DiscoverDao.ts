@@ -169,6 +169,7 @@ export class DiscoverDao extends BaseDao {
             let result: any = {}
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
             let pickupLocation = [];
+            let match:any = {}
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
                 aggPipe.push(
@@ -184,11 +185,18 @@ export class DiscoverDao extends BaseDao {
                 )
             }
             userId = await appUtils.toObjectId(userId.userId)
-            aggPipe.push({ "$match": { _id: { "$ne": userId } } });
+            // aggPipe.push({ "$match": { _id: { "$ne": userId } } });
             if (_id) {
-                aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
+                match["_id"] = await appUtils.toObjectId(_id)
+                // aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
                 pageNo = 1
                 limit = 1
+            } else {
+                match = {
+                    "_id": { "$ne": userId },
+                    adminStatus: CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+                    status: CONSTANT.STATUS.ACTIVE
+                }
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
             aggPipe.push({
@@ -200,11 +208,14 @@ export class DiscoverDao extends BaseDao {
                 }
             })
             if (industryType) {
-                aggPipe.push({ "$match": { industryType: { $in: industryType } } })
+                match["industryType"] = { $in: industryType }
+                // aggPipe.push({ "$match": { industryType: { $in: industryType } } })
             }
             if (searchKey) {
-                aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
+                match["firstName"] = { "$regex": searchKey, "$options": "-i" }
+                // aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
             }
+            aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {
                     from: "discovers",

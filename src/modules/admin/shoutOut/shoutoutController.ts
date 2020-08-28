@@ -40,7 +40,7 @@ class AdminShoutOut {
             const aggPipe = [];
             const match: any = {};
 
-            match['userId'] = appUtils.toObjectId(userId)
+            match['userId'] = userId
             if (status) {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             } else {
@@ -115,6 +115,19 @@ class AdminShoutOut {
         }
     }
 
+
+    async getShoutOutDetail(params) {
+        try {
+            const { cardId } = params;
+            const criteria = {
+                _id: cardId
+            }
+            const data = await shoutoutDao.findOne('shoutout', criteria, {}, {});
+            return data;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
     // async updateForumTopic(params: AdminForumRequest.UpdateForum) {
     //     try {
     //         const criteria = {
