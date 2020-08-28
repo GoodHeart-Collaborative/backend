@@ -90,36 +90,36 @@ class EventController {
 
             aggPipe = [...aggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
-            let MyInterestedEventslist, MyHostedEventslist;
+            let myInterestedEventslist, myHostedEventslist;
             if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                MyInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
-                console.log('datadatadatadata', MyInterestedEventslist);
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                console.log('datadatadatadata', myInterestedEventslist);
             }
             else if (params.type == config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
-                MyHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
-                console.log('MyHostedEventslist', MyHostedEventslist);
+                myHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                console.log('myHostedEventslist', myHostedEventslist);
             }
             else {
-                MyInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
 
-                MyHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
-                console.log('datadatadatadata', MyHostedEventslist);
+                myHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                console.log('datadatadatadata', myHostedEventslist);
             }
 
 
             if (params.type === config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
-                return MyHostedEventslist
+                return myHostedEventslist
             }
             else if (params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                return MyInterestedEventslist
+                return myInterestedEventslist
             }
             else {
                 return {
-                    MyInterestedEventslist,
-                    MyHostedEventslist
+                    myInterestedEventslist,
+                    myHostedEventslist
                 }
             }
-            return MyInterestedEventslist;
+            // return MyInterestedEventslist;
 
         } catch (error) {
             return Promise.reject(error);
@@ -137,36 +137,6 @@ class EventController {
             let match: any = {}
 
             let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
-
-            if (eventCategoryId && eventCategoryId != 5) {
-                match['eventCategory'] = eventCategoryId;
-            }
-            const start = new Date();
-            start.setHours(0, 0, 0, 0);
-            const end = new Date();
-            end.setHours(23, 59, 59, 999);
-
-            if (date === config.CONSTANT.DATE_FILTER.TOMORROW) {
-                const tomorrowStart = moment().add(1, 'days').startOf('day');
-                const tomorrowEnd = moment(tomorrowStart).endOf('day');
-                match['startDate'] = {
-                    $gte: tomorrowStart.toISOString(),
-                    $lte: tomorrowEnd.toISOString()
-                }
-            }
-            else if (date == config.CONSTANT.DATE_FILTER.WEEKEND) {
-                const dates = await weekend.getWeekendDates()
-                match['startDate'] = {
-                    $gte: dates.fridayDate,
-                    $lte: dates.sundayEndDate
-                };
-            }
-            // else {
-            //     match['startDate'] = {
-            //         $gte: start,
-            //         $lte: end
-            //     }
-            // }
 
             if (searchKey) {
                 const reg = new RegExp(searchKey, 'ig');
@@ -287,49 +257,47 @@ class EventController {
             aggPipe.push(unwind);
             aggPipe.push(projection);
 
-            const getEventCategory = [
-                {
-                    $match: {
-                        status: config.CONSTANT.STATUS.ACTIVE,
-                    }
-                },
-                {
-                    $group: {
-                        _id: '$eventCategoryId',
-                        description: { $first: "$eventCategoryDisplayName" },
-                    }
-                }
-            ];
-            console.log('getEventCategorygetEventCategory', getEventCategory);
-            const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
-            eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
-            // eventCategoryListName[0][;
+            // const getEventCategory = [
+            //     {
+            //         $match: {
+            //             status: config.CONSTANT.STATUS.ACTIVE,
+            //         }
+            //     },
+            //     {
+            //         $group: {
+            //             _id: '$eventCategoryId',
+            //             description: { $first: "$eventCategoryDisplayName" },
+            //         }
+            //     }
+            // ];
+            // console.log('getEventCategorygetEventCategory', getEventCategory);
+            // const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
+            // eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
+            // // eventCategoryListName[0][;
 
-            console.log('eventCategoryList1eventCategoryList1', eventCategoryListName);
+            // console.log('eventCategoryList1eventCategoryList1', eventCategoryListName);
 
-            const FeaturedEvent = await eventDao.aggregate('event', featureAggPipe, {})
+            const featuredEvent = await eventDao.aggregate('event', featureAggPipe, {})
             const event = await eventDao.aggregate('event', aggPipe, {});
-            const time = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
-            const TIMES = {
-                time,
-                type: 2
-            }
-            const category = {
-                eventCategoryListName,
-                type: 0
-            }
+            // const time = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
+            // const TIMES = {
+            //     time,
+            //     type: 2
+            // }
+            // const category = {
+            //     eventCategoryListName,
+            //     type: 0
+            // }
             const FEATURED = {
-                FeaturedEvent,
-                type: 1
+                featuredEvent,
+                type: 0
             }
             const EVENTS = {
                 event,
-                type: 3
+                type: 1
             }
             return [
-                category,
                 FEATURED,
-                TIMES,
                 EVENTS,
             ]
         } catch (error) {
