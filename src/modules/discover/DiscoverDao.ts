@@ -219,16 +219,30 @@ export class DiscoverDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "discovers",
-                    let: { "follower": "$_id", "user": await appUtils.toObjectId(userId) },
+                    let: { "users": "$_id", "user": userId },
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $and: [
+                                $or: [
                                     {
-                                        $eq: ["$followerId", "$$follower"]
+                                        $and: [
+                                            {
+                                                $eq: ["$followerId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$userId", "$$users"]
+                                            }
+                                        ]
                                     },
                                     {
-                                        $eq: ["$userId", "$$user"]
+                                        $and: [
+                                            {
+                                                $eq: ["$userId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$followerId", "$$users"]
+                                            }
+                                        ]
                                     }
                                 ]
                             }
@@ -244,17 +258,17 @@ export class DiscoverDao extends BaseDao {
                 $project:
                 {
                     _id: 1,
-                    discover_status: {
-                        $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
-                    },
+                    discover_status: { $ifNull: ["$discovers.discover_status", 4] },
                     user: {
                         _id: "$_id",
-                        discover_status: {
-                            $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
-                        },
-                        name: { $ifNull: ["$firstName", ""] },
+                        industryType: "$industryType",
+                        myConnection: "$myConnection",
+                        experience: "$experience",
+                        discover_status: { $ifNull: ["$discovers.discover_status", 4] },
+                        name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                         profilePicUrl: "$profilePicUrl",
-                        profession: { $ifNull: ["$profession", ""] }
+                        profession: { $ifNull: ["$profession", ""] },
+                        about: { $ifNull: ["$about", ""] }
                     },
                     created: 1
                 }
