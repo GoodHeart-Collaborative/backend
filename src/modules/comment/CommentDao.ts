@@ -125,7 +125,7 @@ export class CommentDao extends BaseDao {
                                                     $eq: ["$userId", "$$user"]
                                                 },
                                                 {
-                                                    $eq: ["$followerId", "$users"]
+                                                    $eq: ["$followerId", "$$users"]
                                                 }
                                             ]
                                         }
