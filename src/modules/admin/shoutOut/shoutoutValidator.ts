@@ -21,7 +21,11 @@ let getShoutOut = Joi.object({
     searchTerm: Joi.string(),
 }).unknown()
 
+let getShoutOutById = Joi.object({
+    cardId: Joi.string().required().trim().regex(config.CONSTANT.REGEX.MONGO_ID),
+})
 
 export {
     getShoutOut,
+    getShoutOutById
 };
