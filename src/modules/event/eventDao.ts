@@ -17,7 +17,7 @@ export class EventDao extends BaseDao {
 
     async getEventList(params, tokenData) {
         try {
-            const { pageNo, limit, date, searchKey, longitude, latitude, distance, eventCategoryId, isFeaturedEvent } = params;
+            const { pageNo, limit, date, searchKey, longitude, privacy, latitude, distance, eventCategoryId, isFeaturedEvent } = params;
 
             const paginateOptions = {
                 limit: limit || 10,
@@ -163,14 +163,26 @@ export class EventDao extends BaseDao {
             aggPipe.push(projection);
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
-            const EVENT = await eventDao.aggregateWithPagination('event', aggPipe);
+            const events = await eventDao.aggregateWithPagination('event', aggPipe);
 
-            const EVENTS = {
-                EVENT,
-                // type: 4
-            }
+            let filterdata: any = {}
+            let privacy1 = [];
+            privacy1.push(config.CONSTANT.PRIVACY_STATUS.PRIVATE);
+            privacy1.push(config.CONSTANT.PRIVACY_STATUS.PUBLIC);
+
+            const eventType = config.CONSTANT.PRIVACY_STATUS;
+
+            filterdata['privacy'] = privacy1;
+
+            const categoryClass = [config.CONSTANT.EVENT_CATEGORY];
+
+            filterdata['eventCategory'] = categoryClass
+
+            let event;
+            paginateOptions.pageNo === 1 ? event = { events, filterdata } : event = { events }
+
             return [
-                EVENTS,
+                event,
             ]
         } catch (error) {
             return Promise.reject(error)

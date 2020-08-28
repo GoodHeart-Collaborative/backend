@@ -27,8 +27,8 @@ class InterestController {
             let incOrDec: number = 1
             const criteria = {
                 type: type,
-                eventId: eventId,
-                userId: userId
+                eventId: appUtils.toObjectId(eventId),
+                userId: appUtils.toObjectId(userId)
             }
 
             const checkExist = await eventInterestDao.findOne('event_interest', criteria, {}, {})
