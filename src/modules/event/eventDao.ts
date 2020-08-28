@@ -182,11 +182,23 @@ export class EventDao extends BaseDao {
                 }
             }
             filterdata['eventCategory'] = eventCategory1
-            let events;
-            paginateOptions.pageNo === 1 ? events = { event, filterdata } : events = { event }
+            let events = {
+                ...event,
+                type: 1
+            }
+            const forFilter = {
+                filterdata,
+                type: 2
+            }
+            // paginateOptions.pageNo === 1 ? events = { ...event, ...filterdata } : events = { event }
+            // return [
+            //     events,
+            // ]
             return [
                 events,
-            ]
+                forFilter
+            ];
+
         } catch (error) {
             return Promise.reject(error)
         }
