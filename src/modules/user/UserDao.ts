@@ -268,6 +268,16 @@ export class UserDao extends BaseDao {
 			}
 			params.created = new Date().getTime();
 			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+			// late long
+			params["location"] = {
+				"location" : "Noida, Uttar Pradesh, India",
+				"type" : "Point",
+				"coordinates" : [ 
+					77.3619782, 
+					28.6060713
+				]
+			}
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;

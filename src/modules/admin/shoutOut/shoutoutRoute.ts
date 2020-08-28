@@ -44,6 +44,42 @@ export const AdminShoutOut: ServerRoute[] = [
         }
     },
 
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/shoutout/{cardId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload = request.params;
+            // payload['userId'] = tokenData['userId']
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await adminShoutOut.getShoutOutDetail(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "forum"],
+            description: "user add forum",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: shoutOutValidator.getShoutOutById,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
+
+
+
     // {
     //     method: "PATCH",
     //     path: `${config.SERVER.API_BASE_URL}/v1/admin/shoutOut/{postId}`,
