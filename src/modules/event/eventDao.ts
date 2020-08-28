@@ -190,14 +190,14 @@ export class EventDao extends BaseDao {
                 filterdata,
                 type: 2
             }
-            return paginateOptions.pageNo === 1 ? [events, forFilter] : [event]
+            return paginateOptions.pageNo === 1 ? [events, forFilter] : [events]
             // return [
             //     events,
             // ]
-            return [
-                events,
-                forFilter
-            ];
+            // return [
+            //     events,
+            //     forFilter
+            // ];
 
         } catch (error) {
             return Promise.reject(error)
