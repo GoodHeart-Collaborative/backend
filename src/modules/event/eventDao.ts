@@ -163,26 +163,29 @@ export class EventDao extends BaseDao {
             aggPipe.push(projection);
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
-            const events = await eventDao.aggregateWithPagination('event', aggPipe);
+            const event = await eventDao.aggregateWithPagination('event', aggPipe);
 
-            let filterdata: any = {}
-            let privacy1 = [];
+            const filterdata: any = {}
+            const privacy1 = [];
             privacy1.push(config.CONSTANT.PRIVACY_STATUS.PRIVATE);
             privacy1.push(config.CONSTANT.PRIVACY_STATUS.PUBLIC);
 
-            const eventType = config.CONSTANT.PRIVACY_STATUS;
-
+            // const eventType = config.CONSTANT.PRIVACY_STATUS;
             filterdata['privacy'] = privacy1;
 
-            const categoryClass = [config.CONSTANT.EVENT_CATEGORY];
-
-            filterdata['eventCategory'] = categoryClass
-
-            let event;
-            paginateOptions.pageNo === 1 ? event = { events, filterdata } : event = { events }
-
+            const eventCategory1 = [];
+            for (var key in config.CONSTANT.EVENT_CATEGORY) {
+                if (config.CONSTANT.EVENT_CATEGORY.hasOwnProperty(key)) {
+                    var val = config.CONSTANT.EVENT_CATEGORY[key];
+                    console.log(val);
+                    eventCategory1.push({ type: val.TYPE, value: val.VALUE })
+                }
+            }
+            filterdata['eventCategory'] = eventCategory1
+            let events;
+            paginateOptions.pageNo === 1 ? events = { event, filterdata } : events = { event }
             return [
-                event,
+                events,
             ]
         } catch (error) {
             return Promise.reject(error)
