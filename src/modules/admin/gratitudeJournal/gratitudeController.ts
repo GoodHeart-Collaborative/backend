@@ -28,17 +28,49 @@ class GratitudeController {
 
     async getPostById(params: GratitudeRequest.IgratitudeById) {
         try {
-            const criteria = {
-                _id: params.Id,
-            };
+            let aggPipe = [];
+            let match: any = {};
+            match['_id'] = appUtils.toObjectId(params.Id);
 
-            const data = await gratitudeJournalDao.findOne('gratitude_journals', criteria, {}, {})
-            if (!data) {
+            aggPipe.push({ $match: match })
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { 'uId': '$userId' },
+                    as: 'userData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            firstName: 1,
+                            lastName: 1,
+                            profilePicUrl: 1
+                        }
+                    }]
+                }
+            });
+            aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: true } })
+
+            const data = await gratitudeJournalDao.aggregate('gratitude_journals', aggPipe, {})
+            console.log('datadata', data);
+
+            if (!data[0]) {
                 return gratitudeConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return gratitudeConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            return gratitudeConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data[0]);
 
-            // return data;
         } catch (error) {
             throw error;
         }

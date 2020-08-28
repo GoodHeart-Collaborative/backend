@@ -51,8 +51,8 @@ let addEvents = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
-    startDate: Joi.date().required(),
-    endDate: Joi.date().required(),
+    startDate: Joi.number().required(), //  Joi.date().required(),
+    endDate: Joi.number().required(),
     price: Joi.number(),
     imageUrl: Joi.string(),
     eventUrl: Joi.string(),
@@ -82,8 +82,8 @@ let updateEvent = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
-    startDate: Joi.date(),
-    endDate: Joi.date(),
+    startDate: Joi.number().required(),
+    endDate: Joi.number().required(),
     price: Joi.number(),
     imageUrl: Joi.string(),
     eventUrl: Joi.string(),
