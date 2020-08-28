@@ -52,7 +52,8 @@ const HTTP_STATUS_CODE = {
 
 const EVENT_INTEREST = {
 	GOING: 1,
-	INTEREST: 2
+	INTEREST: 2,
+	MY_EVENT: 3
 }
 
 const MEMBER_TYPE = {

@@ -61,7 +61,7 @@ declare namespace UserEventRequest {
     export interface userGetEvent {
         page: number;
         limit: number;
-        type: string;
+        type: number;
         category: string;
     }
 }

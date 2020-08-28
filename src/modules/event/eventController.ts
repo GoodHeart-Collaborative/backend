@@ -45,15 +45,19 @@ class EventController {
     async calenderEvent(params: UserEventRequest.userGetEvent, tokenData) {
         try {
             console.log('tokenData', tokenData.userId);
-
             const { page, limit } = params;
+            const paginateOptions = {
+                limit: limit || 10,
+                page: page || 1,
+            }
+
             let aggPipe = [];
             let match: any = {};
 
             match['userId'] = appUtils.toObjectId(tokenData.userId);
-
-            if (params.type == 'going') {
-                match['type'] = config.CONSTANT.EVENT_INTEREST.GOING;
+            aggPipe.push({ $match: match })
+            if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
+                match['type'] = config.CONSTANT.EVENT_INTEREST.INTEREST;
                 aggPipe.push({
                     $lookup: {
                         from: 'events',
@@ -78,20 +82,44 @@ class EventController {
                 $project: {
                     status: 0,
                     createdAt: 0,
-                    updatedAt: 0
+                    updatedAt: 0,
+                    location: 0,
                 }
             })
             aggPipe.push({ $sort: { startDate: -1 } });
 
-            let data;
-            if (params.type == 'going') {
-                data = await eventInterestDao.aggreagtionWithPaginateTotal('event_interest', aggPipe, limit, page, true)
-                console.log('datadatadatadata', data);
-            } else {
-                data = await eventInterestDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
-                console.log('datadatadatadata', data);
+            aggPipe = [...aggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+
+            let MyInterestedEventslist, MyHostedEventslist;
+            if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
+                MyInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                console.log('datadatadatadata', MyInterestedEventslist);
             }
-            return data;
+            else if (params.type == config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
+                MyHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                console.log('MyHostedEventslist', MyHostedEventslist);
+            }
+            else {
+                MyInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+
+                MyHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                console.log('datadatadatadata', MyHostedEventslist);
+            }
+
+
+            if (params.type === config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
+                return MyHostedEventslist
+            }
+            else if (params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
+                return MyInterestedEventslist
+            }
+            else {
+                return {
+                    MyInterestedEventslist,
+                    MyHostedEventslist
+                }
+            }
+            return MyInterestedEventslist;
 
         } catch (error) {
             return Promise.reject(error);

@@ -64,9 +64,13 @@ let getEvent = Joi.object({
     limit: Joi.number(),
     page: Joi.number(),
     // userId: Joi.string(),
-    type: Joi.string().allow([
-        'going', 'myEvent'
-    ]).default('going').required(),
+    type: Joi.number().allow([
+        // 'myInterest', 'myEvent',
+        config.CONSTANT.EVENT_INTEREST.INTEREST,
+        config.CONSTANT.EVENT_INTEREST.MY_EVENT,
+    ]).description(
+        'INTEREST- 2, MY_EVENT- 3'
+    ),
 
 })
 
