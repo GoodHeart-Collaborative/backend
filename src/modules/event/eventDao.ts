@@ -190,7 +190,7 @@ export class EventDao extends BaseDao {
                 filterdata,
                 type: 2
             }
-            // paginateOptions.pageNo === 1 ? events = { ...event, ...filterdata } : events = { event }
+            return paginateOptions.pageNo === 1 ? [events, forFilter] : [event]
             // return [
             //     events,
             // ]
