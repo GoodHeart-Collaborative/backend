@@ -151,7 +151,7 @@ export class GratitudeJournalDao extends BaseDao {
                                                     $eq: ["$userId", "$$user"]
                                                 },
                                                 {
-                                                    $eq: ["$followerId", "$users"]
+                                                    $eq: ["$followerId", "$$users"]
                                                 }
                                             ]
                                         }
