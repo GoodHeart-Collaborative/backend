@@ -68,8 +68,8 @@ const expertSchema = new Schema({
     // contentType: { type: String },
     // contentDisplayName: { type: String },
 
-    likeCount: { type: Schema.Types.Number, default: 0 },
-    commentCount: { type: Schema.Types.Number, default: 0 },
+    // likeCount: { type: Schema.Types.Number, default: 0 },
+    // commentCount: { type: Schema.Types.Number, default: 0 },
     status: {
         type: String,
         enum: [
