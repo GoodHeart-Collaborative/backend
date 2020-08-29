@@ -51,14 +51,26 @@ class EventController {
                 page: page || 1,
             }
 
-            let aggPipe = [];
+            let noTypeAggPipeandTypeInterest = [];
+            let typeAggPipe = [];
             let match: any = {};
 
             match['userId'] = appUtils.toObjectId(tokenData.userId);
-            aggPipe.push({ $match: match })
-            if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                match['type'] = config.CONSTANT.EVENT_INTEREST.INTEREST;
-                aggPipe.push({
+            //&& params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT
+            // if ((params.type == config.CONSTANT.EVENT_INTEREST.INTEREST || !params.type) && params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
+
+            // if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
+            //     match['type'] = config.CONSTANT.EVENT_INTEREST.INTEREST;
+            // }
+            typeAggPipe.push({ $match: match })
+            if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
+                noTypeAggPipeandTypeInterest.push({
+                    $match: {
+                        userId: appUtils.toObjectId(tokenData.userId),
+                        type: config.CONSTANT.EVENT_INTEREST.INTEREST
+                    }
+                })
+                noTypeAggPipeandTypeInterest.push({
                     $lookup: {
                         from: 'events',
                         let: { eId: '$eventId' },
@@ -74,35 +86,66 @@ class EventController {
                         as: 'eventData'
                     }
                 })
-                aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
+                noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
             }
 
-            aggPipe.push({ $match: match })
-            aggPipe.push({
+            noTypeAggPipeandTypeInterest.push({
+                $replaceRoot: { newRoot: "$eventData" }
+            }
+            )
+
+            noTypeAggPipeandTypeInterest.push({
                 $project: {
-                    status: 0,
-                    createdAt: 0,
-                    updatedAt: 0,
-                    location: 0,
+                    "_id": 0,
+                    "type": 0,
+                    "eventId": 0,
+                    // "userId": 0,
+                    "created": 0,
+                    "createdAt": 0,
+                    "updatedAt": 0,
+                    location: 0
                 }
             })
-            aggPipe.push({ $sort: { startDate: -1 } });
+            // aggPipe.push({ $match: match })
+            // noTypeAggPipe.push({
+            //     $project: {
+            //         status: 0,
+            //         createdAt: 0,
+            //         updatedAt: 0,
+            //         location: 0,
+            //         eventId: 0,
+            //         'eventData.location': 0
+            //     }
+            // })
+            typeAggPipe.push({
+                $project: {
+                    location: 0,
+                    createdAt: 0,
+                    updatedAt: 0,
+                    // userId: 0
+                }
+            })
+            noTypeAggPipeandTypeInterest.push({ $sort: { startDate: -1 } });
+            console.log('aggPipeaggPipeaggPipe', noTypeAggPipeandTypeInterest);
 
-            aggPipe = [...aggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            typeAggPipe = [...typeAggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+
+            noTypeAggPipeandTypeInterest = [...noTypeAggPipeandTypeInterest, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
             let myInterestedEventslist, myHostedEventslist;
             if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
-                console.log('datadatadatadata', myInterestedEventslist);
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', noTypeAggPipeandTypeInterest, paginateOptions.limit, paginateOptions.page, true)
+                // console.log('datadatadatadata', myInterestedEventslist);
             }
             else if (params.type == config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
-                myHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
-                console.log('myHostedEventslist', myHostedEventslist);
+                myHostedEventslist = await eventInterestDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
+                // console.log('myHostedEventslist', myHostedEventslist);
             }
             else {
-                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', noTypeAggPipeandTypeInterest, paginateOptions.limit, paginateOptions.page, true)
+                console.log('myInterestedEventslistmyInterestedEventslist', myInterestedEventslist);
 
-                myHostedEventslist = await eventInterestDao.aggregateWithPagination('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
+                myHostedEventslist = await eventDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
                 console.log('datadatadatadata', myHostedEventslist);
             }
 
