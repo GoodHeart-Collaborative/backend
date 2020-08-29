@@ -74,6 +74,7 @@ class EventController {
                     $lookup: {
                         from: 'events',
                         let: { eId: '$eventId' },
+                        as: 'eventData',
                         pipeline: [{
                             $match: {
                                 $expr: {
@@ -82,8 +83,13 @@ class EventController {
                                     }]
                                 }
                             }
-                        }],
-                        as: 'eventData'
+                        },
+                        {
+                            $addFields: {
+                                isInterest: true
+                            }
+                        }
+                        ],
                     }
                 })
                 noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
@@ -96,13 +102,13 @@ class EventController {
 
             noTypeAggPipeandTypeInterest.push({
                 $project: {
-                    "type": 0,
-                    "eventId": 0,
+                    type: 0,
+                    eventId: 0,
                     // "userId": 0,
-                    "created": 0,
-                    "createdAt": 0,
-                    "updatedAt": 0,
-                    location: 0
+                    created: 0,
+                    createdAt: 0,
+                    updatedAt: 0,
+                    location: 0,
                 }
             })
             // aggPipe.push({ $match: match })
@@ -150,10 +156,10 @@ class EventController {
 
 
             if (params.type === config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
-                return myHostedEventslist
+                return { myHostedEventslist }
             }
             else if (params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                return myInterestedEventslist
+                return { myInterestedEventslist }
             }
             else {
                 return {
