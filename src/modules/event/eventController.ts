@@ -379,15 +379,21 @@ class EventController {
                         }
                     }, {
                         $project: {
-                            firstName: 1,
-                            lastName: 1,
-                            hostedBy: 1
+                            _id: 1,
+                            industryType: "$industryType",
+                            myConnection: "$myConnection",
+                            experience: "$experience",
+                            discover_status: '1',//{ $ifNull: ["$DiscoverData.discover_status", 4] },
+                            name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+                            profilePicUrl: "$profilePicUrl",
+                            profession: { $ifNull: ["$profession", ""] },
+                            about: { $ifNull: ["$about", ""] }
                         }
                     }],
-                    as: 'users'
+                    as: 'hostUser'
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } });
+            aggPipe.push({ '$unwind': { path: '$hostUser', preserveNullAndEmptyArrays: true } });
 
 
             aggPipe.push({
@@ -477,7 +483,7 @@ class EventController {
                     interestCount: 1,
                     goingCount: 1,
                     imageUrl: 1,
-                    users: 1,
+                    hostUser: 1,
                     price: 1,
                     endDate: 1,
                     allowSharing: 1,
