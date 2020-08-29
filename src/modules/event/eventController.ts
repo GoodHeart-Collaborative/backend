@@ -96,7 +96,6 @@ class EventController {
 
             noTypeAggPipeandTypeInterest.push({
                 $project: {
-                    "_id": 0,
                     "type": 0,
                     "eventId": 0,
                     // "userId": 0,
@@ -475,12 +474,12 @@ class EventController {
                     users: 1,
                     price: 1,
                     endDate: 1,
-                    location: 1,
                     allowSharing: 1,
                     description: 1,
                     eventCategory: 1,
                     title: 1,
                     address: 1,
+                    friends: []
                 }
             })
 
