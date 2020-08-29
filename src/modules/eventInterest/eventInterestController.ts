@@ -44,10 +44,15 @@ class InterestController {
                 data = await eventInterestDao.remove('event_interest', criteria)
             }
             if (type == config.CONSTANT.EVENT_INTEREST.GOING) {
-                data = await eventDao.updateOne('event', { _id: eventId }, { $inc: { goingCount: incOrDec } }, {})
+                data = await eventDao.findByIdAndUpdate('event', { _id: eventId }, { $inc: { goingCount: incOrDec } }, { new: true })
+                console.log('datadata', data);
+                return data;
+
             }
             if (type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                data = await eventDao.updateOne('event', { _id: eventId }, { $inc: { interestCount: incOrDec } }, {})
+                data = await eventDao.findByIdAndUpdate('event', { _id: eventId }, { $inc: { interestCount: incOrDec } }, { new: true })
+                console.log('datadata>>>>>>>>>>', data);
+                return data;
             }
             return;
         } catch (error) {
