@@ -510,7 +510,7 @@ class EventController {
 
             const data = await eventDao.aggregate('event', aggPipe, {})
             console.log('datadata', data);
-            return data;
+            return data[0] ? data : {};
 
         } catch (error) {
             return Promise.reject(error)
