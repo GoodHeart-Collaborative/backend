@@ -291,10 +291,17 @@ class EventController {
                     created: 1,
                     "isInterest": {
                         $cond: {
-                            if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
+                            if: { "$eq": ["$interestData.userId", appUtils.toObjectId(tokenData.userId)] },
                             then: true,
                             else: false
                         }
+                    },
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
                     },
                     users: 1,
                 }
@@ -472,7 +479,7 @@ class EventController {
                     // },
                     isHostedByMe: {
                         $cond: {
-                            if: { "$eq": ["$going", 1] },
+                            if: { "$eq": ['$userId', appUtils.toObjectId(tokenData.userId)] },
                             then: true,
                             else: false
                         }
