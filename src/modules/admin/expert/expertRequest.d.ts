@@ -9,7 +9,7 @@ declare namespace AdminExpertRequest {
         industry: string,
         bio: string;
         experience: string;
-        profilePicUrl: string[],
+        profilePicUrl: any; // [string],
     }
 
     export interface getExpert {
@@ -34,7 +34,7 @@ declare namespace AdminExpertRequest {
         industry: string;
         bio: string;
         experience: string;
-        profilePicUrl: string[],
+        profilePicUrl: any //[string],
     }
 
     export interface updateStatus {
