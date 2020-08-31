@@ -38,6 +38,9 @@ class EventController {
             // params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
+
+            // const updateInterest = await eventInterestDao
+
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {

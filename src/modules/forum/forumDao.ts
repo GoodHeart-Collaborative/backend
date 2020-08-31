@@ -3,6 +3,7 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
+import { reportDao } from "@modules/report/reportDao";
 
 export class ForumTopic extends BaseDao {
 
@@ -27,16 +28,20 @@ export class ForumTopic extends BaseDao {
                 limit: limit || 10
             };
 
+            const reportedIdsCriteria = {
+                userId: appUtils.toObjectId(params.userId)
+            };
+            const reportedIds = await reportDao.find('report', reportedIdsCriteria, { _id: 1 }, {}, {}, {}, {});
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             if (categoryId) {
-                match['categoryId'] = await appUtils.toObjectId(categoryId);
+                match['categoryId'] = appUtils.toObjectId(categoryId);
             }
             // if (categoryId) {
             //     match['categoryId'] = appUtils.toObjectId(categoryId)
             // }
             if (postId) {
-                match['_id'] = postId;
+                match['_id'] = appUtils.toObjectId(postId);
             } else {
                 if (page === 1) {
                     let categoryPipe = [
@@ -86,6 +91,11 @@ export class ForumTopic extends BaseDao {
             // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
             // if (postId) {
             //     match['_id'] = appUtils.toObjectId(postId);
+            // }
+            // if (reportedIds.length >= 1) {
+            //     match['_id'] = {
+            //         $nin: reportedIds
+            //     }
             // }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             aggPipe.push({ $match: match });
