@@ -40,10 +40,11 @@ let addEvents = Joi.object({
     //         latitude: Joi.number().precision(8)
     //     }]
     // }),
-    location: Joi.object().keys({
-        type: Joi.string().required().valid(["Point"]),
-        coordinates: Joi.array().items(Joi.number())
-    }),
+
+    // location: Joi.object().keys({
+    //     type: Joi.string().required().valid(["Point"]),
+    //     coordinates: Joi.array().items(Joi.number())
+    // }),
     address: Joi.string().trim().required(),
     eventCategoryId: Joi.number().allow([
         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
@@ -89,10 +90,10 @@ let updateEvent = Joi.object({
     price: Joi.number(),
     imageUrl: Joi.string(),
     eventUrl: Joi.string(),
-    location: Joi.object().keys({
-        type: Joi.string().required().valid(["Point"]),
-        coordinates: Joi.array().items(Joi.number())
-    }).required(),
+    // location: Joi.object().keys({
+    //     type: Joi.string().required().valid(["Point"]),
+    //     coordinates: Joi.array().items(Joi.number())
+    // }).required(),
     address: Joi.string().trim().required(),
     eventCategoryId: Joi.number().allow([
         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,

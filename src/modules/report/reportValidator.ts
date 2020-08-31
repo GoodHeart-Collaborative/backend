@@ -9,12 +9,13 @@ let addReport = Joi.object({
     type: Joi.number().allow([
         config.CONSTANT.HOME_TYPE.FORUM_TOPIC
     ]),
-    prefilledComment: Joi.number().allow([
+    prefilledComment: Joi.number().required().allow([
         config.CONSTANT.REPORT_MESSAGE.Explicit_photos.id,
         config.CONSTANT.REPORT_MESSAGE.Offensive_content.id,
         config.CONSTANT.REPORT_MESSAGE.Impostor_accounts.id,
         config.CONSTANT.REPORT_MESSAGE.Other.id,
-    ]), requierd: true
+    ],
+    ),
 
 }).unknown()
 

@@ -22,6 +22,7 @@ export interface Iforum extends Document {
     thumbnailUrl: string;
     mediaUrl: string;
     mediaType: number;
+    reportCount: number;
 }
 
 const forumSchema = new Schema({
@@ -44,6 +45,7 @@ const forumSchema = new Schema({
         ],
         default: config.CONSTANT.STATUS.ACTIVE,
     },
+    reportCount: { type: Number, default: 0 },
     createrId: { type: Schema.Types.ObjectId, required: true },
     likeCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
