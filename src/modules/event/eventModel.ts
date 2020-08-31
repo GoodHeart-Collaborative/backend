@@ -16,7 +16,7 @@ export interface Ievent extends Document {
     endDate: number;
     price: number;
     url: string;
-    allowSharing: boolean;
+    allowSharing: number;
     description: string;
     goingCount: number;
     interestCount: number;
@@ -62,7 +62,7 @@ const eventSchema = new Schema({
     },
     imageUrl: { type: String },
     eventUrl: { type: String },
-    allowSharing: { type: Boolean },
+    allowSharing: { type: Number },
     goingCount: { type: Number, default: 0 },
     // eventCategoryType: {
     //     type: String, enum: [

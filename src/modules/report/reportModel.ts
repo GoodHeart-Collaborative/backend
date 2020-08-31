@@ -8,7 +8,7 @@ export interface Ireport extends Document {
     userId: string
     postId: string;
     type: number;
-    message: string;
+    reason: string;
 }
 
 const reportSchema = new Schema({
@@ -35,7 +35,7 @@ const reportSchema = new Schema({
             config.CONSTANT.REPORT_MESSAGE.Other.id,
         ], required: true
     },
-    message: { type: String, required: true },
+    reason: { type: String, required: true },
     created: { type: Number, default: new Date() }
 }, {
     versionKey: false,

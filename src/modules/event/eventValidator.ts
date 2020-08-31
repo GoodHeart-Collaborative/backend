@@ -53,7 +53,7 @@ let addEvents = Joi.object({
     //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
     //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
     // ]).required(),
-    allowSharing: Joi.boolean().default(true),
+    allowSharing: Joi.number().allow(0, 1), //boolean().default(true),
     description: Joi.string().required(),
 })
 

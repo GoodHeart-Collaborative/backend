@@ -5,7 +5,7 @@ import * as config from "@config/index";
 
 let addReport = Joi.object({
     postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
-    message: Joi.string().required(),
+    reason: Joi.string().required(),
     type: Joi.number().allow([
         config.CONSTANT.HOME_TYPE.FORUM_TOPIC
     ]),
