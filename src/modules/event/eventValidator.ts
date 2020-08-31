@@ -40,18 +40,20 @@ let addEvents = Joi.object({
     //         latitude: Joi.number().precision(8)
     //     }]
     // }),
-    location: Joi.object().keys({
-        type: Joi.string().required().valid(["Point"]),
-        coordinates: Joi.array().items(Joi.number())
-    }),
+
+    // location: Joi.object().keys({
+    //     type: Joi.string().required().valid(["Point"]),
+    //     coordinates: Joi.array().items(Joi.number())
+    // }),
     address: Joi.string().trim().required(),
-    eventCategoryId: Joi.number().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    ]).required(),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string().required(),
+    // Joi.number().allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]).required(),
+    allowSharing: Joi.number().allow(0, 1), //boolean().default(true),
     description: Joi.string().required(),
 })
 
@@ -64,9 +66,13 @@ let getEvent = Joi.object({
     limit: Joi.number(),
     page: Joi.number(),
     // userId: Joi.string(),
-    type: Joi.string().allow([
-        'going', 'myEvent'
-    ]).default('going').required(),
+    type: Joi.number().allow([
+        // 'myInterest', 'myEvent',
+        config.CONSTANT.EVENT_INTEREST.INTEREST,
+        config.CONSTANT.EVENT_INTEREST.MY_EVENT,
+    ]).description(
+        'INTEREST- 2, MY_EVENT- 3'
+    ),
 
 })
 
@@ -85,10 +91,10 @@ let updateEvent = Joi.object({
     price: Joi.number(),
     imageUrl: Joi.string(),
     eventUrl: Joi.string(),
-    location: Joi.object().keys({
-        type: Joi.string().required().valid(["Point"]),
-        coordinates: Joi.array().items(Joi.number())
-    }).required(),
+    // location: Joi.object().keys({
+    //     type: Joi.string().required().valid(["Point"]),
+    //     coordinates: Joi.array().items(Joi.number())
+    // }).required(),
     address: Joi.string().trim().required(),
     eventCategoryId: Joi.number().allow([
         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,

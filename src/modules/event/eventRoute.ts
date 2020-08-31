@@ -199,16 +199,16 @@ export const userEventRoutes: ServerRoute[] = [
                         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
                         5
                     ]).description('5-All'),
-                    isFeaturedEvent: Joi.boolean(),
+                    isFeaturedEvent: Joi.number().allow(0, 1),
                     date: Joi.string().allow([
                         config.CONSTANT.DATE_FILTER.TODAY,
                         config.CONSTANT.DATE_FILTER.TOMORROW,
                         config.CONSTANT.DATE_FILTER.WEEKEND
-                    ]).description('3-today ,4-tomorrow ,5-weekend')
-                    // eventCategoryType: Joi.string().allow([
-                    //     config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-                    //     config.CONSTANT.PRIVACY_STATUS.PUBLIC
-                    // ])
+                    ]).description('3-today ,4-tomorrow ,5-weekend'),
+                    privacy: Joi.string().allow([
+                        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+                        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+                    ])
                 },
                 failAction: appUtils.failActionFunction
             },

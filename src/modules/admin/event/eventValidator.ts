@@ -51,23 +51,24 @@ let addEvents = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
-    startDate: Joi.date().required(),
-    endDate: Joi.date().required(),
+    startDate: Joi.number().required(), //  Joi.date().required(),
+    endDate: Joi.number().required(),
     price: Joi.number(),
     imageUrl: Joi.string(),
-    eventUrl: Joi.string(),
+    eventUrl: Joi.string().allow('u'),
     location: Joi.object().keys({
         type: Joi.string().required().valid(["Point"]),
         coordinates: Joi.array().items(Joi.number())
     }),
     address: Joi.string().required().trim(),
-    eventCategoryId: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    ]).required(),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string().required(),
+    // .allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]).required(),
+    allowSharing: Joi.number().allow(0, 1).default(1),
     description: Joi.string().allow('').required(),
     isFeatured: Joi.boolean().default(false),
 })
@@ -82,11 +83,11 @@ let updateEvent = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
-    startDate: Joi.date(),
-    endDate: Joi.date(),
+    startDate: Joi.number().required(),
+    endDate: Joi.number().required(),
     price: Joi.number(),
     imageUrl: Joi.string(),
-    eventUrl: Joi.string(),
+    eventUrl: Joi.string().allow(''),
     location: Joi.object().keys({
         type: Joi.string().required().valid(["Point"]),
         coordinates: Joi.array().items(Joi.number())
@@ -95,13 +96,14 @@ let updateEvent = Joi.object({
         // }]
     }),
     address: Joi.string().trim(),
-    eventCategoryId: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    ]),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string(),
+    //.allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]),
+    allowSharing: Joi.number().allow(0, 1), //.default(true),
     description: Joi.string(),
     isFeatured: Joi.boolean()
 })

@@ -169,6 +169,7 @@ export class DiscoverDao extends BaseDao {
             let result: any = {}
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
             let pickupLocation = [];
+            let match:any = {}
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
                 aggPipe.push(
@@ -184,11 +185,18 @@ export class DiscoverDao extends BaseDao {
                 )
             }
             userId = await appUtils.toObjectId(userId.userId)
-            aggPipe.push({ "$match": { userId: { "$ne": userId } } });
+            // aggPipe.push({ "$match": { _id: { "$ne": userId } } });
             if (_id) {
-                aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
+                match["_id"] = await appUtils.toObjectId(_id)
+                // aggPipe.push({ "$match": { "_id": await appUtils.toObjectId(_id) } })
                 pageNo = 1
                 limit = 1
+            } else {
+                match = {
+                    "_id": { "$ne": userId },
+                    adminStatus: CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+                    status: CONSTANT.STATUS.ACTIVE
+                }
             }
             aggPipe.push({ "$sort": { "createdAt": 1 } })
             aggPipe.push({
@@ -200,24 +208,41 @@ export class DiscoverDao extends BaseDao {
                 }
             })
             if (industryType) {
-                aggPipe.push({ "$match": { industryType: { $in: industryType } } })
+                match["industryType"] = { $in: industryType }
+                // aggPipe.push({ "$match": { industryType: { $in: industryType } } })
             }
             if (searchKey) {
-                aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
+                match["firstName"] = { "$regex": searchKey, "$options": "-i" }
+                // aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
             }
+            aggPipe.push({ "$match": match })
             aggPipe.push({
                 $lookup: {
                     from: "discovers",
-                    let: { "follower": "$_id", "user": await appUtils.toObjectId(userId) },
+                    let: { "users": "$_id", "user": userId },
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $and: [
+                                $or: [
                                     {
-                                        $eq: ["$followerId", "$$follower"]
+                                        $and: [
+                                            {
+                                                $eq: ["$followerId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$userId", "$$users"]
+                                            }
+                                        ]
                                     },
                                     {
-                                        $eq: ["$userId", "$$user"]
+                                        $and: [
+                                            {
+                                                $eq: ["$userId", "$$user"]
+                                            },
+                                            {
+                                                $eq: ["$followerId", "$$users"]
+                                            }
+                                        ]
                                     }
                                 ]
                             }
@@ -233,17 +258,17 @@ export class DiscoverDao extends BaseDao {
                 $project:
                 {
                     _id: 1,
-                    discover_status: {
-                        $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
-                    },
+                    discover_status: { $ifNull: ["$discovers.discover_status", 4] },
                     user: {
                         _id: "$_id",
-                        discover_status: {
-                            $cond: { if: { "$eq": ["$discovers.userId", userId] }, then: "$discovers.discover_status", else: config.CONSTANT.DISCOVER_STATUS.NO_ACTION }
-                        },
-                        name: { $ifNull: ["$firstName", ""] },
+                        industryType: "$industryType",
+                        myConnection: "$myConnection",
+                        experience: "$experience",
+                        discover_status: { $ifNull: ["$discovers.discover_status", 4] },
+                        name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                         profilePicUrl: "$profilePicUrl",
-                        profession: { $ifNull: ["$profession", ""] }
+                        profession: { $ifNull: ["$profession", ""] },
+                        about: { $ifNull: ["$about", ""] }
                     },
                     created: 1
                 }

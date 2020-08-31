@@ -25,3 +25,4 @@ export { shoutout } from './shoutout/shoutoutModel';
 export { event } from './event/eventModel';
 export { event_interest } from './eventInterest/interestModel';
 export { forum } from './forum/forumModel';
+export { report } from './report/reportModel';

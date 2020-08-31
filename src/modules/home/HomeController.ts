@@ -36,14 +36,12 @@ class HomeController {
                 // }
                 params.limit = 5
                 getGeneralGratitude = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
-                console.log('getGeneralGratitudegetGeneralGratitudegetGeneralGratitude', getGeneralGratitude);
 
                 if (getGeneralGratitude && getGeneralGratitude.list && getGeneralGratitude.list.length > 0) {
                     console.log('responseDataresponseDataresponseData', responseData);
 
                     responseData.unshift(getGeneralGratitude)
                     responseData.unshift(getmemberOfTheDay)
-                    console.log('responseDataresponseDataresponseData', responseData);
 
                     // responseData["getGratitudeJournal"] = getGeneralGratitude
                     //     if(responseData && responseData.list && responseData.list.length > 9) {
@@ -53,10 +51,10 @@ class HomeController {
                     //         }
                     //     }
                     //     responseData.list.push(getGeneralGratitude)
+                } else {
+                    responseData.unshift(getmemberOfTheDay)
                 }
-                console.log('getmemberOfTheDay1111111111111', getmemberOfTheDay);
                 responseData["getmemberOfTheDay"] = getmemberOfTheDay
-                console.log('responseDataresponseDataresponseData>>>>>>>>>>>>', responseData);
 
             } else {
                 if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
@@ -65,7 +63,26 @@ class HomeController {
                     responseData = await homeDao.getHomeData(params, userId.tokenData)
                 }
             }
+
+            const reoprtData1 = [];
+            for (var key in config.CONSTANT.REPORT_MESSAGE) {
+                console.log('keykey', key);
+
+                if (config.CONSTANT.REPORT_MESSAGE.hasOwnProperty(key)) {
+                    var val = config.CONSTANT.REPORT_MESSAGE[key];
+
+                    console.log(val);
+                    reoprtData1.push({ reason: val.reason, id: val.id })
+                }
+            }
+
+
+            return {
+                reportData: reoprtData1,
+                homeData: responseData
+            }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
+
         } catch (error) {
             throw error;
         }

@@ -17,7 +17,7 @@ export class EventDao extends BaseDao {
 
     async getEventList(params, tokenData) {
         try {
-            const { pageNo, limit, date, searchKey, longitude, latitude, distance, eventCategoryId, isFeaturedEvent } = params;
+            const { pageNo, limit, date, searchKey, longitude, privacy, latitude, distance, eventCategoryId, isFeaturedEvent } = params;
 
             const paginateOptions = {
                 limit: limit || 10,
@@ -113,7 +113,7 @@ export class EventDao extends BaseDao {
                             $expr: {
                                 $and: [
                                     {
-                                        $eq: ['$userId', '$$userId']
+                                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)]
                                     },
                                     {
                                         $eq: ['$eventId', '$$eId']
@@ -149,10 +149,20 @@ export class EventDao extends BaseDao {
                     created: 1,
                     "isInterest": {
                         $cond: {
-                            if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
+                            if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
                         }
+                    },
+                    // "isInterest": {
+                    //     $cond: {
+                    //         if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
+                    //         then: true,
+                    //         else: false
+                    //     }
+                    // },
+                    isHostedByMe: {
+                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
+                        then: true,
+                        else: false
                     },
                     users: 1,
                 }
@@ -163,15 +173,42 @@ export class EventDao extends BaseDao {
             aggPipe.push(projection);
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
-            const EVENT = await eventDao.aggregateWithPagination('event', aggPipe);
+            const event = await eventDao.aggregateWithPagination('event', aggPipe);
 
-            const EVENTS = {
-                EVENT,
-                // type: 4
+            const filterdata: any = {}
+            const privacy1 = [];
+            privacy1.push(config.CONSTANT.PRIVACY_STATUS.PRIVATE);
+            privacy1.push(config.CONSTANT.PRIVACY_STATUS.PUBLIC);
+
+            // const eventType = config.CONSTANT.PRIVACY_STATUS;
+            filterdata['privacy'] = privacy1;
+
+            const eventCategory1 = [];
+            for (var key in config.CONSTANT.EVENT_CATEGORY) {
+                if (config.CONSTANT.EVENT_CATEGORY.hasOwnProperty(key)) {
+                    var val = config.CONSTANT.EVENT_CATEGORY[key];
+                    console.log(val);
+                    eventCategory1.push({ type: val.TYPE, value: val.VALUE })
+                }
             }
-            return [
-                EVENTS,
-            ]
+            filterdata['eventCategory'] = eventCategory1
+            let events = {
+                ...event,
+                type: 1
+            }
+            const forFilter = {
+                filterdata,
+                type: 2
+            }
+            return paginateOptions.pageNo === 1 ? [events, forFilter] : [events]
+            // return [
+            //     events,
+            // ]
+            // return [
+            //     events,
+            //     forFilter
+            // ];
+
         } catch (error) {
             return Promise.reject(error)
         }
