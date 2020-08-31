@@ -159,7 +159,7 @@ class ExpertController {
             const criteria = {
                 _id: params.expertId,
             };
-
+            params['profilePicUrl'] = [params.profilePicUrl]
             const dataToUpdate = {
                 ...params
             }
