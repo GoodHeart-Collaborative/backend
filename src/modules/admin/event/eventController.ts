@@ -187,7 +187,7 @@ class EventController {
                 _id: params.eventId
             }
 
-            const result = await categoryDao.findOne('categories', { _id: params.categoryId }, {}, {})
+            const result = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
 
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             console.log('data1data1data1data1data1', result);
