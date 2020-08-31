@@ -10,6 +10,8 @@ export class BaseDao {
 	async save(model: ModelNames, data: any) {
 		try {
 			const ModelName: any = models[model];
+			console.log('ModelNameModelNameModelName', ModelName);
+
 			return await new ModelName(data).save();
 		} catch (error) {
 			return Promise.reject(error);

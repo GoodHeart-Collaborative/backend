@@ -59,6 +59,8 @@ import { AdminForumRoute as AdminForumRouteV1 } from '@modules/admin/forum/forum
 import { userForumRoutes as userForumRoutesV1 } from '@modules/forum/forumRoute';
 import { AdminFeedRoute as AdminFeedRouteV1 } from '@modules/admin/feed/feedRoute';
 import { AdminShoutOut as AdminShoutOutV1 } from '@modules/admin/shoutOut/shoutoutRoute';
+import { ReportRoute as ReportRouteV1 } from '@modules/report/reportRoute';
+
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -104,5 +106,6 @@ export const routes: ServerRoute[] = [
 	...AdminForumRouteV1,
 	...userForumRoutesV1,
 	...AdminFeedRouteV1,
-	...AdminShoutOutV1
+	...AdminShoutOutV1,
+	...ReportRouteV1
 ];

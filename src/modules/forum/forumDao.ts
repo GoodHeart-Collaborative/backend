@@ -38,49 +38,49 @@ export class ForumTopic extends BaseDao {
             if (postId) {
                 match['_id'] = postId;
             } else {
-                if(page === 1) {
-                let categoryPipe = [
-                    {
-                        $match: {
-                            status: config.CONSTANT.STATUS.ACTIVE,
-                        }
-                    }, {
-                        $lookup: {
-                            from: 'forums',
-                            let: { cId: '$_id' },
-                            as: 'forumData',
-                            pipeline: [{
-                                $match: {
-                                    $expr: {
-                                        $and: [{
-                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                        },
-                                        {
-                                            $eq: ['$categoryId', '$$cId']
+                if (page === 1) {
+                    let categoryPipe = [
+                        {
+                            $match: {
+                                status: config.CONSTANT.STATUS.ACTIVE,
+                            }
+                        }, {
+                            $lookup: {
+                                from: 'forums',
+                                let: { cId: '$_id' },
+                                as: 'forumData',
+                                pipeline: [{
+                                    $match: {
+                                        $expr: {
+                                            $and: [{
+                                                $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                            },
+                                            {
+                                                $eq: ['$categoryId', '$$cId']
+                                            }
+                                            ]
                                         }
-                                        ]
                                     }
                                 }
+                                ]
                             }
-                            ]
+                        },
+                        {
+                            $match: {
+                                forumData: { $ne: [] }
+                            }
+                        },
+                        {
+                            $project: {
+                                forumData: 0
+                            }
+                        },
+                        {
+                            $limit: 5
                         }
-                    },
-                    {
-                        $match: {
-                            forumData: { $ne: [] }
-                        }
-                    },
-                    {
-                        $project: {
-                            forumData: 0
-                        }
-                    },
-                    {
-                        $limit: 5
-                    }
-                ];
-                data = await this.aggregate('categories', categoryPipe, {})
-            }
+                    ];
+                    data = await this.aggregate('categories', categoryPipe, {})
+                }
             }
 
             // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
@@ -293,11 +293,11 @@ export class ForumTopic extends BaseDao {
             if (categoryId) {
                 arr = [...myForumData.list]
             } else {
-                if(data && data.length > 0) {
+                if (data && data.length > 0) {
                     arr = [categories, ...myForumData.list]
                 } else {
                     arr = [...myForumData.list]
-                }   
+                }
             }
             if (!params.postId) {
                 return {

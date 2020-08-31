@@ -63,7 +63,26 @@ class HomeController {
                     responseData = await homeDao.getHomeData(params, userId.tokenData)
                 }
             }
+
+            const reoprtData1 = [];
+            for (var key in config.CONSTANT.REPORT_MESSAGE) {
+                console.log('keykey', key);
+
+                if (config.CONSTANT.REPORT_MESSAGE.hasOwnProperty(key)) {
+                    var val = config.CONSTANT.REPORT_MESSAGE[key];
+
+                    console.log(val);
+                    reoprtData1.push({ reason: val.reason, id: val.id })
+                }
+            }
+
+
+            return {
+                reportData: reoprtData1,
+                homeData: responseData
+            }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
+
         } catch (error) {
             throw error;
         }

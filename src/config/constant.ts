@@ -106,7 +106,8 @@ const DB_MODEL_REF = {
 	EXPERT_POST: 'expert_post',
 	EVENT: 'event',
 	EVENT_INTEREST: 'event_interest',
-	FORUM: 'forum'
+	FORUM: 'forum',
+	REPORT: 'report'
 
 };
 
@@ -121,6 +122,33 @@ const ADMIN_TYPE = {
 	SUPER_ADMIN: "super",
 	SUB_ADMIN: "sub"
 };
+
+
+// const EVENT_CATEGORY = {
+// 	EVENTS: {
+// 		TYPE: 'events',
+// 		VALUE: 1,
+// 		DISPLAY_NAME: 'EVENTS'
+// 	},
+
+const REPORT_MESSAGE = {
+	Explicit_photos: {
+		reason: "Explicit photos",
+		id: 1
+	},
+	Offensive_content: {
+		reason: "Offensive content",
+		id: 2
+	},
+	Impostor_accounts: {
+		reason: "Impostor accounts",
+		id: 3
+	},
+	Other: {
+		reason: "Other",
+		id: 4
+	}
+}
 
 const GENDER = {
 	MALE: "male",
@@ -837,5 +865,6 @@ export const CONSTANT = Object.freeze({
 	EVENT_INTEREST,
 	EXPERIENCE_LEVEL,
 	DATE_FILTER,
-	REQUEST_TYPE
+	REQUEST_TYPE,
+	REPORT_MESSAGE,
 });

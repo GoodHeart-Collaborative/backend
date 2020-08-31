@@ -79,9 +79,9 @@ declare interface Address {
 	coordinates: number[];
 }
 
-declare interface ListingRequest extends Pagination, Filter { 
-	request_type ?: number
- }
+declare interface ListingRequest extends Pagination, Filter {
+	request_type?: number
+}
 
 declare interface BlockRequest {
 	status: string;
@@ -128,4 +128,5 @@ declare type ModelNames =
 	'expert_post' |
 	'event' |
 	'event_interest' |
-	'forum'
+	'forum' |
+	'report'
