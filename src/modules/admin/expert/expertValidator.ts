@@ -63,6 +63,7 @@ let validateExpertId = Joi.object({
 let updateExpert = Joi.object({
     categoryId: Joi.array().items(Joi.string()).required(),
     name: Joi.string().required(),
+    email: Joi.string().email(),
     profession: Joi.string().required(),
     industry: Joi.number().valid([
         // config.INDUSTRIES.Compassion_Fatigue,
