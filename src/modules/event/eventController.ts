@@ -89,7 +89,16 @@ class EventController {
                         },
                         {
                             $addFields: {
-                                isInterest: true
+                                isInterest: true,
+                                isHostedByMe: {
+                                    $cond: {
+                                        if: {
+                                            $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
+                                            then: true,
+                                            else: false
+                                        }
+                                    }
+                                }
                             }
                         }
                         ],
@@ -127,10 +136,26 @@ class EventController {
             // })
             typeAggPipe.push({
                 $project: {
-                    location: 0,
-                    createdAt: 0,
-                    updatedAt: 0,
-                    // userId: 0
+                    _id: 1,
+                    "isFeatured": 1,
+                    "price": 1,
+                    "goingCount": 0,
+                    "interestCount": 0,
+                    "startDate": 1,
+                    "endDate": 1,
+                    "allowSharing": 1,
+                    "imageUrl": 1,
+                    "address": 1,
+                    "eventCategoryId": 1,
+                    "description": 1,
+                    "title": 1,
+                    "eventUrl": 1,
+                    "userId": 1,
+                    isHostedByMe: {
+                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
+                        then: true,
+                        else: false
+                    }
                 }
             })
             noTypeAggPipeandTypeInterest.push({ $sort: { startDate: -1 } });

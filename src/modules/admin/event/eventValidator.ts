@@ -55,7 +55,7 @@ let addEvents = Joi.object({
     endDate: Joi.number().required(),
     price: Joi.number(),
     imageUrl: Joi.string(),
-    eventUrl: Joi.string(),
+    eventUrl: Joi.string().allow('u'),
     location: Joi.object().keys({
         type: Joi.string().required().valid(["Point"]),
         coordinates: Joi.array().items(Joi.number())
@@ -87,7 +87,7 @@ let updateEvent = Joi.object({
     endDate: Joi.number().required(),
     price: Joi.number(),
     imageUrl: Joi.string(),
-    eventUrl: Joi.string(),
+    eventUrl: Joi.string().allow(''),
     location: Joi.object().keys({
         type: Joi.string().required().valid(["Point"]),
         coordinates: Joi.array().items(Joi.number())
