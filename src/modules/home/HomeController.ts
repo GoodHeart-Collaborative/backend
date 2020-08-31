@@ -76,10 +76,11 @@ class HomeController {
                 }
             }
 
-
-            return {
-                reportData: reoprtData1,
-                homeData: responseData
+            if (!params.type) {
+                return {
+                    reportData: reoprtData1,
+                    homeData: responseData
+                }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
 
