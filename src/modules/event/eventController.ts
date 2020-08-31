@@ -139,8 +139,8 @@ class EventController {
                     _id: 1,
                     "isFeatured": 1,
                     "price": 1,
-                    "goingCount": 0,
-                    "interestCount": 0,
+                    "goingCount": 1,
+                    "interestCount": 1,
                     "startDate": 1,
                     "endDate": 1,
                     "allowSharing": 1,
@@ -267,19 +267,19 @@ class EventController {
             featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
 
             const unwind = {
-                '$unwind': { path: '$interestData', preserveNullAndEmptyArrays: true },
+                '$unwind': { path: '$interestData' },
             }
 
             const interesetData = {
                 $lookup: {
                     from: 'event_interests',
-                    let: { userId: '$userId', eId: '$_id' },
+                    let: { uId: '$userId', eId: '$_id' },
                     pipeline: [{
                         $match: {
                             $expr: {
                                 $and: [
                                     {
-                                        $eq: ['$userId', '$$userId']
+                                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)]
                                     },
                                     {
                                         $eq: ['$eventId', '$$eId']
@@ -289,7 +289,7 @@ class EventController {
                                     }
                                 ]
                             }
-                        }
+                        },
                     }],
                     as: 'interestData',
                 }
@@ -316,11 +316,10 @@ class EventController {
                     created: 1,
                     "isInterest": {
                         $cond: {
-                            if: { "$eq": ["$interestData.userId", appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
+                            if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
                         }
                     },
+                    // interestData: 1,
                     isHostedByMe: {
                         $cond: {
                             if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
@@ -333,12 +332,12 @@ class EventController {
             };
 
             featureAggPipe.push(interesetData);
-            featureAggPipe.push(unwind);
+            // featureAggPipe.push(unwind);
             console.log('featureAggPipefeatureAggPipefeatureAggPipe', featureAggPipe);
             featureAggPipe.push(projection)
 
             aggPipe.push(interesetData);
-            aggPipe.push(unwind);
+            // aggPipe.push(unwind);
             aggPipe.push(projection);
 
             // const getEventCategory = [

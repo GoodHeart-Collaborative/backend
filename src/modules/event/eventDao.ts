@@ -113,7 +113,7 @@ export class EventDao extends BaseDao {
                             $expr: {
                                 $and: [
                                     {
-                                        $eq: ['$userId', '$$userId']
+                                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)]
                                     },
                                     {
                                         $eq: ['$eventId', '$$eId']
@@ -149,10 +149,20 @@ export class EventDao extends BaseDao {
                     created: 1,
                     "isInterest": {
                         $cond: {
-                            if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
+                            if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
                         }
+                    },
+                    // "isInterest": {
+                    //     $cond: {
+                    //         if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
+                    //         then: true,
+                    //         else: false
+                    //     }
+                    // },
+                    isHostedByMe: {
+                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
+                        then: true,
+                        else: false
                     },
                     users: 1,
                 }
