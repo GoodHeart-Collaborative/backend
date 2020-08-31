@@ -28,11 +28,11 @@ class EventController {
 	 */
     async addEvent(params: UserEventRequest.AddEvent) {
         try {
-            const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-            console.log('data1data1data1data1data1', result);
-            params.eventCategoryType = result['TYPE'];
-            params.eventCategoryDisplayName = result['DISPLAY_NAME'];
-            params.created = new Date().getTime();
+            // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
+            // console.log('data1data1data1data1data1', result);
+            // params.eventCategoryType = result['TYPE'];
+            // params.eventCategoryDisplayName = result['DISPLAY_NAME'];
+            // params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
@@ -92,6 +92,28 @@ class EventController {
                         ],
                     }
                 })
+                // noTypeAggPipeandTypeInterest.push({
+                //     $lookup: {
+                //         from: 'categories',
+                //         let: { ecId: '$eventCategoryId' },
+                //         as: 'eventCategoryData',
+                //         pipeline: [{
+                //             $match: {
+                //                 $expr: {
+                //                     $and: [{
+                //                         $eq: ['$_id', '$$ecId']
+                //                     },
+                //                     {
+                //                         $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                //                     }]
+                //                 }
+                //             }
+                //         },
+                //         ],
+                //     }
+                // })
+                // noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventCategoryData', preserveNullAndEmptyArrays: true } });
+
                 noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
             }
 

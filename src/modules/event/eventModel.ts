@@ -23,9 +23,9 @@ export interface Ievent extends Document {
     eventCategory: string,
     created: number;
     isFeatured: boolean;
-    eventCategoryType: string;
-    eventCategoryDisplayName: string;
-    eventCategoryId: number;
+    // eventCategoryType: string;
+    // eventCategoryDisplayName: string;
+    eventCategoryId: string;
 }
 
 const eventSchema = new Schema({
@@ -64,31 +64,31 @@ const eventSchema = new Schema({
     eventUrl: { type: String },
     allowSharing: { type: Boolean },
     goingCount: { type: Number, default: 0 },
-
-    eventCategoryType: {
-        type: String, enum: [
-            config.CONSTANT.EVENT_CATEGORY.CLASSES.TYPE,
-            config.CONSTANT.EVENT_CATEGORY.EVENTS.TYPE,
-            config.CONSTANT.EVENT_CATEGORY.MEETUP.TYPE,
-            config.CONSTANT.EVENT_CATEGORY.TRAINING.TYPE
-        ]
-    },
-    eventCategoryDisplayName: {
-        type: String, enum: [
-            config.CONSTANT.EVENT_CATEGORY.CLASSES.DISPLAY_NAME,
-            config.CONSTANT.EVENT_CATEGORY.EVENTS.DISPLAY_NAME,
-            config.CONSTANT.EVENT_CATEGORY.MEETUP.DISPLAY_NAME,
-            config.CONSTANT.EVENT_CATEGORY.TRAINING.DISPLAY_NAME
-        ]
-    },
-    eventCategoryId: {
-        type: Number, index: true, enum: [
-            config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-            config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-            config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-            config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-        ]
-    },
+    // eventCategoryType: {
+    //     type: String, enum: [
+    //         config.CONSTANT.EVENT_CATEGORY.CLASSES.TYPE,
+    //         config.CONSTANT.EVENT_CATEGORY.EVENTS.TYPE,
+    //         config.CONSTANT.EVENT_CATEGORY.MEETUP.TYPE,
+    //         config.CONSTANT.EVENT_CATEGORY.TRAINING.TYPE
+    //     ]
+    // },
+    // eventCategoryDisplayName: {
+    //     type: String, enum: [
+    //         config.CONSTANT.EVENT_CATEGORY.CLASSES.DISPLAY_NAME,
+    //         config.CONSTANT.EVENT_CATEGORY.EVENTS.DISPLAY_NAME,
+    //         config.CONSTANT.EVENT_CATEGORY.MEETUP.DISPLAY_NAME,
+    //         config.CONSTANT.EVENT_CATEGORY.TRAINING.DISPLAY_NAME
+    //     ]
+    // },
+    eventCategoryId: { type: Schema.Types.ObjectId, required: true },
+    // {
+    //     type: Number, index: true, enum: [
+    //         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //         config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //         config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    //     ]
+    // },
     interestCount: { type: Number, default: 0 },
     created: { type: Number },
 

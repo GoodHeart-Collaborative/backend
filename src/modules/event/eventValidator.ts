@@ -46,12 +46,13 @@ let addEvents = Joi.object({
     //     coordinates: Joi.array().items(Joi.number())
     // }),
     address: Joi.string().trim().required(),
-    eventCategoryId: Joi.number().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    ]).required(),
+    eventCategoryId: Joi.string().required(),
+    // Joi.number().allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]).required(),
     allowSharing: Joi.boolean().default(true),
     description: Joi.string().required(),
 })
