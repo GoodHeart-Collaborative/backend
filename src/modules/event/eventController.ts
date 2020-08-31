@@ -76,7 +76,7 @@ class EventController {
                 noTypeAggPipeandTypeInterest.push({
                     $lookup: {
                         from: 'events',
-                        let: { eId: '$eventId' },
+                        let: { eId: '$eventId', uId: appUtils.toObjectId(tokenData.userId) },
                         as: 'eventData',
                         pipeline: [{
                             $match: {
@@ -90,15 +90,15 @@ class EventController {
                         {
                             $addFields: {
                                 isInterest: true,
-                                isHostedByMe: {
-                                    $cond: {
-                                        if: {
-                                            $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
-                                            then: true,
-                                            else: false
-                                        }
-                                    }
-                                }
+                                // isHostedByMe: {
+                                //     $cond: {
+                                //         if: {
+                                //             $eq: ['$userId', '$$uId'],
+                                //             then: true,
+                                //             else: false
+                                //         }
+                                //     }
+                                // }
                             }
                         }
                         ],
@@ -151,11 +151,12 @@ class EventController {
                     "title": 1,
                     "eventUrl": 1,
                     "userId": 1,
-                    isHostedByMe: {
-                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
-                        then: true,
-                        else: false
-                    }
+                    isInterest: ''
+                    // isHostedByMe: {
+                    //     $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
+                    //     then: true,
+                    //     else: false
+                    // }
                 }
             })
             noTypeAggPipeandTypeInterest.push({ $sort: { startDate: -1 } });
