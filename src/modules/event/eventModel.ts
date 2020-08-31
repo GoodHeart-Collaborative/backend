@@ -23,8 +23,8 @@ export interface Ievent extends Document {
     eventCategory: string,
     created: number;
     isFeatured: boolean;
-    // eventCategoryType: string;
-    // eventCategoryDisplayName: string;
+    eventCategoryType: string;
+    eventCategoryDisplayName: string;
     eventCategoryId: string;
 }
 

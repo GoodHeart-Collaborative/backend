@@ -470,6 +470,13 @@ class EventController {
                     //         }
                     //     }
                     // },
+                    isHostedByMe: {
+                        $cond: {
+                            if: { "$eq": ["$going", 1] },
+                            then: true,
+                            else: false
+                        }
+                    },
                     isGoing: {
                         $cond: {
                             if: { "$eq": ["$going", 1] },
