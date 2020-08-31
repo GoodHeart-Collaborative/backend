@@ -8,6 +8,7 @@ import * as eventConstant from "@modules/admin/event/eventConstant";
 import { eventDao } from "@modules/event/eventDao";
 import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
+import { categoryDao } from "../catgeory";
 
 class EventController {
 
@@ -27,10 +28,11 @@ class EventController {
    */
     async addEvent(params) {
         try {
-            const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-            console.log('data1data1data1data1data1', result);
-            params.eventCategoryType = result['TYPE'];
-            params.eventCategoryDisplayName = result['DISPLAY_NAME'];
+            const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
+            // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
+            // console.log('data1data1data1data1data1', result);
+            params.eventCategoryType = categoryData['name'];
+            params.eventCategoryDisplayName = categoryData['title'];
             params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});

@@ -15,6 +15,14 @@ export const MESSAGES = {
         //     "message": "SUCCESS",
         //     "type": "DEFAULT"
         // },
+        POST_REPORTED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "Post reported successFully",
+                "type": "DEFAULT",
+                data: data
+            }
+        },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
             "message": "successfully added",

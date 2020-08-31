@@ -61,13 +61,14 @@ let addEvents = Joi.object({
         coordinates: Joi.array().items(Joi.number())
     }),
     address: Joi.string().required().trim(),
-    eventCategoryId: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    ]).required(),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string().required(),
+    // .allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]).required(),
+    allowSharing: Joi.number().allow(0, 1).default(1),
     description: Joi.string().allow('').required(),
     isFeatured: Joi.boolean().default(false),
 })
@@ -95,13 +96,14 @@ let updateEvent = Joi.object({
         // }]
     }),
     address: Joi.string().trim(),
-    eventCategoryId: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    ]),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string(),
+    //.allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]),
+    allowSharing: Joi.number().allow(0, 1), //.default(true),
     description: Joi.string(),
     isFeatured: Joi.boolean()
 })

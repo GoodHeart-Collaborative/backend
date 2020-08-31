@@ -8,7 +8,7 @@ import { reportDao } from "@modules/report/reportDao";
 import { expert } from "@modules/admin/expert/expertModel";
 import { forumtopicDao } from "@modules/forum/forumDao";
 import * as config from "@config/constant";
-
+import * as reportConstant from '@modules/report/reportConstant';
 class ReportController {
 
     async addReport(params) {
@@ -34,7 +34,7 @@ class ReportController {
                 const updateCount = await forumtopicDao.updateOne('forum', criteria, updateOne, {})
                 console.log('updateCountupdateCount', updateCount);
             }
-            return data;
+            return reportConstant.MESSAGES.SUCCESS.POST_REPORTED(data);
 
         } catch (error) {
             throw error;

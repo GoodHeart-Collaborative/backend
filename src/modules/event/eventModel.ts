@@ -64,22 +64,10 @@ const eventSchema = new Schema({
     eventUrl: { type: String },
     allowSharing: { type: Number },
     goingCount: { type: Number, default: 0 },
-    // eventCategoryType: {
-    //     type: String, enum: [
-    //         config.CONSTANT.EVENT_CATEGORY.CLASSES.TYPE,
-    //         config.CONSTANT.EVENT_CATEGORY.EVENTS.TYPE,
-    //         config.CONSTANT.EVENT_CATEGORY.MEETUP.TYPE,
-    //         config.CONSTANT.EVENT_CATEGORY.TRAINING.TYPE
-    //     ]
-    // },
-    // eventCategoryDisplayName: {
-    //     type: String, enum: [
-    //         config.CONSTANT.EVENT_CATEGORY.CLASSES.DISPLAY_NAME,
-    //         config.CONSTANT.EVENT_CATEGORY.EVENTS.DISPLAY_NAME,
-    //         config.CONSTANT.EVENT_CATEGORY.MEETUP.DISPLAY_NAME,
-    //         config.CONSTANT.EVENT_CATEGORY.TRAINING.DISPLAY_NAME
-    //     ]
-    // },
+    eventCategoryType: {
+        type: String,
+    },
+    eventCategoryDisplayName: { type: String },
     eventCategoryId: { type: Schema.Types.ObjectId, required: true },
     // {
     //     type: Number, index: true, enum: [

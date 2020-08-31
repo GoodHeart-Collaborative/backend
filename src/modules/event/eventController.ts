@@ -11,6 +11,7 @@ import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
 import * as moment from 'moment';
 import * as weekend from '@utils/dateManager'
+import { categoryDao } from "@modules/admin/catgeory";
 class EventController {
 
     getTypeAndDisplayName(findObj, num: number) {
@@ -28,10 +29,12 @@ class EventController {
 	 */
     async addEvent(params: UserEventRequest.AddEvent) {
         try {
+
+            const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             // console.log('data1data1data1data1data1', result);
-            // params.eventCategoryType = result['TYPE'];
-            // params.eventCategoryDisplayName = result['DISPLAY_NAME'];
+            params.eventCategoryType = categoryData['name'];
+            params.eventCategoryDisplayName = categoryData['title'];
             // params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
@@ -92,28 +95,6 @@ class EventController {
                         ],
                     }
                 })
-                // noTypeAggPipeandTypeInterest.push({
-                //     $lookup: {
-                //         from: 'categories',
-                //         let: { ecId: '$eventCategoryId' },
-                //         as: 'eventCategoryData',
-                //         pipeline: [{
-                //             $match: {
-                //                 $expr: {
-                //                     $and: [{
-                //                         $eq: ['$_id', '$$ecId']
-                //                     },
-                //                     {
-                //                         $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                //                     }]
-                //                 }
-                //             }
-                //         },
-                //         ],
-                //     }
-                // })
-                // noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventCategoryData', preserveNullAndEmptyArrays: true } });
-
                 noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
             }
 
