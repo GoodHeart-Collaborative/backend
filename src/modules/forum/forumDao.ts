@@ -212,6 +212,45 @@ export class ForumTopic extends BaseDao {
                         _id: -1
                     }
                 })
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$userId", "user": appUtils.toObjectId(params.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$$users"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $project: {
@@ -240,6 +279,7 @@ export class ForumTopic extends BaseDao {
                         myConnection: "$users.myConnection",
                         experience: "$users.experience",
                         about: "$users.about",
+                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] },
                         name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },

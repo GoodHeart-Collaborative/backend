@@ -180,7 +180,7 @@ class LikeController {
                     return Promise.reject(homeConstants.MESSAGES.ERROR.POST_BLOCK);
                 }
             } else {
-                return homeConstants.MESSAGES.ERROR.POST_NOT_FOUND;
+                return Promise.reject(homeConstants.MESSAGES.ERROR.POST_NOT_FOUND);
             }
             if (params && params.commentId) {
                 params["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
