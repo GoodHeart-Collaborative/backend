@@ -52,6 +52,11 @@ class EventController {
             let aggPipe = [];
             const match: any = {};
             let sort = {};
+            const paginateOptions = {
+                page: page || 1,
+                limit: limit || 10,
+            };
+
             if (userId) {
                 match.userId = appUtils.toObjectId(params.userId);
             }
@@ -95,7 +100,7 @@ class EventController {
 
 
             aggPipe.push({ $match: match })
-
+            aggPipe.push({ $sort: { _id: -1 } });
             // aggPipe.push({
             //     $lookup: {
             //         from: 'categories',
@@ -110,10 +115,8 @@ class EventController {
             //         "as": "categoryData"
             //     }
             // })
-            console.log('>>>>>>>>>>>>>.');
 
-
-
+            aggPipe = [...aggPipe, ...eventDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
             console.log('datadatadata', data);
             return data;
