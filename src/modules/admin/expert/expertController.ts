@@ -30,7 +30,7 @@ class ExpertController {
 
             const findEmail = await expertDao.findOne('expert', { email: params.email }, {}, {});
             if (findEmail) {
-                return expertConstant.MESSAGES.ERROR.ALREADY_EXIST;
+                return Promise.reject(expertConstant.MESSAGES.ERROR.ALREADY_EXIST);
             }
             const data = await expertDao.insert("expert", params, {});
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
