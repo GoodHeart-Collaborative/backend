@@ -57,7 +57,8 @@ const forumSchema = new Schema({
         type: Number,
         enum: [
             config.CONSTANT.MEDIA_TYPE.IMAGE,
-            config.CONSTANT.MEDIA_TYPE.VIDEO
+            config.CONSTANT.MEDIA_TYPE.VIDEO,
+            config.CONSTANT.MEDIA_TYPE.NONE,
         ],
         default: config.CONSTANT.MEDIA_TYPE.IMAGE
     },

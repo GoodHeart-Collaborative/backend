@@ -285,7 +285,8 @@ const EXPERT_CONTENT_TYPE = {
 }
 const MEDIA_TYPE = {
 	IMAGE: 1,
-	VIDEO: 2
+	VIDEO: 2,
+	NONE: 3
 };
 
 const PRIVACY_STATUS = {
