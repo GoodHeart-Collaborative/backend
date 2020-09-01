@@ -17,7 +17,9 @@ class ReportController {
             let aggPipe = [];
             let match: any = {};
             match['type'] = type;
-            match['postId'] = apputils.toObjectId(postId);
+            if (postId) {
+                match['postId'] = apputils.toObjectId(postId);
+            }
             aggPipe.push({
                 $match: match
             }
