@@ -32,7 +32,13 @@ export class ForumTopic extends BaseDao {
                 userId: appUtils.toObjectId(params.userId)
             };
             const reportedIds = await reportDao.find('report', reportedIdsCriteria, { _id: 1 }, {}, {}, {}, {});
+            console.log('reportedIdsreportedIds', reportedIds);
 
+            let Ids = reportedIds.map(function (item) {
+                console.log('itemitem', item);
+                delete item.id;
+                return item._id;
+            });
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             if (categoryId) {
                 match['categoryId'] = appUtils.toObjectId(categoryId);
@@ -98,12 +104,15 @@ export class ForumTopic extends BaseDao {
             //     }
             // }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            match['_id'] = {
+                $nin: Ids
+            };
             aggPipe.push({ $match: match });
             aggPipe.push({
                 $lookup: {
                     "from": "categories",
                     let: { cId: '$categoryId' },
-                    as: 'categoryData',
+                    as: 'forumCategoryData',
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -125,7 +134,7 @@ export class ForumTopic extends BaseDao {
                     }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$forumCategoryData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
@@ -217,7 +226,7 @@ export class ForumTopic extends BaseDao {
                     postAt: 1,
                     postedAt: 1,
                     createdAt: 1,
-                    categoryData: 1,
+                    forumCategoryData: 1,
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
@@ -331,6 +340,13 @@ export class ForumTopic extends BaseDao {
     async updateForum(query, params) {
         try {
             let update: any = {}
+
+            if (params.mediaType === config.CONSTANT.MEDIA_TYPE.NONE) {
+                params['thumbnailUrl'] = '';
+                params['mediaUrl'] = ''
+            }
+            update["$set"] = params;
+
             if (params && params.postAnonymous === false) {
                 params['userId'] = query.createrId
             } else {

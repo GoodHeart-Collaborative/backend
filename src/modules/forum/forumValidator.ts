@@ -6,12 +6,13 @@ import * as config from "@config/index";
 
 let addForum = Joi.object({
     categoryId: Joi.string().required(),
-    mediaUrl: Joi.string(),
+    mediaUrl: Joi.string().allow(""),
     description: Joi.string().optional(),
     thumbnailUrl: Joi.string().allow(""),
     mediaType: Joi.number().allow([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
-        config.CONSTANT.MEDIA_TYPE.VIDEO
+        config.CONSTANT.MEDIA_TYPE.VIDEO,
+        config.CONSTANT.MEDIA_TYPE.NONE
     ]).required(),
     postAnonymous: Joi.boolean().default(false),
 }).unknown();
@@ -30,8 +31,9 @@ let updateForum = Joi.object({
     mediaType: Joi.number().allow([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
         config.CONSTANT.MEDIA_TYPE.VIDEO,
+        config.CONSTANT.MEDIA_TYPE.NONE,
     ]).required(),
-    thumbnailUrl: Joi.string().allow(''),
+    thumbnailUrl: Joi.string().optional(),
     description: Joi.string().optional(),
     postAnonymous: Joi.boolean().optional(),
 }).unknown()
