@@ -80,7 +80,7 @@ class EventController {
                     sort = { "created": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { _id: -1 };
             }
             if (searchTerm) {
                 match["$or"] = [
@@ -117,8 +117,7 @@ class EventController {
             // })
 
             aggPipe = [...aggPipe, ...eventDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
-            const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
-            console.log('datadatadata', data);
+            const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
             return data;
 
         } catch (error) {
