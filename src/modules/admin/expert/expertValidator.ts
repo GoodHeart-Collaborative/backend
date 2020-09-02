@@ -86,7 +86,7 @@ let updateExpert = Joi.object({
     experience: Joi.string().valid([
         'Junior', 'Mid', 'Senior',
     ]).required(),
-    profilePicUrl: Joi.any(), // Joi.array().items(Joi.string()),
+    profilePicUrl: Joi.array().items(Joi.string()),
 })
 
 let updateStatus = Joi.object({
