@@ -32,6 +32,12 @@ const eventSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, required: true, ref: 'users', index: true },
     // categoryId:{type:Schema.Types.ObjectId },
     // name: { type: String, index: true },
+    userType: {
+        type: String, required: true, enum: [
+            config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
+            config.CONSTANT.ACCOUNT_LEVEL.USER
+        ]
+    },
     privacy: {
         type: String, enum: [
             config.CONSTANT.PRIVACY_STATUS.PRIVATE,

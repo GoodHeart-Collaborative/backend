@@ -122,7 +122,7 @@ export const categoryRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/categoryDetails`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: CategoryRequest.IGetCategory = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.getDetails(payload);
@@ -151,17 +151,15 @@ export const categoryRoute: ServerRoute[] = [
         }
     },
 
-
     {
         method: "PATCH",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/category/{categoryId}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: CategoryRequest.IUpdateCategoryStatus = {
                 ...request.params,
                 ...request.payload
             }
-            console.log('payloadpayloadpayloadpayload', payload);
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.updateStatus(payload);
@@ -178,14 +176,7 @@ export const categoryRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    categoryId: Joi.string().required(),
-                    status: Joi.string().valid([
-                        config.CONSTANT.STATUS.ACTIVE,
-                        config.CONSTANT.STATUS.BLOCKED,
-                        config.CONSTANT.STATUS.DELETED
-                    ]).required()
-                },
+                params: CategoryValidator.updateStatus,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -202,7 +193,7 @@ export const categoryRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/category/{categoryId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: CategoryRequest.ICategoryById = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await categoryController.getCategoryDetailById(payload);
@@ -219,9 +210,7 @@ export const categoryRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    categoryId: Joi.string().required(),
-                },
+                params: CategoryValidator.GetCategoryId,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -232,6 +221,4 @@ export const categoryRoute: ServerRoute[] = [
             }
         }
     },
-
-
 ];

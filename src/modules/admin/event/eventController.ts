@@ -23,15 +23,16 @@ class EventController {
     }
 
     /**
-   * @function addExpert
-   * @description admin add experts
-   */
-    async addEvent(params) {
+     * @function addEvent
+     * @description admin add event
+     * @param { CommentRequest.getComments  } params
+     * @author Shubham
+     */
+
+    async addEvent(params: AdminEventRequest.IEventAdd) {
         try {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-            // console.log('data1data1data1data1data1', result);
-            console.log('categoryDatacategoryData', categoryData);
 
             params.eventCategoryType = categoryData['name'];
             params.eventCategoryDisplayName = categoryData['title'];
@@ -45,10 +46,16 @@ class EventController {
         }
     }
 
+    /**
+   * @function getEvent
+   * @description admin add event
+   * @param { CommentRequest.getComments  } params
+   * @author Shubham
+   */
 
-    async getEvent(params) {
+    async getEvent(params: AdminEventRequest.IGetEvent) {
         try {
-            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status } = params;
+            const { limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status } = params;
             let aggPipe = [];
             const match: any = {};
             let sort = {};
@@ -88,10 +95,9 @@ class EventController {
                     { "description": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
-            if (categoryId) {
-
-                match.userId = appUtils.toObjectId(params.categoryId);
-            }
+            // if (categoryId) {
+            //     match.userId = appUtils.toObjectId(params.categoryId);
+            // }
             aggPipe.push({ "$sort": sort });
 
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
@@ -123,31 +129,14 @@ class EventController {
         } catch (error) {
             return Promise.reject(error);
         }
-
     }
-
-    // async updateExpert(params: AdminExpertRequest.updateExpert) {
-    //     try {
-    //         const criteria = {
-    //             _id: params.expertId,
-    //         };
-
-    //         const data = await eventDao.updateOne('expert', criteria, params, {})
-    //         if (!data) {
-    //             return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
-    //         }
-    //         return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
     /**
      * @function updateStatus
      * @description admin update status active ,block ,delete
      */
 
-    async updateStatus(params) {
+    async updateStatus(params: AdminEventRequest.IupdateStatus) {
         try {
             const { Id, status } = params;
             const criteria = {
@@ -172,7 +161,7 @@ class EventController {
     /**
      * @description admin get event detail
      */
-    async getDetails(params) {
+    async getDetails(params: AdminEventRequest.IgetEventDetail) {
         try {
             const criteria = {
                 _id: params.eventId
@@ -183,20 +172,22 @@ class EventController {
         }
     }
 
-    async updateEvent(params) {
+    /**
+     * @description admin update event
+     * @param (AdminEventRequest.IUpdateEvent)params 
+     */
+
+    async updateEvent(params: AdminEventRequest.IUpdateEvent) {
         try {
             const criteria = {
                 _id: params.eventId
             }
 
             const result = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
-
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             console.log('data1data1data1data1data1', result);
             params['eventCategoryType'] = result['name'];
             params['eventCategoryDisplayName'] = result['title'];
-            params['created'] = new Date().getTime();
-
 
             const dataToUpdate = {
                 ...params

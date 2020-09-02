@@ -100,22 +100,23 @@ class CategoryController {
                 }
             })
 
-
             aggPipe.push({
                 '$project': {
                     expertData: 0
                 }
             })
-
-
-
-
             const data = await categoryDao.paginate('categories', aggPipe, limit, page, {}, true);
             return data;
         } catch (error) {
             return Promise.reject(error);
         }
     }
+    /**
+      * @function updateCategory
+      * @description admin update category
+      * @param { CategoryRequest.IUpdateCategory  } params
+      * @author Shubham
+     */
 
     async updateCategory(params: CategoryRequest.IUpdateCategory) {
         try {
@@ -128,12 +129,9 @@ class CategoryController {
             const criteria = {
                 _id: params.categoryId
             };
-            console.log('resultresultresultresultresult', result);
 
             if (findData.name !== result) {
                 const findName = await categoryDao.findOne('categories', { name: result }, {}, {});
-                console.log('findNamefindName22222222', findName);
-
                 if (findName) {
                     return CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST
                 }
@@ -149,8 +147,14 @@ class CategoryController {
         }
     }
 
+    /**
+     * @function categoryDetail
+     * @description admin update category
+     * @param { CategoryRequest.IGetCategory  } params
+     * @author Shubham
+     */
 
-    async getDetails(params) {
+    async getDetails(params: CategoryRequest.IGetCategory) {
         try {
             return await categoryDao.getCatgeoryPosts(params)
         } catch (error) {
@@ -158,8 +162,14 @@ class CategoryController {
         }
     }
 
+    /**
+     * @function updateStatus
+     * @description admin update category status
+     * @param { CategoryRequest.IGetCategory  } params
+     * @author Shubham
+    */
 
-    async updateStatus(params) {
+    async updateStatus(params: CategoryRequest.IUpdateCategoryStatus) {
         try {
             const { status, categoryId } = params;
             const criteria = {
@@ -180,8 +190,14 @@ class CategoryController {
             throw error;
         }
     }
+    /**
+     * @function getCategoryDetailById
+     * @description admin getCategoryDetailById
+     * @param { CategoryRequest.IGetCategory  } params
+     * @author Shubham
+     */
 
-    async getCategoryDetailById(params) {
+    async getCategoryDetailById(params: CategoryRequest.ICategoryById) {
         try {
             const criteria = {
                 _id: params.categoryId

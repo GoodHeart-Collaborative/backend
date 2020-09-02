@@ -55,7 +55,7 @@ let GetCategoryDetailsList = Joi.object({
 }).unknown()
 
 let GetCategoryId = Joi.object({
-    categoryId: Joi.string().required()
+    categoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
 })
 
 let UpdateCategory = Joi.object({
@@ -91,12 +91,12 @@ let GetList = Joi.object({
 })
 
 let updateStatus = Joi.object({
-    Id: Joi.string().required(),
+    categoryId: Joi.string().required(),
     status: Joi.string().valid([
         config.CONSTANT.STATUS.ACTIVE,
-        config.CONSTANT.STATUS.DELETED,
-        config.CONSTANT.STATUS.BLOCKED
-    ])
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED
+    ]).required()
 })
 
 let updateHome = Joi.object({

@@ -6,11 +6,12 @@ declare namespace CategoryRequest {
         name?: string
     }
 
-    export interface IAdviceGetById {
-        Id: string;
+    export interface ICategoryById {
+        categoryId: string;
     }
 
     export interface IGetCategory {
+        categoryId: string;
         limit: number;
         page: number;
         sortOrder: number;
@@ -21,9 +22,9 @@ declare namespace CategoryRequest {
         toDate: Date;
     }
 
-    export interface IUpdateAdviceStatus {
+    export interface IUpdateCategoryStatus {
         status: string;
-        Id: string;
+        categoryId: string;
     }
 
     export interface IUpdateCategory {

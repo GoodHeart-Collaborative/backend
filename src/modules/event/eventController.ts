@@ -35,12 +35,10 @@ class EventController {
             // console.log('data1data1data1data1data1', result);
             params.eventCategoryType = categoryData['name'];
             params.eventCategoryDisplayName = categoryData['title'];
-            // params.created = new Date().getTime();
+            params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
-
             // const updateInterest = await eventInterestDao
-
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {

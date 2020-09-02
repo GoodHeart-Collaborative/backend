@@ -19,9 +19,8 @@ let getEvents = Joi.object({
     status: Joi.string().allow([
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
-        // config.CONSTANT.STATUS.DELETED ,
     ]),
-    userId: Joi.string().trim()
+    userId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).trim()
 }).unknown()
 
 
@@ -32,7 +31,7 @@ let validateEventId = Joi.object({
 
 
 let updateStatus = Joi.object({
-    Id: Joi.string().required(),
+    Id: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     status: Joi.string().valid([
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
@@ -61,7 +60,7 @@ let addEvents = Joi.object({
         coordinates: Joi.array().items(Joi.number())
     }),
     address: Joi.string().required().trim(),
-    eventCategoryId: Joi.string().required(),
+    eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     // .allow([
     //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
     //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
@@ -70,7 +69,7 @@ let addEvents = Joi.object({
     // ]).required(),
     allowSharing: Joi.number().allow(0, 1).default(1),
     description: Joi.string().allow('').required(),
-    isFeatured: Joi.boolean().default(false),
+    isFeatured: Joi.number().allow(0, 1).default(0),
 })
 
 let updateEvent = Joi.object({
@@ -105,7 +104,7 @@ let updateEvent = Joi.object({
     // ]),
     allowSharing: Joi.number().allow(0, 1), //.default(true),
     description: Joi.string(),
-    isFeatured: Joi.boolean()
+    isFeatured: Joi.number().allow(0, 1).default(0),
 })
 
 export {

@@ -19,10 +19,15 @@ export class CategoryDao extends BaseDao {
             throw error;
         }
     }
+    /**
+      * @function getCatgeoryPosts
+      * @description get category related posts
+      * @param { CategoryRequest.IGetCategory  } params
+      * @author Shubham
+      */
 
-    async getCatgeoryPosts(params) {
+    async getCatgeoryPosts(params: CategoryRequest.IGetCategory) {
         try {
-
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId } = params;
             const aggPipe = [];
             const match: any = {};
