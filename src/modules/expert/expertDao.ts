@@ -437,7 +437,6 @@ export class ExpertDao extends BaseDao {
                 limit: payload.limit || 10,
                 page: payload.page || 1
             }
-
             let match: any = {}
 
             // let postConditions: any = []
@@ -467,6 +466,18 @@ export class ExpertDao extends BaseDao {
 
             // console.log('postConditionspostConditions', postConditions);
             console.log('payload.userIdpayload.userId', payload.userId);
+
+            const reportedIdsCriteria = {
+                userId: appUtils.toObjectId(payload.userId),
+                type: config.CONSTANT.HOME_TYPE.EXPERTS_POST,
+            };
+            const reportedIds = await payload.find('report', reportedIdsCriteria, { _id: 1 }, {}, {}, {}, {});
+            console.log('reportedIdsreportedIds', reportedIds);
+            let Ids = reportedIds.map(function (item) {
+                console.log('itemitem', item);
+                return appUtils.toObjectId(item._id);
+            });
+            console.log('IdsIds', Ids);
 
             const pipeline = [
                 {
@@ -523,8 +534,10 @@ export class ExpertDao extends BaseDao {
 
             let expertPostspipeline = []
             match['expertId'] = appUtils.toObjectId(payload.expertId);
-
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            match['_id'] = {
+                $nin: Ids
+            };
 
 
             if (payload.posted === 1) {
@@ -558,7 +571,6 @@ export class ExpertDao extends BaseDao {
             //     })
             // }
 
-
             if (payload.contentType) {
                 let aa = [];
                 let bb = payload.contentType.split(',')
@@ -569,20 +581,6 @@ export class ExpertDao extends BaseDao {
                     $in: aa
                 }
             };
-            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.ARTICLE.VALUE) {
-            //     match['contentId'] = payload.contentType;
-            // }
-            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.IMAGE.VALUE) {
-            //     match['contentId'] = payload.contentType;
-            // }
-            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.VIDEO.VALUE) {
-            //     match['contentId'] = payload.contentType;
-            // }
-            // if (payload.contentType === config.CONSTANT.EXPERT_CONTENT_TYPE.VOICE_NOTE.VALUE) {
-            //     match['contentId'] = payload.contentType;
-            // }
-
-            console.log('match', match);
 
             expertPostspipeline = [
                 {

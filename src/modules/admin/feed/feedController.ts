@@ -11,35 +11,16 @@ import * as appUtils from '@utils/appUtils';
 
 class AdminFeedController {
 
-    getTypeAndDisplayName(findObj, num: number) {
-        const obj = findObj;
-        const data = Object.values(obj);
-        const result = data.filter((x: any) => {
-            return x.VALUE === num;
-        });
-        console.log('resultresultresult', result);
-        return result[0];
-    }
 	/**
-	 * @function add event
+	 * @function Get listing of shoutout and general gratitude
 	 * @description user add event
 	 */
-    // async addForum(params: AdminForumRequest.AddForum) {
-    //     try {
-    //         params["created"] = new Date().getTime()
-    //         const data = await eventDao.insert("forum", params, {});
-    //         return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED(data);
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
-    async GetFeed(params) {
+    async GetFeed(params: AdminFeedRequest.IGetFeed) {
         try {
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, type, privacy } = params;
             const aggPipe = [];
             const match: any = {};
-
 
             if (status) {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
@@ -107,13 +88,11 @@ class AdminFeedController {
             aggPipe.push({ '$unwind': { path: '$userData' } });
             if (type == config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                 const data = await gratitudeJournalDao.aggreagtionWithPaginateTotal('gratitude_journals', aggPipe, limit, page, true);
-                console.log('data>>>>>>>>>>>', data);
                 return data;
             }
 
             if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
                 const data = await shoutoutDao.aggreagtionWithPaginateTotal('shoutout', aggPipe, limit, page, true);
-                console.log('data>>>>>>>>>>>', data);
                 return data;
             }
 
@@ -122,30 +101,12 @@ class AdminFeedController {
         }
     }
 
-    // async updateForumTopic(params: AdminForumRequest.UpdateForum) {
-    //     try {
-    //         const criteria = {
-    //             _id: params.postId,
-    //         };
-    //         const dataToUpdate = {
-    //             ...params
-    //         }
-    //         const data = await eventDao.findOneAndUpdate('forum', criteria, dataToUpdate, { new: true })
-    //         if (!data) {
-    //             // return forumConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
-    //         }
-    //         return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(data);
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
-
     /**
      * @function updateStatus
      * @description admin update status active ,block ,delete
      */
 
-    async updateStatus(params) {
+    async updateStatus(params: AdminFeedRequest.adminUpdateFeedStatus) {
         try {
             const { type, postId, status } = params
             const criteria = {
@@ -170,74 +131,5 @@ class AdminFeedController {
             return Promise.reject(error)
         }
     }
-
-    // async getForum(params) {
-    //     try {
-    //         let aggPipe = [];
-    //         let match: any = {}
-
-    //         match['_id'] = appUtils.toObjectId(params.postId)
-
-    //         aggPipe.push({
-    //             $match: match
-    //         })
-    //         if (params.userType == config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-
-    //             aggPipe.push({
-    //                 $lookup: {
-    //                     from: 'admin',
-    //                     let: { aId: '$userId' },
-    //                     pipeline: [{
-    //                         $match: {
-    //                             $expr: {
-    //                                 $eq: ['$_id', '$$aId']
-    //                             }
-    //                         }
-    //                     }],
-    //                     as: 'adminData'
-    //                 }
-    //             })
-    //             aggPipe.push({ '$unwind': { path: '$adminData' } });
-    //         }
-    //         if (params.userType == config.CONSTANT.ACCOUNT_LEVEL.USER) {
-    //             aggPipe.push({
-    //                 $lookup: {
-    //                     from: 'users',
-    //                     let: { uId: '$userId' },
-    //                     pipeline: [{
-    //                         $match: {
-    //                             $expr: {
-    //                                 $and: [
-    //                                     {
-    //                                         $eq: ['$_id', '$$uId']
-    //                                     },
-    //                                     // {
-    //                                     //     $eq: ['$userType', config.CONSTANT.ACCOUNT_LEVEL.USER]
-    //                                     // }
-    //                                 ]
-    //                             }
-    //                         }
-    //                     },
-    //                     {
-    //                         $project: {
-    //                             firstName: 1,
-    //                             lastName: 1,
-    //                             profilePicUrl: 1,
-    //                             status: 1
-    //                         }
-    //                     }],
-    //                     as: 'userData'
-    //                 }
-    //             })
-    //             aggPipe.push({ '$unwind': { path: '$userData' } });
-
-    //         }
-
-    //         const data = await eventDao.aggregate('forum', aggPipe, {})
-    //         return data[0];
-    //     } catch (error) {
-    //         return Promise.reject(error)
-    //     }
-    // }
 }
 export const adminFeedController = new AdminFeedController();

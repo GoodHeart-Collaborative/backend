@@ -78,6 +78,11 @@ export const MESSAGES = {
 			"message": "User already exist",
 			"type": "EMAIL_OR_PHONE_REQUIRED"
 		},
+		DELETED_USER_TRYING_TO_REGISTER: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "You are not authorized to register",
+			"type": "EMAIL_OR_PHONE_REQUIRED"
+		},
 		// SOCIAL_ACCOUNT_ALREADY_EXIST: {
 		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.SOCIAL_ACCOUNT_ALREADY_EXIST,
 		// 	"message": "Account with this social id already exist.",

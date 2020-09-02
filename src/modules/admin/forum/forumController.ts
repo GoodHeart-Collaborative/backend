@@ -83,7 +83,7 @@ class AdminForumController {
         }
     }
 
-    async getForum(params) {
+    async getForum(params: AdminForumRequest.forumDetail) {
         try {
             let aggPipe = [];
             let match: any = {}
@@ -145,8 +145,6 @@ class AdminForumController {
             }
 
             const data = await eventDao.aggregate('forum', aggPipe, {})
-            console.log('datadatadatadata', data);
-
             return data[0] ? data[0] : {};
         } catch (error) {
             return Promise.reject(error)

@@ -117,7 +117,7 @@ export const AdminForumRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/forums/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload = {
+            const payload: AdminForumRequest.UpdateForum = {
                 ...request.payload,
                 ...request.params
             }
@@ -154,10 +154,10 @@ export const AdminForumRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/forums/detail/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload = {
+            const payload: AdminForumRequest.forumDetail = {
                 ...request.params,
                 ...request.query
-            }
+            };
             try {
                 // payload["userId"] = tokenData.userId
                 const result = await adminForumController.getForum(payload);
@@ -185,6 +185,4 @@ export const AdminForumRoute: ServerRoute[] = [
             }
         }
     },
-
-
 ];

@@ -39,6 +39,9 @@ export class UserController {
 				// const step1 = await userDao.findVerifiedEmailOrMobile(params)
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
 				if (step1) {
+					if (step1.status === config.CONSTANT.STATUS.DELETED) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
+					}
 					if (step1.mobileNo === params.mobileNo && step1.email === params.email && step1.isEmailVerified && step1.isMobileVerified) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ALREADY_EXIST);
 					}

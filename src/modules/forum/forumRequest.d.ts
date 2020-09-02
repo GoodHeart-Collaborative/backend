@@ -1,4 +1,4 @@
-declare namespace AdminForumRequest {
+declare namespace UserForumRequest {
 
     export interface AddForum {
         categoryId: string,

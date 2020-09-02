@@ -15,7 +15,7 @@ export const adminLikeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/like`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = request.query;
+            const payload: LikeRequest.AdminGetLikes = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await likeController.getLikes(payload);
@@ -32,12 +32,7 @@ export const adminLikeRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                query: {
-                    pageNo: Joi.number().required(),
-                    limit: Joi.number().required(),
-                    postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
-                    commentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).optional(),
-                },  // likeValidator.getLikes,
+                query: likeValidator.getLikes,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

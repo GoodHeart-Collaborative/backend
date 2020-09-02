@@ -13,18 +13,14 @@ import * as appUtils from "@utils/appUtils";
 
 class AdminHomeController {
     /**
-     * @function signup
-     * @description if IS_REDIS_ENABLE set to true,
-     * than redisClient.storeList() function saves value in redis. 
+     * @function addPost
+     * @description admin add posts for the daily pep talk, inspiration , unicorn
      */
 
     async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
-            // if (params.type == 2 && params.thumbnailUrl) {
-            //     return Promise.reject(HOME_CONSTANT.MESSAGES.ERROR.THUMBAIL_URL)
-            // }
             if (params.postedAt) {
-                params["postedAt"] = new Date(params.postedAt)
+                params["postedAt"] = params.postedAt;
                 // params.postedAt = new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
             } else {
                 params["postedAt"] = new Date()

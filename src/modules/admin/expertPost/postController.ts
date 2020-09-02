@@ -33,7 +33,6 @@ class ExpertPostController {
         try {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
             const result = this.getTypeAndDisplayName(config.CONSTANT.EXPERT_CONTENT_TYPE, params['contentId'])
-            console.log('data1data1data1data1data1', result);
             params['contentType'] = result['TYPE']
             params['contentDisplayName'] = result['DISPLAY_NAME'];
 
@@ -170,15 +169,6 @@ class ExpertPostController {
                                         {
                                             $eq: ['$_id', '$$cId']
                                         },
-                                        // {
-                                        //     $eq: ['$contentId', contentId]
-                                        // },
-                                        // {
-                                        //     $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
-                                        // },
-                                        // {
-                                        //     $eq: ['expertId', appUtils.toObjectId(expertId)]
-                                        // }
                                     ]
                                 }
                             }
@@ -274,8 +264,6 @@ class ExpertPostController {
 
     async updatePost(params: AdminExpertPostRequest.adminUpdateExpertPost) {
         try {
-            console.log('paramsparamsparams', params);
-
             const criteria = {
                 _id: params.postId
             };

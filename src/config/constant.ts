@@ -250,6 +250,7 @@ const HOME_TYPE = {
 	EXPERTS_POST: 7,
 	SHOUTOUT: 8,
 	FORUM_TOPIC: 9,
+	USER: 10
 };
 
 const HOME_TYPES = {

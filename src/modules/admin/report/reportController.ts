@@ -52,8 +52,6 @@ class ReportController {
             aggPipe.push({
                 $unwind: '$userData',
             })
-            console.log('aggPipeaggPipe', JSON.stringify(aggPipe));
-
             let data;
             if (params.type = config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
                 data = await reportDao.paginate('report', aggPipe, paginateOptions.limit, paginateOptions.page, true);

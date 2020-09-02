@@ -32,13 +32,12 @@ export class ForumTopic extends BaseDao {
                 userId: appUtils.toObjectId(params.userId)
             };
             const reportedIds = await reportDao.find('report', reportedIdsCriteria, { _id: 1 }, {}, {}, {}, {});
-            console.log('reportedIdsreportedIds', reportedIds);
 
             let Ids = reportedIds.map(function (item) {
-                console.log('itemitem', item);
-                delete item.id;
-                return item._id;
+                return appUtils.toObjectId(item._id);
             });
+            console.log('IdsIds', Ids);
+
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             if (categoryId) {
                 match['categoryId'] = appUtils.toObjectId(categoryId);

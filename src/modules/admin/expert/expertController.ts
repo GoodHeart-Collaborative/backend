@@ -23,6 +23,7 @@ class ExpertController {
 	/**
 	 * @function addExpert
 	 * @description admin add experts
+     * @param (AdminExpertRequest.expertAdd)
 	 */
     async addExpert(params: AdminExpertRequest.expertAdd) {
         try {
@@ -42,7 +43,7 @@ class ExpertController {
 
 	/**
 	 * @function getExpert
-	 * @description admin get xperts and seacch and filter on the there [] category choose
+	 * @description admin get xperts and search and filter on the there [] category choose
 	 */
 
     async getExpert(params: AdminExpertRequest.getExpert) {
@@ -109,8 +110,6 @@ class ExpertController {
                     "as": "categoryData"
                 }
             })
-            console.log('>>>>>>>>>>>>>.');
-
             aggPipe.push({
                 $lookup: {
                     from: 'expert_posts',
@@ -159,6 +158,7 @@ class ExpertController {
             const criteria = {
                 _id: params.expertId,
             };
+            // params['profilePicUrl'] = [params.profilePicUrl]
             const dataToUpdate = {
                 ...params
             }
@@ -227,12 +227,6 @@ class ExpertController {
                 },
             });
 
-            // aggPipe.push({
-            //     $unwind: {
-            //         path: '$categoryData',
-            //         preserveNullAndEmptyArrays: true,
-            //     }
-            // })
             const data = await expertDao.aggregate('expert', aggPipe, {});
 
             return data;

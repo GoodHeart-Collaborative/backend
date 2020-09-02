@@ -53,8 +53,8 @@ let getExpertPosts = Joi.object({
 }).unknown()
 
 
-let adminUpdateExpertPostId = Joi.object({
-    postId: Joi.string().required(),
+let exprtPostId = Joi.object({
+    postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
 }).unknown()
 
 
@@ -94,7 +94,7 @@ let updateStatus = Joi.object({
 export {
     validaExpertPostAdd,
     getExpertPosts,
-    adminUpdateExpertPostId,
+    exprtPostId,
     adminUpdateExpertPost,
     updateStatus
 };

@@ -7,7 +7,9 @@ let addReport = Joi.object({
     postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     reason: Joi.string().required(),
     type: Joi.number().allow([
-        config.CONSTANT.HOME_TYPE.FORUM_TOPIC
+        config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
+        config.CONSTANT.HOME_TYPE.EXPERTS_POST,
+        config.CONSTANT.HOME_TYPE.USER,
     ]),
     prefilledComment: Joi.number().required().allow([
         config.CONSTANT.REPORT_MESSAGE.Explicit_photos.id,

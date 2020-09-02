@@ -16,9 +16,6 @@ export const ReportRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: any = request.payload;
-            console.log('payloadpayload', payload);
-
-            // const query: LikeRequest.LikeTypeRequest = request.query;
             try {
                 const result = await reportController.addReport({ ...payload, ...{ userId: tokenData.userId } });
                 return responseHandler.sendSuccess(h, result);
