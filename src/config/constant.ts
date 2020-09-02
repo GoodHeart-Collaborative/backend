@@ -281,12 +281,18 @@ const EXPERT_CONTENT_TYPE = {
 		TYPE: 'voice_note',
 		VALUE: 4,
 		DISPLAY_NAME: 'VOICE_NOTE'
-	}
+	},
+	// NONE: {
+	// 	TYPE: 'none',
+	// 	VALUE: 4,
+	// 	DISPLAY_NAME: 'NONE'
+	// },
+
 }
 const MEDIA_TYPE = {
 	IMAGE: 1,
 	VIDEO: 2,
-	NONE: 3
+	NONE: 5
 };
 
 const PRIVACY_STATUS = {
