@@ -53,9 +53,16 @@ class ReportController {
                 $unwind: '$userData',
             })
             let data;
-            if (params.type = config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+            if (params.type) {
                 data = await reportDao.paginate('report', aggPipe, paginateOptions.limit, paginateOptions.page, true);
             }
+            // if (params.type = config.CONSTANT.HOME_TYPE) {
+            //     data = await reportDao.paginate('report', aggPipe, paginateOptions.limit, paginateOptions.page, true);
+            // }
+            // if (params.type = config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+            //     data = await reportDao.paginate('report', aggPipe, paginateOptions.limit, paginateOptions.page, true);
+            // }
+
             return data;
         } catch (error) {
             throw error;
