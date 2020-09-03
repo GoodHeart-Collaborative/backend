@@ -143,6 +143,7 @@ export class EventDao extends BaseDao {
                     eventUrl: 1,
                     allowSharing: 1,
                     description: 1,
+                    eventCategoryName: 1,
                     address: 1,
                     goingCount: 1,
                     interestCount: 1,

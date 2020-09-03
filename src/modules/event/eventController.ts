@@ -528,7 +528,7 @@ class EventController {
                         }
                     },
                     interestCount: 1,
-
+                    startDate: 1,
                     goingCount: 1,
                     imageUrl: 1,
                     hostUser: 1,
@@ -540,7 +540,7 @@ class EventController {
                     description: 1,
                     eventCategory: 1,
                     eventCategoryId: 1,
-                    eventCategoryName: '$eventCategoryDisplayName',
+                    eventCategoryName: 1,
                     title: 1,
                     address: 1,
                     friends: []
