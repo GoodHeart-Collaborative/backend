@@ -31,12 +31,12 @@ export class ForumTopic extends BaseDao {
             const reportedIdsCriteria = {
                 userId: appUtils.toObjectId(params.userId)
             };
-            const reportedIds = await reportDao.find('report', reportedIdsCriteria, { _id: 1 }, {}, {}, {}, {});
-
-            let Ids = reportedIds.map(function (item) {
-                return appUtils.toObjectId(item._id);
+            const reportedIds = await reportDao.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
+            let ids = [];
+            let Ids1 = reportedIds.map(function (item) {
+                return ids.push(appUtils.toObjectId(item.postId));
             });
-            console.log('IdsIds', Ids);
+            console.log('IdsIds', ids);
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             if (categoryId) {
@@ -104,7 +104,7 @@ export class ForumTopic extends BaseDao {
             // }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['_id'] = {
-                $nin: Ids
+                $nin: ids
             };
             aggPipe.push({ $match: match });
             aggPipe.push({
