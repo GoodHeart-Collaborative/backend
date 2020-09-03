@@ -27,7 +27,7 @@ const reportSchema = new Schema({
         ],
         default: config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
     },
-    prefilledComment: {
+    reportOption: {
         type: Number, enum: [
             config.CONSTANT.REPORT_MESSAGE.Explicit_photos.id,
             config.CONSTANT.REPORT_MESSAGE.Impostor_accounts.id,

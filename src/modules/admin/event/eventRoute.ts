@@ -14,8 +14,8 @@ export const adminEventRoutes: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload: AdminEventRequest.IEventAdd = request.payload;
+            payload['userType'] = config.CONSTANT.ACCOUNT_LEVEL.ADMIN;
             payload['userId'] = tokenData['userId'];
-
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.addEvent(payload);
@@ -114,7 +114,7 @@ export const adminEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{eventId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: AdminEventRequest.IUpdateEvent  = {
+            const payload: AdminEventRequest.IUpdateEvent = {
                 ...request.params,
                 ...request.payload
             }
