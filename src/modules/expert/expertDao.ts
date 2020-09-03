@@ -677,11 +677,11 @@ export class ExpertDao extends BaseDao {
 
                     }
                 },
-                {
-                    $unwind: {
-                        path: '$categoryData', preserveNullAndEmptyArrays: false
-                    }
-                },
+                // {
+                //     $unwind: {
+                //         path: '$categoryData', preserveNullAndEmptyArrays: false
+                //     }
+                // },
                 {
                     $project: {
                         // categoryData: 0,
@@ -709,6 +709,7 @@ export class ExpertDao extends BaseDao {
                     thumbnailUrl: 1,
                     topic: 1,
                     description: 1,
+                    categoryData: 1,
                     type: 1,
                     created: 1,
                     contentDisplayName: 1,
