@@ -76,6 +76,7 @@ export const userExpertRoute: ServerRoute[] = [
                     limit: Joi.number(),
                     page: Joi.number(),
                     searchTerm: Joi.string(),
+                    screenType: Joi.string().allow(['addPost'])
                 },
                 failAction: appUtils.failActionFunction
             },

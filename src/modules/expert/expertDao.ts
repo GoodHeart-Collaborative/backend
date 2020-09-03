@@ -340,7 +340,7 @@ export class ExpertDao extends BaseDao {
 
     async getCategory(payload) {
         try {
-            const { searchTerm, sortingType } = payload;
+            const { searchTerm, sortingType, screenType } = payload;
             let { limit, page } = payload
             let criteria: any = {};
 
@@ -411,6 +411,10 @@ export class ExpertDao extends BaseDao {
                     }
                 }
             ];
+
+            if (screenType === 'addPost') {
+                categoryPipeline.splice(2, 1);
+            };
 
             // if (payload.categoryId) {
             //     // const a = {
