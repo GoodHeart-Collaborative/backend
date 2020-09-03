@@ -475,13 +475,13 @@ export class ExpertDao extends BaseDao {
                 userId: appUtils.toObjectId(payload.userId),
                 type: config.CONSTANT.HOME_TYPE.EXPERTS_POST,
             };
-            const reportedIds = await expertDao.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
+            const reportedIds = await this.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
             console.log('reportedIdsreportedIds', reportedIds);
-            let Ids = reportedIds.map(function (item) {
-                console.log('itemitem', item);
-                return appUtils.toObjectId(item.postId);
+            let reportedpost = [];
+            let Ids1 = await reportedIds.map(function (item) {
+                return reportedpost.push(appUtils.toObjectId(item.postId));
             });
-            console.log('IdsIds', Ids);
+            console.log('IdsIds', reportedpost);
 
             const pipeline = [
                 {
@@ -540,7 +540,7 @@ export class ExpertDao extends BaseDao {
             match['expertId'] = appUtils.toObjectId(payload.expertId);
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['_id'] = {
-                $nin: Ids
+                $nin: reportedpost
             };
 
 
