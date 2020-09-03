@@ -21,8 +21,9 @@ declare namespace UserEventRequest {
         allowSharing: boolean,
         description: string,
         created: number;
-        eventCategoryType: string;
-        eventCategoryDisplayName: string;
+        eventCategoryName: string;
+        // eventCategoryType: string;
+        // eventCategoryDisplayName: string;
     }
 
     export interface getExpert {

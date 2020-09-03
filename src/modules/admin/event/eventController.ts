@@ -34,8 +34,8 @@ class EventController {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
 
-            params.eventCategoryType = categoryData['name'];
-            params.eventCategoryDisplayName = categoryData['title'];
+            // params.eventCategoryType = categoryData['name'];
+            params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
@@ -186,8 +186,8 @@ class EventController {
             const result = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             console.log('data1data1data1data1data1', result);
-            params['eventCategoryType'] = result['name'];
-            params['eventCategoryDisplayName'] = result['title'];
+            // params['eventCategoryType'] = result['name'];
+            params['eventCategoryName'] = result['title'];
 
             const dataToUpdate = {
                 ...params

@@ -8,8 +8,9 @@ declare namespace AdminEventRequest {
         // userId: string,
         // categoryId: Joi.string().required;
         // name: Joi.string(),
-        eventCategoryType?: string;
-        eventCategoryDisplayName?: string;
+        // eventCategoryType?: string;
+        // eventCategoryDisplayName?: string;
+        eventCategoryName: string;
         created: number;
         title: string;
         privacy: string;

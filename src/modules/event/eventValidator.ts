@@ -77,9 +77,7 @@ let getEvent = Joi.object({
 })
 
 let updateEvent = Joi.object({
-    // userId: string,
-    // categoryId: Joi.string().required(),
-    // name: Joi.string(),
+    eventId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     title: Joi.string(),
     // privacy: Joi.string().allow([
     //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
@@ -90,19 +88,29 @@ let updateEvent = Joi.object({
     endDate: Joi.date().required(),
     price: Joi.number(),
     imageUrl: Joi.string(),
-    eventUrl: Joi.string(),
+    eventUrl: Joi.string().allow(''),
+    // location: Joi.object().keys({
+    //     address: Joi.string().trim(),
+    //     type: Joi.string().required().valid(["Point"]),
+    //     coordinates: [{
+    //         longitude: Joi.number().precision(8),
+    //         latitude: Joi.number().precision(8)
+    //     }]
+    // }),
+
     // location: Joi.object().keys({
     //     type: Joi.string().required().valid(["Point"]),
     //     coordinates: Joi.array().items(Joi.number())
-    // }).required(),
+    // }),
     address: Joi.string().trim().required(),
-    eventCategoryId: Joi.number().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    ]).required(),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
+    // Joi.number().allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]).required(),
+    allowSharing: Joi.number().allow(0, 1), //boolean().default(true),
     description: Joi.string().required(),
 })
 

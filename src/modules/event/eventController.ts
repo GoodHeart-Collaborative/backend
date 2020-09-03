@@ -33,8 +33,8 @@ class EventController {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             // console.log('data1data1data1data1data1', result);
-            params.eventCategoryType = categoryData['name'];
-            params.eventCategoryDisplayName = categoryData['title'];
+            // params.eventCategoryType = categoryData['name'];
+            params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
@@ -148,6 +148,7 @@ class EventController {
                     "imageUrl": 1,
                     "address": 1,
                     "eventCategoryId": 1,
+                    eventCategoryName: 1,
                     "description": 1,
                     "title": 1,
                     "eventUrl": 1,
@@ -315,6 +316,8 @@ class EventController {
                     goingCount: 1,
                     interestCount: 1,
                     eventCategory: 1,
+                    eventCategoryId: 1,
+                    eventCategoryName: 1,
                     created: 1,
                     "isInterest": {
                         $cond: {
@@ -525,15 +528,19 @@ class EventController {
                         }
                     },
                     interestCount: 1,
+
                     goingCount: 1,
                     imageUrl: 1,
                     hostUser: 1,
                     price: 1,
+                    eventUrl: 1,
                     isFeatured: 1,
                     endDate: 1,
                     allowSharing: 1,
                     description: 1,
                     eventCategory: 1,
+                    eventCategoryId: 1,
+                    eventCategoryName: '$eventCategoryDisplayName',
                     title: 1,
                     address: 1,
                     friends: []
@@ -584,9 +591,23 @@ class EventController {
         }
     }
 
-    async updateEvent(payload) {
+    async updateEvent(params, tokenData) {
         try {
+            const criteria = {
+                _id: params.eventId,
+                userId: tokenData.userId
+            }
+            const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
+            // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
+            // params.eventCategoryType = categoryData['name'];
+            params.eventCategoryName = categoryData['title'];
 
+            const updateEvent = await eventDao.findOneAndUpdate('event', criteria, params, { new: true });
+            if (!updateEvent) {
+                return Promise.reject(eventConstant.MESSAGES.ERROR.EVENT_NOT_FOUND);
+            }
+            const getEventDetail = await eventController.getEventDetail({ eventId: updateEvent._id }, tokenData)
+            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATE(getEventDetail);
         } catch (error) {
             return Promise.reject(error);
         }

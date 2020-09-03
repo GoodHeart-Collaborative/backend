@@ -23,8 +23,8 @@ export interface Ievent extends Document {
     eventCategory: string,
     created: number;
     isFeatured: boolean;
-    eventCategoryType: string;
-    eventCategoryDisplayName: string;
+    // eventCategoryType: string;
+    eventCategoryName: string;
     eventCategoryId: string;
 }
 
@@ -73,7 +73,8 @@ const eventSchema = new Schema({
     eventCategoryType: {
         type: String,
     },
-    eventCategoryDisplayName: { type: String },
+    eventCategoryName: { type: String },
+    // eventCategoryDisplayName: { type: String },
     eventCategoryId: { type: Schema.Types.ObjectId, required: true },
     // {
     //     type: Number, index: true, enum: [

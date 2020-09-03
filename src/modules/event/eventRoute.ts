@@ -223,17 +223,13 @@ export const userEventRoutes: ServerRoute[] = [
 
     {
         method: "PATCH",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/event/{eventId}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/event`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload = {
-                ...request.payload,
-                ...request.params
-            };
-            payload['userId'] = tokenData['userId']
+            const payload = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await eventController.updateEvent(payload);
+                const result = await eventController.updateEvent(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -247,8 +243,8 @@ export const userEventRoutes: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                params: eventValidator.eventId,
-                payload: eventValidator.addEvents,
+                // params: eventValidator.eventId,
+                payload: eventValidator.updateEvent,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
