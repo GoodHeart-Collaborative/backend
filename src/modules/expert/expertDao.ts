@@ -475,7 +475,7 @@ export class ExpertDao extends BaseDao {
                 userId: appUtils.toObjectId(payload.userId),
                 type: config.CONSTANT.HOME_TYPE.EXPERTS_POST,
             };
-            const reportedIds = await payload.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
+            const reportedIds = await expertDao.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
             console.log('reportedIdsreportedIds', reportedIds);
             let Ids = reportedIds.map(function (item) {
                 console.log('itemitem', item);
