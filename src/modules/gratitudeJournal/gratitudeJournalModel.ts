@@ -51,12 +51,13 @@ const gratitudeJournalSchema = new Schema({
         type: Number,
         enum: [
             config.CONSTANT.MEDIA_TYPE.IMAGE,
-            config.CONSTANT.MEDIA_TYPE.VIDEO
+            // config.CONSTANT.MEDIA_TYPE.VIDEO
+            config.CONSTANT.MEDIA_TYPE.NONE
         ],
         default: config.CONSTANT.MEDIA_TYPE.IMAGE
     },
     postAt: { type: String, trim: true },
-    mediaUrl: { type: String },
+    mediaUrl: { type: String, trim: true },
     thumbnailUrl: { type: String },
     created: { type: Number }
 }, {

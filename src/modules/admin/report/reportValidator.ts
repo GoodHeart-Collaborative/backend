@@ -9,7 +9,10 @@ let getReports = Joi.object({
         config.CONSTANT.HOME_TYPE.EXPERTS_POST,
         config.CONSTANT.HOME_TYPE.USER,
     ]).required(),
-    postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID)
+    postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID),
+    searchTerm: Joi.string(),
+    fromDate: Joi.date(),
+    toDate: Joi.date()
 }).unknown()
 
 

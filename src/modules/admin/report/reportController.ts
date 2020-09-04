@@ -9,21 +9,36 @@ class ReportController {
 
     async getReports(params) {
         try {
-            const { type, page, limit, postId } = params;
+            const { type, page, limit, postId, searchTerm, fromDate, toDate } = params;
             const paginateOptions = {
                 page: page || 1,
                 limit: limit || 10
             };
             let aggPipe = [];
             let match: any = {};
+            let searchObj: any = {};
             match['type'] = type;
             if (postId) {
                 match['postId'] = apputils.toObjectId(postId);
             }
+
+            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+
+            if (searchTerm) {
+                const reg = new RegExp(searchTerm, 'ig');
+                searchObj["$or"] = [
+                    { firstName: reg },
+                    { lastName: reg },
+                    { email: reg },
+                ];
+            };
+
             aggPipe.push({
                 $match: match
-            }
-            );
+            });
+
             aggPipe.push({
                 $lookup: {
                     from: 'users',
@@ -36,6 +51,20 @@ class ReportController {
                             }
                         }
                     },
+                    // {
+                    //     $match: {
+                    //         $expr: {
+                    //             $cond: {
+                    //                 if: {
+                    //                     searchTerm:
+                    //                         '$searchObj'
+
+                    //                 }, then: '',
+                    //                 else: ''
+                    //             }
+                    //         }
+                    //     }
+                    // },
                     {
                         $project: {
                             firstName: 1,

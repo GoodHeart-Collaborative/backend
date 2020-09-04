@@ -84,7 +84,7 @@ class EventController {
                     sort = { "endDate": sortOrder };
                 }
                 else {
-                    sort = { "created": sortOrder };
+                    sort = { "_id": sortOrder };
                 }
             } else {
                 sort = { _id: -1 };
