@@ -10,16 +10,13 @@ import { contactDao } from "@modules/contact/ContactDao";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager, redisClient } from "@lib/index";
 import { smsManager } from "@lib/SMSManager";
-// import * as sns from "@lib/pushNotification/sns";
+import * as sns from "@lib/pushNotification/sns";
 import * as tokenManager from "@lib/tokenManager";
 import * as userConstant from "@modules/user/userConstant";
 import { userDao } from "@modules/user/index";
 import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
-import { Config } from "aws-sdk";
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
-// import {} from '@modules/'
-import { forumtopicDao } from '@modules/forum/forumDao';
 import { discoverDao } from "../discover/DiscoverDao";
 import { CONSTANT } from "@config/index";
 
@@ -74,12 +71,13 @@ export class UserController {
 				const userObject = appUtils.buildToken(tokenData);
 
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": salt });
+				// for SNS notofication
 				// let arn;
 				// if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
-				// 	// arn = await sns.registerAndroidUser(params.deviceToken);
+				// 	arn = await sns.registerAndroidUser(params.deviceToken);
 				// 	arn = "";
 				// } else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
-				// 	// arn = await sns.registerIOSUser(params.deviceToken);
+				// 	arn = await sns.registerIOSUser(params.deviceToken);
 				// 	arn = "";
 				// }
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
@@ -606,18 +604,6 @@ export class UserController {
 			throw error;
 		}
 	}
-	/**
- * @function profile
- */
-	// async getUserProfile(userId: UserId) {
-	// 	try {
-	// 		const criteria = {_id: userId.userId};
-	// 		const findByMobile = await userDao.findOne('users', criteria, {}, {}, {});
-	// 		return userConstant.MESSAGES.SUCCESS.PROFILE(findByMobile);
-	// 	} catch (error) {
-	// 		throw error;
-	// 	}
-	// }
 
 	async updateProfile(params, userData) {
 		try {
@@ -638,8 +624,6 @@ export class UserController {
 
 	async updateProfileUser(params, userData, token) {
 		try {
-			console.log('profilePicUrlprofilePicUrlprofilePicUrlprofilePicUrl', token,);
-
 			const updateCriteria = {
 				_id: userData.userId
 			};
@@ -754,8 +738,6 @@ export class UserController {
 			if (params.otp === '0000') {
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP)
 			}
-
-
 			const data = await userDao.checkForgotOtp(params);
 			if (!data) {
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_MOBILE_NUMBER)

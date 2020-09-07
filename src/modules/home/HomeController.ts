@@ -13,11 +13,10 @@ import * as config from "@config/index";
 class HomeController {
 
     /**
-     * @function Home
-     * @description if IS_REDIS_ENABLE set to true,
-     * than redisClient.storeList() function saves value in redis.
+     * @function getHomeData
+     * @description app home screen 1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude"
      */
-    async getHomeData(params, userId) {
+    async getHomeData(params: userHomeRequest.Igethome, userId) {
         try {
             let responseData: any = {}
             let getGeneralGratitude: any = {}

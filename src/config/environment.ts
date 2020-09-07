@@ -92,6 +92,7 @@ export const SERVER = Object.freeze({
 	ADMIN_RESST_PASSWORD_URL: "/auth/reset-password/token/",
 	API_BASE_URL: "",
 	API_URL: process.env['API_URL'],
+	flockApi: process.env['flock'],
 	// API_BASE_URL: "/rcc/api",
 	MONGO: {
 

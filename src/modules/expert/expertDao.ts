@@ -23,28 +23,23 @@ export class ExpertDao extends BaseDao {
         }
     }
 
-    async getExperts(payload) {
+    async getExperts(payload: userExpertRequest.IgetExpert) {
         try {
-            const { searchTerm, sortingType } = payload;
-            let { limit, page } = payload
+            const { limit, page, searchTerm } = payload
             let searchCriteria: any = {};
-            const criteria = {
-                status: config.CONSTANT.STATUS.ACTIVE,
-            }
+
             const paginateOptions = {
                 limit: limit || 5,
                 pageNo: page || 1,
             };
-            console.log('paginateOptions', paginateOptions);
 
             if (searchTerm) {
-                searchCriteria = {
-                    $or: [
-                        { title: { $regex: searchTerm, $options: 'i' } },
-                        { description: { $regex: searchTerm, $options: 'i' } },
-                        { name: { $regex: searchTerm, $options: 'i' } },
-                    ],
-                };
+                const reg = new RegExp(searchTerm, 'ig');
+                searchCriteria["$or"] = [
+                    { title: reg },
+                    { description: reg },
+                    { name: reg }
+                ];
             }
             else {
                 searchCriteria = {
@@ -101,29 +96,16 @@ export class ExpertDao extends BaseDao {
                 }
             },
             {
-                $limit: 5
+                $limit: paginateOptions.limit
             }
             ];
             const CategoryLIST = await expertDao.aggregate('categories', categoryPipeline, {})
-
-            // console.log('CategoryLISTCategoryLISTCategoryLIST', CategoryLIST);
-
-            // let aa = [];
-
-            // for (var i = 0; i < CategoryLIST.length; i++) {
-            //     for (var key1 in CategoryLIST[i]._id) {
-            //         aa.push(key1);
-            //     }
-            // }
-            // // aa.push(CategoryLIST.data._id)
-            // console.log('aaaaaaaaaaaa', aa);
 
             let CATEGORIES = {
                 CategoryLIST,
                 type: 1,
             }
             // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
-
 
             const newlyAdded = [
                 {
@@ -171,55 +153,50 @@ export class ExpertDao extends BaseDao {
                     }
                 },
                 {
-                    $limit: 5
+                    $limit: paginateOptions.limit
                 }
             ]
             const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {})
 
-            // // const getNewlyAddedExperts = await categories('expert', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
+            // const pipeline = [
+            //     {
+            //         $match: searchCriteria,
+            //     },
+            //     {
+            //         $sort: {
+            //             _id: -1
+            //         },
+            //     },
+            //     {
+            //         $lookup: {
+            //             from: 'experts',
+            //             let: { cId: '$_id' },
+            //             as: 'expertData',
+            //             pipeline: [
+            //                 {
+            //                     $match: {
+            //                         $expr: {
+            //                             $and: [{
+            //                                 $in: ['$$cId', '$categoryId'],
+            //                             },
+            //                             {
+            //                                 $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+            //                             }
+            //                             ]
+            //                         }
+            //                     }
+            //                 },
+            //             ],
+            //         },
+            //     },
+            //     {
+            //         $match: {
+            //             expertData: { $ne: [] }
+            //         }
+            //     }
+            // ];
 
-            const pipeline = [
-                {
-                    $match: searchCriteria,
-                },
-                {
-                    $sort: {
-                        _id: -1
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'experts',
-                        let: { cId: '$_id' },
-                        as: 'expertData',
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [{
-                                            $in: ['$$cId', '$categoryId'],
-                                        },
-                                        {
-                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                        }
-                                        ]
-                                    }
-                                }
-                            },
-                        ],
-                    },
-                },
-                {
-                    $match: {
-                        expertData: { $ne: [] }
-                    }
-                }
-            ];
-
-            const data1 = await expertDao.aggregate('categories', pipeline, {});
-            // console.log('data1data1data1data1', data1);
-
-
+            // const data1 = await expertDao.aggregate('categories', pipeline, {});
 
             const expertPipline = [
                 {
@@ -258,7 +235,7 @@ export class ExpertDao extends BaseDao {
                                     _id: -1
                                 }
                             },
-                            { $limit: 5 }
+                            { $limit: paginateOptions.limit }
                         ],
                     },
                 },
@@ -268,48 +245,28 @@ export class ExpertDao extends BaseDao {
                     }
                 },
                 {
-                    $limit: 5
+                    $limit: paginateOptions.limit
                 }
             ];
 
             const EXPERTS1 = await expertDao.aggregate('categories', expertPipline, {});
-            console.log('data1data1data1data1>>>>>>>>>>>>>>', EXPERTS1);
 
-            // result = CategoryLIST;
             CATEGORIES = {
                 CategoryLIST,
                 type: 0,
             }
-            // result.type = 0
 
-            console.log('data1data1data1data1', pipeline);
-            const data: any = await categoryDao.aggregate('categories', pipeline, {})
-            console.log('data1data1data1data1', data);
+            // const data: any = await categoryDao.aggregate('categories', pipeline, {})
 
-            // if (!data || data.length === 0) return UniversalFunctions.sendSuccess(Constant.STATUS_MSG.SUCCESS.S204.NO_CONTENT_AVAILABLE, data);
-            // const CATEGORY_LIST = data[0]['NEWLY_ON_BOARD_EXPERT']
-            const NEWLY_ON_BOARD_EXPERT = {
-                getNewlyAddedExperts,
-                type: 1
-            }
+            // const NEWLY_ON_BOARD_EXPERT = {
+            //     getNewlyAddedExperts,
+            //     type: 1
+            // }
 
             for (var key of EXPERTS1) {
                 key['type'] = 2
             }
 
-            // const EXPERTS = data[0].EXPERT_LIST
-
-            // const EXPERT_LIST = {
-            //     EXPERTS1,
-            // }
-            // return {
-            //     CATEGORIES,
-            //     NEWLY_ON_BOARD_EXPERT,
-            //     EXPERT_LIST
-            //     // CATEGORIES,
-            //     // NEWLY_ON_BOARD_EXPERT,
-            //     // EXPERT_LIST
-            // };
             EXPERTS1.unshift({
                 onBoardData: getNewlyAddedExperts,
                 type: 1
@@ -318,29 +275,22 @@ export class ExpertDao extends BaseDao {
                 categoryData: CATEGORIES.CategoryLIST,
                 type: 0
             })
-            // const EXPERTS = data[0].EXPERT_LIST
 
-            // const EXPERT_LIST = {
-            //     EXPERTS1,
-            // }
-            return EXPERTS1
-            // return {
-            //     // CATEGORIES,
-            //     // // NEWLY_ON_BOARD_EXPERT,
-            //     // // // EXPERT_LIST
-            //     // CATEGORIES,
-            //     // NEWLY_ON_BOARD_EXPERT,
-            //     // EXPERT_LIST
-            // };
+            return EXPERTS1;
 
         } catch (error) {
             return Promise.reject(error)
         }
     }
 
-    async getCategory(payload) {
+    /**
+     * @function getCategory
+     * @params ( userExpertRequest.IgetCategory)
+     * @description get experts-categgory and category-list for add
+     */
+    async getCategory(payload: userExpertRequest.IgetCategory) {
         try {
-            const { searchTerm, sortingType, screenType } = payload;
+            const { searchTerm, screenType } = payload;
             let { limit, page } = payload
             let criteria: any = {};
 
@@ -434,27 +384,19 @@ export class ExpertDao extends BaseDao {
         }
     }
 
-    async expertDetailWithPost(payload) {
+    /**
+    * @function expertDetailWithPost
+    * @params (userExpertRequest.IgetExpertRelatedPost)
+    * @description expertDetail and posts list
+    */
+
+    async expertDetailWithPost(payload: userExpertRequest.IgetExpertRelatedPost) {
         try {
-            console.log('payloadpayloadpayload', payload);
             const paginateOptions = {
                 limit: payload.limit || 10,
                 page: payload.page || 1
             }
             let match: any = {}
-
-            // let postConditions: any = []
-            // postConditions = [
-            //     {
-            //         $eq: ['$expertId', '$$eId']
-            //     },
-            //     {
-            //         $eq: ['$categoryId', '$$cId']
-            //     },
-            //     {
-            //         $eq: ['$status', 'active']
-            //     },
-            // ];
 
             // if (payload.postedBy === 1) {
             //     console.log('LLLLLLLLLLLLLL');
@@ -468,20 +410,15 @@ export class ExpertDao extends BaseDao {
             //     })
             // }
 
-            // console.log('postConditionspostConditions', postConditions);
-            console.log('payload.userIdpayload.userId', payload.userId);
-
             const reportedIdsCriteria = {
                 userId: appUtils.toObjectId(payload.userId),
                 type: config.CONSTANT.HOME_TYPE.EXPERTS_POST,
             };
             const reportedIds = await this.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
-            console.log('reportedIdsreportedIds', reportedIds);
             let reportedpost = [];
             let Ids1 = await reportedIds.map(function (item) {
                 return reportedpost.push(appUtils.toObjectId(item.postId));
             });
-            console.log('IdsIds', reportedpost);
 
             const pipeline = [
                 {
@@ -518,7 +455,6 @@ export class ExpertDao extends BaseDao {
                     },
 
                 },
-                // { '$unwind': { path: '$categoryData' } },
                 {
                     $project: {
                         status: 0,
@@ -543,7 +479,6 @@ export class ExpertDao extends BaseDao {
                 $nin: reportedpost
             };
 
-
             if (payload.posted === 1) {
                 console.log('last week');
                 // match['createdAt'] = {
@@ -555,25 +490,12 @@ export class ExpertDao extends BaseDao {
                 var firstDay = new Date(y, m, 1);
                 console.log('firstDay', firstDay);
                 var lastDay = new Date(y, m + 1, 0);
-                console.log('lastDaylastDay', lastDay);
 
-                console.log('last month');
                 match['createdAt'] = {
                     $gt: firstDay,
                     $lt: lastDay
                 }
             }
-            // if (payload.postedBy === 1) {
-            //     console.log('LLLLLLLLLLLLLL');
-            //     postConditions.push({
-            //         $gt: ['$createdAt', '2020-07-24']
-            //     })
-            // } else if (payload.postedBy == 2) {
-            //     console.log('LLLLLLLLLLLLLL');
-            //     postConditions.push({
-            //         $gt: ['$createdAt',]
-            //     })
-            // }
 
             if (payload.contentType) {
                 let aa = [];
@@ -721,37 +643,22 @@ export class ExpertDao extends BaseDao {
                     isComment: {
                         $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                     },
-                    // likdeta: '$likeData',
-                    // commentData: '$commentData'
-                    // isLike: { likeData: { $size: { $gt: 0 } }, then: true, else: false }
-                    // isLike: {
-                    //     $cond: {
-                    //         if: {
-                    //             $eq: ["$likeData.userId", appUtils.toObjectId(payload.userId)],
-                    //             then: true, else: false
-                    //         }
-                    //     }
-                    // }
                 }
             });
             expertPostspipeline = [...expertPostspipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             let EXPERTPOST = await this.aggregateWithPagination1("expert_post", expertPostspipeline);
-            console.log('resultresultresult', EXPERTPOST);
             const data0 = data ? data[0] : {};
-            console.log('data0data0', data0);
-
             const expertPosts = EXPERTPOST
             return {
                 expert: data0 ? data0 : {},
                 expertPosts
             };
-            // const expertPost = await expertDao.aggreagtionWithPaginateTotal('expert',expertPostspipeline,)
         } catch (error) {
             return Promise.reject(error)
         }
     }
 
-    async getPostDetail(payload) {
+    async getPostDetail(payload: userExpertRequest.IPostId) {
         try {
             const pipeline = [{
                 $match: {
@@ -843,8 +750,6 @@ export class ExpertDao extends BaseDao {
             ]
 
             const data = await expertDao.aggregate('expert_post', pipeline, {})
-
-            console.log('datadatadatadatadatadatadatadata', data);
             return data;
 
         } catch (error) {
@@ -852,16 +757,18 @@ export class ExpertDao extends BaseDao {
         }
     }
 
-    async getcategoryExperts(payload) {
+    /**
+     * @function getcategoryExperts
+     * @params ( userExpertRequest.getCategoryExpert)
+     * @description categoryRelatedExperts
+     */
+    async getcategoryExperts(payload: userExpertRequest.ICategoryRelatedExpert) {
         try {
-            const { searchTerm, sortingType } = payload;
-            let { limit, page } = payload
-            let criteria: any = {};
-
+            let { limit, page, searchTerm } = payload
 
             const match: any = {};
 
-            // match.status = config.CONSTANT.STATUS.ACTIVE;
+            match.status = config.CONSTANT.STATUS.ACTIVE;
 
             if (searchTerm) {
                 match["$or"] = [
@@ -927,11 +834,8 @@ export class ExpertDao extends BaseDao {
                     }
                 }
             ];
-            // console.log('limit>>>>>>>', limit, 'pageLLLLLLLLLLL', page);
             categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(limit, page)];
             let result = await this.aggregateWithPagination("expert", categoryPipeline, limit, page, true)
-
-            // const expertList = await expertDao.aggreagtionWithPaginateTotal('expert', categoryPipeline, limit, page, true)
 
             return result;
         } catch (error) {
@@ -939,7 +843,12 @@ export class ExpertDao extends BaseDao {
         }
     }
 
-    async getExpertListBySearch(payload) {
+    /**
+    * @function expertsListSearch
+    * @params (userExpertRequest.expertSearch)
+    * @description expertList on tap of view all
+    */
+    async getExpertListBySearch(payload: userExpertRequest.expertSearch) {
         try {
             const { limit, pageNo, searchKey } = payload;
             const paginateOptions = {
@@ -1010,7 +919,6 @@ export class ExpertDao extends BaseDao {
 
             aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             let result = await this.aggregateWithPagination("expert", aggPipe)
-            console.log('resultresultresult', result);
             return result;
         } catch (error) {
             return Promise.reject(error)

@@ -7,7 +7,6 @@ import * as config from "@config/index";
 
 export interface IeventInterest extends Document {
     userId: string,
-    // categoryId: string;
     eventId: string,
     created: number;
     type: number;
@@ -38,5 +37,4 @@ eventInterestSchema.methods.toJSON = function () {
     return object;
 };
 
-// Export shoutout
 export const event_interest: Model<IeventInterest> = mongoose.model<IeventInterest>(config.CONSTANT.DB_MODEL_REF.EVENT_INTEREST, eventInterestSchema);

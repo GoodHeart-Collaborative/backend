@@ -213,16 +213,6 @@ let updateProfile = Joi.object({
         config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
         config.INDUSTRIES.LAW_ENFORCEMENT,
         config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
-        // config.INDUSTRIES.Emergency_Services,
-        // config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-        // config.INDUSTRIES.Law_Enforcement,
-        // config.INDUSTRIES.Nonprofit,
-        // config.INDUSTRIES.Social_And_Community_Services
-        // config.INDUSTRIES.Compassion_Fatigue,
-        // config.INDUSTRIES.Experts_in_Executive_Burnout,
-        // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-        // config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-        // config.INDUSTRIES.Wellness_Coaches,
     ]),
     experience: Joi.string().valid([
         config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,

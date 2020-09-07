@@ -198,5 +198,62 @@ class EventController {
             return Promise.reject(error)
         }
     }
+
+    // async getCalender(params) {
+    //     try {
+    //         const { page, limit } = params;
+    //         let match: any = {};
+    //         let aggPipe = [];
+    //         const paginateOptions = {
+    //             limit: limit || 10,
+    //             page: page || 1
+    //         }
+
+    //         match['status'] = config.CONSTANT.STATUS.ACTIVE;
+    //         // const findAdmin = await adminDao.findOne('admins', { email: '' }, {}, {})
+
+
+    //         aggPipe.push({
+    //             $match: match
+    //         });
+
+    //         aggPipe.push({
+    //             $lookup: {
+    //                 from: 'users',
+    //                 let: { uId: '$userId' },
+    //                 as: 'userData',
+    //                 pipeline: [{
+    //                     $match: {
+    //                         $expr: {
+    //                             $eq: ['$_id', '$$uId']
+    //                         }
+    //                     }
+    //                 },
+    //                 {
+    //                     $project: {
+    //                         firstName: 1,
+    //                         lastName: 1,
+    //                         email: 1
+    //                     }
+    //                 }],
+    //             }
+    //         });
+
+
+    //         aggPipe.push({
+    //             $unwind: {
+    //                 path: '$userData',
+    //                 preserveNullAndEmptyArrays: true,
+    //             },
+    //         })
+    //         console.log('aggPipeaggPipe', aggPipe);
+
+    //         // aggPipe.push([...aggPipe, eventDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)]);
+    //         const data = await eventDao.aggregateWithPagination('event', aggPipe);
+    //         return data;
+    //     } catch (error) {
+    //         return Promise.reject(error);
+    //     }
+    // }
 }
 export const eventController = new EventController();

@@ -26,14 +26,6 @@ class ReportController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-            if (searchTerm) {
-                const reg = new RegExp(searchTerm, 'ig');
-                searchObj["$or"] = [
-                    { firstName: reg },
-                    { lastName: reg },
-                    { email: reg },
-                ];
-            };
 
             aggPipe.push({
                 $match: match
@@ -51,20 +43,6 @@ class ReportController {
                             }
                         }
                     },
-                    // {
-                    //     $match: {
-                    //         $expr: {
-                    //             $cond: {
-                    //                 if: {
-                    //                     searchTerm:
-                    //                         '$searchObj'
-
-                    //                 }, then: '',
-                    //                 else: ''
-                    //             }
-                    //         }
-                    //     }
-                    // },
                     {
                         $project: {
                             firstName: 1,
@@ -80,7 +58,22 @@ class ReportController {
             );
             aggPipe.push({
                 $unwind: '$userData',
-            })
+            });
+
+            if (searchTerm) {
+                const reg = new RegExp(searchTerm, 'ig');
+                aggPipe.push({
+                    $match: {
+                        ["$or"]: [
+                            { 'userData.firstName': reg },
+                            { 'userData.lastName': reg },
+                            { 'userData.email': reg }
+                        ]
+                    }
+                });
+            }
+
+
             let data;
             if (params.type) {
                 data = await reportDao.paginate('report', aggPipe, paginateOptions.limit, paginateOptions.page, true);

@@ -1,12 +1,9 @@
-declare namespace HomeRequest {
+declare namespace userHomeRequest {
 
-    // export interface AdviceRequestAdd extends Device {
-    //     userId: string,
-    //     categoryId: string,
-    //     likeCount: number,
-    //     totalComments: number,
-    //     title: string,
-    //     status: string
-    //     privacy: string
-    // }
+    export interface Igethome {
+        endDate: string;
+        type?: number;
+        pageNo?: number;
+        limit: number;
+    }
 }

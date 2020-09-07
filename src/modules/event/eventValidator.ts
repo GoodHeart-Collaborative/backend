@@ -3,22 +3,54 @@ import * as Joi from "joi";
 import * as config from "@config/index";
 
 
-let getEvents = Joi.object({
-    limit: Joi.number(),
-    page: Joi.number(),
-    searchTerm: Joi.string(),
-    fromDate: Joi.date(),
-    toDate: Joi.date(),
-    sortBy: Joi.string().valid([
-        'name', 'createdAt'
-    ]),
-    sortOrder: Joi.number().valid([
-        config.CONSTANT.ENUM.SORT_TYPE
-    ]),
-    categoryId: Joi.string().trim(),
-    userId: Joi.string().trim().required()
+let getEventHomeScreen = Joi.object({
+    // pageNo: Joi.number().required(),
+    // limit: Joi.number().required(),
+    searchKey: Joi.string().optional().description("Search by Address"),
+    longitude: Joi.number().optional(),
+    latitude: Joi.number().optional(),
+    distance: Joi.number().optional(),
+    eventCategoryId: Joi.number().allow([
+        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
+        5
+    ]).description('5-All'),
+    date: Joi.string().allow([
+        config.CONSTANT.DATE_FILTER.TODAY,
+        config.CONSTANT.DATE_FILTER.TOMORROW,
+        config.CONSTANT.DATE_FILTER.WEEKEND
+    ]).description('3-today ,4-tomorrow ,5-weekend')
 }).unknown()
 
+
+let eventViewAllScreen = Joi.object({
+
+    pageNo: Joi.number().required(),
+    limit: Joi.number().required(),
+    searchKey: Joi.string().optional().description("Search by Address"),
+    longitude: Joi.number().optional(),
+    latitude: Joi.number().optional(),
+    distance: Joi.number().optional(),
+    eventCategoryId: Joi.number().allow([
+        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
+        5
+    ]).description('5-All'),
+    isFeaturedEvent: Joi.number().allow(0, 1),
+    date: Joi.string().allow([
+        config.CONSTANT.DATE_FILTER.TODAY,
+        config.CONSTANT.DATE_FILTER.TOMORROW,
+        config.CONSTANT.DATE_FILTER.WEEKEND
+    ]).description('3-today ,4-tomorrow ,5-weekend'),
+    privacy: Joi.string().allow([
+        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+    ])
+})
 
 let addEvents = Joi.object({
     title: Joi.string(),
@@ -62,7 +94,7 @@ let eventId = Joi.object({
     eventId: Joi.string().required()
 }).unknown()
 
-let getEvent = Joi.object({
+let getEventCalendar = Joi.object({
     limit: Joi.number(),
     page: Joi.number(),
     // userId: Joi.string(),
@@ -73,7 +105,6 @@ let getEvent = Joi.object({
     ]).description(
         'INTEREST- 2, MY_EVENT- 3'
     ),
-
 })
 
 let updateEvent = Joi.object({
@@ -116,7 +147,10 @@ let updateEvent = Joi.object({
 
 export {
     addEvents,
-    getEvent,
+    // getEvent,
+    getEventHomeScreen,
+    getEventCalendar,
+    eventViewAllScreen,
     eventId,
     updateEvent
 };

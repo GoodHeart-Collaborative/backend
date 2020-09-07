@@ -36,6 +36,10 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
+	/**
+	 * @description getmember of the day for the homeScreen
+	 * @param userId 
+	 */
 
 	async getMemberOfDays(userId) {
 		try {

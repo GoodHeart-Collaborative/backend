@@ -40,18 +40,45 @@ declare namespace UserEventRequest {
         sortOrder: number;
     }
 
-    export interface adminUpdateExpertPost {
-        postId: string,
-        topic: string;
-        expertId: string;
-        categoryId: string;
-        price?: number;
-        contentId: number
-        mediaType: number
-        description: string,
-        mediaUrl: string,
-        thumbnailUrl: string,
+    export interface getEvents {
+        searchKey: string;
+        longitude: number;
+        latitude: number;
+        distance: number;
+        eventCategoryId: number;
+        date: string;
+    }
+
+    export interface getEventDetail {
+        eventId: string;
+    }
+
+    export interface getEventList {
+        pageNo: number;
+        limit: number;
+        searchKey: string;
+        longitude: number;
+        latitude: number;
+        distance: number;
+        eventCategoryId: number;
+        isFeaturedEvent: number;
+        date: string;
         privacy: string;
+    }
+
+
+    export interface updateEvent {
+        eventId: string;
+        title: string;
+        startDate: Date;
+        endDate: Date;
+        price: number;
+        imageUrl: string;
+        eventUrl: string;
+        address: string;
+        eventCategoryId: string;
+        allowSharing: number //boolean().default(true),
+        description: string;
     }
 
     export interface updateStatus {

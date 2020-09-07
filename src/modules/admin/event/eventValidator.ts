@@ -107,10 +107,17 @@ let updateEvent = Joi.object({
     isFeatured: Joi.number().allow(0, 1).default(0),
 })
 
+// let eventCalender = Joi.object({
+//     fromDate: Joi.date(),
+//     toDate: Joi.date(),
+//     limit: Joi.number(),
+//     page: Joi.number()
+// })
 export {
     getEvents,
     updateStatus,
     validateEventId,
     addEvents,
-    updateEvent
+    updateEvent,
+    // eventCalender
 };

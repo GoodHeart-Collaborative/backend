@@ -8,8 +8,6 @@ import * as eventConstant from "@modules/admin/event/eventConstant";
 import { eventDao } from "@modules/event/eventDao";
 import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
-import * as XLSX from 'xlsx'
-import * as moment from 'moment';
 import * as weekend from '@utils/dateManager'
 import { categoryDao } from "@modules/admin/catgeory";
 class EventController {
@@ -20,25 +18,21 @@ class EventController {
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
         return result[0];
     }
 	/**
-	 * @function add event
+	 * @function addEvent
 	 * @description user add event
-	 */
+     * @params (UserEventRequest.AddEvent)
+     */
     async addEvent(params: UserEventRequest.AddEvent) {
         try {
-
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-            // console.log('data1data1data1data1data1', result);
             // params.eventCategoryType = categoryData['name'];
             params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
-
             const data = await eventDao.insert("event", params, {});
-            // const updateInterest = await eventInterestDao
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {
@@ -46,16 +40,19 @@ class EventController {
         }
     }
 
+    /**
+	 * @function calenderEvent
+	 * @description calender for the event user hosted and user intereseted in event default respinse is both going and interested
+     * @params (UserEventRequest.userGetEvent)
+     */
     async calenderEvent(params: UserEventRequest.userGetEvent, tokenData) {
         try {
-            console.log('tokenData', tokenData.userId);
             const { page, limit } = params;
             const paginateOptions = {
                 limit: limit || 10,
                 page: page || 1,
             }
-
-            let noTypeAggPipeandTypeInterest = [];
+            let defaultAndInterestEveent = [];
             let typeAggPipe = [];
             let match: any = {};
 
@@ -68,13 +65,13 @@ class EventController {
             // }
             typeAggPipe.push({ $match: match })
             if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                noTypeAggPipeandTypeInterest.push({
+                defaultAndInterestEveent.push({
                     $match: {
                         userId: appUtils.toObjectId(tokenData.userId),
                         type: config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
                 })
-                noTypeAggPipeandTypeInterest.push({
+                defaultAndInterestEveent.push({
                     $lookup: {
                         from: 'events',
                         let: { eId: '$eventId', uId: appUtils.toObjectId(tokenData.userId) },
@@ -105,54 +102,43 @@ class EventController {
                         ],
                     }
                 })
-                noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
+                defaultAndInterestEveent.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
+
+                defaultAndInterestEveent.push({
+                    $replaceRoot: { newRoot: "$eventData" }
+                })
+
+                defaultAndInterestEveent.push({
+                    $project: {
+                        type: 0,
+                        eventId: 0,
+                        // "userId": 0,
+                        created: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        location: 0,
+                    }
+                })
             }
 
-            noTypeAggPipeandTypeInterest.push({
-                $replaceRoot: { newRoot: "$eventData" }
-            }
-            )
-
-            noTypeAggPipeandTypeInterest.push({
-                $project: {
-                    type: 0,
-                    eventId: 0,
-                    // "userId": 0,
-                    created: 0,
-                    createdAt: 0,
-                    updatedAt: 0,
-                    location: 0,
-                }
-            })
-            // aggPipe.push({ $match: match })
-            // noTypeAggPipe.push({
-            //     $project: {
-            //         status: 0,
-            //         createdAt: 0,
-            //         updatedAt: 0,
-            //         location: 0,
-            //         eventId: 0,
-            //         'eventData.location': 0
-            //     }
-            // })
             typeAggPipe.push({
                 $project: {
                     _id: 1,
-                    "isFeatured": 1,
-                    "price": 1,
-                    "goingCount": 1,
-                    "interestCount": 1,
-                    "startDate": 1,
-                    "endDate": 1,
-                    "allowSharing": 1,
-                    "imageUrl": 1,
-                    "address": 1,
-                    "eventCategoryId": 1,
+                    isFeatured: 1,
+                    price: 1,
+                    goingCount: 1,
+                    interestCount: 1,
+                    startDate: 1,
+                    endDate: 1,
+                    allowSharing: 1,
+                    imageUrl: 1,
+                    address: 1,
+                    eventCategoryId: 1,
                     eventCategoryName: 1,
-                    "description": 1,
-                    "title": 1,
-                    "eventUrl": 1,
-                    "userId": 1,
+                    description: 1,
+                    title: 1,
+                    eventUrl: 1,
+                    userId: 1,
                     isInterest: ''
                     // isHostedByMe: {
                     //     $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
@@ -161,54 +147,44 @@ class EventController {
                     // }
                 }
             })
-            noTypeAggPipeandTypeInterest.push({ $sort: { startDate: -1 } });
-            console.log('aggPipeaggPipeaggPipe', noTypeAggPipeandTypeInterest);
+            defaultAndInterestEveent.push({ $sort: { startDate: -1 } });
 
             typeAggPipe = [...typeAggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
-            noTypeAggPipeandTypeInterest = [...noTypeAggPipeandTypeInterest, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            defaultAndInterestEveent = [...defaultAndInterestEveent, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
             let myInterestedEventslist, myHostedEventslist;
             if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', noTypeAggPipeandTypeInterest, paginateOptions.limit, paginateOptions.page, true)
-                // console.log('datadatadatadata', myInterestedEventslist);
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+                return { myInterestedEventslist }
+
             }
             else if (params.type == config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
                 myHostedEventslist = await eventInterestDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
-                // console.log('myHostedEventslist', myHostedEventslist);
-            }
-            else {
-                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', noTypeAggPipeandTypeInterest, paginateOptions.limit, paginateOptions.page, true)
-                console.log('myInterestedEventslistmyInterestedEventslist', myInterestedEventslist);
-
-                myHostedEventslist = await eventDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
-                console.log('datadatadatadata', myHostedEventslist);
-            }
-
-
-            if (params.type === config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
                 return { myHostedEventslist }
             }
-            else if (params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                return { myInterestedEventslist }
-            }
             else {
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+                myHostedEventslist = await eventDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
                 return {
                     myInterestedEventslist,
                     myHostedEventslist
                 }
             }
-            // return MyInterestedEventslist;
 
         } catch (error) {
             return Promise.reject(error);
         }
     }
 
-    async getEvent(params, tokenData) {
-        try {
-            console.log('JKKKKKKKKKKKKKKKKKKKK', tokenData['userId']);
+    /**
+	 * @function calenderEvent
+	 * @description event home screen nearest location by the lat lng
+     * @params (UserEventRequest.userGetEvent)
+     */
 
+    async getEvent(params: UserEventRequest.getEvents, tokenData) {
+        try {
             const { longitude, latitude, distance, eventCategoryId, date, searchKey } = params;
             let pickupLocation = [];
             let aggPipe = [];
@@ -338,7 +314,6 @@ class EventController {
 
             featureAggPipe.push(interesetData);
             // featureAggPipe.push(unwind);
-            console.log('featureAggPipefeatureAggPipefeatureAggPipe', featureAggPipe);
             featureAggPipe.push(projection)
 
             aggPipe.push(interesetData);
@@ -358,12 +333,8 @@ class EventController {
             //         }
             //     }
             // ];
-            // console.log('getEventCategorygetEventCategory', getEventCategory);
             // const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
             // eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
-            // // eventCategoryListName[0][;
-
-            // console.log('eventCategoryList1eventCategoryList1', eventCategoryListName);
 
             const featuredEvent = await eventDao.aggregate('event', featureAggPipe, {})
             const event = await eventDao.aggregate('event', aggPipe, {});
@@ -393,10 +364,14 @@ class EventController {
         }
     }
 
-    async getEventDetail(payload, tokenData) {
+    /**
+     * @function getEventDetail
+     * @description user get the event detail
+     * @param (UserEventRequest.getEventDetail) 
+     * @param tokenData 
+     */
+    async getEventDetail(payload: UserEventRequest.getEventDetail, tokenData) {
         try {
-            console.log('payloadpayload', payload);
-
             const match: any = {};
             let aggPipe = [];
 
@@ -547,42 +522,20 @@ class EventController {
                 }
             })
 
-            // aggPipe.push({
-            //     $unwind: {
-            //         path: '$interestData'
-            //     }
-            // })
-            // aggPipe.push({
-            //     $group: {
-            //         _id: null,
-            //         interestCount: { $first: '$interestCount' },
-            //         interestData: { $first: '$interestData' },
-            //         // interestData1: { $last: '$interestData' },
-            //         // goingCount: { $first: '$goingCount' },
-            //         // users: { $first: '$users' },
-            //         // title: { $first: '$title' },
-            //         // "price": { first: '$price' },
-            //         "imageUrl": { $first: '$imageUrl' },
-            //         // "eventCategory": { $first: '$eventCategory' },
-            //         // "eventUrl": { $first: '$eventUrl' },
-            //         // title: { $first : "$title" },
-            //         // isPostLater: { $first : "$isPostLater" },
-            //         // postedAt: { $first : "$postedAt" },
-            //         createdAt: { $first: "$createdAt" }
-            //     }
-            // })
-
             const data = await eventDao.aggregate('event', aggPipe, {})
-            console.log('datadata', data);
             return data[0] ? data[0] : {};
-
         } catch (error) {
             return Promise.reject(error)
         }
     }
 
-
-    async getEventList(params, tokenData) {
+    /**
+     * @function getEventList
+     * @param params (UserEventRequest.getEventList)
+     * @param tokenData 
+     * @description eventList on viewAll featured and normal event
+     */
+    async getEventList(params: UserEventRequest.getEventList, tokenData) {
         try {
             const data = await eventDao.getEventList(params, tokenData);
             return data;
@@ -591,7 +544,15 @@ class EventController {
         }
     }
 
-    async updateEvent(params, tokenData) {
+
+    /**
+     * @function updateEvent
+     * @param params (UserEventRequest.getEventList)
+     * @param tokenData 
+     * @description eventList on viewAll featured and normal event
+     */
+
+    async updateEvent(params: UserEventRequest.updateEvent, tokenData) {
         try {
             const criteria = {
                 _id: params.eventId,
@@ -599,9 +560,7 @@ class EventController {
             }
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-            // params.eventCategoryType = categoryData['name'];
-            params.eventCategoryName = categoryData['title'];
-
+            params['eventCategoryName'] = categoryData['title'];
             const updateEvent = await eventDao.findOneAndUpdate('event', criteria, params, { new: true });
             if (!updateEvent) {
                 return Promise.reject(eventConstant.MESSAGES.ERROR.EVENT_NOT_FOUND);

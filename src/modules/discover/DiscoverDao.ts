@@ -6,6 +6,10 @@ import { CONSTANT } from "@config/index";
 
 
 export class DiscoverDao extends BaseDao {
+    /**
+     * @function getDiscoverData
+     * @description to get the nearby user by location
+     */
     async getDiscoverData(params, userId, isMyConnection) {
         try {
             let { pageNo, limit, user, searchKey, _id, followerId, discover_status, ShoutoutConnection, request_type } = params
@@ -33,12 +37,12 @@ export class DiscoverDao extends BaseDao {
                     ];
                     match['discover_status'] = config.CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
-                        if(request_type === CONSTANT.REQUEST_TYPE.RECEIVED_REQUEST) {
-                            match["followerId"] = userId
-                        } 
-                        if(request_type === CONSTANT.REQUEST_TYPE.SEND_REQUEST) {
-                            match["userId"] = userId
-                        }
+                    if (request_type === CONSTANT.REQUEST_TYPE.RECEIVED_REQUEST) {
+                        match["followerId"] = userId
+                    }
+                    if (request_type === CONSTANT.REQUEST_TYPE.SEND_REQUEST) {
+                        match["userId"] = userId
+                    }
                     if (followerId) {
                         match["$or"] = [
                             { "userId": userId, "followerId": await appUtils.toObjectId(followerId) },
@@ -169,7 +173,7 @@ export class DiscoverDao extends BaseDao {
             let result: any = {}
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
             let pickupLocation = [];
-            let match:any = {}
+            let match: any = {}
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
                 aggPipe.push(
@@ -279,6 +283,11 @@ export class DiscoverDao extends BaseDao {
             throw error;
         }
     }
+
+    /**
+     * @description to check the discvoever status previous
+     * @param params 
+     */
     async checkDiscover(params) {
         try {
             return await this.findOne('discover', params, {}, {});
@@ -286,6 +295,10 @@ export class DiscoverDao extends BaseDao {
             throw error;
         }
     }
+    /**
+     * @description discvover request save
+     * @param params 
+     */
     async saveDiscover(params) {
         try {
             return await this.save('discover', params)
@@ -293,6 +306,11 @@ export class DiscoverDao extends BaseDao {
             throw error;
         }
     }
+
+    /**
+     * @description delete request discover
+     * @param params 
+     */
     async deletedDiscover(params) {
         try {
             return await this.remove('discover', params)
@@ -310,6 +328,10 @@ export class DiscoverDao extends BaseDao {
         }
     }
 
+    /**
+     * @description shout card my connection
+     * @param params 
+     */
     async getShoutoutMyConnection(params) {
         try {
             let { userId } = params

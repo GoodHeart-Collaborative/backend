@@ -67,7 +67,7 @@ export const userEventRoutes: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                query: eventValidator.getEvent,
+                query: eventValidator.getEventCalendar,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -83,7 +83,7 @@ export const userEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/events`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload = request.query;
+            const payload: UserEventRequest.getEvents = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.getEvent(payload, tokenData);
@@ -100,26 +100,7 @@ export const userEventRoutes: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                query: {
-                    // pageNo: Joi.number().required(),
-                    // limit: Joi.number().required(),
-                    searchKey: Joi.string().optional().description("Search by Address"),
-                    longitude: Joi.number().optional(),
-                    latitude: Joi.number().optional(),
-                    distance: Joi.number().optional(),
-                    eventCategoryId: Joi.number().allow([
-                        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-                        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-                        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-                        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
-                        5
-                    ]).description('5-All'),
-                    date: Joi.string().allow([
-                        config.CONSTANT.DATE_FILTER.TODAY,
-                        config.CONSTANT.DATE_FILTER.TOMORROW,
-                        config.CONSTANT.DATE_FILTER.WEEKEND
-                    ]).description('3-today ,4-tomorrow ,5-weekend')
-                },
+                query: eventValidator.getEventHomeScreen,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -134,7 +115,7 @@ export const userEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/events/detail/{eventId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload = request.params;
+            const payload: UserEventRequest.getEventDetail = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.getEventDetail(payload, tokenData);
@@ -169,7 +150,7 @@ export const userEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/events-list`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload = request.query;
+            const payload: UserEventRequest.getEventList = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.getEventList(payload, tokenData);
@@ -186,31 +167,7 @@ export const userEventRoutes: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                query: {
-                    pageNo: Joi.number().required(),
-                    limit: Joi.number().required(),
-                    searchKey: Joi.string().optional().description("Search by Address"),
-                    longitude: Joi.number().optional(),
-                    latitude: Joi.number().optional(),
-                    distance: Joi.number().optional(),
-                    eventCategoryId: Joi.number().allow([
-                        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-                        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-                        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-                        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
-                        5
-                    ]).description('5-All'),
-                    isFeaturedEvent: Joi.number().allow(0, 1),
-                    date: Joi.string().allow([
-                        config.CONSTANT.DATE_FILTER.TODAY,
-                        config.CONSTANT.DATE_FILTER.TOMORROW,
-                        config.CONSTANT.DATE_FILTER.WEEKEND
-                    ]).description('3-today ,4-tomorrow ,5-weekend'),
-                    privacy: Joi.string().allow([
-                        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-                        config.CONSTANT.PRIVACY_STATUS.PUBLIC
-                    ])
-                },
+                query: eventValidator.eventViewAllScreen,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -226,7 +183,7 @@ export const userEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/event`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload = request.payload;
+            const payload: UserEventRequest.updateEvent = request.payload;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.updateEvent(payload, tokenData);

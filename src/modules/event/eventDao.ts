@@ -14,6 +14,12 @@ export class EventDao extends BaseDao {
         }
     }
 
+    /**
+     * @function getEventList
+     * @param params (UserEventRequest.getEventList)
+     * @param tokenData 
+     * @description eventList on viewAll featured and normal event
+     */
 
     async getEventList(params, tokenData) {
         try {
@@ -206,14 +212,7 @@ export class EventDao extends BaseDao {
                 filterdata,
                 type: 2
             }
-            return paginateOptions.pageNo === 1 ? [events, forFilter] : [events]
-            // return [
-            //     events,
-            // ]
-            // return [
-            //     events,
-            //     forFilter
-            // ];
+            return paginateOptions.pageNo === 1 ? [events, forFilter] : [events];
 
         } catch (error) {
             return Promise.reject(error)

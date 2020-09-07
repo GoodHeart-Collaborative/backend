@@ -41,12 +41,12 @@ const loginHistorySchema = new Schema({
 	},
 	deviceToken: { type: String, index: true },
 	refreshToken: { type: String, index: true },
-	// arn: { type: String },
+	arn: { type: String },
 	created: { type: Number }
 }, {
-		versionKey: false,
-		timestamps: true
-	});
+	versionKey: false,
+	timestamps: true
+});
 
 loginHistorySchema.set("toObject", {
 	virtuals: true
