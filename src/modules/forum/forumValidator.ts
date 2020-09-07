@@ -33,7 +33,7 @@ let updateForum = Joi.object({
         config.CONSTANT.MEDIA_TYPE.VIDEO,
         config.CONSTANT.MEDIA_TYPE.NONE,
     ]).required(),
-    thumbnailUrl: Joi.string().optional(),
+    thumbnailUrl: Joi.string().allow('').optional(),
     description: Joi.string().optional(),
     postAnonymous: Joi.boolean().optional(),
 }).unknown()

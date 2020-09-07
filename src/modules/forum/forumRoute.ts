@@ -7,7 +7,6 @@ import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
 import * as forumValidator from './forumValidator';
-import { userInfo } from "os";
 import { CONSTANT } from "@config/index";
 export const userForumRoutes: ServerRoute[] = [
     {
@@ -15,7 +14,7 @@ export const userForumRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/forum`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload: AdminForumRequest.AddForum = request.payload;
+            const payload: UserForumRequest.AddForum = request.payload;
             try {
                 if (payload && payload.postAnonymous === false) {
                     payload["userId"] = tokenData.userId

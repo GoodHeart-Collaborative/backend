@@ -29,7 +29,8 @@ export class ForumTopic extends BaseDao {
             };
 
             const reportedIdsCriteria = {
-                userId: appUtils.toObjectId(params.userId)
+                userId: appUtils.toObjectId(params.userId),
+                type: config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
             };
             const reportedIds = await reportDao.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
             let ids = [];

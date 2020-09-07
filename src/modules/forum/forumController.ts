@@ -28,7 +28,7 @@ class forumController {
             let checkForum = await forumtopicDao.checkForum(criteria)
             if (checkForum) {
                 let updateForum = await forumtopicDao.updateForum(criteria, params);
-                let param: any = { page: 1, limit: 1, postId: updateForum._id }
+                let param: any = { page: 1, limit: 1, postId: updateForum._id, userId: userId.userId }
                 let response = await forumtopicDao.getFormPosts(param);
                 response['isCreatedByMe'] = true
                 return forumConstant.MESSAGES.SUCCESS.FORUM_UPDATED(response);
