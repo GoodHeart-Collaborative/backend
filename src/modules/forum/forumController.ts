@@ -106,7 +106,7 @@ class forumController {
             const datatoUpdate = { status: config.CONSTANT.STATUS.DELETED };
             let data = await eventDao.findByIdAndUpdate('forum', criteria, datatoUpdate, { new: true })
             if (data) {
-                return forumConstant.MESSAGES.SUCCESS.FORUM_DELETED
+                return forumConstant.MESSAGES.SUCCESS.FORUM_DELETED({ postId: params.postId })
             } else {
                 return forumConstant.MESSAGES.ERROR.FORUM_NOT_FOUND
             }
