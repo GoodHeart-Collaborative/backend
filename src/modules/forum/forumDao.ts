@@ -19,7 +19,11 @@ export class ForumTopic extends BaseDao {
     async getFormPosts(params, tokenData?) {
         try {
             const { page, limit, postId, categoryId } = params;
+            console.log('postIdpostIdpostId', postId);
+
             let aggPipe = [];
+            console.log('pagepage', page);
+
             let match: any = {};
             let categoryMatch: any = {};
             let data: any = {}
@@ -46,8 +50,15 @@ export class ForumTopic extends BaseDao {
             // if (categoryId) {
             //     match['categoryId'] = appUtils.toObjectId(categoryId)
             // }
+            if (!postId) {
+                match['_id'] = {
+                    $nin: ids
+                }
+            }
             if (postId) {
-                match['_id'] = appUtils.toObjectId(postId);
+                match['_id'] = {
+                    $eq: appUtils.toObjectId(postId),
+                }
             } else {
                 if (page === 1) {
                     let categoryPipe = [
@@ -90,7 +101,9 @@ export class ForumTopic extends BaseDao {
                             $limit: 5
                         }
                     ];
-                    data = await this.aggregate('categories', categoryPipe, {})
+                    data = await this.aggregate('categories', categoryPipe, {});
+                    console.log('datadatadata', data);
+
                 }
             }
 
@@ -103,10 +116,7 @@ export class ForumTopic extends BaseDao {
             //         $nin: reportedIds
             //     }
             // }
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            match['_id'] = {
-                $nin: ids
-            };
+
             aggPipe.push({ $match: match });
             aggPipe.push({
                 $lookup: {
@@ -333,6 +343,8 @@ export class ForumTopic extends BaseDao {
 
             if (params.postId) {
                 myForumData = await this.aggregate('forum', aggPipe, {})
+                console.log('myForumDatamyForumDatamyForumDatamyForumData>>>>>>>', myForumData);
+
             }
 
             const categories = {
