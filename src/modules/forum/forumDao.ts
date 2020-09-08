@@ -98,12 +98,15 @@ export class ForumTopic extends BaseDao {
                             }
                         },
                         {
+                            $sort: {
+                                _id: -1
+                            }
+                        },
+                        {
                             $limit: 5
                         }
                     ];
                     data = await this.aggregate('categories', categoryPipe, {});
-                    console.log('datadatadata', data);
-
                 }
             }
 

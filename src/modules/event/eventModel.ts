@@ -3,6 +3,8 @@ import * as mongoose from "mongoose";
 import { Schema, Model, Document } from "mongoose";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
+import * as shortid from 'shortid';
+
 // import * as 
 
 export interface Ievent extends Document {
@@ -68,7 +70,9 @@ const eventSchema = new Schema({
     },
     imageUrl: { type: String },
     eventUrl: { type: String },
+    shareUrl: { type: String },
     allowSharing: { type: Number },
+    shortId: { type: String, default: shortid.generate, unique: true },
     goingCount: { type: Number, default: 0 },
     eventCategoryType: {
         type: String,

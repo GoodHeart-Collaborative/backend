@@ -8,10 +8,7 @@ import fetch from 'node-fetch';
 
 export let errorReporter = async (data) => {
     try {
-        console.log('config.get,config.get,', config.SERVER.flockApi, data);
-
         // let formatedMessage = `<flockml><strong>${process.env.NODE_ENV.toUpperCase()} : ${errorMessage.title}</strong><br/>${typeof errorMessage.err == 'object' ? JSON.stringify(errorMessage.err) : errorMessage.err}</flockml>`;
-
         let formatedMessage = `<flockml><strong>${config.SERVER.ENVIRONMENT.toUpperCase()} : ${JSON.stringify(data)}</flockml>`;
 
         var postBody = {

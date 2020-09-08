@@ -74,12 +74,14 @@ export class UserController {
 				// for SNS notofication
 				// let arn;
 				// if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
-				// 	arn = await sns.registerAndroidUser(params.deviceToken);
+				// 	// arn = await sns.registerAndroidUser(params.deviceToken);
 				// 	arn = "";
 				// } else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
-				// 	arn = await sns.registerIOSUser(params.deviceToken);
+				// 	// arn = await sns.registerIOSUser(params.deviceToken);
 				// 	arn = "";
 				// }
+				// console.log('arnarn>>>>>>>>>>>', arn);
+
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 
 				params = _.extend(params, { "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });

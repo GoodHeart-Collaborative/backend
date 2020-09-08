@@ -30,7 +30,7 @@ export class AdminNotificationDao extends BaseDao {
 	 */
 	async addNotification(params: AdminNotificationRequest.Add) {
 		try {
-            params["created"] = new Date().getTime()
+			params["created"] = new Date().getTime()
 			return await this.save("admin_notifications", params);
 		} catch (error) {
 			throw error;
@@ -61,13 +61,21 @@ export class AdminNotificationDao extends BaseDao {
 	 */
 	async notificationList(params: ListingRequest) {
 		try {
+			console.log('paramsparams', params);
+
 			const aggPipe = [];
 
-			if (params.searchKey) {
-				const match: any = {};
-				match.title = { "$regex": params.searchKey, "$options": "-i" };
-				aggPipe.push({ "$match": match });
+			const match: any = {};
+
+			if (params.platform) {
+				match.platform = params.platform;
 			}
+			if (params.searchKey) {
+				match.title = { "$regex": params.searchKey, "$options": "-i" };
+			}
+			console.log('matchmatch', match);
+
+			aggPipe.push({ "$match": match });
 
 			let sort = {};
 			if (params.sortBy && params.sortOrder) {
@@ -83,7 +91,7 @@ export class AdminNotificationDao extends BaseDao {
 			}
 			aggPipe.push({ "$sort": sort });
 
-            return await this.paginate('admin_notifications', aggPipe, params.limit, params.pageNo, {}, true)
+			return await this.paginate('admin_notifications', aggPipe, params.limit, params.pageNo, {}, true)
 		} catch (error) {
 			throw error;
 		}

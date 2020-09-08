@@ -17,7 +17,6 @@ class ExpertController {
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
         return result[0];
     }
 	/**
@@ -140,7 +139,6 @@ class ExpertController {
             aggPipe.push({ $project: { postData: 0 } })
             aggPipe = [...aggPipe, ...expertDao.addSkipLimit(limit, page)]
             const data = await expertDao.aggreagtionWithPaginateTotal('expert', aggPipe, limit, page, true)
-            console.log('datadatadata', data);
             return data;
 
         } catch (error) {

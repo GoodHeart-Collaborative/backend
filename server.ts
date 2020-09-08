@@ -110,11 +110,9 @@ const init = async () => {
 	await server.start();
 	const boot = new BootStrap.BootStrap();
 	await boot.bootStrap(server);
-	console.log('{}}}}}}}}}}}}}}}}}}}}}');
 
 };
 init().then(_ => {
-	// console.log(server.info.uri);
 	console.log(`Hapi server listening on ${config.SERVER.IP}:${config.SERVER.PORT}, in ${config.SERVER.TAG} mode`)
 	logger.info(`Hapi server listening on ${config.SERVER.IP}:${config.SERVER.PORT}, in ${config.SERVER.TAG} mode`);
 }).catch((error) => {

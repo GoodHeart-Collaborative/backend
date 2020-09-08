@@ -81,6 +81,7 @@ declare interface Address {
 
 declare interface ListingRequest extends Pagination, Filter {
 	request_type?: number
+	platform?: string;
 }
 
 declare interface BlockRequest {

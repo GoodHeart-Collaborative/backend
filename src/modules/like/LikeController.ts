@@ -149,6 +149,10 @@ class LikeController {
     //             throw error;
     //         }
     //     }
+    /**
+     * @function addLike
+     * @param params 
+     */
     async addLike(params: LikeRequest.AddLikeRequest) {
         try {
 
@@ -165,7 +169,6 @@ class LikeController {
                 getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
             } else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
                 getPost = await expertPostDao.checkExpertPost(query);
-                console.log('getPost,params.type ', params.type, getPost);
             }
             else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
                 getPost = await forumtopicDao.checkForum(query);

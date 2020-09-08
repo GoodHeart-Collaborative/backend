@@ -15,12 +15,10 @@ class ExpertPostController {
     getTypeAndDisplayName(findObj, num: number) {
         const obj = findObj;
         const data = Object.values(obj);
-        console.log('datadatadatadatadatadatadatadata', data);
 
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
 
         return result[0];
     }
@@ -178,13 +176,10 @@ class ExpertPostController {
                 })
                 // aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } })
             }
-            console.log('aggPipeaggPipe', JSON.stringify(aggPipe));
 
             // aggPipe.push({ $match: query })
             aggPipe = [...aggPipe, ...await expertDao.addSkipLimit(limit, pageNo)];
             if (!contentId) {
-                console.log('5f193411e8e62430c62cada55f193411e8e62430c62cada5');
-
                 // aggPipe.push(query)
                 return await expertDao.aggregate('expert', aggPipe, {},)
             }
