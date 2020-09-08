@@ -167,6 +167,46 @@ export class EventDao extends BaseDao {
                     //         else: false
                     //     }
                     // },
+                    shareUrl: {
+                        $cond: {
+                            if: {
+                                $and: [{
+                                    $eq: ['$isHostedByMe', true]
+                                },
+                                ]
+                            }, then: '$shareUrl',
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
+                        }
+                    },
+                    // isHostedByMe: {
+                    //     $cond: {
+                    //         if: {
+                    //             $eq: ['userId', appUtils.toObjectId(tokenData.userId)]
+                    //         },
+                    //         then: true,
+                    //         else: false
+                    //     }
+                    // },
+                    users: 1,
+                }
+            };
+
+            aggPipe.push(interesetData);
+            // aggPipe.push(unwind);
+            aggPipe.push({
+                $addFields: {
                     isHostedByMe: {
                         $cond: {
                             if: {
@@ -175,13 +215,9 @@ export class EventDao extends BaseDao {
                             then: true,
                             else: false
                         }
-                    },
-                    users: 1,
+                    }
                 }
-            };
-
-            aggPipe.push(interesetData);
-            // aggPipe.push(unwind);
+            });
             aggPipe.push(projection);
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]

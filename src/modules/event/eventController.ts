@@ -10,6 +10,8 @@ import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
 import * as weekend from '@utils/dateManager'
 import { categoryDao } from "@modules/admin/catgeory";
+import * as tokenManager from '@lib/tokenManager';
+import { errorReporter } from "@lib/flockErrorReporter";
 class EventController {
 
     getTypeAndDisplayName(findObj, num: number) {
@@ -33,9 +35,17 @@ class EventController {
             params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
             const data = await eventDao.insert("event", params, {});
+
+            const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+                `&type=event`;
+
+            const updateEvent = eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl }, {});
+
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {
+            errorReporter(error)
             throw error;
         }
     }
@@ -301,12 +311,29 @@ class EventController {
                         }
                     },
                     // interestData: 1,
-                    isHostedByMe: {
+                    isHostedByMe: 1,
+                    shareUrl: {
                         $cond: {
-                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
-                        },
+                            if: {
+                                $and: [{
+                                    $eq: ['$isHostedByMe', true]
+                                },
+                                ]
+                            }, then: '$shareUrl',
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
+                        }
                     },
                     users: 1,
                 }
@@ -314,8 +341,30 @@ class EventController {
 
             featureAggPipe.push(interesetData);
             // featureAggPipe.push(unwind);
+            featureAggPipe.push({
+                $addFields: {
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
+                }
+            });
             featureAggPipe.push(projection)
 
+            aggPipe.push({
+                $addFields: {
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
+                }
+            })
             aggPipe.push(interesetData);
             // aggPipe.push(unwind);
             aggPipe.push(projection);
@@ -440,6 +489,13 @@ class EventController {
             })
             aggPipe.push({
                 $addFields: {
+                    isHostedByMe: {
+                        $cond: {
+                            if: { "$eq": ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        }
+                    },
                     going: {
                         "$size": {
                             "$filter": {
@@ -481,13 +537,37 @@ class EventController {
                     //         }
                     //     }
                     // },
-                    isHostedByMe: {
+                    // isHostedByMe: {
+                    //     $cond: {
+                    //         if: { "$eq": ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                    //         then: true,
+                    //         else: false
+                    //     }
+                    // },
+                    shareUrl: {
                         $cond: {
-                            if: { "$eq": ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
+                            if: {
+                                $and: [{
+                                    $eq: ['$isHostedByMe', true]
+                                },
+                                ]
+                            }, then: '$shareUrl',
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
                         }
                     },
+
                     isGoing: {
                         $cond: {
                             if: { "$eq": ["$going", 1] },
@@ -572,5 +652,52 @@ class EventController {
         }
     }
 
+    async generateLink(params, tokenData) {
+        try {
+            console.log('tokenDatatokenData', tokenData);
+
+            const tokenData1 = _.extend(params, {
+                "userId": tokenData.userId,
+                "countryCode": tokenData.countryCode,
+                "mobileNo": tokenData.mobileNo,
+                "accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+            });
+
+            // const userObject = appUtils.buildToken(tokenData1); // build token data for generating access token
+            // const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
+            // if (params.email) {
+            //     const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
+            //     const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
+
+            const url = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${params.eventId}` +
+                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+                `&type=share`
+
+            console.log('url>>>>>>>>', url);
+
+            // async forgotPasswordEmailToUser(params) {
+            //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
+            //         .compileFile({
+            //             "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
+            //                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
+            //                 `&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
+            //             "name": params.firstName + " " + params.lastName,
+            //             "year": new Date().getFullYear(),
+            //             "validity": appUtils.timeConversion(10 * 60 * 1000), // 10 mins
+            //             "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png",
+            //         });
+            //     await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+            // }
+
+            // return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
+
+            // }
+            return url;
+
+        } catch (error) {
+
+            return Promise.reject(error)
+        }
+    }
 }
 export const eventController = new EventController();

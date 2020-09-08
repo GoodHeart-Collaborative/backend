@@ -77,6 +77,37 @@ class ExpertPostController {
             aggPipe.push({
                 $unwind: '$categoryData'
             })
+            aggPipe.push({
+                $lookup: {
+                    from: 'experts',
+                    let: { eId: '$expertId' },
+                    as: 'expertData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$eId']
+                                },
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            "profilePicUrl": 1,
+                            "name": 1,
+                            "email": 1,
+                            "profession": 1,
+                            "industry": 4,
+                            "bio": 1,
+                            "experience": 1,
+                        }
+                    }]
+                }
+            })
+            aggPipe.push({
+                $unwind: '$expertData'
+            })
             const data = await expertPostDao.aggregate('expert_post', aggPipe, {})
             if (!data) {
                 return expertPostConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;

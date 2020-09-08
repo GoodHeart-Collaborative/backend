@@ -39,6 +39,14 @@ class EventController {
             params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
+
+            console.log('datadatadata', data);
+
+            const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+                `&type=event`;
+
+            const updateEvent = await eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl }, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {
@@ -121,6 +129,8 @@ class EventController {
             //         "as": "categoryData"
             //     }
             // })
+
+            // aggPipe.push({ $project: });
 
             aggPipe = [...aggPipe, ...eventDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
