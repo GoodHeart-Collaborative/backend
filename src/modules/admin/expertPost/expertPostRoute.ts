@@ -149,40 +149,37 @@ export const expertPostRoute: ServerRoute[] = [
         }
     },
 
-    // {
-    //     method: "GET",
-    //     path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}`,
-    //     handler: async (request: Request, h: ResponseToolkit) => {
-    //         const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-    //         const payload: any = request.params;
-    //         try {
-    //             appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-    //             const result = await expertPostController.getPostById(payload);
-    //             return responseHandler.sendSuccess(h, result);
-    //         } catch (error) {
-    //             return responseHandler.sendError(error);
-    //         }
-    //     },
-    //     config: {
-    //         tags: ["api", "expertPost"],
-    //         description: "admin get post detail",
-    //         auth: {
-    //             strategies: ["AdminAuth"]
-    //         },
-    //         validate: {
-    //             headers: validator.adminAuthorizationHeaderObj,
-    //             params: {
-    //                 postId: Joi.string().required()
-    //             },
-    //             // params: expertPostValidator.exprtPostId
-    //         },
-    //         failAction: appUtils.failActionFunction
-    //     },
-    //     plugins: {
-    //         "hapi-swagger": {
-    //             // payloadType: 'form',
-    //             responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-    //         }
-    //     }
-    // }
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload: AdminExpertPostRequest.IpostId = request.params;
+            try {
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                const result = await expertPostController.getPostById(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "expertPost"],
+            description: "admin get post detail",
+            auth: {
+                strategies: ["AdminAuth"]
+            },
+            validate: {
+                headers: validator.adminAuthorizationHeaderObj,
+                params: expertPostValidator.exprtPostId,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    // payloadType: 'form',
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    }
 ];
