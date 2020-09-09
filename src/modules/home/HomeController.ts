@@ -8,6 +8,7 @@ import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalD
 import { userDao } from "@modules/user/v1/UserDao";
 import { homeDao } from "./HomeDao";
 import * as config from "@config/index";
+import { errorReporter } from "@lib/flockErrorReporter";
 
 
 class HomeController {
@@ -74,16 +75,19 @@ class HomeController {
                     reoprtData1.push({ reason: val.reason, id: val.id })
                 }
             }
+            const isGratitudeFilled = await gratitudeJournalDao.checkTodaysGratitudeFilled(params, userId.tokenData)
 
             if (!params.type) {
                 return {
                     reportData: reoprtData1,
-                    homeData: responseData
+                    homeData: responseData,
+                    isGratudeJournalFilled: isGratitudeFilled
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
 
         } catch (error) {
+            errorReporter(error)
             throw error;
         }
     }

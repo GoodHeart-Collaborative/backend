@@ -5,7 +5,7 @@ import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
 import { DataSync } from "aws-sdk";
 import * as mongoose from "mongoose";
-
+import * as moment from 'moment';
 
 export class GratitudeJournalDao extends BaseDao {
 
@@ -401,6 +401,23 @@ export class GratitudeJournalDao extends BaseDao {
             })
             const myGratitude = await this.paginate('gratitude_journals', aggPipe, paginateOptions.limit, paginateOptions.page, {}, true)
             return myGratitude;
+
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async checkTodaysGratitudeFilled(params, userId) {
+        try {
+            const postAt = moment(new Date()).format('YYYY-MM-DD')
+
+            const criteria = {
+                userId: userId.userId,
+                postAt: postAt
+            };
+            // const data = await 
+            const myGratitude = await this.findAll('gratitude_journals', criteria, {}, {})
+            return myGratitude[0] ? true : false;
 
         } catch (error) {
             return Promise.reject(error);
