@@ -81,7 +81,7 @@ class HomeController {
                 return {
                     reportData: reoprtData1,
                     homeData: responseData,
-                    isGratudeJournalFilled: isGratitudeFilled
+                    isGratitudeJournalFilled: isGratitudeFilled
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
