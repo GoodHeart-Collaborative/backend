@@ -61,19 +61,26 @@ export class AdminNotificationDao extends BaseDao {
 	 */
 	async notificationList(params: ListingRequest) {
 		try {
+			const { fromDate, toDate, platform, searchKey } = params;
 			const aggPipe = [];
 
 			const match: any = {};
 
-			if (params.platform) {
-				match.platform = params.platform;
+			if (platform) {
+				match.platform = platform;
 			}
-			if (params.searchKey) {
+			if (searchKey) {
 				match.title = { "$regex": params.searchKey, "$options": "-i" };
 			}
 			console.log('matchmatch', match);
 
 			aggPipe.push({ "$match": match });
+
+			if (fromDate && toDate) { match['created'] = { $gte: fromDate, $lte: toDate }; }
+			if (fromDate && !toDate) { match['created'] = { $gte: fromDate }; }
+			if (!fromDate && toDate) { match['created'] = { $lte: toDate }; }
+
+
 
 			let sort = {};
 			if (params.sortBy && params.sortOrder) {

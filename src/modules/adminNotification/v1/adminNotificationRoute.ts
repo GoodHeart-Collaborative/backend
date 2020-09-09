@@ -111,6 +111,8 @@ export const adminNotificationRoute: ServerRoute[] = [
 						// config.CONSTANT.DEVICE_TYPE.WEB,
 						config.CONSTANT.DEVICE_TYPE.ALL
 					]).description("device OS '1'-Android, '2'-iOS, '3'-all"),
+					fromDate: Joi.number(),
+					toDate: Joi.number()
 				},
 				failAction: appUtils.failActionFunction
 			},
