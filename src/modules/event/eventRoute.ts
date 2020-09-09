@@ -17,7 +17,7 @@ export const userEventRoutes: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: UserEventRequest.AddEvent = request.payload;
             payload['userId'] = tokenData['userId'];
-            payload['userType'] = config.CONSTANT.ACCOUNT_LEVEL.ADMIN;
+            payload['userType'] = config.CONSTANT.ACCOUNT_LEVEL.USER;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.addEvent(payload);
