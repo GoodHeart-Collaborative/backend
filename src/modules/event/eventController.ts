@@ -537,13 +537,7 @@ class EventController {
                     //         }
                     //     }
                     // },
-                    // isHostedByMe: {
-                    //     $cond: {
-                    //         if: { "$eq": ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                    //         then: true,
-                    //         else: false
-                    //     }
-                    // },
+                    isHostedByMe: 1,
                     shareUrl: {
                         $cond: {
                             if: {
