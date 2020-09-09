@@ -64,14 +64,14 @@ let addEvents = Joi.object({
     price: Joi.number(),
     imageUrl: Joi.string(),
     eventUrl: Joi.string(),
-    // location: Joi.object().keys({
-    //     address: Joi.string().trim(),
-    //     type: Joi.string().required().valid(["Point"]),
-    //     coordinates: [{
-    //         longitude: Joi.number().precision(8),
-    //         latitude: Joi.number().precision(8)
-    //     }]
-    // }),
+    location: Joi.object().keys({
+        // address: Joi.string().trim(),
+        type: Joi.string().valid(["Point"]).default('Point'),
+        coordinates: [{
+            longitude: Joi.number().precision(8),
+            latitude: Joi.number().precision(8)
+        }]
+    }),
 
     // location: Joi.object().keys({
     //     type: Joi.string().required().valid(["Point"]),
@@ -129,10 +129,10 @@ let updateEvent = Joi.object({
     //     }]
     // }),
 
-    // location: Joi.object().keys({
-    //     type: Joi.string().required().valid(["Point"]),
-    //     coordinates: Joi.array().items(Joi.number())
-    // }),
+    location: Joi.object().keys({
+        type: Joi.string().valid(["Point"]).default('Point'),
+        coordinates: Joi.array().items(Joi.number())
+    }),
     address: Joi.string().trim().required(),
     eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     // Joi.number().allow([
