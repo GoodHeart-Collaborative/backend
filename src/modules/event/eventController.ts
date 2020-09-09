@@ -288,6 +288,7 @@ class EventController {
                 "$project": {
                     name: 1,
                     title: 1,
+                    location: 1,
                     privacy: 1,
                     startDate: 1,
                     endDate: 1,
@@ -582,6 +583,7 @@ class EventController {
                     goingCount: 1,
                     imageUrl: 1,
                     hostUser: 1,
+                    location: 1,
                     userType: 1,
                     price: 1,
                     eventUrl: 1,
