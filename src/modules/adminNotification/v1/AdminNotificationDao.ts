@@ -15,7 +15,7 @@ export class AdminNotificationDao extends BaseDao {
 			const query: any = {};
 			query._id = params.notificationId;
 
-			const projection = { created: 0, createdAt: 0, updatedAt: 0 };
+			const projection = { updatedAt: 0 };
 
 			const options: any = { lean: true };
 
@@ -61,8 +61,6 @@ export class AdminNotificationDao extends BaseDao {
 	 */
 	async notificationList(params: ListingRequest) {
 		try {
-			console.log('paramsparams', params);
-
 			const aggPipe = [];
 
 			const match: any = {};
