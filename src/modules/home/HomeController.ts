@@ -9,6 +9,7 @@ import { userDao } from "@modules/user/v1/UserDao";
 import { homeDao } from "./HomeDao";
 import * as config from "@config/index";
 import { errorReporter } from "@lib/flockErrorReporter";
+import { shoutoutDao } from "@modules/shoutout";
 
 
 class HomeController {
@@ -22,6 +23,7 @@ class HomeController {
             let responseData: any = {}
             let getGeneralGratitude: any = {}
             let getmemberOfTheDay: any = {}
+            let shoutOutCard: any = {};
             // let flag:boolean = true
             params.pageNo = 1
             params.limit = 10
@@ -37,11 +39,15 @@ class HomeController {
                 params.limit = 5
                 getGeneralGratitude = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
 
+                shoutOutCard = await shoutoutDao.getShoutOutForHome(params, userId.tokenData)
+
+
                 if (getGeneralGratitude && getGeneralGratitude.list && getGeneralGratitude.list.length > 0) {
                     console.log('responseDataresponseDataresponseData', responseData);
 
-                    responseData.unshift(getGeneralGratitude)
-                    responseData.unshift(getmemberOfTheDay)
+                    responseData.unshift(getGeneralGratitude);
+                    responseData.unshift(shoutOutCard);
+                    responseData.unshift(getmemberOfTheDay);
 
                     // responseData["getGratitudeJournal"] = getGeneralGratitude
                     //     if(responseData && responseData.list && responseData.list.length > 9) {

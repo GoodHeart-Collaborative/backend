@@ -212,8 +212,13 @@ export const contentRoute: ServerRoute = [
 			const query: ContentRequest.View = request.query;
 			try {
 				const result = await contentController.viewContent({ ...query });
-				// return h.view("content-page", { "content": result.data.description });
-				return responseHandler.sendSuccess(h, result);
+				console.log('resultresultresult', result);
+
+				if (!request.query.from) {
+					return responseHandler.sendSuccess(h, result);
+				} else {
+					return h.view("content-page", { "content": result.data.description });
+				}
 			} catch (error) {
 				return responseHandler.sendError(error);
 			}
@@ -230,9 +235,9 @@ export const contentRoute: ServerRoute = [
 							config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
 							config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
 							config.CONSTANT.CONTENT_TYPE.ABOUT_US
-						])
-						.required()
-						.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us")
+						]).required()
+						.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us"),
+					from: Joi.string().allow(['user', 'admin'])
 				},
 				failAction: appUtils.failActionFunction
 			},
@@ -410,5 +415,48 @@ export const contentRoute: ServerRoute = [
 				}
 			}
 		}
-	}
+	},
+
+
+	// {
+	// 	method: "GET",
+	// 	path: `${config.SERVER.API_BASE_URL}/v1/users/content/view`,
+	// 	handler: async (request: Request, h: ResponseToolkit) => {
+	// 		const query: ContentRequest.View = request.query;
+	// 		try {
+	// 			const result = await contentController.viewContent({ ...query });
+	// 			// return h.view("content-page", { "content": result.data.description });
+	// 			return responseHandler.sendSuccess(h, result);
+	// 		} catch (error) {
+	// 			return responseHandler.sendError(error);
+	// 		}
+	// 	},
+	// 	config: {
+	// 		tags: ["api", "content"],
+	// 		description: "View Content user",
+	// 		validate: {
+	// 			query: {
+	// 				type: Joi.string()
+	// 					.trim()
+	// 					.valid([
+	// 						config.CONSTANT.CONTENT_TYPE.CONTACT_US,
+	// 						config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
+	// 						config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
+	// 						config.CONSTANT.CONTENT_TYPE.ABOUT_US
+	// 					])
+	// 					.required()
+	// 					.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us")
+	// 			},
+	// 			failAction: appUtils.failActionFunction
+	// 		},
+	// 		plugins: {
+	// 			"hapi-swagger": {
+	// 				// payloadType: 'form',
+	// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+	// 			}
+	// 		}
+	// 	}
+	// },
+
+
 ];
