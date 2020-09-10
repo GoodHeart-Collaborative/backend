@@ -677,6 +677,22 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
+
+	async changePassword(params: ChangeForgotPasswordRequest | ChangePasswordRequest, tokenData: TokenData) {
+		try {
+			const query: any = {};
+			query._id = tokenData.userId;
+
+			const update = {};
+			update["$set"] = {
+				"hash": params.hash
+			};
+
+			return await this.updateOne("users", query, update, {});
+		} catch (error) {
+			throw error;
+		}
+	}
 }
 
 export const userDao = new UserDao();

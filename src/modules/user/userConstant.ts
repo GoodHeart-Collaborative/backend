@@ -112,7 +112,12 @@ export const MESSAGES = {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			message: "You cannot login since you have logged in using Social Account.",
 			type: "CANNOT_LOGIN"
-		}
+		},
+		INVALID_OLD_PASSWORD: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Old password is invalid.",
+			"type": "INVALID_OLD_PASSWORD"
+		},
 	},
 	SUCCESS: {
 		DEFAULT: {
@@ -126,6 +131,11 @@ export const MESSAGES = {
 			"message": "Password reset successfully",
 			"type": "DEFAULT",
 			data: {}
+		},
+		CHANGE_PASSWORD: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Password changed successfully.",
+			"type": "CHANGE_PASSWORD"
 		},
 		RESET_PASSWORD_SUCCESSFULLY: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,

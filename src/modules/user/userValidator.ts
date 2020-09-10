@@ -274,6 +274,19 @@ let validateProfileHome = Joi.object({
 let validateUserIdParams = Joi.object({
     userId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
 }).unknown()
+
+let changePassword = Joi.object({
+    oldPassword: Joi.string()
+        .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+        .max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
+        .required(),
+    newPassword:
+        Joi.string()
+            .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+            .max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
+            .required(),
+}).unknown()
+
 export {
     signUp,
     login,
@@ -287,5 +300,6 @@ export {
     updateProfile,
     validateUserIdParams,
     validateProfileHome,
-    updateProfileUser
+    updateProfileUser,
+    changePassword
 };

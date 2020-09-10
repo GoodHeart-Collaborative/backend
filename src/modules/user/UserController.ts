@@ -19,6 +19,8 @@ import { verifyToken } from '@lib/tokenManager';
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
 import { discoverDao } from "../discover/DiscoverDao";
 import { CONSTANT } from "@config/index";
+import { forumtopicDao } from "@modules/forum/forumDao";
+import { errorReporter } from "@lib/flockErrorReporter";
 
 var ObjectID = require('mongodb').ObjectID;
 export class UserController {
@@ -893,6 +895,7 @@ export class UserController {
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
 				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
+				// getData = await forumtopicDao.getFormPosts(query, tokenData);
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
 				if (query && query.userId && getData && getData.data && getData.data.length > 0) {
@@ -927,6 +930,29 @@ export class UserController {
 			return Promise.reject(error);
 		}
 	}
+
+	async changePassword(params, tokenData) {
+		try {
+			const step1 = await userDao.findUserById(tokenData);
+			console.log('step1step1', step1);
+
+			const oldHash = await appUtils.encryptHashPassword(params.oldPassword, step1.salt);
+			console.log('oldHasholdHash', oldHash);
+
+			if (oldHash !== step1.hash) {
+				return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
+			} else {
+				params.hash = appUtils.encryptHashPassword(params.newPassword, step1.salt);
+				const step2 = userDao.changePassword(params, tokenData);
+			}
+
+			return userConstant.MESSAGES.SUCCESS.CHANGE_PASSWORD;
+		} catch (error) {
+			errorReporter(error);
+			return Promise.reject(error);
+		}
+	}
+
 }
 
 export const userController = new UserController();
