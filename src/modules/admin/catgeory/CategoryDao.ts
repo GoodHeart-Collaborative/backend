@@ -28,7 +28,7 @@ export class CategoryDao extends BaseDao {
 
     async getCatgeoryPosts(params: CategoryRequest.IGetCategory) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId } = params;
+            const { status, sortBy, privacy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId } = params;
             const aggPipe = [];
             const match: any = {};
 
@@ -37,6 +37,10 @@ export class CategoryDao extends BaseDao {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            }
+
+            if (privacy) {
+                match.privacy = privacy;
             }
 
             if (searchTerm) {
@@ -93,8 +97,9 @@ export class CategoryDao extends BaseDao {
             })
 
             aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } })
-
+            const findCategoryData = await categoryDao.findOne('categories', { _id: params.categoryId }, {}, {})
             const data = await categoryDao.paginate('expert_post', aggPipe, limit, page, {}, true);
+            data['categoryData'] = findCategoryData;
             return data;
 
         } catch (error) {

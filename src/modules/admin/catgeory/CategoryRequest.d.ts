@@ -20,6 +20,7 @@ declare namespace CategoryRequest {
         status: string
         fromDate: Date;
         toDate: Date;
+        privacy: string;
     }
 
     export interface IUpdateCategoryStatus {

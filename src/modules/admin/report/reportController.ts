@@ -22,9 +22,9 @@ class ReportController {
                 match['postId'] = apputils.toObjectId(postId);
             }
 
-            if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
-            if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
-            if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+            if (fromDate && toDate) { match['created'] = { $gte: fromDate, $lte: toDate }; }
+            if (fromDate && !toDate) { match['created'] = { $gte: fromDate }; }
+            if (!fromDate && toDate) { match['created'] = { $lte: toDate }; }
 
 
             aggPipe.push({
@@ -49,7 +49,16 @@ class ReportController {
                             lastName: 1,
                             email: 1,
                             profilePicUrl: 1,
-                            status: 1
+                            status: 1,
+                            fullName: {
+                                $cond: {
+                                    if: {
+                                        $eq: ['$lastName', null]
+                                    },
+                                    then: '$firstName',
+                                    else: { $concat: ['$firstName', ' ', '$lastName'] }
+                                }
+                            }
                         }
                     }
                     ]
@@ -67,7 +76,8 @@ class ReportController {
                         ["$or"]: [
                             { 'userData.firstName': reg },
                             { 'userData.lastName': reg },
-                            { 'userData.email': reg }
+                            { 'userData.email': reg },
+                            { 'userData.fullName': reg }
                         ]
                     }
                 });

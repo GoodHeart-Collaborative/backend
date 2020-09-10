@@ -51,7 +51,12 @@ let GetCategoryDetailsList = Joi.object({
         config.CONSTANT.STATUS.DELETED
     ]),
     fromDate: Joi.date(),
-    toDate: Joi.date()
+    toDate: Joi.date(),
+    privacy: Joi.string().allow([
+        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+    ])
 }).unknown()
 
 let GetCategoryId = Joi.object({
