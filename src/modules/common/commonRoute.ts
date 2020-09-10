@@ -219,7 +219,7 @@ export const commonRoute: ServerRoute = [
 					fallback: Joi.string().trim().optional(),
 					token: Joi.string().trim().optional(),
 					name: Joi.string().required(),
-					type: Joi.string().trim().valid(["forgot", "login"]).optional(),
+					type: Joi.string().trim().valid(["forgot", "login", "event"]).optional(),
 					accountLevel: Joi.string().trim().valid([
 						config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
 						config.CONSTANT.ACCOUNT_LEVEL.USER

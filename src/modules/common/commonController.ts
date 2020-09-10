@@ -63,7 +63,20 @@ export class CommonController {
 					});
 
 				return responseHtml;
-			} else {
+			}
+			else if (params.type === "event") {
+				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
+					.compileFile({
+						url: params.android || "", // android scheme,
+						iosLink: params.ios || "", // ios scheme
+						fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+						title: config.SERVER.APP_NAME,
+						android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
+						ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
+					});
+				return responseHtml;
+			}
+			else {
 				let step1;
 				if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
 					step1 = await baseDao.findOne("admins", { "forgotToken": params.token }, {}, {}, {});

@@ -40,12 +40,33 @@ class EventController {
                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
                 `&type=event`;
 
-            const updateEvent = eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl }, {});
+            const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}&type=event&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}`;
+            console.log('eventUrl1eventUrl1', eventUrl1);
+
+
+            // let link = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/user/deeplink?fallback=${config.SERVER.WEB_URL}/layout/forums/post/${data._id}&url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
+
+            // async forgotPasswordEmailToUser(params) {
+            //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
+            //         .compileFile({
+            //             "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
+            //                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
+            //                 `&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
+            //             "name": params.firstName + " " + params.lastName,
+            //             "year": new Date().getFullYear(),
+            //             "validity": appUtils.timeConversion(10 * 60 * 1000), // 10 mins
+            //             "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png",
+            //         });
+            //     await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+            // }
+
+
+            const updateEvent = eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl1 }, {});
 
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {
-            errorReporter(error)
+            errorReporter(error);
             throw error;
         }
     }
