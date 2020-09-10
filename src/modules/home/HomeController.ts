@@ -39,14 +39,14 @@ class HomeController {
                 params.limit = 5
                 getGeneralGratitude = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
 
-                shoutOutCard = await shoutoutDao.getShoutOutForHome(params, userId.tokenData)
+                // shoutOutCard = await shoutoutDao.getShoutOutForHome(params, userId.tokenData)
 
 
                 if (getGeneralGratitude && getGeneralGratitude.list && getGeneralGratitude.list.length > 0) {
                     console.log('responseDataresponseDataresponseData', responseData);
 
                     responseData.unshift(getGeneralGratitude);
-                    responseData.unshift(shoutOutCard);
+                    // responseData.unshift(shoutOutCard);
                     responseData.unshift(getmemberOfTheDay);
 
                     // responseData["getGratitudeJournal"] = getGeneralGratitude
