@@ -10,6 +10,7 @@ import { imageCropUtil } from "@lib/ImageCropUtil";
 import { TemplateUtil } from "@utils/TemplateUtil";
 import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/UserDao";
+import { errorReporter } from "@lib/flockErrorReporter";
 
 export class CommonController {
 
@@ -64,18 +65,6 @@ export class CommonController {
 
 				return responseHtml;
 			}
-			else if (params.type === "event") {
-				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
-					.compileFile({
-						url: params.android || "", // android scheme,
-						iosLink: params.ios || "", // ios scheme
-						fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
-						title: config.SERVER.APP_NAME,
-						android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
-						ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
-					});
-				return responseHtml;
-			}
 			else {
 				let step1;
 				if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
@@ -115,6 +104,27 @@ export class CommonController {
 			}
 		} catch (error) {
 			throw error;
+		}
+	}
+
+
+	async deepLinkShare(params) {
+		try {
+
+			const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
+				.compileFile({
+					url: params.android || "", // android scheme,
+					iosLink: params.ios || "", // ios scheme
+					fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+					title: config.SERVER.APP_NAME,
+					android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
+					ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
+				});
+			return responseHtml;
+
+		} catch (error) {
+			errorReporter(error);
+			return Promise.reject(error);
 		}
 	}
 

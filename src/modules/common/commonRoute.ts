@@ -236,6 +236,39 @@ export const commonRoute: ServerRoute = [
 		}
 	},
 
+	{
+		method: "GET",
+		path: `${config.SERVER.API_BASE_URL}/v1/common/deepLink-share`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			try {
+				const query: DeeplinkRequest = request.query;
+				return await commonController.deepLinkShare(query);
+			} catch (error) {
+				const message = "please check in the mobile version.";
+				return h.view("please check in the mobile version.", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
+			}
+		},
+		options: {
+			tags: ["api", "common"],
+			description: "Deep Link",
+			validate: {
+				query: {
+					android: Joi.string().trim().optional(),
+					ios: Joi.string().trim().optional(),
+					fallback: Joi.string().trim().optional(),
+					type: Joi.string().trim().valid(["login", "event"]).optional(),
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: "form",
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
 
 	{
 		method: "GET",
