@@ -894,8 +894,8 @@ export class UserController {
 		try {
 			let getData: any = {}
 			if (query.type === config.CONSTANT.USER_PROFILE_TYPE.POST) {
-				getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
-				// getData = await forumtopicDao.getFormPosts(query, tokenData);
+				// getData = await gratitudeJournalDao.userProfileHome(query, tokenData);
+				getData = await forumtopicDao.getFormPostsForProfile(query, tokenData);
 			} else if (query.type === config.CONSTANT.USER_PROFILE_TYPE.DISCOVER) {
 				getData = await discoverDao.getDiscoverData(query, { userId: tokenData.userId }, true)
 				if (query && query.userId && getData && getData.data && getData.data.length > 0) {

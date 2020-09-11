@@ -31,12 +31,7 @@ class AdminFeedController {
                 match.privacy = params.privacy;
             }
 
-            if (searchTerm) {
-                match["$or"] = [
-                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
-                    { "description": { "$regex": searchTerm, "$options": "-i" } },
-                ];
-            }
+
             let sort = {};
             if (sortBy && sortOrder) {
                 if (sortBy === "title") {
@@ -78,13 +73,35 @@ class AdminFeedController {
                             lastName: 1,
                             email: 1,
                             status: 1,
+                            fullName: {
+                                $cond: {
+                                    if: {
+                                        $eq: ['$lastName', null]
+                                    },
+                                    then: '$firstName',
+                                    else: { $concat: ['$firstName', ' ', '$lastName'] }
+                                }
+                            }
                         }
                     }
-
                     ],
                     as: 'userData'
                 }
             })
+
+            if (searchTerm) {
+                const reg = new RegExp(searchTerm, 'ig');
+                aggPipe.push({
+                    $match: {
+                        ["$or"]: [
+                            { 'userData.fullName': reg },
+                            { topic: reg },
+                            { description: reg }
+                        ]
+                    }
+                });
+            }
+
             aggPipe.push({ '$unwind': { path: '$userData' } });
             if (type == config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                 const data = await gratitudeJournalDao.aggreagtionWithPaginateTotal('gratitude_journals', aggPipe, limit, page, true);
