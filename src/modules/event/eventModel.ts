@@ -3,6 +3,8 @@ import * as mongoose from "mongoose";
 import { Schema, Model, Document } from "mongoose";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
+import * as shortid from 'shortid';
+
 // import * as 
 
 export interface Ievent extends Document {
@@ -23,8 +25,8 @@ export interface Ievent extends Document {
     eventCategory: string,
     created: number;
     isFeatured: boolean;
-    eventCategoryType: string;
-    eventCategoryDisplayName: string;
+    // eventCategoryType: string;
+    eventCategoryName: string;
     eventCategoryId: string;
 }
 
@@ -32,6 +34,12 @@ const eventSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, required: true, ref: 'users', index: true },
     // categoryId:{type:Schema.Types.ObjectId },
     // name: { type: String, index: true },
+    userType: {
+        type: String, required: true, enum: [
+            config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
+            config.CONSTANT.ACCOUNT_LEVEL.USER
+        ]
+    },
     privacy: {
         type: String, enum: [
             config.CONSTANT.PRIVACY_STATUS.PRIVATE,
@@ -62,12 +70,15 @@ const eventSchema = new Schema({
     },
     imageUrl: { type: String },
     eventUrl: { type: String },
+    shareUrl: { type: String },
     allowSharing: { type: Number },
+    shortId: { type: String, default: shortid.generate, unique: true },
     goingCount: { type: Number, default: 0 },
     eventCategoryType: {
         type: String,
     },
-    eventCategoryDisplayName: { type: String },
+    eventCategoryName: { type: String },
+    // eventCategoryDisplayName: { type: String },
     eventCategoryId: { type: Schema.Types.ObjectId, required: true },
     // {
     //     type: Number, index: true, enum: [

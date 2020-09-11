@@ -15,7 +15,7 @@ export const AdminFeedRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/feed`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.query;
+            const payload: AdminFeedRequest.IGetFeed = request.query;
             payload['userId'] = tokenData['userId']
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
@@ -49,7 +49,7 @@ export const AdminFeedRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/feed/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload = {
+            const payload: AdminFeedRequest.adminUpdateFeedStatus = {
                 ...request.params,
                 ...request.payload
             }

@@ -4,8 +4,6 @@ import * as _ from "lodash";
 import fs = require("fs");
 import * as config from "@config/index";
 import * as appUtils from '../../../utils/appUtils'
-// import * as sns from "@lib/pushNotification/sns";
-import { homeDao } from "@modules/admin/Home/adminHomeDao";
 import { likeDao } from "@modules/like";
 
 class AdminLikeController {
@@ -16,9 +14,9 @@ class AdminLikeController {
      */
 
 
-    async getLikes(params) {
+    async getLikes(params: LikeRequest.AdminGetLikes) {
         try {
-            let { pageNo, limit, userId, commentId, postId } = params
+            let { pageNo, limit, commentId, postId } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
@@ -48,7 +46,9 @@ class AdminLikeController {
                         "category": 1,
                         user: {
                             _id: "$users._id",
-                            name: { $ifNull: ["$users.firstName", ""] },
+                            // name: { $ifNull: ["$users.firstName", ""] },
+                            firstName: { $ifNull: ["$users.firstName", ""] },
+                            lastName: { $ifNull: ["$users.lastName", ""] },
                             profilePicUrl: "$users.profilePicUrl",
                             profession: { $ifNull: ["$users.profession", ""] },
                             status: '$users.status'
@@ -60,40 +60,6 @@ class AdminLikeController {
             return result
         } catch (error) {
             throw error;
-        }
-    }
-
-
-    async updateStatus(params: UnicornRequest.IUpdateUnicornStatus) {
-        try {
-            const criteria = {
-                _id: params.Id
-            }
-            const dataToUpdate = {
-                ...params
-            }
-            const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED;
-
-
-        } catch (error) {
-            return Promise.reject(error);
-        }
-    }
-
-    async updatePost(params: HomeRequest.updateHome) {
-        try {
-            const criteria = {
-                _id: params.Id
-            }
-            const dataToUpdate = {
-                ...params
-            }
-            const data = await homeDao.updateOne('home', criteria, dataToUpdate, {});
-            return config.CONSTANT.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED
-
-        } catch (error) {
-            return Promise.reject(error);
         }
     }
 }

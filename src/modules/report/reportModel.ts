@@ -23,11 +23,12 @@ const reportSchema = new Schema({
             // config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
             // config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY,
             config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
-            // config.CONSTANT.HOME_TYPE.EXPERTS_POST
+            config.CONSTANT.HOME_TYPE.USER,
+            config.CONSTANT.HOME_TYPE.EXPERTS_POST
         ],
         default: config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
     },
-    prefilledComment: {
+    reportOption: {
         type: Number, enum: [
             config.CONSTANT.REPORT_MESSAGE.Explicit_photos.id,
             config.CONSTANT.REPORT_MESSAGE.Impostor_accounts.id,

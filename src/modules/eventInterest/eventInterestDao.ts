@@ -2,21 +2,7 @@
 
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
-import * as appUtils from '@utils/appUtils'
-import { DataSync } from "aws-sdk";
-import { categoryDao } from "@modules/admin/catgeory";
-import { expert } from "@modules/admin/expert/expertModel";
-import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
-import { eventDao } from "@modules/event/eventDao";
-
 export class EventInterest extends BaseDao {
-
-    async getGratitudeJournalData(params) {
-        try {
-        } catch (error) {
-            return Promise.reject(error);
-        }
-    }
 
     // async incGoingAndInterestCount(params) {
     //     try {

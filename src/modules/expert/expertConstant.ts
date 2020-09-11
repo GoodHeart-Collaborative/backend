@@ -4,18 +4,11 @@ import * as config from "@config/index";
 
 export const MESSAGES = {
     ERROR: {
-        GRATITUDE_JOURNAL_NOT_FOUND: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-            "message": "Gratitude journal not found.",
-            "type": "GRATITUDE_JOURNAL_NOT_FOUND"
-        },
-        GRATITUDE_JOURNAL_ALREADY_ADDED: (date) => {
-            return {
-                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-                "message": `Gratitude journal already added on ${date}`,
-                "type": "GRATITUDE_JOURNAL_ALREADY_ADDED"
-            }
-        },
+        // GRATITUDE_JOURNAL_NOT_FOUND: {
+        //     "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+        //     "message": "Gratitude journal not found.",
+        //     "type": "GRATITUDE_JOURNAL_NOT_FOUND"
+        // },
     },
     SUCCESS: {
         GRATITUDE_JOURNAL_DATA: (data) => {

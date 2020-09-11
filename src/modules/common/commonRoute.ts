@@ -219,11 +219,44 @@ export const commonRoute: ServerRoute = [
 					fallback: Joi.string().trim().optional(),
 					token: Joi.string().trim().optional(),
 					name: Joi.string().required(),
-					type: Joi.string().trim().valid(["forgot", "login"]).optional(),
+					type: Joi.string().trim().valid(["forgot", "login", "event"]).optional(),
 					accountLevel: Joi.string().trim().valid([
 						config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
 						config.CONSTANT.ACCOUNT_LEVEL.USER
 					]).required()
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: "form",
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+	{
+		method: "GET",
+		path: `${config.SERVER.API_BASE_URL}/v1/common/deepLink-share`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			try {
+				const query: DeeplinkRequest = request.query;
+				return await commonController.deepLinkShare(query);
+			} catch (error) {
+				const message = "please check in the mobile version.";
+				return h.view("please check in the mobile version.", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
+			}
+		},
+		options: {
+			tags: ["api", "common"],
+			description: "Deep Link",
+			validate: {
+				query: {
+					android: Joi.string().trim().optional(),
+					ios: Joi.string().trim().optional(),
+					fallback: Joi.string().trim().optional(),
+					type: Joi.string().trim().valid(["login", "event"]).optional(),
 				},
 				failAction: appUtils.failActionFunction
 			},

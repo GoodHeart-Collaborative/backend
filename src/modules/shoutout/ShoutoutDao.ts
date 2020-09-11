@@ -8,13 +8,13 @@ import { CONSTANT } from "@config/index";
 export class ShoutoutDao extends BaseDao {
     async getShoutoutData(params, userId) {
         try {
-            let { pageNo, limit  } = params
+            let { pageNo, limit } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
             userId = await appUtils.toObjectId(userId.userId)
             match["$or"] = [
-                { "membersDetail": { $elemMatch: { userId: userId }} },
+                { "membersDetail": { $elemMatch: { userId: userId } } },
                 { "userId": userId }
             ];
             aggPipe.push({ "$sort": { "_id": -1 } })
@@ -46,45 +46,49 @@ export class ShoutoutDao extends BaseDao {
                                         ]
                                     }
                                 }
-                            } ],
+                            }],
                         as: 'membersDetail.userInfo'
                     }
                 },
                 { $unwind: { path: '$membersDetail.userInfo', preserveNullAndEmptyArrays: false } })
-                aggPipe.push({
-                    $group: {
-                        _id: {
-                            _id: '$_id',
-                            description: "$description",
-                            title: "$title",
-                            createdAt: "$createdAt",
-                            isCreatedByMe: {
-                                $cond:[{ $and: [ { $eq: [ "$userId", userId ] } ]}, true, false]
-                            },
-                            user: {
-                                _id: "$userss._id",
-                                name: { $ifNull: ["$userss.firstName", ""] },
-                                profilePicUrl: "$userss.profilePicUrl",
-                                profession: { $ifNull: ["$userss.profession", ""] }
-                            }
+            aggPipe.push({
+                $group: {
+                    _id: {
+                        _id: '$_id',
+                        description: "$description",
+                        title: "$title",
+                        createdAt: "$createdAt",
+                        isCreatedByMe: {
+                            $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, true, false]
                         },
-                        membersDetail: { "$push": {
+                        user: {
+                            _id: "$userss._id",
+                            name: { $ifNull: ["$userss.firstName", ""] },
+                            profilePicUrl: "$userss.profilePicUrl",
+                            profession: { $ifNull: ["$userss.profession", ""] }
+                        }
+                    },
+                    membersDetail: {
+                        "$push": {
                             _id: "$membersDetail.userInfo._id",
                             name: { $ifNull: ["$membersDetail.userInfo.firstName", ""] },
                             profilePicUrl: "$membersDetail.userInfo.profilePicUrl",
                             profession: { $ifNull: ["$membersDetail.userInfo.profession", ""] }
-                        } }
+                        }
                     }
-                })
-                aggPipe.push({ "$project": {
+                }
+            })
+            aggPipe.push({
+                "$project": {
                     _id: "$_id._id",
                     description: "$_id.description",
                     title: "$_id.title",
                     createdAt: "$_id.createdAt",
                     isCreatedByMe: "$_id.isCreatedByMe",
                     user: "$_id.user",
-                    users: "$membersDetail"	
-                    }}); 
+                    users: "$membersDetail"
+                }
+            });
             result = await this.paginate('shoutout', aggPipe, limit, pageNo, {}, true)
             return result
         } catch (error) {
@@ -94,13 +98,13 @@ export class ShoutoutDao extends BaseDao {
 
     async getShoutoutUpdatedData(params, userId) {
         try {
-            let { pageNo, limit  } = params
+            let { pageNo, limit } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
             userId = await appUtils.toObjectId(userId.userId)
             match["$or"] = [
-                {"members": { $all: [ userId ]}, privacy:  CONSTANT.PRIVACY_STATUS.PUBLIC},
+                { "members": { $all: [userId] }, privacy: CONSTANT.PRIVACY_STATUS.PUBLIC },
                 { "senderId": userId },
                 { "receiverId": userId }
             ];
@@ -125,7 +129,8 @@ export class ShoutoutDao extends BaseDao {
             })
             aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: true } })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
-                aggPipe.push({ "$project": {
+            aggPipe.push({
+                "$project": {
                     sender: {
                         industryType: "$sender.industryType",
                         myConnection: "$sender.myConnection",
@@ -148,13 +153,14 @@ export class ShoutoutDao extends BaseDao {
                     },
                     created: 1,
                     story: {
-                    storyDuration: 6, // in seconds
-                    greetWord: 'congratulates',
-                     gif: "$gif",
-                     title: "$title",
-                     description: "$description"
-                     }	
-                    }}); 
+                        storyDuration: 6, // in seconds
+                        greetWord: 'congratulates',
+                        gif: "$gif",
+                        title: "$title",
+                        description: "$description"
+                    }
+                }
+            });
             result = await this.paginate('shoutout', aggPipe, limit, pageNo, {}, true)
             return result
         } catch (error) {
@@ -176,6 +182,91 @@ export class ShoutoutDao extends BaseDao {
         }
     }
 
+    async getShoutOutForHome(params, userId) {
+        try {
+            let { pageNo, limit } = params
+            let match: any = {};
+            let aggPipe = [];
+            let result: any = {}
+            userId = await appUtils.toObjectId(userId.userId)
+            match["$or"] = [
+                {
+                    "members": { $all: [userId] },
+                    privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
+                },
+                // { "senderId": userId },
+                { "receiverId": userId }
+            ];
+            aggPipe.push({ "$sort": { "_id": -1 } })
+            aggPipe.push({ "$match": match })
+            aggPipe.push({
+                $lookup: {
+                    "from": "users",
+                    "localField": "senderId",
+                    "foreignField": "_id",
+                    "as": "sender"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                $lookup: {
+                    "from": "users",
+                    "localField": "receiverId",
+                    "foreignField": "_id",
+                    "as": "receiver"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
+            aggPipe.push({
+                $sort: {
+                    _id: -1,
+                },
+            },
+                {
+                    $limit: 1
+                });
+            aggPipe.push({
+                "$project": {
+                    sender: {
+                        industryType: "$sender.industryType",
+                        myConnection: "$sender.myConnection",
+                        experience: "$sender.experience",
+                        // discover_status: 
+                        about: "$sender.about",
+                        name: { $ifNull: ["$sender.firstName", ""] },
+                        profilePicUrl: "$sender.profilePicUrl",
+                        profession: { $ifNull: ["$sender.profession", ""] }
+                    },
+                    receiver: {
+                        industryType: "$receiver.industryType",
+                        myConnection: "$receiver.myConnection",
+                        experience: "$receiver.experience",
+                        // discover_status: 
+                        about: "$receiver.about",
+                        name: { $ifNull: ["$receiver.firstName", ""] },
+                        profilePicUrl: "$receiver.profilePicUrl",
+                        profession: { $ifNull: ["$receiver.profession", ""] }
+                    },
+                    created: 1,
+                    story: {
+                        storyDuration: 6, // in seconds
+                        greetWord: 'congratulates',
+                        gif: "$gif",
+                        title: "$title",
+                        description: "$description"
+                    }
+                }
+            });
+            result = await this.aggregate('shoutout', aggPipe, {});
+            result[0]["type"] = config.CONSTANT.HOME_TYPE.CONGRATS;
+            return result[0];
+
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }
 
 export const shoutoutDao = new ShoutoutDao();

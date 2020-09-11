@@ -1,16 +1,14 @@
 "use strict";
 
-
 import * as _ from "lodash";
-
-import * as config from "@config/index";
-import * as eventConstant from "@modules/admin/event/eventConstant";
 import * as appUtils from "@utils/appUtils";
-import * as XLSX from 'xlsx'
 import { adminEventInterestDao } from './eventInterestDao'
 
 class EventInterestController {
-
+    /**
+     * @description admin get interests of list of users
+     * @param (AdminEventInterest.GetInterest)params 
+     */
     async getInterests(params: AdminEventInterest.GetInterest) {
         try {
             const { limit, page, type, eventId } = params;
@@ -49,7 +47,5 @@ class EventInterestController {
         }
 
     }
-
-
 }
 export const eventInterestController = new EventInterestController();

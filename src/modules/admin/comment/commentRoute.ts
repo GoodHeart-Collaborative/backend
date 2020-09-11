@@ -34,7 +34,6 @@ export const adminCommentRoute: ServerRoute[] = [
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
                 query: commentValidator.getComments,
-                // likeValidator.getLikes,
                 failAction: appUtils.failActionFunction
             },
             plugins: {

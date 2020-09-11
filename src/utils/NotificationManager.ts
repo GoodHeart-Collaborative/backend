@@ -24,6 +24,7 @@ export class NotificationManager {
 		}
 		query.status = config.CONSTANT.STATUS.ACTIVE;
 		const step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
+		console.log('step1step1step1step1', step1.length);
 
 		await step1.forEach(async (data) => {
 			const noticiationData = {
@@ -48,6 +49,7 @@ export class NotificationManager {
 			];
 			step3 = await baseDao.find("login_histories", { "userId": { "$in": users }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 			// step3 = step3.filter((data) => data.userId !== null);
+			console.log('step3step3step3step3', step3.length);
 		}
 
 		// save data to notification history

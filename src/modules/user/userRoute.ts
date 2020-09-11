@@ -446,7 +446,7 @@ export const
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const query = request.query;
 				try {
-					if(query &&  query.userId) {
+					if (query && query.userId) {
 						query["user"] = query.userId
 					}
 					const result = await userController.getProfileHome(query, tokenData);
@@ -503,4 +503,37 @@ export const
 		// 		}
 		// 	}
 		// },
+
+		{
+			method: "PATCH",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/change-password`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const payload = request.payload;
+				try {
+					const result = await userController.changePassword(payload, tokenData);
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			config: {
+				tags: ["api", "user"],
+				description: "Change Password",
+				notes: "change password",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					headers: validator.userAuthorizationHeaderObj,
+					payload: validateUser.changePassword,
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
 	];

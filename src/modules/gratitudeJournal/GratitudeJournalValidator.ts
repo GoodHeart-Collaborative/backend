@@ -18,8 +18,9 @@ let validateAddGratitudeJournal = Joi.object({
     mediaType: Joi.number().valid([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
         // config.CONSTANT.MEDIA_TYPE.VIDEO,
+        config.CONSTANT.MEDIA_TYPE.NONE,
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
-    mediaUrl: Joi.string().required(),
+    mediaUrl: Joi.string().allow('').required(),
     // thumbnailUrl: Joi.string().required(),
     postAt: Joi.string().required()
 }).unknown()
@@ -33,10 +34,11 @@ let validateEditGratitudeJournal = Joi.object({
     ]).optional(),
     mediaType: Joi.number().valid([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
-        config.CONSTANT.MEDIA_TYPE.VIDEO,
+        // config.CONSTANT.MEDIA_TYPE.VIDEO,
+        config.CONSTANT.MEDIA_TYPE.NONE,
     ]).optional(),
-    mediaUrl: Joi.string().optional(),
-    thumbnailUrl: Joi.string().optional(),
+    mediaUrl: Joi.string().allow('').optional(),
+    // thumbnailUrl: Joi.string().optional(),
     postAt: Joi.string().optional()
 }).unknown()
 

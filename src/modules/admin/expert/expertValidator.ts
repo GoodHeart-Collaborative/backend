@@ -9,16 +9,6 @@ let validaExpertAdd = Joi.object({
     email: Joi.string().email().trim().lowercase().required(),
     profession: Joi.string().required(),
     industry: Joi.number().valid([
-        // config.INDUSTRIES.Compassion_Fatigue,
-        // config.INDUSTRIES.Experts_in_Executive_Burnout,
-        // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-        // config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-        // config.INDUSTRIES.Wellness_Coaches,
-        // config.INDUSTRIES.Emergency_Services,
-        // config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-        // config.INDUSTRIES.Law_Enforcement,
-        // config.INDUSTRIES.Nonprofit,
-        // config.INDUSTRIES.Social_And_Community_Services,
         config.INDUSTRIES.NONPROFIT,
         config.INDUSTRIES.EMERGENCY_SERVICES,
         config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
@@ -63,19 +53,9 @@ let validateExpertId = Joi.object({
 let updateExpert = Joi.object({
     categoryId: Joi.array().items(Joi.string()).required(),
     name: Joi.string().required(),
-    email: Joi.string().email(),
+    // email: Joi.string().email().lowercase(),
     profession: Joi.string().required(),
     industry: Joi.number().valid([
-        // config.INDUSTRIES.Compassion_Fatigue,
-        // config.INDUSTRIES.Experts_in_Executive_Burnout,
-        // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-        // config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-        // config.INDUSTRIES.Wellness_Coaches,
-        // config.INDUSTRIES.Emergency_Services,
-        // config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-        // config.INDUSTRIES.Law_Enforcement,
-        // config.INDUSTRIES.Nonprofit,
-        // config.INDUSTRIES.Social_And_Community_Services,
         config.INDUSTRIES.NONPROFIT,
         config.INDUSTRIES.EMERGENCY_SERVICES,
         config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
@@ -86,7 +66,7 @@ let updateExpert = Joi.object({
     experience: Joi.string().valid([
         'Junior', 'Mid', 'Senior',
     ]).required(),
-    profilePicUrl: Joi.any(), // Joi.array().items(Joi.string()),
+    profilePicUrl: Joi.array().items(Joi.string()),
 })
 
 let updateStatus = Joi.object({

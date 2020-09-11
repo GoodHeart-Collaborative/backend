@@ -10,14 +10,12 @@ import * as appUtils from "@utils/appUtils";
 class GratitudeController {
 
 	/**
-	 * @function signup
-	 * @description if IS_REDIS_ENABLE set to true,
-	 * than redisClient.storeList() function saves value in redis.
+	 * @function addGratitude
+	 * @description admin add gratitude 
 	 */
     async addGratitude(params: InspirationRequest.InspirationAdd) {
         try {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
-
             const data = await gratitudeJournalDao.insert("inspiration", params, {});
             return gratitudeConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -26,6 +24,10 @@ class GratitudeController {
         }
     }
 
+    /**
+     * @function getPostById
+     * @description admin get gratitude per user 
+     */
     async getPostById(params: GratitudeRequest.IgratitudeById) {
         try {
             let aggPipe = [];
@@ -64,8 +66,6 @@ class GratitudeController {
             aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: true } })
 
             const data = await gratitudeJournalDao.aggregate('gratitude_journals', aggPipe, {})
-            console.log('datadata', data);
-
             if (!data[0]) {
                 return gratitudeConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
@@ -76,6 +76,10 @@ class GratitudeController {
         }
     }
 
+    /**
+     * @function getPosts
+     * @description admin get gratitude list as in feed 
+    */
     async getPosts(params: GratitudeRequest.IGetGratitude) {
         try {
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
@@ -120,6 +124,10 @@ class GratitudeController {
         }
     }
 
+    /**
+     * @function updateStatus
+     * @description admin update gratitude status  active, block,delete
+     */
     async updateStatus(params: GratitudeRequest.IUpdateStatus) {
         try {
             const criteria = {
@@ -143,6 +151,11 @@ class GratitudeController {
         }
     }
 
+
+    /**
+     * @function updateStatus
+     * @description admin update gratitude
+     */
     async updatePost(params: GratitudeRequest.updateGratitude) {
         try {
             const criteria = {

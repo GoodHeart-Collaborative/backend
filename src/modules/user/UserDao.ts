@@ -26,7 +26,7 @@ export class UserDao extends BaseDao {
 			// }
 			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
 
@@ -208,10 +208,10 @@ export class UserDao extends BaseDao {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
 			params["location"] = {
-				"location" : "Noida, Uttar Pradesh, India",
-				"type" : "Point",
-				"coordinates" : [ 
-					77.3619782, 
+				"location": "Noida, Uttar Pradesh, India",
+				"type": "Point",
+				"coordinates": [
+					77.3619782,
 					28.6060713
 				]
 			}
@@ -271,10 +271,10 @@ export class UserDao extends BaseDao {
 
 			// late long
 			params["location"] = {
-				"location" : "Noida, Uttar Pradesh, India",
-				"type" : "Point",
-				"coordinates" : [ 
-					77.3619782, 
+				"location": "Noida, Uttar Pradesh, India",
+				"type": "Point",
+				"coordinates": [
+					77.3619782,
 					28.6060713
 				]
 			}
@@ -633,50 +633,66 @@ export class UserDao extends BaseDao {
 
 	async pullMember(params) {
 		try {
-			let query:any = {}
+			let query: any = {}
 			query = {
 				_id: await appUtils.toObjectId(params.userId)
 			}
-			let update:any = {}
+			let update: any = {}
 			update["$pull"] = {
 				members: await appUtils.toObjectId(params.followerId)
 			}
-			update["$inc"] = {myConnection: -1}
+			update["$inc"] = { myConnection: -1 }
 			return await this.update('users', query, update, {});
-		} catch(error) {
+		} catch (error) {
 			throw error
 		}
 	}
 	async pushMember(params) {
 		try {
-			let query:any = {}
+			let query: any = {}
 			query = {
 				_id: await appUtils.toObjectId(params.userId)
 			}
-			let update:any = {}
+			let update: any = {}
 			update["$push"] = {
 				members: await appUtils.toObjectId(params.followerId)
 			}
-			update["$inc"] = {myConnection: 1}
+			update["$inc"] = { myConnection: 1 }
 			return await this.update('users', query, update, {});
-		} catch(error) {
+		} catch (error) {
 			throw error
 		}
 	}
 
-	    async getMembers(params) {
-        try {
-            let {userId, followerId} = params
-            let query:any = {}
-            query = {
-                _id: await appUtils.toObjectId(userId),
-                "members": { $all: [ await appUtils.toObjectId(followerId) ]}
-            }
-            return await this.findOne('users', query, {},{});
-        } catch (error) {
-            throw error;
-        }
-    }
+	async getMembers(params) {
+		try {
+			let { userId, followerId } = params
+			let query: any = {}
+			query = {
+				_id: await appUtils.toObjectId(userId),
+				"members": { $all: [await appUtils.toObjectId(followerId)] }
+			}
+			return await this.findOne('users', query, {}, {});
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async changePassword(params: ChangeForgotPasswordRequest | ChangePasswordRequest, tokenData: TokenData) {
+		try {
+			const query: any = {};
+			query._id = tokenData.userId;
+
+			const update = {};
+			update["$set"] = {
+				"hash": params.hash
+			};
+
+			return await this.updateOne("users", query, update, {});
+		} catch (error) {
+			throw error;
+		}
+	}
 }
 
 export const userDao = new UserDao();

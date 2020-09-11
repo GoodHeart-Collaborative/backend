@@ -26,6 +26,7 @@ export interface IExpert extends Document {
     mediaUrl: string;
     thumbnailUrl: string;
     created: number;
+    reportCount: number;
 }
 
 
@@ -76,7 +77,7 @@ const expertPostSchema = new Schema({
     mediaUrl: { type: String },
     thumbnailUrl: { type: String },
     created: { type: Number },
-
+    reportCount: { type: Number, default: 0 }
 }, {
     versionKey: false,
     timestamps: true

@@ -17,12 +17,12 @@ class ExpertController {
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
         return result[0];
     }
 	/**
 	 * @function addExpert
 	 * @description admin add experts
+     * @param (AdminExpertRequest.expertAdd)
 	 */
     async addExpert(params: AdminExpertRequest.expertAdd) {
         try {
@@ -30,7 +30,7 @@ class ExpertController {
 
             const findEmail = await expertDao.findOne('expert', { email: params.email }, {}, {});
             if (findEmail) {
-                return expertConstant.MESSAGES.SUCCESS.ALREADY_EXIST;
+                return Promise.reject(expertConstant.MESSAGES.ERROR.ALREADY_EXIST);
             }
             const data = await expertDao.insert("expert", params, {});
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
@@ -42,7 +42,7 @@ class ExpertController {
 
 	/**
 	 * @function getExpert
-	 * @description admin get xperts and seacch and filter on the there [] category choose
+	 * @description admin get xperts and search and filter on the there [] category choose
 	 */
 
     async getExpert(params: AdminExpertRequest.getExpert) {
@@ -109,8 +109,6 @@ class ExpertController {
                     "as": "categoryData"
                 }
             })
-            console.log('>>>>>>>>>>>>>.');
-
             aggPipe.push({
                 $lookup: {
                     from: 'expert_posts',
@@ -139,9 +137,8 @@ class ExpertController {
                 }
             })
             aggPipe.push({ $project: { postData: 0 } })
-
+            aggPipe = [...aggPipe, ...expertDao.addSkipLimit(limit, page)]
             const data = await expertDao.aggreagtionWithPaginateTotal('expert', aggPipe, limit, page, true)
-            console.log('datadatadata', data);
             return data;
 
         } catch (error) {
@@ -159,7 +156,7 @@ class ExpertController {
             const criteria = {
                 _id: params.expertId,
             };
-            params['profilePicUrl'] = [params.profilePicUrl]
+            // params['profilePicUrl'] = [params.profilePicUrl]
             const dataToUpdate = {
                 ...params
             }
@@ -228,12 +225,6 @@ class ExpertController {
                 },
             });
 
-            // aggPipe.push({
-            //     $unwind: {
-            //         path: '$categoryData',
-            //         preserveNullAndEmptyArrays: true,
-            //     }
-            // })
             const data = await expertDao.aggregate('expert', aggPipe, {});
 
             return data;

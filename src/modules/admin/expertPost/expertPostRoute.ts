@@ -26,7 +26,7 @@ export const expertPostRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "expert"],
+            tags: ["api", "expertPost"],
             description: "Add expert post",
             auth: {
                 strategies: ["AdminAuth"]
@@ -60,7 +60,7 @@ export const expertPostRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "expert"],
+            tags: ["api", "expertPost"],
             description: "Add expert post",
             auth: {
                 strategies: ["AdminAuth"]
@@ -83,10 +83,10 @@ export const expertPostRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = {
+            const payload: any = {
                 ...request.payload,
                 ...request.params
-            }
+            };
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertPostController.updatePost(payload);
@@ -96,14 +96,14 @@ export const expertPostRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "expert"],
+            tags: ["api", "expertPost"],
             description: "update expert post",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: expertPostValidator.adminUpdateExpertPostId,
+                params: expertPostValidator.exprtPostId,
                 payload: expertPostValidator.adminUpdateExpertPost,
                 failAction: appUtils.failActionFunction
             },
@@ -130,7 +130,7 @@ export const expertPostRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "expert"],
+            tags: ["api", "expertPost"],
             description: "update expert post",
             auth: {
                 strategies: ["AdminAuth"]
@@ -154,7 +154,7 @@ export const expertPostRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/expertpost/{postId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload = request.params;
+            const payload: AdminExpertPostRequest.IpostId = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await expertPostController.getPostById(payload);
@@ -164,16 +164,14 @@ export const expertPostRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "expert"],
+            tags: ["api", "expertPost"],
             description: "admin get post detail",
             auth: {
                 strategies: ["AdminAuth"]
             },
             validate: {
                 headers: validator.adminAuthorizationHeaderObj,
-                params: {
-                    postId: Joi.string().required()
-                },
+                params: expertPostValidator.exprtPostId,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -183,6 +181,5 @@ export const expertPostRoute: ServerRoute[] = [
                 }
             }
         }
-    },
-
+    }
 ];

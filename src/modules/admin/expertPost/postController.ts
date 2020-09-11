@@ -15,12 +15,10 @@ class ExpertPostController {
     getTypeAndDisplayName(findObj, num: number) {
         const obj = findObj;
         const data = Object.values(obj);
-        console.log('datadatadatadatadatadatadatadata', data);
 
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
 
         return result[0];
     }
@@ -33,7 +31,6 @@ class ExpertPostController {
         try {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
             const result = this.getTypeAndDisplayName(config.CONSTANT.EXPERT_CONTENT_TYPE, params['contentId'])
-            console.log('data1data1data1data1data1', result);
             params['contentType'] = result['TYPE']
             params['contentDisplayName'] = result['DISPLAY_NAME'];
 
@@ -79,6 +76,37 @@ class ExpertPostController {
             })
             aggPipe.push({
                 $unwind: '$categoryData'
+            })
+            aggPipe.push({
+                $lookup: {
+                    from: 'experts',
+                    let: { eId: '$expertId' },
+                    as: 'expertData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$eId']
+                                },
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            "profilePicUrl": 1,
+                            "name": 1,
+                            "email": 1,
+                            "profession": 1,
+                            "industry": 4,
+                            "bio": 1,
+                            "experience": 1,
+                        }
+                    }]
+                }
+            })
+            aggPipe.push({
+                $unwind: '$expertData'
             })
             const data = await expertPostDao.aggregate('expert_post', aggPipe, {})
             if (!data) {
@@ -170,15 +198,6 @@ class ExpertPostController {
                                         {
                                             $eq: ['$_id', '$$cId']
                                         },
-                                        // {
-                                        //     $eq: ['$contentId', contentId]
-                                        // },
-                                        // {
-                                        //     $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
-                                        // },
-                                        // {
-                                        //     $eq: ['expertId', appUtils.toObjectId(expertId)]
-                                        // }
                                     ]
                                 }
                             }
@@ -188,13 +207,10 @@ class ExpertPostController {
                 })
                 // aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } })
             }
-            console.log('aggPipeaggPipe', JSON.stringify(aggPipe));
 
             // aggPipe.push({ $match: query })
             aggPipe = [...aggPipe, ...await expertDao.addSkipLimit(limit, pageNo)];
             if (!contentId) {
-                console.log('5f193411e8e62430c62cada55f193411e8e62430c62cada5');
-
                 // aggPipe.push(query)
                 return await expertDao.aggregate('expert', aggPipe, {},)
             }
@@ -274,8 +290,6 @@ class ExpertPostController {
 
     async updatePost(params: AdminExpertPostRequest.adminUpdateExpertPost) {
         try {
-            console.log('paramsparamsparams', params);
-
             const criteria = {
                 _id: params.postId
             };
@@ -284,7 +298,7 @@ class ExpertPostController {
             };
             const data = await expertPostDao.findOneAndUpdate('expert_post', criteria, datatoUpdate, { new: true })
             if (data) {
-                expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
             }
             return;
         } catch (error) {

@@ -46,13 +46,14 @@ export interface IUser extends Document {
 	about: string;
 	userPrivacy: string;
 	loginToken: string;
-	createdAt: number;
+	// createdAt: number;
 	countMember: number;
 	memberCreatedAt: Date;
 	isMemberOfDay: boolean;
 	likeCount: number,
 	commentCount: number,
 	adminStatus: string;
+	reportCount: number;
 	// isAdminRejected: boolean;
 	// isAdminVerified: boolean;
 }
@@ -154,7 +155,7 @@ const userSchema = new Schema({
 	countMember: { type: Number, default: 0 },
 	memberCreatedAt: { type: Date },
 	isMemberOfDay: { type: Boolean, default: false },
-    members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
+	members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
 	about: { type: String },
 	userPrivacy: {
 
@@ -167,8 +168,9 @@ const userSchema = new Schema({
 	location: geoSchema,
 	likeCount: { type: Number, default: 0 },
 	commentCount: { type: Number, default: 0 },
-	createdAt: { type: Date },
-	updatedAt: { type: Date }
+	// createdAt: { type: Date },
+	// updatedAt: { type: Date },
+	reportCount: { type: Number, default: 0 }
 }, {
 	versionKey: false,
 	timestamps: true

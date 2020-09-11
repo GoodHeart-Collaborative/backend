@@ -8,27 +8,30 @@ import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalD
 import { userDao } from "@modules/user/v1/UserDao";
 import { homeDao } from "./HomeDao";
 import * as config from "@config/index";
+import { errorReporter } from "@lib/flockErrorReporter";
+import { shoutoutDao } from "@modules/shoutout";
 
 
 class HomeController {
 
     /**
-     * @function Home
-     * @description if IS_REDIS_ENABLE set to true,
-     * than redisClient.storeList() function saves value in redis.
+     * @function getHomeData
+     * @description app home screen 1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude"
      */
-    async getHomeData(params, userId) {
+    async getHomeData(params: userHomeRequest.Igethome, userId) {
         try {
             let responseData: any = {}
             let getGeneralGratitude: any = {}
             let getmemberOfTheDay: any = {}
+            let shoutOutCard: any = {};
             // let flag:boolean = true
             params.pageNo = 1
             params.limit = 10
             if (!params.type) {
                 getmemberOfTheDay = await userDao.getMemberOfDays(userId.tokenData)
+                responseData = await homeDao.getHomeData(params, userId.tokenData);
+                shoutOutCard = await shoutoutDao.getShoutOutForHome(params, userId.tokenData);
 
-                responseData = await homeDao.getHomeData(params, userId.tokenData)
                 // params.limit = 5
                 // if(responseData && responseData.list && responseData.list.length > 0) {
                 //     params["startDate"] = responseData.list[0].createdAt
@@ -37,11 +40,16 @@ class HomeController {
                 params.limit = 5
                 getGeneralGratitude = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
 
+
+
                 if (getGeneralGratitude && getGeneralGratitude.list && getGeneralGratitude.list.length > 0) {
                     console.log('responseDataresponseDataresponseData', responseData);
 
-                    responseData.unshift(getGeneralGratitude)
-                    responseData.unshift(getmemberOfTheDay)
+                    responseData.unshift(getGeneralGratitude);
+                    if (getGeneralGratitude) {
+                        responseData.unshift(shoutOutCard);
+                    }
+                    responseData.unshift(getmemberOfTheDay);
 
                     // responseData["getGratitudeJournal"] = getGeneralGratitude
                     //     if(responseData && responseData.list && responseData.list.length > 9) {
@@ -75,16 +83,19 @@ class HomeController {
                     reoprtData1.push({ reason: val.reason, id: val.id })
                 }
             }
+            const isGratitudeFilled = await gratitudeJournalDao.checkTodaysGratitudeFilled(params, userId.tokenData)
 
             if (!params.type) {
                 return {
                     reportData: reoprtData1,
-                    homeData: responseData
+                    homeData: responseData,
+                    isGratitudeJournalFilled: isGratitudeFilled
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
 
         } catch (error) {
+            errorReporter(error)
             throw error;
         }
     }

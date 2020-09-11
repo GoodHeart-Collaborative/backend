@@ -8,10 +8,10 @@ import * as eventConstant from "@modules/admin/event/eventConstant";
 import { eventDao } from "@modules/event/eventDao";
 import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
-import * as XLSX from 'xlsx'
-import * as moment from 'moment';
 import * as weekend from '@utils/dateManager'
 import { categoryDao } from "@modules/admin/catgeory";
+import * as tokenManager from '@lib/tokenManager';
+import { errorReporter } from "@lib/flockErrorReporter";
 class EventController {
 
     getTypeAndDisplayName(findObj, num: number) {
@@ -20,44 +20,77 @@ class EventController {
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
         return result[0];
     }
 	/**
-	 * @function add event
+	 * @function addEvent
 	 * @description user add event
-	 */
+     * @params (UserEventRequest.AddEvent)
+     */
     async addEvent(params: UserEventRequest.AddEvent) {
         try {
-
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-            // console.log('data1data1data1data1data1', result);
-            params.eventCategoryType = categoryData['name'];
-            params.eventCategoryDisplayName = categoryData['title'];
-            // params.created = new Date().getTime();
-
+            // params.eventCategoryType = categoryData['name'];
+            params.eventCategoryName = categoryData['title'];
+            params.created = new Date().getTime();
             const data = await eventDao.insert("event", params, {});
 
-            // const updateInterest = await eventInterestDao
+            // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
+
+
+            // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
+
+            // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}`;
+            // console.log('eventUrl1eventUrl1', eventUrl1);
+
+            // const eventUrl1 = `${config.SERVER.APP_URL}?type=event&eventId=5f5903250711f37999791887`
+
+            const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_STORE_LINK}?type=event&eventId=${data._id}`
+            // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
+
+
+
+            // async forgotPasswordEmailToUser(params) {
+            //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
+            //         .compileFile({
+            //             "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
+            //                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
+            //                 `&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
+            //             "name": params.firstName + " " + params.lastName,
+            //             "year": new Date().getFullYear(),
+            //             "validity": appUtils.timeConversion(10 * 60 * 1000), // 10 mins
+            //             "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png",
+            //         });
+            //     await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+            // }
+
+
+            const updateEvent = eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl1 }, {});
 
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {
+            errorReporter(error);
             throw error;
         }
     }
 
+    /**
+	 * @function calenderEvent
+	 * @description calender for the event user hosted and user intereseted in event default respinse is both going and interested
+     * @params (UserEventRequest.userGetEvent)
+     */
     async calenderEvent(params: UserEventRequest.userGetEvent, tokenData) {
         try {
-            console.log('tokenData', tokenData.userId);
             const { page, limit } = params;
             const paginateOptions = {
                 limit: limit || 10,
                 page: page || 1,
             }
-
-            let noTypeAggPipeandTypeInterest = [];
+            let defaultAndInterestEveent = [];
             let typeAggPipe = [];
             let match: any = {};
 
@@ -70,13 +103,25 @@ class EventController {
             // }
             typeAggPipe.push({ $match: match })
             if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                noTypeAggPipeandTypeInterest.push({
+                defaultAndInterestEveent.push({
                     $match: {
                         userId: appUtils.toObjectId(tokenData.userId),
                         type: config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
-                })
-                noTypeAggPipeandTypeInterest.push({
+                });
+                // defaultAndInterestEveent.push({
+                //     $addFields: {
+                //         isHostedByMe: {
+                //             $cond: {
+                //                 if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                //                 then: true,
+                //                 else: false
+                //             },
+                //         },
+                //     }
+                // })
+
+                defaultAndInterestEveent.push({
                     $lookup: {
                         from: 'events',
                         let: { eId: '$eventId', uId: appUtils.toObjectId(tokenData.userId) },
@@ -93,123 +138,104 @@ class EventController {
                         {
                             $addFields: {
                                 isInterest: true,
-                                // isHostedByMe: {
-                                //     $cond: {
-                                //         if: {
-                                //             $eq: ['$userId', '$$uId'],
-                                //             then: true,
-                                //             else: false
-                                //         }
-                                //     }
-                                // }
+                                isHostedByMe: {
+                                    $cond: {
+                                        if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                                        then: true,
+                                        else: false
+                                    },
+                                },
                             }
                         }
                         ],
                     }
                 })
-                noTypeAggPipeandTypeInterest.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
+                defaultAndInterestEveent.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
+
+                defaultAndInterestEveent.push({
+                    $replaceRoot: { newRoot: "$eventData" }
+                })
+
+                defaultAndInterestEveent.push({
+                    $project: {
+                        type: 0,
+                        eventId: 0,
+                        // "userId": 0,
+                        created: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        location: 0,
+                    }
+                })
             }
 
-            noTypeAggPipeandTypeInterest.push({
-                $replaceRoot: { newRoot: "$eventData" }
-            }
-            )
-
-            noTypeAggPipeandTypeInterest.push({
-                $project: {
-                    type: 0,
-                    eventId: 0,
-                    // "userId": 0,
-                    created: 0,
-                    createdAt: 0,
-                    updatedAt: 0,
-                    location: 0,
-                }
-            })
-            // aggPipe.push({ $match: match })
-            // noTypeAggPipe.push({
-            //     $project: {
-            //         status: 0,
-            //         createdAt: 0,
-            //         updatedAt: 0,
-            //         location: 0,
-            //         eventId: 0,
-            //         'eventData.location': 0
-            //     }
-            // })
             typeAggPipe.push({
                 $project: {
                     _id: 1,
-                    "isFeatured": 1,
-                    "price": 1,
-                    "goingCount": 1,
-                    "interestCount": 1,
-                    "startDate": 1,
-                    "endDate": 1,
-                    "allowSharing": 1,
-                    "imageUrl": 1,
-                    "address": 1,
-                    "eventCategoryId": 1,
-                    "description": 1,
-                    "title": 1,
-                    "eventUrl": 1,
-                    "userId": 1,
-                    isInterest: ''
-                    // isHostedByMe: {
-                    //     $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
-                    //     then: true,
-                    //     else: false
-                    // }
+                    isFeatured: 1,
+                    price: 1,
+                    goingCount: 1,
+                    interestCount: 1,
+                    startDate: 1,
+                    endDate: 1,
+                    allowSharing: 1,
+                    imageUrl: 1,
+                    address: 1,
+                    eventCategoryId: 1,
+                    eventCategoryName: 1,
+                    description: 1,
+                    title: 1,
+                    eventUrl: 1,
+                    userId: 1,
+                    isInterest: '',
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
                 }
-            })
-            noTypeAggPipeandTypeInterest.push({ $sort: { startDate: -1 } });
-            console.log('aggPipeaggPipeaggPipe', noTypeAggPipeandTypeInterest);
+            });
+
+            defaultAndInterestEveent.push({ $sort: { startDate: -1 } });
 
             typeAggPipe = [...typeAggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
-            noTypeAggPipeandTypeInterest = [...noTypeAggPipeandTypeInterest, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            defaultAndInterestEveent = [...defaultAndInterestEveent, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
             let myInterestedEventslist, myHostedEventslist;
             if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', noTypeAggPipeandTypeInterest, paginateOptions.limit, paginateOptions.page, true)
-                // console.log('datadatadatadata', myInterestedEventslist);
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+                return { myInterestedEventslist }
+
             }
             else if (params.type == config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
                 myHostedEventslist = await eventInterestDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
-                // console.log('myHostedEventslist', myHostedEventslist);
-            }
-            else {
-                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', noTypeAggPipeandTypeInterest, paginateOptions.limit, paginateOptions.page, true)
-                console.log('myInterestedEventslistmyInterestedEventslist', myInterestedEventslist);
-
-                myHostedEventslist = await eventDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
-                console.log('datadatadatadata', myHostedEventslist);
-            }
-
-
-            if (params.type === config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
                 return { myHostedEventslist }
             }
-            else if (params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                return { myInterestedEventslist }
-            }
             else {
+                myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+                myHostedEventslist = await eventDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
                 return {
                     myInterestedEventslist,
                     myHostedEventslist
                 }
             }
-            // return MyInterestedEventslist;
 
         } catch (error) {
             return Promise.reject(error);
         }
     }
 
-    async getEvent(params, tokenData) {
-        try {
-            console.log('JKKKKKKKKKKKKKKKKKKKK', tokenData['userId']);
+    /**
+     * @function calenderEvent
+     * @description event home screen nearest location by the lat lng
+     * @params (UserEventRequest.userGetEvent)
+     */
 
+    async getEvent(params: UserEventRequest.getEvents, tokenData) {
+        try {
             const { longitude, latitude, distance, eventCategoryId, date, searchKey } = params;
             let pickupLocation = [];
             let aggPipe = [];
@@ -303,12 +329,14 @@ class EventController {
                 "$project": {
                     name: 1,
                     title: 1,
+                    location: 1,
                     privacy: 1,
                     startDate: 1,
                     endDate: 1,
                     price: 1,
                     url: 1,
                     imageUrl: 1,
+                    userType: 1,
                     eventUrl: 1,
                     allowSharing: 1,
                     isFeatured: 1,
@@ -317,6 +345,8 @@ class EventController {
                     goingCount: 1,
                     interestCount: 1,
                     eventCategory: 1,
+                    eventCategoryId: 1,
+                    eventCategoryName: 1,
                     created: 1,
                     "isInterest": {
                         $cond: {
@@ -324,12 +354,29 @@ class EventController {
                         }
                     },
                     // interestData: 1,
-                    isHostedByMe: {
+                    isHostedByMe: 1,
+                    shareUrl: {
                         $cond: {
-                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
-                        },
+                            if: {
+                                $and: [{
+                                    $eq: ['$isHostedByMe', true]
+                                },
+                                ]
+                            }, then: '$shareUrl',
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
+                        }
                     },
                     users: 1,
                 }
@@ -337,9 +384,30 @@ class EventController {
 
             featureAggPipe.push(interesetData);
             // featureAggPipe.push(unwind);
-            console.log('featureAggPipefeatureAggPipefeatureAggPipe', featureAggPipe);
+            featureAggPipe.push({
+                $addFields: {
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
+                }
+            });
             featureAggPipe.push(projection)
 
+            aggPipe.push({
+                $addFields: {
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
+                }
+            })
             aggPipe.push(interesetData);
             // aggPipe.push(unwind);
             aggPipe.push(projection);
@@ -357,12 +425,8 @@ class EventController {
             //         }
             //     }
             // ];
-            // console.log('getEventCategorygetEventCategory', getEventCategory);
             // const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
             // eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
-            // // eventCategoryListName[0][;
-
-            // console.log('eventCategoryList1eventCategoryList1', eventCategoryListName);
 
             const featuredEvent = await eventDao.aggregate('event', featureAggPipe, {})
             const event = await eventDao.aggregate('event', aggPipe, {});
@@ -392,19 +456,26 @@ class EventController {
         }
     }
 
-    async getEventDetail(payload, tokenData) {
+    /**
+     * @function getEventDetail
+     * @description user get the event detail
+     * @param (UserEventRequest.getEventDetail) 
+     * @param tokenData 
+     */
+    async getEventDetail(payload: UserEventRequest.getEventDetail, tokenData) {
         try {
-            console.log('payloadpayload', payload);
-
             const match: any = {};
             let aggPipe = [];
 
             match['_id'] = appUtils.toObjectId(payload.eventId)
             aggPipe.push({ $match: match })
+
+
             aggPipe.push({
                 $lookup: {
                     from: 'users',
                     let: { uId: '$userId' },
+                    as: 'hostUser',
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -416,23 +487,50 @@ class EventController {
                                 }]
                             }
                         }
-                    }, {
-                        $project: {
-                            _id: 1,
-                            industryType: "$industryType",
-                            myConnection: "$myConnection",
-                            experience: "$experience",
-                            discover_status: '1',//{ $ifNull: ["$DiscoverData.discover_status", 4] },
-                            name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
-                            profilePicUrl: "$profilePicUrl",
-                            profession: { $ifNull: ["$profession", ""] },
-                            about: { $ifNull: ["$about", ""] }
-                        }
-                    }],
-                    as: 'hostUser'
+                    }]
                 }
             })
             aggPipe.push({ '$unwind': { path: '$hostUser', preserveNullAndEmptyArrays: true } });
+
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$userId", "user": appUtils.toObjectId(tokenData.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$$users"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+
 
 
             aggPipe.push({
@@ -464,6 +562,13 @@ class EventController {
             })
             aggPipe.push({
                 $addFields: {
+                    isHostedByMe: {
+                        $cond: {
+                            if: { "$eq": ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        }
+                    },
                     going: {
                         "$size": {
                             "$filter": {
@@ -505,13 +610,31 @@ class EventController {
                     //         }
                     //     }
                     // },
-                    isHostedByMe: {
+                    isHostedByMe: 1,
+                    shareUrl: {
                         $cond: {
-                            if: { "$eq": ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
+                            if: {
+                                $and: [{
+                                    $eq: ['$isHostedByMe', true]
+                                },
+                                ]
+                            }, then: '$shareUrl',
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
                         }
                     },
+
                     isGoing: {
                         $cond: {
                             if: { "$eq": ["$going", 1] },
@@ -527,57 +650,52 @@ class EventController {
                         }
                     },
                     interestCount: 1,
+                    startDate: 1,
                     goingCount: 1,
                     imageUrl: 1,
-                    hostUser: 1,
+                    location: 1,
+                    userType: 1,
                     price: 1,
+                    eventUrl: 1,
                     isFeatured: 1,
                     endDate: 1,
                     allowSharing: 1,
                     description: 1,
                     eventCategory: 1,
+                    eventCategoryId: 1,
+                    eventCategoryName: 1,
                     title: 1,
                     address: 1,
-                    friends: []
+                    friends: [],
+                    // hostUser: 1,
+                    hostUser: {
+                        _id: 1,
+                        industryType: "$hostUser.industryType",
+                        myConnection: "$hostUser.myConnection",
+                        experience: "$hostUser.experience",
+                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                        name: { $concat: [{ $ifNull: ["$hostUser.firstName", ""] }, " ", { $ifNull: ["$hostUser.lastName", ""] }] },
+                        profilePicUrl: "$hostUser.profilePicUrl",
+                        profession: { $ifNull: ["$hostUser.profession", ""] },
+                        about: { $ifNull: ["$hostUser.about", ""] }
+                    }
                 }
             })
 
-            // aggPipe.push({
-            //     $unwind: {
-            //         path: '$interestData'
-            //     }
-            // })
-            // aggPipe.push({
-            //     $group: {
-            //         _id: null,
-            //         interestCount: { $first: '$interestCount' },
-            //         interestData: { $first: '$interestData' },
-            //         // interestData1: { $last: '$interestData' },
-            //         // goingCount: { $first: '$goingCount' },
-            //         // users: { $first: '$users' },
-            //         // title: { $first: '$title' },
-            //         // "price": { first: '$price' },
-            //         "imageUrl": { $first: '$imageUrl' },
-            //         // "eventCategory": { $first: '$eventCategory' },
-            //         // "eventUrl": { $first: '$eventUrl' },
-            //         // title: { $first : "$title" },
-            //         // isPostLater: { $first : "$isPostLater" },
-            //         // postedAt: { $first : "$postedAt" },
-            //         createdAt: { $first: "$createdAt" }
-            //     }
-            // })
-
             const data = await eventDao.aggregate('event', aggPipe, {})
-            console.log('datadata', data);
             return data[0] ? data[0] : {};
-
         } catch (error) {
             return Promise.reject(error)
         }
     }
 
-
-    async getEventList(params, tokenData) {
+    /**
+     * @function getEventList
+     * @param params (UserEventRequest.getEventList)
+     * @param tokenData 
+     * @description eventList on viewAll featured and normal event
+     */
+    async getEventList(params: UserEventRequest.getEventList, tokenData) {
         try {
             const data = await eventDao.getEventList(params, tokenData);
             return data;
@@ -586,13 +704,80 @@ class EventController {
         }
     }
 
-    async updateEvent(payload) {
-        try {
 
+    /**
+     * @function updateEvent
+     * @param params (UserEventRequest.getEventList)
+     * @param tokenData 
+     * @description eventList on viewAll featured and normal event
+     */
+
+    async updateEvent(params: UserEventRequest.updateEvent, tokenData) {
+        try {
+            const criteria = {
+                _id: params.eventId,
+                userId: tokenData.userId
+            }
+            const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
+            // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
+            params['eventCategoryName'] = categoryData['title'];
+            const updateEvent = await eventDao.findOneAndUpdate('event', criteria, params, { new: true });
+            if (!updateEvent) {
+                return Promise.reject(eventConstant.MESSAGES.ERROR.EVENT_NOT_FOUND);
+            }
+            const getEventDetail = await eventController.getEventDetail({ eventId: updateEvent._id }, tokenData)
+            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATE(getEventDetail);
         } catch (error) {
             return Promise.reject(error);
         }
     }
 
+    async generateLink(params, tokenData) {
+        try {
+            console.log('tokenDatatokenData', tokenData);
+
+            const tokenData1 = _.extend(params, {
+                "userId": tokenData.userId,
+                "countryCode": tokenData.countryCode,
+                "mobileNo": tokenData.mobileNo,
+                "accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+            });
+
+            // const userObject = appUtils.buildToken(tokenData1); // build token data for generating access token
+            // const accessToken = await tokenManager.generateUserToken({ type: "FORGOT_PASSWORD", object: userObject });
+            // if (params.email) {
+            //     const step2 = userDao.addForgotToken({ "userId": step1._id, "forgotToken": accessToken }); // add forgot token
+            //     const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
+
+            const url = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${params.eventId}` +
+                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+                `&type=share`
+
+            console.log('url>>>>>>>>', url);
+
+            // async forgotPasswordEmailToUser(params) {
+            //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
+            //         .compileFile({
+            //             "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
+            //                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
+            //                 `&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
+            //             "name": params.firstName + " " + params.lastName,
+            //             "year": new Date().getFullYear(),
+            //             "validity": appUtils.timeConversion(10 * 60 * 1000), // 10 mins
+            //             "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png",
+            //         });
+            //     await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+            // }
+
+            // return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
+
+            // }
+            return url;
+
+        } catch (error) {
+
+            return Promise.reject(error)
+        }
+    }
 }
 export const eventController = new EventController();

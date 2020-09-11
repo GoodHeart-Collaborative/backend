@@ -9,6 +9,11 @@ export const MESSAGES = {
             "message": "User with this email is already registered.",
             "type": "EMAIL_ALREADY_EXIST"
         },
+        EVENT_NOT_FOUND: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Event Not fount",
+            "type": "EMAIL_ALREADY_EXIST"
+        },
     },
     SUCCESS: {
         DEFAULT: {
@@ -44,10 +49,13 @@ export const MESSAGES = {
             "message": "Event has been active successfully",
             "type": "DEFAULT"
         },
-        SUCCESSFULLY_UPDATE: {
-            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Event has been updated successfully",
-            "type": "DEFAULT"
+        SUCCESSFULLY_UPDATE: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "Event has been updated successfully",
+                "type": "DEFAULT",
+                data: data
+            }
         },
 
 

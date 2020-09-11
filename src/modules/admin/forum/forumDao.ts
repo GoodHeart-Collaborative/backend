@@ -132,6 +132,7 @@ export class ForumTopic extends BaseDao {
                     likeCount: 1,
                     commentCount: 1,
                     "createdAt": 1,
+                    reportCount: 1,
                     "updatedAt": 1,
                     categoryData: '$categoryData',
                     'userData.firstName': {

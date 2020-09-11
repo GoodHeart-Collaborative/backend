@@ -107,7 +107,7 @@ let updateFeedStatus = Joi.object({
         config.CONSTANT.STATUS.BLOCKED,
         config.CONSTANT.STATUS.DELETED
     ]),
-    type: Joi.string().allow([
+    type: Joi.number().allow([
         config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
         config.CONSTANT.HOME_TYPE.SHOUTOUT,
     ]).required(),

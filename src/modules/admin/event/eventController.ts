@@ -23,21 +23,37 @@ class EventController {
     }
 
     /**
-   * @function addExpert
-   * @description admin add experts
-   */
-    async addEvent(params) {
+     * @function addEvent
+     * @description admin add event
+     * @param { CommentRequest.getComments  } params
+     * @author Shubham
+     */
+
+    async addEvent(params: AdminEventRequest.IEventAdd) {
         try {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-            // console.log('data1data1data1data1data1', result);
-            console.log('categoryDatacategoryData', categoryData);
 
-            params.eventCategoryType = categoryData['name'];
-            params.eventCategoryDisplayName = categoryData['title'];
+            // params.eventCategoryType = categoryData['name'];
+            params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
 
             const data = await eventDao.insert("event", params, {});
+
+            // const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
+
+            const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
+
+
+            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
+
+            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
+
+            const updateEvent = await eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl }, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
         } catch (error) {
@@ -45,13 +61,24 @@ class EventController {
         }
     }
 
+    /**
+   * @function getEvent
+   * @description admin add event
+   * @param { CommentRequest.getComments  } params
+   * @author Shubham
+   */
 
-    async getEvent(params) {
+    async getEvent(params: AdminEventRequest.IGetEvent) {
         try {
-            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status } = params;
+            const { limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status } = params;
             let aggPipe = [];
             const match: any = {};
             let sort = {};
+            const paginateOptions = {
+                page: page || 1,
+                limit: limit || 10,
+            };
+
             if (userId) {
                 match.userId = appUtils.toObjectId(params.userId);
             }
@@ -72,10 +99,10 @@ class EventController {
                     sort = { "endDate": sortOrder };
                 }
                 else {
-                    sort = { "created": sortOrder };
+                    sort = { "_id": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { _id: -1 };
             }
             if (searchTerm) {
                 match["$or"] = [
@@ -83,10 +110,9 @@ class EventController {
                     { "description": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
-            if (categoryId) {
-
-                match.userId = appUtils.toObjectId(params.categoryId);
-            }
+            // if (categoryId) {
+            //     match.userId = appUtils.toObjectId(params.categoryId);
+            // }
             aggPipe.push({ "$sort": sort });
 
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
@@ -95,7 +121,7 @@ class EventController {
 
 
             aggPipe.push({ $match: match })
-
+            aggPipe.push({ $sort: { _id: -1 } });
             // aggPipe.push({
             //     $lookup: {
             //         from: 'categories',
@@ -110,42 +136,24 @@ class EventController {
             //         "as": "categoryData"
             //     }
             // })
-            console.log('>>>>>>>>>>>>>.');
 
+            // aggPipe.push({ $project: });
 
-
-            const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, limit, page, true)
-            console.log('datadatadata', data);
+            aggPipe = [...aggPipe, ...eventDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            const data = await eventDao.aggreagtionWithPaginateTotal('event', aggPipe, paginateOptions.limit, paginateOptions.page, true)
             return data;
 
         } catch (error) {
             return Promise.reject(error);
         }
-
     }
-
-    // async updateExpert(params: AdminExpertRequest.updateExpert) {
-    //     try {
-    //         const criteria = {
-    //             _id: params.expertId,
-    //         };
-
-    //         const data = await eventDao.updateOne('expert', criteria, params, {})
-    //         if (!data) {
-    //             return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
-    //         }
-    //         return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
     /**
      * @function updateStatus
      * @description admin update status active ,block ,delete
      */
 
-    async updateStatus(params) {
+    async updateStatus(params: AdminEventRequest.IupdateStatus) {
         try {
             const { Id, status } = params;
             const criteria = {
@@ -170,7 +178,7 @@ class EventController {
     /**
      * @description admin get event detail
      */
-    async getDetails(params) {
+    async getDetails(params: AdminEventRequest.IgetEventDetail) {
         try {
             const criteria = {
                 _id: params.eventId
@@ -181,29 +189,88 @@ class EventController {
         }
     }
 
-    async updateEvent(params) {
+    /**
+     * @description admin update event
+     * @param (AdminEventRequest.IUpdateEvent)params 
+     */
+
+    async updateEvent(params: AdminEventRequest.IUpdateEvent) {
         try {
             const criteria = {
                 _id: params.eventId
             }
 
             const result = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
-
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             console.log('data1data1data1data1data1', result);
-            params['eventCategoryType'] = result['name'];
-            params['eventCategoryDisplayName'] = result['title'];
-            params['created'] = new Date().getTime();
-
+            // params['eventCategoryType'] = result['name'];
+            params['eventCategoryName'] = result['title'];
 
             const dataToUpdate = {
                 ...params
             }
             const data = await eventDao.updateOne('event', criteria, dataToUpdate, {})
-            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATE;
+            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATE(data);
         } catch (error) {
             return Promise.reject(error)
         }
     }
+
+    // async getCalender(params) {
+    //     try {
+    //         const { page, limit } = params;
+    //         let match: any = {};
+    //         let aggPipe = [];
+    //         const paginateOptions = {
+    //             limit: limit || 10,
+    //             page: page || 1
+    //         }
+
+    //         match['status'] = config.CONSTANT.STATUS.ACTIVE;
+    //         // const findAdmin = await adminDao.findOne('admins', { email: '' }, {}, {})
+
+
+    //         aggPipe.push({
+    //             $match: match
+    //         });
+
+    //         aggPipe.push({
+    //             $lookup: {
+    //                 from: 'users',
+    //                 let: { uId: '$userId' },
+    //                 as: 'userData',
+    //                 pipeline: [{
+    //                     $match: {
+    //                         $expr: {
+    //                             $eq: ['$_id', '$$uId']
+    //                         }
+    //                     }
+    //                 },
+    //                 {
+    //                     $project: {
+    //                         firstName: 1,
+    //                         lastName: 1,
+    //                         email: 1
+    //                     }
+    //                 }],
+    //             }
+    //         });
+
+
+    //         aggPipe.push({
+    //             $unwind: {
+    //                 path: '$userData',
+    //                 preserveNullAndEmptyArrays: true,
+    //             },
+    //         })
+    //         console.log('aggPipeaggPipe', aggPipe);
+
+    //         // aggPipe.push([...aggPipe, eventDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)]);
+    //         const data = await eventDao.aggregateWithPagination('event', aggPipe);
+    //         return data;
+    //     } catch (error) {
+    //         return Promise.reject(error);
+    //     }
+    // }
 }
 export const eventController = new EventController();

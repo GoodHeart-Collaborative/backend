@@ -8,9 +8,8 @@ import { userDao } from "@modules/user";
 class DiscoverController {
 
     /**
-     * @function Home
-     * @description if IS_REDIS_ENABLE set to true,
-     * than redisClient.storeList() function saves value in redis.
+     * @function getDiscoverData
+     * @description to get the nearby user by location
      */
     async getDiscoverData(params, userId) {
         try {
@@ -34,39 +33,39 @@ class DiscoverController {
     }
 
     /** 7664
-     * @function Home
+     * @function updateDiscoverData
      * @description if IS_REDIS_ENABLE set to true,
      * than redisClient.storeList() function saves value in redis.
      */
     async updateDiscoverData(params: DiscoverRequest.DiscoverRequestEdit, userId) {
         try {
-            let query:any = {}
-            query["_id"]= params.followerId
+            let query: any = {}
+            query["_id"] = params.followerId
             userId.userId = await appUtils.toObjectId(userId.userId)
             query["$or"] = [{ userId: userId.userId }, { followerId: userId.userId }];
-            let checkQuery:any = {}
-            checkQuery["$or"] = [{userId: userId.userId, followerId: params.followerId}, {followerId: userId.userId, userId: params.followerId}] 
+            let checkQuery: any = {}
+            checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
-            if(checkDiscover) {
-                if(userId.userId.toString() === checkDiscover.userId.toString() && params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
-                    return homeConstants.MESSAGES.ERROR.PERMISSION_DENIED 
+            if (checkDiscover) {
+                if (userId.userId.toString() === checkDiscover.userId.toString() && params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                    return homeConstants.MESSAGES.ERROR.PERMISSION_DENIED
                 }
-                query = {_id: checkDiscover._id}
-                if(params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                query = { _id: checkDiscover._id }
+                if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     // push
-                    await userDao.pushMember({userId: userId.userId.toString(), followerId: params.followerId})
-                    await userDao.pushMember({userId: params.followerId, followerId: userId.userId.toString()})
+                    await userDao.pushMember({ userId: userId.userId.toString(), followerId: params.followerId })
+                    await userDao.pushMember({ userId: params.followerId, followerId: userId.userId.toString() })
 
                 } else {
                     //pull
-                    if(checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
-                        await userDao.pullMember({userId: userId.userId.toString(), followerId: params.followerId})
-                        await userDao.pullMember({userId: params.followerId, followerId: userId.userId.toString()})
+                    if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                        await userDao.pullMember({ userId: userId.userId.toString(), followerId: params.followerId })
+                        await userDao.pullMember({ userId: params.followerId, followerId: userId.userId.toString() })
                     }
                 }
                 await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
                 userId = userId.userId.toString()
-                let getData = await discoverDao.getUserData({_id: params.followerId}, userId)
+                let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
                 getData.data[0].discover_status = params.discover_status
                 getData.data[0].user.discover_status = params.discover_status
                 return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_UPDATED(getData.data[0])
@@ -77,20 +76,26 @@ class DiscoverController {
             throw error;
         }
     }
+
+    /**
+     * 
+     * @param params 
+     * @param (DiscoverRequest.DiscoverRequestAdd)
+     */
     async saveDiscoverData(params: DiscoverRequest.DiscoverRequestAdd, userId) {
         try {
-            let checkQuery:any = {}
-            let status:any = {}
-            checkQuery["$or"] = [{userId: userId.userId, followerId: params.followerId}, {followerId: userId.userId, userId: params.followerId}] 
+            let checkQuery: any = {}
+            let status: any = {}
+            checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
-                // { followerId: params.followerId, userId: userId.userId })
+            // { followerId: params.followerId, userId: userId.userId })
             if (checkDiscover) {
-                if(checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     status = CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
                     // update 
                     status = CONSTANT.DISCOVER_STATUS.PENDING
-                    await discoverDao.updateDiscover({_id: checkDiscover._id}, { discover_status: status })
+                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status })
                 }
                 let param: any = {}
                 param["_id"] = params.followerId

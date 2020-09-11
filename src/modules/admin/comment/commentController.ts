@@ -1,15 +1,19 @@
 "use strict";
 
 import * as _ from "lodash";
-import fs = require("fs");
 import { commentDao } from "./commentDao";
-import * as config from "@config/index";
 import { CONSTANT } from "@config/index";
 import * as appUtils from '../../../utils/appUtils'
 
 
 class AdminCommentController {
 
+    /**
+     * @function getComments
+     * @description admin get comments normal comment and nested comment
+     * @param { CommentRequest.getComments  } params
+     * @author Shubham
+     */
     async getComments(params: CommentRequest.getComments) {
         try {
             let { pageNo, limit, commentId, postId } = params

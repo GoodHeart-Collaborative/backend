@@ -78,6 +78,11 @@ export const MESSAGES = {
 			"message": "User already exist",
 			"type": "EMAIL_OR_PHONE_REQUIRED"
 		},
+		DELETED_USER_TRYING_TO_REGISTER: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "You are not authorized to register",
+			"type": "EMAIL_OR_PHONE_REQUIRED"
+		},
 		// SOCIAL_ACCOUNT_ALREADY_EXIST: {
 		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.SOCIAL_ACCOUNT_ALREADY_EXIST,
 		// 	"message": "Account with this social id already exist.",
@@ -107,7 +112,12 @@ export const MESSAGES = {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			message: "You cannot login since you have logged in using Social Account.",
 			type: "CANNOT_LOGIN"
-		}
+		},
+		INVALID_OLD_PASSWORD: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Old password is invalid.",
+			"type": "INVALID_OLD_PASSWORD"
+		},
 	},
 	SUCCESS: {
 		DEFAULT: {
@@ -121,6 +131,11 @@ export const MESSAGES = {
 			"message": "Password reset successfully",
 			"type": "DEFAULT",
 			data: {}
+		},
+		CHANGE_PASSWORD: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Password changed successfully.",
+			"type": "CHANGE_PASSWORD"
 		},
 		RESET_PASSWORD_SUCCESSFULLY: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,

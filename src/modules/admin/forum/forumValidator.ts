@@ -12,6 +12,7 @@ let addForum = Joi.object({
     mediaType: Joi.number().allow([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
         config.CONSTANT.MEDIA_TYPE.VIDEO,
+        config.CONSTANT.MEDIA_TYPE.NONE,
     ]),
     thumbnailUrl: Joi.string(),
     description: Joi.string().required(),
@@ -60,14 +61,19 @@ let forumDetail = Joi.object({
 
 let updateForum = Joi.object({
     categoryId: Joi.string().required(),
-    categoryName: Joi.string(), // only for searching
     // userId: Joi.string().required(),
     userType: Joi.string().required().allow([
         config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
         config.CONSTANT.ACCOUNT_LEVEL.USER
     ]),
+    mediaUrl: Joi.string().allow(''),
+    mediaType: Joi.number().allow([
+        config.CONSTANT.MEDIA_TYPE.IMAGE,
+        config.CONSTANT.MEDIA_TYPE.VIDEO,
+        config.CONSTANT.MEDIA_TYPE.NONE,
+    ]),
+    thumbnailUrl: Joi.string().allow(''),
     topic: Joi.string().optional().description('optional'),
-    mediaUrl: Joi.string(),
     description: Joi.string().required(),
     postAnonymous: Joi.boolean().default(false),
 }).unknown()
