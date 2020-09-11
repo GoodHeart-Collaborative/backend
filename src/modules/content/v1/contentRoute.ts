@@ -215,11 +215,11 @@ export const contentRoute: ServerRoute = [
 				const result = await contentController.viewContent({ ...query });
 				console.log('resultresultresult', result);
 
-				if (!request.query.from) {
-					return responseHandler.sendSuccess(h, result);
-				} else {
-					return h.view("content-page", { "content": result.data.description });
-				}
+				return h.view("content-page", { "content": result.data.description });
+				// return responseHandler.sendSuccess(h, result);
+				// } else {
+				// 	return h.view("content-page", { "content": result.data.description });
+				// }
 			} catch (error) {
 				return responseHandler.sendError(error);
 			}
