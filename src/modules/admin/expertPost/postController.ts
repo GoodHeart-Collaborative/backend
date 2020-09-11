@@ -298,7 +298,7 @@ class ExpertPostController {
             };
             const data = await expertPostDao.findOneAndUpdate('expert_post', criteria, datatoUpdate, { new: true })
             if (data) {
-                expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
             }
             return;
         } catch (error) {
