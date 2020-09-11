@@ -163,8 +163,8 @@ export class DiscoverDao extends BaseDao {
             }
             if (ShoutoutConnection) {
                 aggPipe = [...aggPipe, ...this.addSkipLimit(limit, pageNo)];
-                result = await this.aggregate('discover', aggPipe, {})
-                result = await this.aggregate('discover', aggPipe, {})
+                result = await this.aggregateWithPagination('discover', aggPipe)
+                // result = await this.aggregate('discover', aggPipe, {})
             } else {
                 aggPipe = [...aggPipe, ...this.addSkipLimit(limit, pageNo)];
                 result = await this.aggregateWithPagination('discover', aggPipe)
