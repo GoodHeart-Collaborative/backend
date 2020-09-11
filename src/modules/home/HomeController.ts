@@ -32,9 +32,9 @@ class HomeController {
                 responseData = await homeDao.getHomeData(params, userId.tokenData);
                 shoutOutCard = await shoutoutDao.getShoutOutForHome(params, userId.tokenData)
 
-                if (shoutOutCard) {
-                    responseData.push(shoutOutCard);
-                }
+                // if (shoutOutCard) {
+                //     responseData.push(shoutOutCard);
+                // }
 
                 // params.limit = 5
                 // if(responseData && responseData.list && responseData.list.length > 0) {
