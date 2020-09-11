@@ -46,7 +46,7 @@ class HomeController {
                     console.log('responseDataresponseDataresponseData', responseData);
 
                     responseData.unshift(getGeneralGratitude);
-                    if (getGeneralGratitude) {
+                    if (shoutOutCard) {
                         responseData.unshift(shoutOutCard);
                     }
                     responseData.unshift(getmemberOfTheDay);
@@ -60,7 +60,9 @@ class HomeController {
                     //     }
                     //     responseData.list.push(getGeneralGratitude)
                 } else {
+                    responseData.unshift(shoutOutCard);
                     responseData.unshift(getmemberOfTheDay)
+
                 }
                 responseData["getmemberOfTheDay"] = getmemberOfTheDay
 
