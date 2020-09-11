@@ -36,15 +36,22 @@ class EventController {
             params.created = new Date().getTime();
             const data = await eventDao.insert("event", params, {});
 
-            const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-                `&type=event`;
-
-            const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}`;
-            console.log('eventUrl1eventUrl1', eventUrl1);
+            // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
 
 
-            // let link = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/user/deeplink?fallback=${config.SERVER.WEB_URL}/layout/forums/post/${data._id}&url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
+            // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
+
+            // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}`;
+            // console.log('eventUrl1eventUrl1', eventUrl1);
+
+            // const eventUrl1 = `${config.SERVER.APP_URL}?type=event&eventId=5f5903250711f37999791887`
+
+            const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_STORE_LINK}?type=event&eventId=${data._id}`
+            // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
+
+
 
             // async forgotPasswordEmailToUser(params) {
             //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
@@ -101,7 +108,19 @@ class EventController {
                         userId: appUtils.toObjectId(tokenData.userId),
                         type: config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
-                })
+                });
+                // defaultAndInterestEveent.push({
+                //     $addFields: {
+                //         isHostedByMe: {
+                //             $cond: {
+                //                 if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                //                 then: true,
+                //                 else: false
+                //             },
+                //         },
+                //     }
+                // })
+
                 defaultAndInterestEveent.push({
                     $lookup: {
                         from: 'events',
@@ -119,15 +138,13 @@ class EventController {
                         {
                             $addFields: {
                                 isInterest: true,
-                                // isHostedByMe: {
-                                //     $cond: {
-                                //         if: {
-                                //             $eq: ['$userId', '$$uId'],
-                                //             then: true,
-                                //             else: false
-                                //         }
-                                //     }
-                                // }
+                                isHostedByMe: {
+                                    $cond: {
+                                        if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                                        then: true,
+                                        else: false
+                                    },
+                                },
                             }
                         }
                         ],
@@ -170,14 +187,17 @@ class EventController {
                     title: 1,
                     eventUrl: 1,
                     userId: 1,
-                    isInterest: ''
-                    // isHostedByMe: {
-                    //     $eq: ['$userId', appUtils.toObjectId(tokenData.userId)],
-                    //     then: true,
-                    //     else: false
-                    // }
+                    isInterest: '',
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
                 }
-            })
+            });
+
             defaultAndInterestEveent.push({ $sort: { startDate: -1 } });
 
             typeAggPipe = [...typeAggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
@@ -209,8 +229,8 @@ class EventController {
     }
 
     /**
-	 * @function calenderEvent
-	 * @description event home screen nearest location by the lat lng
+     * @function calenderEvent
+     * @description event home screen nearest location by the lat lng
      * @params (UserEventRequest.userGetEvent)
      */
 
@@ -449,10 +469,13 @@ class EventController {
 
             match['_id'] = appUtils.toObjectId(payload.eventId)
             aggPipe.push({ $match: match })
+
+
             aggPipe.push({
                 $lookup: {
                     from: 'users',
                     let: { uId: '$userId' },
+                    as: 'hostUser',
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -464,23 +487,50 @@ class EventController {
                                 }]
                             }
                         }
-                    }, {
-                        $project: {
-                            _id: 1,
-                            industryType: "$industryType",
-                            myConnection: "$myConnection",
-                            experience: "$experience",
-                            discover_status: '1',//{ $ifNull: ["$DiscoverData.discover_status", 4] },
-                            name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
-                            profilePicUrl: "$profilePicUrl",
-                            profession: { $ifNull: ["$profession", ""] },
-                            about: { $ifNull: ["$about", ""] }
-                        }
-                    }],
-                    as: 'hostUser'
+                    }]
                 }
             })
             aggPipe.push({ '$unwind': { path: '$hostUser', preserveNullAndEmptyArrays: true } });
+
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$userId", "user": appUtils.toObjectId(tokenData.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$$users"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+
 
 
             aggPipe.push({
@@ -603,7 +653,6 @@ class EventController {
                     startDate: 1,
                     goingCount: 1,
                     imageUrl: 1,
-                    hostUser: 1,
                     location: 1,
                     userType: 1,
                     price: 1,
@@ -617,7 +666,19 @@ class EventController {
                     eventCategoryName: 1,
                     title: 1,
                     address: 1,
-                    friends: []
+                    friends: [],
+                    // hostUser: 1,
+                    hostUser: {
+                        _id: 1,
+                        industryType: "$hostUser.industryType",
+                        myConnection: "$hostUser.myConnection",
+                        experience: "$hostUser.experience",
+                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                        name: { $concat: [{ $ifNull: ["$hostUser.firstName", ""] }, " ", { $ifNull: ["$hostUser.lastName", ""] }] },
+                        profilePicUrl: "$hostUser.profilePicUrl",
+                        profession: { $ifNull: ["$hostUser.profession", ""] },
+                        about: { $ifNull: ["$hostUser.about", ""] }
+                    }
                 }
             })
 

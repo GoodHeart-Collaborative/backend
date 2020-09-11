@@ -16,7 +16,7 @@ export interface Iforum extends Document {
     likeCount: number;
     commentCount: number;
     created: number;
-
+    postAt: string;
     createrId: string;
     // topic: string;
     thumbnailUrl: string;
@@ -53,6 +53,7 @@ const forumSchema = new Schema({
     description: { type: String, required: true },
     postAnonymous: { type: Boolean },
     created: { type: Number },
+    postAt: { type: String, trim: true },
     mediaType: {
         type: Number,
         enum: [

@@ -8,7 +8,7 @@ import * as forumConstant from "@modules/admin/forum/forumConstant";
 import { eventDao } from "@modules/event/eventDao";
 import * as appUtils from '@utils/appUtils';
 import { AdminForumDao } from "@modules/admin/forum/forumDao";
-
+import * as moment from 'moment';
 class AdminForumController {
 
     getTypeAndDisplayName(findObj, num: number) {
@@ -26,7 +26,9 @@ class AdminForumController {
 	 */
     async addForum(params: AdminForumRequest.AddForum) {
         try {
-            params["created"] = new Date().getTime()
+            params["created"] = new Date().getTime();
+            params['postAt'] = moment(new Date()).format('YYYY-MM-DD')
+            // match["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
 
             const data = await eventDao.insert("forum", params, {});
             return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED(data);

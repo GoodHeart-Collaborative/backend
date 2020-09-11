@@ -399,7 +399,12 @@ export class GratitudeJournalDao extends BaseDao {
                     }
                 }
             })
-            const myGratitude = await this.paginate('gratitude_journals', aggPipe, paginateOptions.limit, paginateOptions.page, {}, true)
+
+            aggPipe = [...aggPipe, ...this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            const myGratitude = await this.aggregateWithPagination('gratitude_journals', aggPipe)
+            return myGratitude;
+
+            // const myGratitude = await this.paginate('gratitude_journals', aggPipe, paginateOptions.limit, paginateOptions.page, {}, true)
             return myGratitude;
 
         } catch (error) {

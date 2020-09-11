@@ -40,11 +40,18 @@ class EventController {
 
             const data = await eventDao.insert("event", params, {});
 
-            console.log('datadatadata', data);
+            // const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
 
-            const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-                `&type=event`;
+            const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
+
+
+            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
+
+            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
 
             const updateEvent = await eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl }, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
@@ -203,7 +210,7 @@ class EventController {
                 ...params
             }
             const data = await eventDao.updateOne('event', criteria, dataToUpdate, {})
-            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATE;
+            return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATE(data);
         } catch (error) {
             return Promise.reject(error)
         }
