@@ -32,7 +32,8 @@ export class ForumTopic extends BaseDao {
                 limit: limit || 10
             };
             // const _id = params.userId ? appUtils.toObjectId(params.userId) : appUtils.toObjectId(tokenData.userId)
-            match['userId'] = params.userId ? appUtils.toObjectId(params.userId) : appUtils.toObjectId(tokenData.userId);
+
+
             const reportedIdsCriteria = {
                 userId: appUtils.toObjectId(params.userId),
                 type: config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
