@@ -40,10 +40,14 @@ class EventController {
 
             const data = await eventDao.insert("event", params, {});
 
+            // const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
 
-            const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-                `&type=event`;
+            const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
+
+
+            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
 
             // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
             //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +

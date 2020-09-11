@@ -36,15 +36,22 @@ class EventController {
             params.created = new Date().getTime();
             const data = await eventDao.insert("event", params, {});
 
-            const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-                `&type=event`;
+            // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
+
+
+            // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
 
             // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}`;
-            console.log('eventUrl1eventUrl1', eventUrl1);
+            // console.log('eventUrl1eventUrl1', eventUrl1);
+
+            // const eventUrl1 = `${config.SERVER.APP_URL}?type=event&eventId=5f5903250711f37999791887`
+
+            const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_STORE_LINK}?type=event&eventId=${data._id}`
+            // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
 
 
-            // let link = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/user/deeplink?fallback=${config.SERVER.WEB_URL}/layout/forums/post/${data._id}&url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
 
             // async forgotPasswordEmailToUser(params) {
             //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
