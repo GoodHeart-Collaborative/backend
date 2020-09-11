@@ -7,6 +7,7 @@ import { eventDao } from "@modules/event/eventDao";
 import { forumtopicDao } from "./forumDao";
 import * as appUtils from '@utils/appUtils';
 import * as config from "@config/constant";
+import * as moment from 'moment';
 class forumController {
 
     // getTypeAndDisplayName(findObj, num: number) {
@@ -42,6 +43,7 @@ class forumController {
     async addForum(params: UserForumRequest.AddForum) {
         try {
             params["created"] = new Date().getTime()
+            params['postAt'] = moment(new Date()).format('YYYY-MM-DD')
             let data = await forumtopicDao.saveForum(params)
             let param: any = { page: 1, limit: 1, postId: data._id }
             let response = await forumtopicDao.getFormPosts(param);
