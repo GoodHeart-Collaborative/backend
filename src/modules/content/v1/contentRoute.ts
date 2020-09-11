@@ -41,7 +41,8 @@ export const contentRoute: ServerRoute = [
 							config.CONSTANT.CONTENT_TYPE.CONTACT_US,
 							config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
 							config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
-							config.CONSTANT.CONTENT_TYPE.ABOUT_US
+							config.CONSTANT.CONTENT_TYPE.ABOUT_US,
+							config.CONSTANT.CONTENT_TYPE.FAQ,
 						])
 						.required()
 						.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us")
