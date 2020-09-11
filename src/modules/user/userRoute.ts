@@ -505,7 +505,7 @@ export const
 		// },
 
 		{
-			method: "POST",
+			method: "PATCH",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/change-password`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
