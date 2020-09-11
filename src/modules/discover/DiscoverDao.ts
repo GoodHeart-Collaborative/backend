@@ -16,6 +16,11 @@ export class DiscoverDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
+            // const paginateOptions = {
+            //     pageNo: pageNo || 1,
+            //     limit: limit || 10
+            // }
+
             if (user) {
                 match["$nor"] = [
                     { "userId": await appUtils.toObjectId(userId.userId), "followerId": await appUtils.toObjectId(user) },
@@ -157,9 +162,13 @@ export class DiscoverDao extends BaseDao {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
             }
             if (ShoutoutConnection) {
+                // aggPipe = [...aggPipe, ...this.addSkipLimit(limit, pageNo)];
                 result = await this.aggregate('discover', aggPipe, {})
+                // result = await this.aggregate('discover', aggPipe, {})
             } else {
-                result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
+                aggPipe = [...aggPipe, ...this.addSkipLimit(limit, pageNo)];
+                result = await this.aggregateWithPagination('discover', aggPipe)
+                // result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
             }
             return result
         } catch (error) {
