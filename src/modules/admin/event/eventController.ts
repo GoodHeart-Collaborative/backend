@@ -45,6 +45,10 @@ class EventController {
                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
                 `&type=event`;
 
+            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+            //     `&type=event`;
+
             const updateEvent = await eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl }, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
 
