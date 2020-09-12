@@ -259,8 +259,12 @@ export class ShoutoutDao extends BaseDao {
                 }
             });
             result = await this.aggregate('shoutout', aggPipe, {});
-            result[0]["type"] = config.CONSTANT.HOME_TYPE.CONGRATS;
-            return result[0];
+
+            if (result[0]) {
+                return result[0]["type"] = config.CONSTANT.HOME_TYPE.CONGRATS
+            }
+            return;
+            // return result[0];
 
         }
         catch (error) {

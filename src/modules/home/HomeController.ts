@@ -60,7 +60,9 @@ class HomeController {
                     //     }
                     //     responseData.list.push(getGeneralGratitude)
                 } else {
-                    responseData.unshift(shoutOutCard);
+                    if (shoutOutCard) {
+                        responseData.unshift(shoutOutCard);
+                    }
                     responseData.unshift(getmemberOfTheDay)
 
                 }
