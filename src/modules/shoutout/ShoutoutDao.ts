@@ -261,7 +261,8 @@ export class ShoutoutDao extends BaseDao {
             result = await this.aggregate('shoutout', aggPipe, {});
 
             if (result[0]) {
-                return result[0]["type"] = config.CONSTANT.HOME_TYPE.CONGRATS
+                result[0]["type"] = config.CONSTANT.HOME_TYPE.CONGRATS
+                return result[0]
             }
             return;
             // return result[0];
