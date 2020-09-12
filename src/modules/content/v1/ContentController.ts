@@ -3,6 +3,7 @@
 import * as config from "@config/constant";
 import * as contentConstant from "@modules/content/contentConstant";
 import { contentDao } from "@modules/content/v1/ContentDao";
+import * as configApi from "@config/index";
 
 export class ContentController {
 
@@ -117,7 +118,9 @@ export class ContentController {
 				return Promise.reject(contentConstant.MESSAGES.ERROR.CONTENT_NOT_FOUND);
 			} else {
 				return contentConstant.MESSAGES.SUCCESS.CONTENT_DETAILS(step1);
+				// return `${configApi.SERVER.API_BASE_URL}/v1/content/view?type${params.type}`
 			}
+
 		} catch (error) {
 			throw error;
 		}
