@@ -294,8 +294,9 @@ export const contentRoute: ServerRoute = [
 		path: `${config.SERVER.API_BASE_URL}/v1/content/faq`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+			const params = request.query;
 			try {
-				const result = await contentController.faqList(tokenData);
+				const result = await contentController.faqList(tokenData, params);
 				return responseHandler.sendSuccess(h, result);
 			} catch (error) {
 				return responseHandler.sendError(error);
@@ -309,6 +310,11 @@ export const contentRoute: ServerRoute = [
 				strategies: ["AdminAuth"]
 			},
 			validate: {
+				query: {
+					searchKey: Joi.string(),
+					fromDate: Joi.string(),
+					toDate: Joi.string()
+				},
 				headers: validator.adminAuthorizationHeaderObj,
 				failAction: appUtils.failActionFunction
 			},

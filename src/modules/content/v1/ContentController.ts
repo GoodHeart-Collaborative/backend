@@ -148,13 +148,13 @@ export class ContentController {
 	/**
 	 * @function faqList
 	 */
-	async faqList(tokenData: TokenData) {
+	async faqList(tokenData: TokenData, params) {
 		try {
 			if (
 				tokenData.adminType === config.CONSTANT.ADMIN_TYPE.SUPER_ADMIN ||
 				tokenData.permission.indexOf("view_content") !== -1
 			) {
-				const step1 = await contentDao.faqList();
+				const step1 = await contentDao.faqList(params);
 				return contentConstant.MESSAGES.SUCCESS.CONTENT_LIST({ "contentList": step1.data, "totalRecord": step1.total });
 			} else {
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.UNAUTHORIZED_ACCESS);

@@ -142,8 +142,9 @@ export class ContentDao extends BaseDao {
 	/**
 	 * @function faqList
 	 */
-	async faqList() {
+	async faqList(params?) {
 		try {
+			const { fromDate, toDate, searchKey } = params;
 			const query: any = {};
 			query.type = config.CONSTANT.CONTENT_TYPE.FAQ;
 			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
@@ -151,6 +152,14 @@ export class ContentDao extends BaseDao {
 			const projection: any = { question: 1, answer: 1, createdAt: 1 };
 
 			const options: any = { lean: true };
+			if (searchKey) {
+				const reg = new RegExp(searchKey, 'ig');
+				query.question = reg
+				query.answer = reg
+			}
+			if (fromDate && toDate) { query['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+			if (fromDate && !toDate) { query['createdAt'] = { $gte: fromDate }; }
+			if (!fromDate && toDate) { query['createdAt'] = { $lte: toDate }; }
 
 			const step1 = this.find("contents", query, projection, options, {}, {}, {});
 			const step2 = this.countDocuments("contents", query);
