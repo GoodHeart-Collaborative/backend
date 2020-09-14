@@ -311,6 +311,8 @@ export const contentRoute: ServerRoute = [
 			},
 			validate: {
 				query: {
+					limit: Joi.number(),
+					page: Joi.number(),
 					searchKey: Joi.string(),
 					fromDate: Joi.string(),
 					toDate: Joi.string()

@@ -153,10 +153,14 @@ export class ContentDao extends BaseDao {
 
 			const options: any = { lean: true };
 			if (searchKey) {
-				const reg = new RegExp(searchKey, 'ig');
-				query.question = reg
-				query.answer = reg
-			}
+				// const reg = new RegExp(searchKey, 'ig');
+				query['$or'] = [
+					{ question: { $regex: searchKey, $options: 'i' } },
+					{ answer: { $regex: searchKey, $options: 'i' } }
+					// query.question  { $regex: searchKey },
+					// query.answer = { $regex: searchKey }
+				]
+			};
 			if (fromDate && toDate) { query['createdAt'] = { $gte: fromDate, $lte: toDate }; }
 			if (fromDate && !toDate) { query['createdAt'] = { $gte: fromDate }; }
 			if (!fromDate && toDate) { query['createdAt'] = { $lte: toDate }; }
