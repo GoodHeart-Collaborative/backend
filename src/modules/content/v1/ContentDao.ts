@@ -148,7 +148,7 @@ export class ContentDao extends BaseDao {
 			query.type = config.CONSTANT.CONTENT_TYPE.FAQ;
 			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
-			const projection: any = { question: 1, answer: 1 };
+			const projection: any = { question: 1, answer: 1, createdAt: 1 };
 
 			const options: any = { lean: true };
 
