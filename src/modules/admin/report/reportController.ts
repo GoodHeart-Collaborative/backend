@@ -18,6 +18,52 @@ class ReportController {
             let match: any = {};
             let searchObj: any = {};
             match['type'] = type;
+
+            const forForumName = {
+                $lookup: {
+                    from: 'forums',
+                    let: { pId: '$postId' },
+                    as: 'forumsData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$pId']
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            title: 1,
+                            description: 1,
+
+                        }
+                    }
+                    ]
+                }
+            };
+
+
+            const forExpertPostName = {
+                $lookup: {
+                    from: 'expert_posts',
+                    let: { pId: '$postId' },
+                    as: 'expertPostData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$pId']
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            title: 1,
+                            description: 1,
+                        }
+                    }
+                    ]
+                }
+            };
             if (postId) {
                 match['postId'] = apputils.toObjectId(postId);
             }
@@ -30,6 +76,26 @@ class ReportController {
             aggPipe.push({
                 $match: match
             });
+
+            if (type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                aggPipe.push(forForumName);
+                aggPipe.push({ '$unwind': { path: '$forumsData', } });
+
+            }
+            else if (type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
+                aggPipe.push(forExpertPostName);
+                aggPipe.push({ '$unwind': { path: '$expertPostData', } });
+
+                // // _.each(forForumName.$lookup,'expert_posts','from')
+                // function replaceAt(array, index, value) {
+                //     const ret = array.slice(0);
+                //     ret[index] = value;
+                //     return ret;
+                // }
+                // const newArray = replaceAt(forForumName, index, "J");
+
+            }
+
 
             aggPipe.push({
                 $lookup: {

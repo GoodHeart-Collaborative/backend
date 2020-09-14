@@ -29,7 +29,7 @@ export class ContentDao extends BaseDao {
 	 */
 	async addContent(params: ContentRequest.Add) {
 		try {
-            params["created"] = new Date().getTime()
+			params["created"] = new Date().getTime()
 			return await this.save("contents", params);
 		} catch (error) {
 			throw error;
@@ -47,7 +47,10 @@ export class ContentDao extends BaseDao {
 			const match: any = {};
 			match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 			if (searchKey) {
-				match.title = { "$regex": searchKey, "$options": "-i" };
+				const reg = new RegExp(searchKey, 'ig');
+				match.title = reg
+				match.question = reg
+				match.answer = reg
 			}
 			aggPipe.push({ "$match": match });
 

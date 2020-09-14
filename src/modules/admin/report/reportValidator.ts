@@ -12,7 +12,9 @@ let getReports = Joi.object({
     postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID),
     searchTerm: Joi.string(),
     fromDate: Joi.number(),
-    toDate: Joi.number()
+    toDate: Joi.number(),
+    limit: Joi.number(),
+    page: Joi.number()
 }).unknown()
 
 
