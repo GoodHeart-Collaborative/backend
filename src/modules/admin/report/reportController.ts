@@ -9,7 +9,7 @@ class ReportController {
 
     async getReports(params) {
         try {
-            const { type, page, limit, postId, searchTerm, fromDate, toDate } = params;
+            const { type, page, limit, postId, searchTerm, fromDate, toDate, sortBy, sortOrder } = params;
             const paginateOptions = {
                 page: page || 1,
                 limit: limit || 10
@@ -18,6 +18,17 @@ class ReportController {
             let match: any = {};
             let searchObj: any = {};
             match['type'] = type;
+            let sort = {};
+            if (sortBy && sortOrder) {
+                if (sortBy === "name") {
+                    sort = { "name": sortOrder };
+                } else {
+                    sort = { "createdAt": sortOrder };
+                }
+            } else {
+                sort = { "createdAt": -1 };
+            }
+            aggPipe.push({ $sort: sort });
 
             const forForumName = {
                 $lookup: {
@@ -35,6 +46,7 @@ class ReportController {
                         $project: {
                             title: 1,
                             description: 1,
+                            userType: 1
 
                         }
                     }
@@ -59,6 +71,7 @@ class ReportController {
                         $project: {
                             title: 1,
                             description: 1,
+                            userType: 1
                         }
                     }
                     ]

@@ -14,7 +14,11 @@ let getReports = Joi.object({
     fromDate: Joi.number(),
     toDate: Joi.number(),
     limit: Joi.number(),
-    page: Joi.number()
+    page: Joi.number(),
+    sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
+    sortBy: Joi.string().valid([
+        'createdAt', 'title'
+    ]),
 }).unknown()
 
 
