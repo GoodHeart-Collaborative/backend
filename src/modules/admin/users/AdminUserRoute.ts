@@ -101,12 +101,14 @@ export const adminUser: ServerRoute[] = [
         method: "PATCH",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/user/{userId}/status`,
         handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+
             const payload = {
                 ...request.payload,
                 ...request.params
             };
             try {
-                const result = await adminController.updateStatus(payload);
+                const result = await adminController.updateStatus(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

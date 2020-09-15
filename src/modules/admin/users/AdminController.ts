@@ -14,7 +14,7 @@ import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/UserDao";
 import { AdminuserDao } from "@modules/admin/users/userDao";
 import { TemplateUtil } from "@utils/TemplateUtil";
-
+import * as createPayload from '@utils/NotificationManager';
 class AdminController {
 
 	/**
@@ -565,7 +565,7 @@ class AdminController {
 		}
 	}
 
-	async updateStatus(params) {
+	async updateStatus(params, tokenData) {
 		try {
 			const criteria = {
 				_id: params.userId
@@ -586,6 +586,12 @@ class AdminController {
 			if (!data) {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}
+
+			// send push from here 
+
+			createPayload.notificationManager.sendOneToOneNotification(params, tokenData)
+
+
 			if (data && params.status === config.CONSTANT.STATUS.DELETED) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
 			}

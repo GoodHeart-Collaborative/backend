@@ -193,37 +193,65 @@ const createAndroidPushPayload = function (data) {
 };
 
 const createIOSPushPayload = function (data) {
-	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound"];
+	// let set: any = {};
+	// const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound"];
 
-	data.priority = data.priority ? data.priority : "high";
-	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
-	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
-	data.category = "action"; // to show buttons
+	// data.priority = data.priority ? data.priority : "high";
+	// // data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
+	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
+	// data.category = "action"; // to show buttons
+	// data.mutableContent = 1;
+	// data.threadId = "RichPush";
+	// set = this.setInsertObject(data, set, fieldsToFill);
+
+	// if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
+	// 	return {
+	// 		// "data": set,
+	// 		"data": {
+	// 			"data": set
+	// 		},
+	// 		"notification": {
+	// 			"title": data.title,
+	// 			"body": data.body,
+	// 			"sound": "default",
+	// 			"priority": data.priority ? data.priority : "high"
+	// 		}
+	// 	};
+	// } else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
+	// 	const payload = {};
+	// 	payload[config.CONSTANT.SNS_SERVER_TYPE.DEV] = JSON.stringify({
+	// 		aps: set
+	// 	});
+	// 	return payload;
+	// }
+
+	let set = {};
+	let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+
 	data.mutableContent = 1;
-	data.threadId = "RichPush";
-	set = this.setInsertObject(data, set, fieldsToFill);
+	data.threadId = "womenCommunity";
+	data.priority = data.priority ? data.priority : "high";
+	data.image = data.icon ? data.icon : "";
+	data.contentType = "text";
+	data.badge = 1;
 
-	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
-		return {
-			// "data": set,
-			"data": {
-				"data": set
-			},
-			"notification": {
-				"title": data.title,
-				"body": data.body,
-				"sound": "default",
-				"priority": data.priority ? data.priority : "high"
-			}
-		};
-	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
-		const payload = {};
-		payload[config.CONSTANT.SNS_SERVER_TYPE.DEV] = JSON.stringify({
-			aps: set
-		});
-		return payload;
+	if (data.entityData !== undefined) data.entityData = data.entityData;
+	// data.category = "action"; // to show buttons
+	set = setInsertObject(data, set, fieldsToFill);
+	let notification = {
+		"title": data.title,
+		"body": data.message,
+		"sound": "default",
+		"priority": data.priority
 	}
+	if (data.entityData !== undefined)
+		set = Object.assign(set, data.entityData);
+
+	return {
+		data: set,
+		notification: notification
+	};
+
 };
 
 const createWebPushPayload = function (data) {
@@ -652,3 +680,51 @@ export {
 	generateOtp,
 	getShoutoutCard
 };
+
+
+
+// const createAndroidPushPayload = function (data) {
+// 	let set = {};
+// 	let fieldsToFill = ["type", "title", "message", "priority", "sound", "image", "contentType", "category", "click_action", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+
+// 	data.priority = data.priority ? data.priority : "high";
+// 	data.image = data.icon ? data.icon : "";
+// 	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
+// 	// data.category = "action";
+// 	// data.click_action = "FLUTTER_NOTIFICATION_CLICK";
+// 	set = setInsertObject(data, set, fieldsToFill);
+// 	// if(data.entityData !== undefined) {
+// 	// 	set = Object.assign(set, {entityData: data.entityData })
+// 	// }
+
+// 	return set;
+// };
+
+// const createIOSPushPayload = function (data) {
+// 	let set = {};
+// 	let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+
+// 	data.mutableContent = 1;
+// 	data.threadId = "nowccrowd";
+// 	data.priority = data.priority ? data.priority : "high";
+// 	data.image = data.icon ? data.icon : "";
+// 	data.contentType = "text";
+// 	data.badge = 1;
+
+// 	if (data.entityData !== undefined) data.entityData = data.entityData;
+// 	// data.category = "action"; // to show buttons
+// 	set = setInsertObject(data, set, fieldsToFill);
+// 	let notification = {
+// 		"title": data.title,
+// 		"body": data.message,
+// 		"sound": "default",
+// 		"priority": data.priority
+// 	}
+// 	if (data.entityData !== undefined)
+// 		set = Object.assign(set, data.entityData);
+
+// 	return {
+// 		data: set,
+// 		notification: notification
+// 	};
+// };
