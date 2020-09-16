@@ -20,7 +20,7 @@ let validateAddGratitudeJournal = Joi.object({
         // config.CONSTANT.MEDIA_TYPE.VIDEO,
         config.CONSTANT.MEDIA_TYPE.NONE,
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
-    mediaUrl: Joi.string().allow('').required(),
+    mediaUrl: Joi.string().allow('').optional(),
     // thumbnailUrl: Joi.string().required(),
     postAt: Joi.string().required()
 }).unknown()
