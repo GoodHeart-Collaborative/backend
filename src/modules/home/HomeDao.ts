@@ -42,7 +42,7 @@ export class HomeDao extends BaseDao {
                         mediaType: { $first: "$mediaType" },
                         created: { $first: "$created" },
                         mediaUrl: { $first: "$mediaUrl" },
-                        // title: { $first : "$title" },
+                        title: { $first: "$title" },
                         // isPostLater: { $first : "$isPostLater" },
                         // postedAt: { $first : "$postedAt" },
                         createdAt: { $first: "$createdAt" }
