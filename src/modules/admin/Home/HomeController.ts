@@ -31,6 +31,11 @@ class AdminHomeController {
             // }
             // console.log('paramsparams', params);
 
+            if (params.type == config.CONSTANT.HOME_TYPE.UNICORN) {
+                params.title = params.description;
+                delete params.description;
+            }
+
             const data = await homeDao.insert("home", params, {});
             if (data && params.type == config.CONSTANT.HOME_TYPE.UNICORN) {
                 return HOME_CONSTANT.MESSAGES.SUCCESS.DAILY_SMILES
