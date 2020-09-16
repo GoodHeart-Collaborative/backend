@@ -112,7 +112,7 @@ export class HomeDao extends BaseDao {
                 mediaType: "$mediaType",
                 mediaUrl: "$mediaUrl",
                 // thumbnailUrl: "$",
-                // title: "$title",
+                title: "$title",
                 // createdd:"$created",
                 // isPostLater: "$isPostLater",
                 description: "$description",
