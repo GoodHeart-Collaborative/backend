@@ -229,6 +229,7 @@ export class ShoutoutDao extends BaseDao {
             aggPipe.push({
                 "$project": {
                     sender: {
+                        _id: '$sender._id',
                         industryType: "$sender.industryType",
                         myConnection: "$sender.myConnection",
                         experience: "$sender.experience",
@@ -239,6 +240,7 @@ export class ShoutoutDao extends BaseDao {
                         profession: { $ifNull: ["$sender.profession", ""] }
                     },
                     receiver: {
+                        _id: "$receiver._id",
                         industryType: "$receiver.industryType",
                         myConnection: "$receiver.myConnection",
                         experience: "$receiver.experience",
