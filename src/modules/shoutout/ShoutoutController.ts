@@ -23,13 +23,9 @@ class ShoutoutController {
     async getShoutouMyConnection(userId, query?) {
         try {
             let response:any = {}
-           let getData = await discoverDao.getDiscoverData({ShoutoutConnection: true}, userId, true)         
+           let getData = await discoverDao.getDiscoverData({ShoutoutConnection: true, ...query}, userId, true ,);         
         
-        console.log('getDatagetDatagetDatagetData',getData);
-        console.log('getDatagetData',getData.data);
-        
-        
-           if(query.page == 1){
+           if(query.pageNo == 1){
             response = {
                 greetWord:  await appUtils.getShoutoutCard(),
                 list:getData['list'], //myconnection
@@ -41,8 +37,6 @@ class ShoutoutController {
             }
           }else {
             response =   getData;
-        //    ,
-        //   }
         }
             return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(response)
         } catch (error) {

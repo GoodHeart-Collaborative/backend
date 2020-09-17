@@ -92,8 +92,9 @@ export const shoutoutRoute: ServerRoute[] = [
             },
             validate: {
                 query: {
-                    page: Joi.number().required(),
-                    limit: Joi.number().required()
+                    pageNo: Joi.number().required(),
+                    limit: Joi.number().required(),
+                    searchKey: Joi.string()
                 },
                 headers: validator.userAuthorizationHeaderObj,
                 failAction: appUtils.failActionFunction
