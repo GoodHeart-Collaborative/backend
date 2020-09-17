@@ -111,6 +111,9 @@ export class DiscoverDao extends BaseDao {
                         }
                     }
                 })
+                if (searchKey) {
+                    aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
+                }
                 aggPipe.push({
                     $project:
                     {
@@ -158,7 +161,7 @@ export class DiscoverDao extends BaseDao {
                     }
                 })
             }
-            if (searchKey) {
+            if (searchKey && !ShoutoutConnection) {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
             }
             if (ShoutoutConnection) {
