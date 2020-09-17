@@ -3,7 +3,7 @@
 import { adminDao } from "@modules/admin/users/AdminDao";
 import { contentDao } from "@modules/content/v1/ContentDao";
 import * as config from "@config/index";
-import { CronUtils } from "@lib/CronUtils";
+import { cronJob } from "@lib/CronUtils";
 import { Database } from "@utils/Database";
 import { elasticSearch, rabbitMQ, redisClient, redisStorage } from "@lib/index";
 import * as socket from "@lib/socketManager";
@@ -87,13 +87,14 @@ export class BootStrap {
 				const step10 = contentDao.addContent(data);
 			}
 
-			CronUtils.init();
 		} catch (error) {
 			return Promise.resolve();
 		}
 	}
 
 	async generateMemberOfDay() {
+		// cronJob.init();
+
 		try {
 			let a = 0;
 			// if (globalVariable = 1) {
@@ -116,6 +117,7 @@ export class BootStrap {
 			};
 
 			const getUsers = await userDao.aggregate('users', criteria, {});
+			console.log('getUsersgetUsersgetUsers', getUsers);
 
 			if (getUsers && getUsers[0]) {
 				const criteria = {
@@ -125,15 +127,16 @@ export class BootStrap {
 				let endDate: any
 				startDate = new Date();
 				startDate.setHours(0, 0, 0, 0);
+
 				endDate = new Date();
 				endDate.setHours(23, 59, 59, 999);
-				await userDao.updateMany('users', { memberCreatedAt: { $gte: startDate, $lte: endDate } }, { "$unset": { memberCreatedAt: "" } }, {});
-				await userDao.updateMany('users', { isMemberOfDay: true }, { "$set": { isMemberOfDay: false } }, {});
-				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
+				// await userDao.updateMany('users', { memberCreatedAt: { $gte: startDate, $lte: endDate } }, { "$unset": { memberCreatedAt: "" } }, {});
+				// await userDao.updateMany('users', { isMemberOfDay: true }, { "$set": { isMemberOfDay: false } }, {});
+				// const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
 			}
 
 			if (!getUsers && !getUsers[0]) {
-				++a;
+
 
 			}
 			// CronUtils.init();

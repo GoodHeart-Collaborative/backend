@@ -130,4 +130,5 @@ declare type ModelNames =
 	'event' |
 	'event_interest' |
 	'forum' |
-	'report'
+	'report' |
+	'global_var'

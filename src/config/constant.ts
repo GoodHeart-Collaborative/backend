@@ -107,8 +107,8 @@ const DB_MODEL_REF = {
 	EVENT: 'event',
 	EVENT_INTEREST: 'event_interest',
 	FORUM: 'forum',
-	REPORT: 'report'
-
+	REPORT: 'report',
+	GLOBAL_VARIABLE: 'global_var'
 };
 
 const DEVICE_TYPE = {
@@ -645,6 +645,13 @@ const MAIL_SENDING_TYPE = {
 	AMAZON: 3
 };
 
+const NOTIFICATION_CATEGORY = {
+	FRIEND_REQUEST_SEND: 1,
+	// FRIEND_REQUEST_ACCEPT: 2
+	ADMIN_STATUS: 2,
+
+}
+
 const SMS_SENDING_TYPE = {
 	TWILIO: 1,
 	AWS_SDK: 2
@@ -875,4 +882,5 @@ export const CONSTANT = Object.freeze({
 	DATE_FILTER,
 	REQUEST_TYPE,
 	REPORT_MESSAGE,
+	NOTIFICATION_CATEGORY
 });

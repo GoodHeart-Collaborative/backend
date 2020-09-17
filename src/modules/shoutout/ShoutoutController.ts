@@ -20,14 +20,30 @@ class ShoutoutController {
             throw error;
         }
     }
-    async getShoutouMyConnection(userId) {
+    async getShoutouMyConnection(userId, query?) {
         try {
             let response:any = {}
-           let getData = await discoverDao.getDiscoverData({ShoutoutConnection: true}, userId, true)
-           response = {
-            greetWord:  await appUtils.getShoutoutCard(),
-            data: getData, //myconnection
-           }
+           let getData = await discoverDao.getDiscoverData({ShoutoutConnection: true}, userId, true)         
+        
+        console.log('getDatagetDatagetDatagetData',getData);
+        console.log('getDatagetData',getData.data);
+        
+        
+           if(query.page == 1){
+            response = {
+                greetWord:  await appUtils.getShoutoutCard(),
+                list:getData['list'], //myconnection
+                "total": getData.total,
+                "page": getData.page,
+                "total_page": getData.total_page,
+                "next_hit": getData.next_hit,
+                "limit": getData.limit
+            }
+          }else {
+            response =   getData;
+        //    ,
+        //   }
+        }
             return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(response)
         } catch (error) {
             throw error;

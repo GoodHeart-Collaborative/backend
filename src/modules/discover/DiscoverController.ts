@@ -79,7 +79,7 @@ class DiscoverController {
 
     /**
      * 
-     * @param params 
+     * @description to accept the connection request
      * @param (DiscoverRequest.DiscoverRequestAdd)
      */
     async saveDiscoverData(params: DiscoverRequest.DiscoverRequestAdd, userId) {

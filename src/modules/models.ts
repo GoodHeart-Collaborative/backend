@@ -10,7 +10,7 @@ export { notifications } from "./notification/notificationModel";
 export { users } from "./user/userModel";
 export { versions } from "./version/versionModel";
 export { categories } from "./admin/catgeory/categoryModel";
-export { posts } from './post/postModel'
+// export { posts } from './post/postModel'
 export { inspiration } from './admin/dailyInspiration/inspirationModel';
 export { unicorn } from './admin/unicornHumour/unicornModel';
 export { advice } from './admin/dailyAdvice/adviceModel'
@@ -26,3 +26,4 @@ export { event } from './event/eventModel';
 export { event_interest } from './eventInterest/interestModel';
 export { forum } from './forum/forumModel';
 export { report } from './report/reportModel';
+export { global_var } from './user/globalVariableModel';
