@@ -11,42 +11,97 @@ export class CronUtils {
 
 	constructor() { }
 
-	static init() {
+	init() {
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule("00 01 00 * * *", async function () {
+		task = cron.schedule("0 15 0 * * *'", async function () {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			// request.get(baseUrl + "/common/appointment/upcoming");
-			// request.get(baseUrl + "/common/appointment/pending");
 
-			let a = 0;
 
-			const criteria = [
-				{
-					$match: {
-						status: config.CONSTANT.STATUS.ACTIVE,
-						// isAdminVerified: true,
-						adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
-						countMember: 0,
-					}
-				},
-				{ $sample: { size: 1 } } // You want to get 5 docs
-			];
-			const dataToUpdate = {
-				countMember: a,
-				memberCreatedAt: new Date()
-			};
-			const getUsers = await userDao.aggregate('users', criteria, {});
-
-			if (getUsers && getUsers[0]) {
-				const criteria = {
-					_id: getUsers[0]._id
-				};
-				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
-			}
+			cronJob.createMember()
 
 		}, { scheduled: false });
 		task.start();
 	}
 
+	async createMember() {
+		const minMemberCount = await userDao.findOne('global_var', {}, {}, {}, {});
+
+		console.log('minMemberCountminMemberCountminMemberCount', minMemberCount);
+
+		const criteria = [
+			{
+				$match: {
+					status: config.CONSTANT.STATUS.ACTIVE,
+					adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+					countMember: minMemberCount.memberOfDayCount
+				}
+			},
+			{ $sample: { size: 1 } } // You want to get 5 docs
+		];
+		const dataToUpdate = {
+			countMember: minMemberCount.memberOfDayCount + 1,
+			isMemberOfDay: true,
+			memberCreatedAt: new Date()
+		};
+
+		const getUsers = await userDao.aggregate('users', criteria, {});
+		console.log('getUsersgetUsers', getUsers);
+
+		if (!getUsers || !getUsers[0]) {
+			await this.updateCount(minMemberCount);
+		}
+		if (getUsers || getUsers[0]) {
+			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, {});
+			return;
+
+		}
+
+	}
+
+	async updateCount(minMemberCount) {
+		const findGlobalCount = await userDao.findOneAndUpdate('global_var', { _id: minMemberCount._id }, { memberOfDayCount: minMemberCount.memberOfDayCount + 1 }, {});
+		console.log('findGlobalCountfindGlobalCount', findGlobalCount);
+		this.createMember();
+	}
+
 }
+
+export const cronJob = new CronUtils()
+
+
+
+
+	// }
+		// if (!getUsers || !getUsers[0]) {
+		// 	const findGlobalCount1 = await userDao.find('global_var', {}, {}, {}, {}, {}, {});
+
+
+		// 	const findGlobalCount = await userDao.updateOne('global_var', { _id: findGlobalCount1._id }, {}, {});
+		// 	console.log('findGlobalCountfindGlobalCount', findGlobalCount);
+
+		// 	const criteria1 = [
+		// 		{
+		// 			$match: {
+		// 				status: config.CONSTANT.STATUS.ACTIVE,
+		// 				adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+		// 				isEmailVerified: true,
+		// 				countMember: { $not: { $lt: minMemberCount.countMember } }
+		// 			}
+		// 		},
+		// 		{ $sample: { size: 1 } } // You want to get 5 docs
+		// 	];
+		// 	console.log(' minMemberCount.countMember minMemberCount.countMember', minMemberCount.countMember);
+
+		// 	const dataToUpdate = {
+		// 		countMember: minMemberCount.countMember + 1,
+		// 		memberCreatedAt: new Date(),
+		// 	};
+
+		// 	const getUser = await userDao.aggregate('users', criteria1, {});
+		// 	console.log('datadatadatadata>>>>>>>>', getUser);
+
+		// 	const data = await userDao.findOneAndUpdate('users', { _id: getUser[0]._id }, dataToUpdate, {});
+
+		// }
