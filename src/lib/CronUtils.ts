@@ -12,7 +12,7 @@ export class CronUtils {
 	constructor() { }
 	init() {
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule("* * * * *", async function () {
+		task = cron.schedule("5 0 * * *", async function () {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			// request.get(baseUrl + "/common/appointment/upcoming");
