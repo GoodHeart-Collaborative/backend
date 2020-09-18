@@ -10,10 +10,9 @@ let task;
 export class CronUtils {
 
 	constructor() { }
-
 	init() {
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule("0 15 0 * * *'", async function () {
+		task = cron.schedule("* * * * *", async function () {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			// request.get(baseUrl + "/common/appointment/upcoming");
@@ -30,12 +29,14 @@ export class CronUtils {
 
 		console.log('minMemberCountminMemberCountminMemberCount', minMemberCount);
 
+
 		const criteria = [
 			{
 				$match: {
 					status: config.CONSTANT.STATUS.ACTIVE,
 					adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
-					countMember: minMemberCount.memberOfDayCount
+					countMember: minMemberCount.memberOfDayCount,
+					profession: { $ne: "" },
 				}
 			},
 			{ $sample: { size: 1 } } // You want to get 5 docs
@@ -50,9 +51,12 @@ export class CronUtils {
 		console.log('getUsersgetUsers', getUsers);
 
 		if (!getUsers || !getUsers[0]) {
+			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
 			await this.updateCount(minMemberCount);
+			return;
 		}
 		if (getUsers || getUsers[0]) {
+			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
 			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, {});
 			return;
 

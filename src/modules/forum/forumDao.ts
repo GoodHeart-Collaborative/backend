@@ -284,7 +284,7 @@ export class ForumTopic extends BaseDao {
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
-                        $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
+                        $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(tokenData.userId)] }, then: true, else: false }
                     },
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
@@ -426,7 +426,7 @@ export class ForumTopic extends BaseDao {
     }
 
 
-    async getFormPostsForProfile(params, tokenData?) {
+    async getFormPostsForProfile(params, tokenData) {
         try {
             const { page, limit, postId, categoryId } = params;
 
@@ -443,7 +443,8 @@ export class ForumTopic extends BaseDao {
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
 
             const reportedIdsCriteria = {
-                userId: appUtils.toObjectId(params.userId ? params.userId : tokenData.userId),
+                // userId: appUtils.toObjectId(params.userId ? params.userId : tokenData.userId),
+                userId: appUtils.toObjectId(tokenData.userId),
                 type: config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
             };
             const reportedIds = await reportDao.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
@@ -452,8 +453,6 @@ export class ForumTopic extends BaseDao {
                 return ids.push(appUtils.toObjectId(item.postId));
             });
             console.log('IdsIds', ids);
-
-
 
             if (!postId) {
                 match['_id'] = {
@@ -492,7 +491,7 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "userId",
+                    "localField": "createrId",
                     "foreignField": "_id",
                     "as": "users"
                 }
@@ -514,7 +513,7 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "likes",
-                    let: { "post": '$_id', "user": await appUtils.toObjectId(params.userId) },
+                    let: { "post": '$_id', "user": await appUtils.toObjectId(tokenData.userId) },
                     pipeline: [
                         {
                             $match: {
@@ -540,7 +539,7 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "comments",
-                    let: { "post": "$_id", "user": await appUtils.toObjectId(params.userId) },
+                    let: { "post": "$_id", "user": await appUtils.toObjectId(tokenData.userId) },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -569,7 +568,7 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: "discovers",
-                    let: { "users": "$userId", "user": appUtils.toObjectId(params.userId) },
+                    let: { "users": "$userId", "user": appUtils.toObjectId(tokenData.userId) },
                     pipeline: [
                         {
                             $match: {
@@ -623,7 +622,7 @@ export class ForumTopic extends BaseDao {
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
-                        $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
+                        $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(tokenData.userId)] }, then: true, else: false }
                     },
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
@@ -637,7 +636,6 @@ export class ForumTopic extends BaseDao {
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] },
                         name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
-
                     },
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
