@@ -18,7 +18,7 @@ export const MESSAGES = {
         POST_REPORTED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "reported successFully",
+                "message": "post reported successFully",
                 "type": "DEFAULT",
                 data: data
             }

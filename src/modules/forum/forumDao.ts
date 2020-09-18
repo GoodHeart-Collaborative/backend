@@ -16,7 +16,7 @@ export class ForumTopic extends BaseDao {
         }
     }
 
-    async getFormPosts(params, tokenData?) {
+    async getFormPosts(params) {
         try {
             const { page, limit, postId, categoryId } = params;
             console.log('postIdpostIdpostId', postId);
@@ -284,7 +284,7 @@ export class ForumTopic extends BaseDao {
                     postAnonymous: 1,
                     userType: 1,
                     isCreatedByMe: {
-                        $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(tokenData.userId)] }, then: true, else: false }
+                        $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
                     },
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
