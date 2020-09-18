@@ -36,6 +36,26 @@ class EventController {
             params.created = new Date().getTime();
             const data = await eventDao.insert("event", params, {});
 
+            const updateEventAndGoing = [
+                {
+                    userId: params['userId'],
+                    eventId: data._id,
+                    type: config.CONSTANT.EVENT_INTEREST.GOING,
+                    created: Date.now(),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                }, {
+                    userId: params['userId'],
+                    eventId: data._id,
+                    type: config.CONSTANT.EVENT_INTEREST.INTEREST,
+                    created: Date.now(),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                }
+            ];
+
+            const updateISGoing = await eventDao.insertMany('event_interest', updateEventAndGoing, {})
+
             // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
 
 
@@ -67,7 +87,6 @@ class EventController {
             //     await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
             // }
 
-
             const updateEvent = eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl1 }, {});
 
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
@@ -79,8 +98,8 @@ class EventController {
     }
 
     /**
-	 * @function calenderEvent
-	 * @description calender for the event user hosted and user intereseted in event default respinse is both going and interested
+     * @function calenderEvent
+     * @description calender for the event user hosted and user intereseted in event default respinse is both going and interested
      * @params (UserEventRequest.userGetEvent)
      */
     async calenderEvent(params: UserEventRequest.userGetEvent, tokenData) {
@@ -93,6 +112,103 @@ class EventController {
             let defaultAndInterestEveent = [];
             let typeAggPipe = [];
             let match: any = {};
+
+
+            const interesetData = {
+                $lookup: {
+                    from: 'event_interests',
+                    let: { uId: '$userId', eId: '$_id' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)]
+                                    },
+                                    {
+                                        $eq: ['$eventId', '$$eId']
+                                    },
+                                    // {
+                                    //     $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
+                                    // }
+                                ]
+                            }
+                        },
+                    }],
+                    as: 'interestData',
+                }
+            }
+
+            const projection = {
+                "$project": {
+                    name: 1,
+                    title: 1,
+                    location: 1,
+                    privacy: 1,
+                    startDate: 1,
+                    endDate: 1,
+                    price: 1,
+                    url: 1,
+                    imageUrl: 1,
+                    userType: 1,
+                    eventUrl: 1,
+                    allowSharing: 1,
+                    isFeatured: 1,
+                    description: 1,
+                    address: 1,
+                    goingCount: 1,
+                    interestCount: 1,
+                    eventCategory: 1,
+                    eventCategoryId: 1,
+                    eventCategoryName: 1,
+                    created: 1,
+                    "isInterest": {
+                        $cond: {
+                            if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
+                        }
+                    },
+                    // interestData: 1,
+                    isHostedByMe: 1,
+                    shareUrl: {
+                        $cond: {
+                            if: {
+                                $and: [{
+                                    $eq: ['$isHostedByMe', true]
+                                },
+                                ]
+                            }, then: '$shareUrl',
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
+                        }
+                    },
+                    users: 1,
+                }
+            };
+
+            // featureAggPipe.push(interesetData);
+            // // featureAggPipe.push(unwind);
+            // featureAggPipe.push({
+            //     $addFields: {
+            //         isHostedByMe: {
+            //             $cond: {
+            //                 if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+            //                 then: true,
+            //                 else: false
+            //             },
+            //         },
+            //     }
+            // });
 
             match['userId'] = appUtils.toObjectId(tokenData.userId);
             //&& params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT
@@ -296,9 +412,9 @@ class EventController {
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
             featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
 
-            const unwind = {
-                '$unwind': { path: '$interestData' },
-            }
+            // const unwind = {
+            //     '$unwind': { path: '$interestData', preserveNullAndEmptyArrays: true },
+            // }
 
             const interesetData = {
                 $lookup: {
@@ -314,14 +430,45 @@ class EventController {
                                     {
                                         $eq: ['$eventId', '$$eId']
                                     },
-                                    {
-                                        $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
-                                    }
+                                    // {
+                                    //     $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
+                                    // }
                                 ]
                             }
                         },
                     }],
                     as: 'interestData',
+                }
+            };
+
+            const FilterForGoingAndIntereset = {
+                $addFields: {
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
+                    going: {
+                        "$size": {
+                            "$filter": {
+                                "input": "$interestData",
+                                "as": "el",
+                                "cond": { "$eq": ["$$el.type", 1] }
+                            }
+
+                        }
+                    },
+                    interest: {
+                        "$size": {
+                            "$filter": {
+                                "input": "$interestData",
+                                "as": "el",
+                                "cond": { "$eq": ["$$el.type", 2] }
+                            }
+                        }
+                    },
                 }
             }
 
@@ -348,13 +495,18 @@ class EventController {
                     eventCategoryId: 1,
                     eventCategoryName: 1,
                     created: 1,
+                    event_interests: 1,
                     "isInterest": {
                         $cond: {
-                            if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
+                            if: { "$eq": ["$interest", 0] }, then: false, else: true
                         }
                     },
-                    // interestData: 1,
-                    isHostedByMe: 1,
+                    "isGoing": {
+                        $cond: {
+                            if: { "$eq": ["$going", 0] }, then: false, else: true
+                        }
+                    },
+                    isHostedByMe: '$isHostedByMe',
                     shareUrl: {
                         $cond: {
                             if: {
@@ -383,33 +535,26 @@ class EventController {
             };
 
             featureAggPipe.push(interesetData);
-            // featureAggPipe.push(unwind);
-            featureAggPipe.push({
-                $addFields: {
-                    isHostedByMe: {
-                        $cond: {
-                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
-                        },
-                    },
-                }
-            });
-            featureAggPipe.push(projection)
+            featureAggPipe.push(FilterForGoingAndIntereset);
+            featureAggPipe.push(projection);
 
-            aggPipe.push({
-                $addFields: {
-                    isHostedByMe: {
-                        $cond: {
-                            if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                            then: true,
-                            else: false
-                        },
-                    },
-                }
-            })
+            aggPipe.push(projection)
+            // aggPipe.push({
+            //     $addFields: {
+            //         isHostedByMe: {
+            //             $cond: {
+            //                 if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
+            //                 then: true,
+            //                 else: false
+            //             },
+            //         },
+            //     }
+            // })
             aggPipe.push(interesetData);
+            aggPipe.push(FilterForGoingAndIntereset);
             // aggPipe.push(unwind);
+            // aggPipe.push(unwind);
+
             aggPipe.push(projection);
 
             // const getEventCategory = [
