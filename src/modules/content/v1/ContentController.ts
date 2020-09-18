@@ -113,6 +113,15 @@ export class ContentController {
 	 */
 	async viewContent(params: ContentRequest.View) {
 		try {
+			const getFaq = await contentDao.faqList();
+			let content = "";
+			for (let i = 0; i < getFaq.data.length; i++) {
+				content = content + config.CONSTANT.TEMPLATES.FAQ(getFaq.data[i].question, getFaq.data[i].answer);
+			}
+			if (params.type == config.CONSTANT.CONTENT_TYPE.FAQ) {
+				return contentConstant.MESSAGES.SUCCESS.CONTENT_DETAILS(content);
+			}
+
 			const step1 = await contentDao.isContentExists(params);
 			if (!step1) {
 				return Promise.reject(contentConstant.MESSAGES.ERROR.CONTENT_NOT_FOUND);
