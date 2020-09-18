@@ -55,6 +55,13 @@ class InterestController {
             if (checkExist && params.type === 2) {
                 data['isInterest'] = false;
             }
+            if (!checkExist && params.type === 1) {
+                data['isGoing'] = true;
+            }
+            if (checkExist && params.type === 1) {
+                data['isGoing'] = false;
+            }
+
             return data;
         } catch (error) {
             return Promise.reject(error);
