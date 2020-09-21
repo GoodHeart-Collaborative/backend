@@ -415,23 +415,14 @@ export class DiscoverDao extends BaseDao {
 
             aggPipe.push({
                 $project: {
-                    user: {
-                        _id: "$_id",
-                        industryType: "$industryType",
-                        myConnection: "$myConnection",
-                        experience: "$experience",
-                        about: "$about",
-                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
-                        profilePicUrl: "$profilePicUrl",
-                        profession: { $ifNull: ["$profession", ""] },
-                        name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
-
-                    },
+                    discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                    name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+                    _id: "$_id",
                 },
 
             })
             const data = await this.aggregate('users', aggPipe, {});
-            return data;
+            return data[0] ? data[0] : {};
         } catch (error) {
             return Promise.reject(error);
 
