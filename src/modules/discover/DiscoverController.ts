@@ -118,5 +118,15 @@ class DiscoverController {
         }
     }
 
+    async getDiscoverStatus(params, tokenData) {
+        try {
+            const data = await discoverDao.getDiscoverStatus(params, tokenData);
+            console.log('data', data);
+            return data;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
 }
 export const discoverController = new DiscoverController();

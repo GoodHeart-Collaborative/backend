@@ -363,6 +363,81 @@ export class DiscoverDao extends BaseDao {
         }
     }
 
+    async getDiscoverStatus(params, tokenData) {
+        try {
+            const aggPipe = [];
+
+            aggPipe.push({
+                $match: {
+                    _id: appUtils.toObjectId(tokenData.userId),
+                }
+            });
+
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers", // "$userId",
+                    let: { "users": appUtils.toObjectId(params.otherUserId), "user": appUtils.toObjectId(tokenData.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$$users"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+
+            aggPipe.push({
+                $project: {
+                    user: {
+                        _id: "$_id",
+                        industryType: "$industryType",
+                        myConnection: "$myConnection",
+                        experience: "$experience",
+                        about: "$about",
+                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                        profilePicUrl: "$profilePicUrl",
+                        profession: { $ifNull: ["$profession", ""] },
+                        name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+
+                    },
+                },
+
+            })
+            const data = await this.aggregate('users', aggPipe, {});
+            return data;
+        } catch (error) {
+            return Promise.reject(error);
+
+        }
+
+    }
 }
 
 export const discoverDao = new DiscoverDao();

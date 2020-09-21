@@ -31,7 +31,7 @@ let validateListUsers = Joi.object({
         config.INDUSTRIES.LAW_ENFORCEMENT,
         config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
     ])).optional()
-    .description("1-Nonprofit, 2-Emergency services, 3- Social and community services, 4-Law enforcement, 5-Healthcare and community medical services"),
+        .description("1-Nonprofit, 2-Emergency services, 3- Social and community services, 4-Law enforcement, 5-Healthcare and community medical services"),
 }).unknown()
 
 let validateListDiscover = Joi.object({
@@ -52,10 +52,16 @@ let validateListDiscover = Joi.object({
     // .description("1-Nonprofit, 2-Emergency services, 3- Social and community services, 4-Law enforcement, 5-Healthcare and community medical services"),
 }).unknown()
 
+
+let otherUserIdDiscoverStatus = Joi.object({
+    otherUserId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
+}).unknown()
+
 export {
     validateAddDiscover,
     validateEditDiscover,
     validateEditDiscoverParams,
     validateListDiscover,
-    validateListUsers
+    validateListUsers,
+    otherUserIdDiscoverStatus
 };

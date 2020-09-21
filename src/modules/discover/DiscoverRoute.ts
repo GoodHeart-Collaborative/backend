@@ -133,5 +133,37 @@ export const discoverRoute: ServerRoute[] = [
                 }
             }
         }
-    }
+    },
+
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/discover-status/{otherUserId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            const payload: DiscoverRequest.DiscoverRequestAdd = request.params;
+            try {
+                const result = await discoverController.getDiscoverStatus({ ...payload }, { userId: tokenData.userId });
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "discover"],
+            description: "get discover status",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                params: discoverValidator.otherUserIdDiscoverStatus,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
 ];
