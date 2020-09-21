@@ -193,7 +193,7 @@ export const contentRoute: ServerRoute = [
 					contentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
 				},
 				payload: {
-					title: Joi.string().trim().required(),
+					// title: Joi.string().trim().required(),
 					description: Joi.string().trim().required()
 				},
 				failAction: appUtils.failActionFunction

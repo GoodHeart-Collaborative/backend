@@ -116,7 +116,7 @@ export class ContentDao extends BaseDao {
 
 			const update = {};
 			update["$set"] = {
-				"title": params.title,
+				// "title": params.title,
 				"description": params.description
 			};
 

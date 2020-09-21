@@ -47,6 +47,7 @@ declare namespace UserEventRequest {
         distance: number;
         eventCategoryId: number;
         date: string;
+        getIpfromNtwk:string;
     }
 
     export interface getEventDetail {

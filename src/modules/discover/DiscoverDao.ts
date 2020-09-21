@@ -419,8 +419,7 @@ export class DiscoverDao extends BaseDao {
                     name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                     _id: "$_id",
                 },
-
-            })
+            });
             const data = await this.aggregate('users', aggPipe, {});
             return data[0] ? data[0] : {};
         } catch (error) {
