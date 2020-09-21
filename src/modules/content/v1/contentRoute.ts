@@ -222,7 +222,7 @@ export const contentRoute: ServerRoute = [
 				if (query.type === config.CONSTANT.CONTENT_TYPE.FAQ) {
 					return h.view("faq", { "content": result.data });
 				}
-				return h.view("content-page", { title: result.data.title, "content": result.data.description });
+				return h.view("content-page", { "content": result.data.description });
 				// return result
 
 				// return responseHandler.sendSuccess(h, result);
