@@ -168,10 +168,10 @@ export const contentRoute: ServerRoute = [
 	},
 	{
 		method: "PUT",
-		path: `${config.SERVER.API_BASE_URL}/v1/content/{contentId}`,
+		path: `${config.SERVER.API_BASE_URL}/v1/content/{type}`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-			const params: ContentRequest.Id = request.params;
+			const params = request.params;
 			const payload: ContentRequest.Edit = request.payload;
 			try {
 				const result = await contentController.editContent({ ...params, ...payload }, tokenData);
@@ -190,7 +190,12 @@ export const contentRoute: ServerRoute = [
 			validate: {
 				headers: validator.adminAuthorizationHeaderObj,
 				params: {
-					contentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+					// contentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+					type: Joi.string().allow([
+						config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
+						config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
+						config.CONSTANT.CONTENT_TYPE.ABOUT_US
+					]),
 				},
 				payload: {
 					// title: Joi.string().trim().required(),

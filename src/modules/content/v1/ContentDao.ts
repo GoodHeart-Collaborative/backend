@@ -112,7 +112,9 @@ export class ContentDao extends BaseDao {
 	async editContent(params: ContentRequest.Edit) {
 		try {
 			const query: any = {};
-			query._id = params.contentId;
+			// query._id = params.contentId;
+			query.type = params.type;
+
 
 			const update = {};
 			update["$set"] = {
