@@ -18,7 +18,7 @@ export class ContentDao extends BaseDao {
 
 			const options = { lean: true };
 
-			return await this.findOne("contents", query, {}, options, {});
+			return await this.findOne("contents", query, { title: 0 }, options, {});
 		} catch (error) {
 			throw error;
 		}
