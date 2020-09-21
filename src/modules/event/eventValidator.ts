@@ -83,7 +83,7 @@ let addEvents = Joi.object({
     //     coordinates: Joi.array().items(Joi.number())
     // }),
     address: Joi.string().trim().required(),
-    eventCategoryId: Joi.string().required(),
+    eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     // Joi.number().allow([
     //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
     //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,

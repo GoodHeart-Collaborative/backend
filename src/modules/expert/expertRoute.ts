@@ -184,7 +184,7 @@ export const userExpertRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/experts-search`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload = request.query;
+            const payload :userExpertRequest.expertSearch = request.query;
             try {
                 payload["userId"] = tokenData.userId
                 const result = await expertController.expertsListSearch(payload);

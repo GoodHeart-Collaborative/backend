@@ -51,16 +51,17 @@ class InterestController {
                 data = await eventDao.findByIdAndUpdate('event', { _id: eventId }, { $inc: { interestCount: incOrDec } }, { new: true, lean: true })
             }
 
-            console.log('userEventuserEvent', userEvent);
 
             data['isGoing'] = false;
-            data['isInterest'] = true;
-            if (userEvent.legth > 0) {
+            data['isInterest'] = false;
+            if (userEvent.length > 0) {
                 userEvent.map(data1 => {
-                    if (data1.type = 1) {
+                    console.log('data1data1data1', data1);
+
+                    if (data1.type === 1) {
                         data['isGoing'] = true;
                     }
-                    if (data1.type = 2) {
+                    if (data1.type === 2) {
                         data['isInterest'] = true;
                     }
                 })

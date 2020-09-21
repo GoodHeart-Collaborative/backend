@@ -34,19 +34,21 @@ class EventController {
             // params.eventCategoryType = categoryData['name'];
             params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
+            params['goingCount'] = 1;
+            params['interestCount'] = 1;
             const data = await eventDao.insert("event", params, {});
 
             const updateEventAndGoing = [
                 {
-                    userId: params['userId'],
-                    eventId: data._id,
+                    userId: appUtils.toObjectId(params['userId']),
+                    eventId: appUtils.toObjectId(data._id),
                     type: config.CONSTANT.EVENT_INTEREST.GOING,
                     created: Date.now(),
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 }, {
-                    userId: params['userId'],
-                    eventId: data._id,
+                    userId: appUtils.toObjectId(params['userId']),
+                    eventId: appUtils.toObjectId(data._id),
                     type: config.CONSTANT.EVENT_INTEREST.INTEREST,
                     created: Date.now(),
                     createdAt: new Date(),
@@ -68,7 +70,7 @@ class EventController {
 
             // const eventUrl1 = `${config.SERVER.APP_URL}?type=event&eventId=5f5903250711f37999791887`
 
-            const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_STORE_LINK}?type=event&eventId=${data._id}`
+            const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
             // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
 
 
@@ -352,7 +354,8 @@ class EventController {
 
     async getEvent(params: UserEventRequest.getEvents, tokenData) {
         try {
-            const { longitude, latitude, distance, eventCategoryId, date, searchKey } = params;
+            const { distance, eventCategoryId, date, searchKey, getIpfromNtwk } = params;
+            let { longitude, latitude, } = params;
             let pickupLocation = [];
             let aggPipe = [];
             let featureAggPipe = [];
@@ -367,6 +370,12 @@ class EventController {
                     { title: reg },
                 ];
             }
+            // if (longitude == undefined && latitude == undefined) {
+            // const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+
+            //     latitude = lat_lng.latitude;
+            //     longitude = lat_lng.longitude;
+            // }
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
@@ -390,7 +399,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { dist: -1 } }
+                    { "$sort": { dist: -1, _id: -1 } }
                 )
             }
             else {

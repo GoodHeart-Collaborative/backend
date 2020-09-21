@@ -93,7 +93,7 @@ export class BootStrap {
 	}
 
 	async generateMemberOfDay() {
-		// cronJob.init();
+		cronJob.init();
 
 		try {
 			let a = 0;
@@ -117,7 +117,6 @@ export class BootStrap {
 			};
 
 			const getUsers = await userDao.aggregate('users', criteria, {});
-			console.log('getUsersgetUsersgetUsers', getUsers);
 
 			if (getUsers && getUsers[0]) {
 				const criteria = {
