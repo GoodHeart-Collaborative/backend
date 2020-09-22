@@ -27,3 +27,4 @@ export { event_interest } from './eventInterest/interestModel';
 export { forum } from './forum/forumModel';
 export { report } from './report/reportModel';
 export { global_var } from './user/globalVariableModel';
+export { subscription } from './subscription/subscriptionModel'

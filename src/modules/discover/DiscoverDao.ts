@@ -405,7 +405,7 @@ export class DiscoverDao extends BaseDao {
                                     ]
                                 }
                             }
-                        }
+                        },
                     ],
                     as: "DiscoverData"
                 }
@@ -418,6 +418,7 @@ export class DiscoverDao extends BaseDao {
                     discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
                     name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                     _id: "$_id",
+                    connectionCount: '$myConnection',
                 },
             });
             const data = await this.aggregate('users', aggPipe, {});

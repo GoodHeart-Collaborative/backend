@@ -131,4 +131,5 @@ declare type ModelNames =
 	'event_interest' |
 	'forum' |
 	'report' |
-	'global_var'
+	'global_var' |
+	'subscription';

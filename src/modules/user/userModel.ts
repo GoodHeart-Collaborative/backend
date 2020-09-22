@@ -48,12 +48,14 @@ export interface IUser extends Document {
 	loginToken: string;
 	// createdAt: number;
 	countMember: number;
-	memberCreatedAt: Date;
+	memberCreatedAt: string;
 	isMemberOfDay: boolean;
 	likeCount: number,
 	commentCount: number,
 	adminStatus: string;
 	reportCount: number;
+	// memberType: number;
+	subscriptionType: string;
 	// isAdminRejected: boolean;
 	// isAdminVerified: boolean;
 }
@@ -113,12 +115,22 @@ const userSchema = new Schema({
 		],
 		default: config.CONSTANT.STATUS.ACTIVE
 	},
-	memberType: {
-		type: String, default: config.CONSTANT.MEMBER_TYPE.FREE, enum: [
-			config.CONSTANT.MEMBER_TYPE.FREE,
-			config.CONSTANT.MEMBER_TYPE.PREMIUM,
-		]
+	subscriptionType: {
+		// memberType: {
+		type: Number, enum: [
+			// config.CONSTANT.MEMBER_TYPE.FREE,
+			// config.CONSTANT.MEMBER_TYPE.PREMIUM,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.YEARLY.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
+		],
+		default: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value
+		// default: config.CONSTANT.MEMBER_TYPE.FREE
 	}, // Free(Default rakho)
+	subscriptionEndDate: {
+		type: Date
+	},
 	memberShipStatus: { type: String },
 	myConnection: { type: Number, default: 0 },
 	emailOtp: { type: Number },
@@ -153,7 +165,7 @@ const userSchema = new Schema({
 		]
 	},
 	countMember: { type: Number, default: 0 },
-	memberCreatedAt: { type: Date },
+	memberCreatedAt: { type: String },
 	isMemberOfDay: { type: Boolean, default: false },
 	members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
 	about: { type: String },

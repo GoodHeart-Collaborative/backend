@@ -473,11 +473,87 @@ export class UserDao extends BaseDao {
 				status: { $ne: config.CONSTANT.STATUS.DELETED }
 			};
 
+			var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+			var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+			const currentMonthEarning = [
+				// {
+				// 	$match: {
+				// 		createdAt: {
+				// 			$gt: {
+				// 				firstDay
+				// 			},
+				// 			$lt: {
+				// 				lastDay
+				// 			}
+				// 		},
+				// 	},
+				// },
+				{
+					$group: {
+						_id: null,
+						totalAmountMonthly: {
+							$sum: '$price'
+						}
+					}
+
+				}];
+
+			const totalEarningYearly = [
+				// {
+				// 	$match: {
+				// 		createdAt: {
+				// 			$gt: {
+				// 				firstDay
+				// 			},
+				// 			$lt: {
+				// 				lastDay
+				// 			}
+				// 		},
+				// 	},
+				// },
+				{
+					$group: {
+						_id: null,
+						totalAmountYearly: {
+							$sum: '$price'
+						}
+					}
+
+				}]
+
+			const graphEarningMonthly = [
+				{
+
+					$match: {
+						createdAt: {
+							$gte: new Date(new Date().getFullYear(), 0, 1)
+						}
+					}
+				},
+				{
+					$project:
+						{ month: { $month: { $toDate: '$createdAt' } } },
+				},
+				{
+					$group: {
+						_id: { month_joined: '$month' },
+						number: { $sum: 1 }
+					}
+				},
+				{
+					$sort: { '_id.month_joined': 1 }
+				}]
+
+
 			pipeline.push(this.count("users", newUsers));
 			pipeline.push(this.count('users', previousYearTotalUser))
 			pipeline.push(this.count('users', thisYeartotalUser))
+			pipeline.push(this.aggregate('subscription', currentMonthEarning, {}))
+			pipeline.push(this.aggregate('subscription', totalEarningYearly, {}))
 
-			const [userCount, newUser, previousYearUserCount, currentYearUserCount] = await Promise.all(pipeline);
+			pipeline.push(this.aggregate('subscription', graphEarningMonthly, {}));
+
+			const [userCount, newUser, previousYearUserCount, currentYearUserCount, monthlyEarning, earningYearly, earningMonthlyGraph] = await Promise.all(pipeline);
 
 			const userGraph = await this.aggregate("users", userGraphCriteria, {});
 			const userGraphPreviousYear = await this.aggregate('users', userGraphLastYearCriteria, {})
@@ -486,6 +562,8 @@ export class UserDao extends BaseDao {
 
 			const userGraphThisYear = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
 			const userGraphLastYear = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
+			const subscriptionEarningMonthly = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
+
 
 			userGraph.map(data => {
 				userGraphThisYear[data['_id']['month_joined']] = data.number;
@@ -495,13 +573,19 @@ export class UserDao extends BaseDao {
 				userGraphLastYear[data['_id']['month_joined']] = data.number;
 			});
 
+			earningMonthlyGraph.map(data => {
+				subscriptionEarningMonthly[data['_id']['month_joined']] = data.number;
+			});
 			return {
 				totalUsers: userCount,
 				newUser,
 				userGraphThisYear,
 				userGraphLastYear,
 				previousYearUserCount,
-				currentYearUserCount
+				currentYearUserCount,
+				monthlyEarning: monthlyEarning[0] ? monthlyEarning[0]['totalAmountMonthly'] : 0,
+				earningYearly: earningYearly[0] ? earningYearly[0]['totalAmountYearly'] : 0,
+				subscriptionEarningMonthly
 			}
 
 		} catch (error) {

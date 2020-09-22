@@ -93,7 +93,12 @@ class HomeController {
                 return {
                     reportData: reoprtData1,
                     homeData: responseData,
-                    isGratitudeJournalFilled: isGratitudeFilled
+                    isGratitudeJournalFilled: isGratitudeFilled,
+                    subscriptionData: {
+                        isSubscribed: (userId.tokenData.planType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
+                        subscriptionType: userId.tokenData.planType,
+                        subscriptionEndDate: userId.tokenData.subscriptionEndDate
+                    }
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)

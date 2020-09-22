@@ -61,6 +61,33 @@ const MEMBER_TYPE = {
 	PREMIUM: 'Premium'
 }
 
+const USER_SUBSCRIPTION_PLAN = {
+	FREE: {
+		price: 0,
+		value: 1
+	},
+	MONTHLY: {
+		price: 8,
+		value: 2
+	},
+	YEARLY: {
+		price: 78,
+		value: 3
+	},
+	NONE: {
+		price: 0,
+		value: 4
+	}
+}
+
+// const USER_SUBSCRIPTION_PLAN_PRICE = {
+// 	FREE: 0,
+// 	MONTHLY: 8,
+// 	YEARLY: 787,
+// 	NONE: 0,
+// }
+
+
 const USER_ADMIN_STATUS = {
 	PENDING: 'pending',
 	VERIFIED: 'verified',
@@ -108,7 +135,8 @@ const DB_MODEL_REF = {
 	EVENT_INTEREST: 'event_interest',
 	FORUM: 'forum',
 	REPORT: 'report',
-	GLOBAL_VARIABLE: 'global_var'
+	GLOBAL_VARIABLE: 'global_var',
+	SUBSCRIPTION: 'subscription'
 };
 
 const DEVICE_TYPE = {
@@ -788,6 +816,17 @@ const TEMPLATES = {
 				<div class= "col-content hide-col-con">
 				${answer} </div>
 			</div>`;
+
+		// return `<div class="card">
+		// 	<div class="card-header">
+		// 		<h5 class="faq-title">${question}</h5>
+		// 		<i class="fa fa-chevron-right" aria-hidden="true"></i>
+		// 	</div>
+		// 	<div class="card-body">
+		// 		<p>${answer}</p>
+		// 	</div>
+		// </div>`;
+
 	}
 };
 
@@ -882,5 +921,7 @@ export const CONSTANT = Object.freeze({
 	DATE_FILTER,
 	REQUEST_TYPE,
 	REPORT_MESSAGE,
-	NOTIFICATION_CATEGORY
+	NOTIFICATION_CATEGORY,
+	USER_SUBSCRIPTION_PLAN,
+	// USER_SUBSCRIPTION_PLAN_PRICE
 });
