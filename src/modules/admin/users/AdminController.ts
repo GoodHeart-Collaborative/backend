@@ -584,7 +584,7 @@ class AdminController {
 			const findUserCurrenstatus = await userDao.findOne('users', criteria, {}, {})
 			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED && findUserCurrenstatus.adminStatus !== config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
 				const date = new Date();
-				date.setDate(date.getDate() + 7);
+				date.setDate(date.getDate() + 365);
 				dataToUpdate['subscriptionType'] = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
 				dataToUpdate['subscriptionEndDate'] = moment(date).format('YYYY-MM-DD');
 
