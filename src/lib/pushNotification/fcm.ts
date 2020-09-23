@@ -10,7 +10,7 @@ const fcm = new FCM(fcmServerKey);
 export const sendPush = async function (deviceId, deviceType, payload, category?) {
 	console.log("======================>", deviceId);
 	console.log("======================>", deviceType);
-	console.log("======================>", payload);
+	console.log("======================>11111111111111111111111", payload);
 	let message = {};
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 		message = {
@@ -18,6 +18,8 @@ export const sendPush = async function (deviceId, deviceType, payload, category?
 			"data": payload,
 			// "notification": payload.notification
 		};
+		console.log('messagemessagemessagemessagemessage', message);
+
 	}
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.IOS) {
 		// if (payload.category) {
