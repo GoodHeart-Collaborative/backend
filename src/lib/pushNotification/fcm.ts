@@ -10,12 +10,12 @@ const fcm = new FCM(fcmServerKey);
 export const sendPush = async function (deviceId, deviceType, payload, category?) {
 	console.log("======================>", deviceId);
 	console.log("======================>", deviceType);
-	console.log("======================>11111111111111111111111", payload);
+	console.log("======================>11111111111111111111111", payload.data);
 	let message = {};
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 		message = {
 			"to": deviceId,
-			"data": payload,
+			"data": payload.data,
 			// "notification": payload.notification
 		};
 		console.log('messagemessagemessagemessagemessage', message);
