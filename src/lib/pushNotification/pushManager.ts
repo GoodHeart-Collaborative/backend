@@ -5,7 +5,6 @@ import * as config from "@config/index";
 import * as fcm from "@lib/pushNotification/fcm";
 import * as sns from "@lib/pushNotification/sns";
 export const pushNotification = async function (data) {
-	console.log('chunkNoticiationPayloadchunkNoticiationPayload', data);
 
 	return new Promise(async (resolve, reject) => {
 		try {

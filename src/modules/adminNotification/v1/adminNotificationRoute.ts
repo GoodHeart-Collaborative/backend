@@ -44,15 +44,15 @@ export const adminNotificationRoute: ServerRoute[] = [
 					title: Joi.string().trim().required(),
 					link: Joi.string().trim().regex(config.CONSTANT.REGEX.URL).optional(),
 					message: Joi.string().trim().required(),
-					platform: Joi.string()
-						.trim()
-						.valid([
-							config.CONSTANT.DEVICE_TYPE.ANDROID,
-							config.CONSTANT.DEVICE_TYPE.IOS,
-							// // config.CONSTANT.DEVICE_TYPE.WEB,
-							config.CONSTANT.DEVICE_TYPE.ALL
-						]).default(config.CONSTANT.DEVICE_TYPE.ALL)
-						.description("device OS '1'-Android, '2'-iOS, '3'-all"),
+					// platform: Joi.string()
+					// .trim()
+					// .valid([
+					// 	config.CONSTANT.DEVICE_TYPE.ANDROID,
+					// 	// config.CONSTANT.DEVICE_TYPE.IOS,
+					// 	// // config.CONSTANT.DEVICE_TYPE.WEB,
+					// 	config.CONSTANT.DEVICE_TYPE.ALL
+					// ]).default(config.CONSTANT.DEVICE_TYPE.ALL)
+					// .description("device OS '1'-Android, '2'-iOS, '3'-all"),
 					fromDate: Joi.number().optional().description("in timestamp"),
 					toDate: Joi.number().optional().description("in timestamp"),
 					// gender: Joi.string()

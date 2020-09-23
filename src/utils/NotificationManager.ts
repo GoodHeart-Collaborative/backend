@@ -91,10 +91,13 @@ export class NotificationManager {
 			// create android and ios payload
 			let androidPayload, iosPayload, webPayload;
 			if (androidUserChunks.length) {
+				params['body'] = {};
 				androidPayload = appUtils.createAndroidPushPayload(params);
+				console.log('androidPayloadandroidPayloadandroidPayload', androidPayload);
 			}
 			if (iosUserChunks.length) {
 				iosPayload = appUtils.createIOSPushPayload(params);
+				console.log('iosPayloadiosPayloadiosPayloadiosPayload', iosPayload);
 			}
 			if (webUserChunks.length) {
 				webPayload = appUtils.createWebPushPayload(params);
@@ -127,6 +130,8 @@ export class NotificationManager {
 					"payload": webPayload,
 					"deviceType": config.CONSTANT.DEVICE_TYPE.WEB
 				};
+				console.log('chunkNoticiationPayloadchunkNoticiationPayloadchunkNoticiationPayload', chunkNoticiationPayload);
+
 				const step6 = await pushManager.pushNotification(chunkNoticiationPayload);
 			});
 		}

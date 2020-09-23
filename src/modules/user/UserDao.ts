@@ -498,6 +498,33 @@ export class UserDao extends BaseDao {
 
 				}];
 
+			const conversionGraph = [
+				{
+					$match: {
+						createdAt: { $gt: firstDay }
+					}
+				},
+				{
+					$project: {
+						createdAt: { "$month": "$createdAt" },
+						//            "createdAt" :{"$year":"$createdAt"},
+						price: 1,
+						subscriptionType: 1
+					}
+				},
+				{
+					$group: {
+						_id: { subscriptionType: '$subscriptionType', createdAt: '$createdAt' },
+						price: {
+							$sum: '$price'
+						}
+					}
+				},
+
+			]
+
+
+
 			const totalEarningYearly = [
 				// {
 				// 	$match: {
@@ -552,11 +579,15 @@ export class UserDao extends BaseDao {
 			pipeline.push(this.aggregate('subscription', totalEarningYearly, {}))
 
 			pipeline.push(this.aggregate('subscription', graphEarningMonthly, {}));
-
-			const [userCount, newUser, previousYearUserCount, currentYearUserCount, monthlyEarning, earningYearly, earningMonthlyGraph] = await Promise.all(pipeline);
+			pipeline.push(this.aggregate('subscription', conversionGraph, {}));
+			const [userCount, newUser, previousYearUserCount, currentYearUserCount, monthlyEarning, earningYearly, earningMonthlyGraph, freePaidConverion] = await Promise.all(pipeline);
 
 			const userGraph = await this.aggregate("users", userGraphCriteria, {});
 			const userGraphPreviousYear = await this.aggregate('users', userGraphLastYearCriteria, {})
+
+
+			console.log('freePaidConverionfreePaidConverion', freePaidConverion);
+
 			console.log('userGraph1userGraph1userGraph1userGraph1', userGraph);
 
 
@@ -585,7 +616,8 @@ export class UserDao extends BaseDao {
 				currentYearUserCount,
 				monthlyEarning: monthlyEarning[0] ? monthlyEarning[0]['totalAmountMonthly'] : 0,
 				earningYearly: earningYearly[0] ? earningYearly[0]['totalAmountYearly'] : 0,
-				subscriptionEarningMonthly
+				subscriptionEarningMonthly,
+				freePaidConverion
 			}
 
 		} catch (error) {

@@ -12,6 +12,7 @@ export class SubscriptionDao extends BaseDao {
 
             const insertData = {
                 ...params,
+                created: Date.now(),
                 userId: appUtils.toObjectId(userId.userId)
             };
             console.log('insertDatainsertData', insertData);
