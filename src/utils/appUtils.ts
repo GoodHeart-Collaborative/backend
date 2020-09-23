@@ -196,7 +196,7 @@ const createAndroidPushPayload = function (data) {
 			// 	"title": data.title,
 			// 	"body": data.body
 			data: set,
-			notification: set,
+			// notification: set,
 		}
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {
