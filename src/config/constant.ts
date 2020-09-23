@@ -674,10 +674,11 @@ const MAIL_SENDING_TYPE = {
 };
 
 const NOTIFICATION_CATEGORY = {
-	FRIEND_REQUEST_SEND: 1,
-	// FRIEND_REQUEST_ACCEPT: 2
-	ADMIN_STATUS: 2,
-
+	ADMIN_STATUS_VERIFIED: 1,
+	FRIEND_REQUEST_SEND: 2,
+	FRIEND_REQUEST_APPROVED: 3,
+	LEADER_OF_DAY: 4,
+	SHOUTOUT_TAGGED_ME: 5
 }
 
 const SMS_SENDING_TYPE = {
@@ -706,13 +707,13 @@ const DEEPLINK = {
 	DEFAULT_FALLBACK_URL: "https://google.com",
 	// for android deeplink
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
-	ANDROID_SCHEME: "com.womencommunity://",
+	ANDROID_SCHEME: "com.goodheart://",
 	// for ios user deeplink
-	IOS_SCHEME: "com.womencommunity://",
+	IOS_SCHEME: "com.goodheart://",
 	// for ios sp deeplink
 	IOS_STORE_LINK: "https://itunes.apple.com",
-	ANDROID_PACKAGE_NAME: "com.womencommunity", // when app is not installed redirect to google playstore
-	IOS_PACKAGE_NAME: "com.womencommunity"
+	ANDROID_PACKAGE_NAME: "com.goodheart", // when app is not installed redirect to google playstore
+	IOS_PACKAGE_NAME: "com.goodheart"
 };
 const WEBSITE_URL = {
 	ADMIN_URL: "http://womenappdevadmin.appskeeper.com"

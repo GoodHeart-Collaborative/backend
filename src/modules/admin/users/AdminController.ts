@@ -581,8 +581,9 @@ class AdminController {
 			else {
 				dataToUpdate['adminStatus'] = params.adminStatus
 			}
-			const findUserCurrenstatus = await userDao.findOne('users', criteria, {}, {})
-			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED && findUserCurrenstatus.adminStatus !== config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
+			const findUserCurrenstatus = await userDao.findOne('users', criteria, {}, {});
+
+			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED && findUserCurrenstatus.adminStatus !== config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 				const date = new Date();
 				date.setDate(date.getDate() + 365);
 				dataToUpdate['subscriptionType'] = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
@@ -591,28 +592,18 @@ class AdminController {
 				const updateSubscription = await subscriptionDao.saveSubscription(dataToUpdate, tokenData)
 			}
 
-			console.log('dataToUpdatedataToUpdatedataToUpdate', dataToUpdate);
-
 			const data = await userDao.updateOne('users', criteria, dataToUpdate, {})
 			if (!data) {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}
-
-			// send push from here 
-
-			// data: {},
-			// title: undefined,
-			// body: undefined,
-			// type: 1,
-			// category: 'friend_request'
+			// send push from here
 			params['title'] = 'request Approval';
-			params['body'] = `your account has been ${params.adminStatus} successfully`
-			params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS;
-			params['message'] = "Admin approved your request enjoy";
-			params['type'] = 1;
-			if (params.adminStatus) {
+			params['body'] = {}
+			// params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED;
+			params['message'] = `your account has been ${params.adminStatus} successfully`;
+			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED;
+			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
 				const data1111 = await createPayload.notificationManager.sendOneToOneNotification(params, tokenData)
-				console.log('data1111 data1111 ', data1111);
 			}
 
 			if (data && params.status === config.CONSTANT.STATUS.DELETED) {

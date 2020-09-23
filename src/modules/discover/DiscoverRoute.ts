@@ -109,7 +109,7 @@ export const discoverRoute: ServerRoute[] = [
             const payload: DiscoverRequest.DiscoverRequestEdit = request.payload;
             const followerId: DiscoverRequest.DiscoverRequestEditParams = request.params;
             try {
-                const result = await discoverController.updateDiscoverData({ ...payload, ...followerId }, { userId: tokenData.userId });
+                const result = await discoverController.updateDiscoverData({ ...payload, ...followerId }, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

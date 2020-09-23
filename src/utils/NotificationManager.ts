@@ -26,16 +26,31 @@ export class NotificationManager {
 		const step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
 		console.log('step1step1step1step1', step1.length);
 
+		let bulkNotitification = [];
 		await step1.forEach(async (data) => {
-			const noticiationData = {
+			bulkNotitification.push({
 				"senderId": tokenData.userId,
-				"receiverId": [data._id],
+				"receiverId": data._id,
+				"isRead": false,
 				"title": params.title,
 				"message": params.message,
-				"type": params.type
-			};
-			const step2 = await notificationDao.addNotification(noticiationData);
+				"type": params.type,
+				created: Date.now(),
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			// const noticiationData = {
+			// 	"senderId": tokenData.userId,
+			// 	"receiverId": [data._id],
+			// 	"title": params.title,
+			// 	"message": params.message,
+			// 	"type": params.type,
+			// 	"isRead" : false,
+			// };
+			// const step2 = await notificationDao.addNotification(noticiationData);
 		});
+
+		const step2 = await notificationDao.insertMany('notifications', bulkNotitification, {});
 
 		const users = [];
 		let step3 = [];
@@ -49,7 +64,7 @@ export class NotificationManager {
 			];
 			step3 = await baseDao.find("login_histories", { "userId": { "$in": users }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 			// step3 = step3.filter((data) => data.userId !== null);
-			console.log('step3step3step3step3', step3.length);
+			console.log('step3step3step3step3', step3);
 		}
 
 		// save data to notification history
@@ -125,6 +140,8 @@ export class NotificationManager {
 		let step1 = await baseDao.find("login_histories", { "userId": { "$in": [params.userId] }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 		step1 = step1.filter((data) => data.userId !== null);
 
+		console.log('step1step1', step1);
+
 		if (step1.length) {
 			const noticiationData = {
 				"senderId": tokenData.userId,
@@ -154,9 +171,13 @@ export class NotificationManager {
 			let androidPayload, iosPayload, webPayload;
 			if (androidUsers.length) {
 				androidPayload = appUtils.createAndroidPushPayload(params);
+				console.log('androidPayloadandroidPayload>>>>>>>>111111', androidPayload);
+
 			}
 			if (iosUsers.length) {
 				iosPayload = appUtils.createIOSPushPayload(params);
+				console.log('iosPayloadiosPayload', iosPayload);
+
 			}
 			if (webUsers.length) {
 				webPayload = appUtils.createWebPushPayload(params);
@@ -170,6 +191,7 @@ export class NotificationManager {
 					"deviceType": config.CONSTANT.DEVICE_TYPE.ANDROID
 				};
 				const step3 = await pushManager.pushNotification(chunkNoticiationPayload);
+				console.log('step3step3step3step3step3', step3);
 			});
 
 			// save ios chunk data

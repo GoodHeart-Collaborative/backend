@@ -4,6 +4,9 @@ import { discoverDao } from "./DiscoverDao";
 import * as appUtils from "@utils/appUtils";
 import { CONSTANT } from "@config/constant";
 import { userDao } from "@modules/user";
+import * as config from '@config/constant';
+import { notificationManager } from '@utils/NotificationManager';
+import { errorReporter } from "@lib/flockErrorReporter";
 
 class DiscoverController {
 
@@ -53,6 +56,15 @@ class DiscoverController {
                 query = { _id: checkDiscover._id }
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     // push
+                    params['title'] = 'Friend_request';
+                    params['body'] = {
+                        userId: userId.userId,
+                    };
+                    params['click_action'] = "VIEW_PROFILE";
+                    params['message'] = `${userId.firstName} accepted your friend request`;
+                    params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED;
+                    const data1111 = notificationManager.sendOneToOneNotification(params, userId)
+
                     await userDao.pushMember({ userId: userId.userId.toString(), followerId: params.followerId })
                     await userDao.pushMember({ userId: params.followerId, followerId: userId.userId.toString() })
 
@@ -109,11 +121,21 @@ class DiscoverController {
                 let param: any = {}
                 param["_id"] = params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
-                getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING
+                getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING;
+
+                params['title'] = 'Friend_request';
+                params['body'] = {
+                    userId: userId.userId
+                };
+                params['click_action'] = "FRIEND_REQUEST";
+                params['message'] = `${getData.data[0].user.name} wants to connect with you `;
+                params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND;
+                const data1111 = notificationManager.sendOneToOneNotification(params, userId)
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }
 
         } catch (error) {
+            errorReporter(error);
             throw error;
         }
     }
