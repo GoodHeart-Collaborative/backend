@@ -16,6 +16,7 @@ class AdminNotificationController {
 	 */
 	async addNotification(params: AdminNotificationRequest.Add, tokenData: TokenData) {
 		try {
+			console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>...');
 			if (
 				tokenData.adminType === config.CONSTANT.ADMIN_TYPE.SUPER_ADMIN ||
 				tokenData.permission.indexOf("add_notification") !== -1

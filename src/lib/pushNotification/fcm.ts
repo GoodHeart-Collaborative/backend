@@ -26,8 +26,8 @@ export const sendPush = async function (deviceId, deviceType, payload, category?
 		message = {
 			category: category ? category : '',
 			"to": deviceId,
-			// "data": payload.data,
-			"aps": payload.apn,
+			"data": payload.data,
+			"aps": payload.aps,
 			"notification": payload.notification
 		};
 		console.log('messagemessage', message);
