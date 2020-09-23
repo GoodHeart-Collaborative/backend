@@ -44,7 +44,7 @@ export class CronUtils {
 		const dataToUpdate = {
 			countMember: minMemberCount.memberOfDayCount + 1,
 			isMemberOfDay: true,
-			memberCreatedAt: new Date()
+			memberCreatedAt: Date.now()
 		};
 
 		const getUsers = await userDao.aggregate('users', criteria, {});
