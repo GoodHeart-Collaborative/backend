@@ -46,13 +46,12 @@ export const adminNotificationRoute: ServerRoute[] = [
 					message: Joi.string().trim().required(),
 					platform: Joi.string()
 						.trim()
-						.required()
 						.valid([
 							config.CONSTANT.DEVICE_TYPE.ANDROID,
 							config.CONSTANT.DEVICE_TYPE.IOS,
-							// config.CONSTANT.DEVICE_TYPE.WEB,
+							// // config.CONSTANT.DEVICE_TYPE.WEB,
 							config.CONSTANT.DEVICE_TYPE.ALL
-						])
+						]).default(config.CONSTANT.DEVICE_TYPE.ALL)
 						.description("device OS '1'-Android, '2'-iOS, '3'-all"),
 					fromDate: Joi.number().optional().description("in timestamp"),
 					toDate: Joi.number().optional().description("in timestamp"),

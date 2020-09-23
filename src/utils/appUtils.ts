@@ -196,6 +196,7 @@ const createAndroidPushPayload = function (data) {
 			// 	"title": data.title,
 			// 	"body": data.body
 			data: set,
+			notification: set,
 		}
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {
@@ -207,69 +208,40 @@ const createAndroidPushPayload = function (data) {
 
 const createIOSPushPayload = function (data) {
 	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound"];
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type"];
 
 	console.log('datadata>>>>', data);
 
 
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
-	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
+	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
 	// data.category = "action"; // to show buttons
 	// data.mutableContent = 1;
-	data.threadId = "RichPush";
+	data.sound = 'default';
+	// data.threadId = "RichPush";
 
 
 	data.title = data.title ? data.title : '';
 	data.body = data.message;
+	// data.type = data.type;
 
 	set = this.setInsertObject(data, set, fieldsToFill);
 	console.log('setsetsetsetsetset', set);
 
-
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {
-			// "data": set,
-			"apn": {
-				alert: set,
-				"data": {
-					type: data.type
+			"data": set,
+			notification: set,
+			aps: {
+				type: data.type,
+				alert: {
+					title: data.title ? data.title : '',
+					body: data.message,
 				},
-			},
-			// "notification": {
-			// 	"title": data.title ? data.title : '',
-			// 	"body": data.message,
-			// 	"data": {
-			// 		type: data.type
-			// 	},
-			// },
+				"mutable-content": 1
+			}
 		};
-
-		// apns: {
-		// 	aps: { 
-		// 	  alert: { 
-		// 		title: "Pusher's Native Push Notifications API", 
-		// 		subtitle: "Bringing you iOS 10 support!", 
-		// 		body: "Now add more content to your Push Notifications!"
-		// 		}, 
-		// 		"mutable-content": 1,
-		// 		category: "pusher"
-		// 	  },
-		// 	data: {
-		// 	  "attachment-url": "https://pusher.com/static_logos/320x320.png"
-		// 	} 
-
-
-		// 	"title" : "",
-		// 	"subtitle" : "",
-		// 	"body" : "Bob wants to connect with you",
-		// 	"data" : {
-		// 		"userId" : "12345678"
-		// 	},
-		// 	"type" : 2,
-		//  },
-		//  "category" : "FRIEND_REQUEST"
-
 
 		// return {
 		// 	set={

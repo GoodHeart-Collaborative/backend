@@ -579,7 +579,7 @@ class AdminController {
 				}
 			}
 			else {
-				dataToUpdate['adminStatus'] = params.adminStatus
+				dataToUpdate['adminStatus'] = params.adminStatus;
 			}
 			const findUserCurrenstatus = await userDao.findOne('users', criteria, {}, {});
 
@@ -588,7 +588,6 @@ class AdminController {
 				date.setDate(date.getDate() + 365);
 				dataToUpdate['subscriptionType'] = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
 				dataToUpdate['subscriptionEndDate'] = moment(date).format('YYYY-MM-DD');
-
 				const updateSubscription = await subscriptionDao.saveSubscription(dataToUpdate, tokenData)
 			}
 
@@ -598,7 +597,7 @@ class AdminController {
 			}
 			// send push from here
 			params['title'] = 'request Approval';
-			params['body'] = {}
+			params['body'] = {};
 			// params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED;
 			params['message'] = `your account has been ${params.adminStatus} successfully`;
 			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED;
