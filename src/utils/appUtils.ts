@@ -22,6 +22,10 @@ import * as environment from '@config/environment'
 import * as config from "@config/index";
 import { logger } from "@lib/logger";
 const TAG = "rcc-uploads";
+// import ipLocation from "iplocation";
+import * as geoip from 'geoip-lite';
+
+
 
 const verifyEmailFormat = function (value: string) {
 	return validator.isEmail(value);
@@ -166,24 +170,33 @@ const splitArrayInToChunks = function (data) {
 
 const createAndroidPushPayload = function (data) {
 	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "priority", "sound", "click_action"];
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "priority", "sound", "click_action", "title", "message", "notification_type"];
+	console.log('datadata', data);
 
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
 	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
 	data.category = "action";
+	// data.body = {};
+	data.notification_type = data.type;
+	data.message = data.message;
+	// data.notification_type = data.notification_type;
+	data.title = data.title ? data.title : "";
+	data.body = data.body;
+
+	// category
 	// data.click_action = "FLUTTER_NOTIFICATION_CLICK";
 	set = this.setInsertObject(data, set, fieldsToFill);
 
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {
-			"data": set,
+			// "data": set,
 			// "body": set,
-			"notification": {
-				"title": data.title,
-				"body": data.body
-			}
-		};
+			// "notification": {
+			// 	"title": data.title,
+			// 	"body": data.body
+			data: set,
+		}
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {
 			data: set
@@ -193,64 +206,121 @@ const createAndroidPushPayload = function (data) {
 };
 
 const createIOSPushPayload = function (data) {
-	// let set: any = {};
-	// const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound"];
+	let set: any = {};
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound"];
 
-	// data.priority = data.priority ? data.priority : "high";
-	// // data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
-	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
+	console.log('datadata>>>>', data);
+
+
+	data.priority = data.priority ? data.priority : "high";
+	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
+	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
 	// data.category = "action"; // to show buttons
 	// data.mutableContent = 1;
-	// data.threadId = "RichPush";
-	// set = this.setInsertObject(data, set, fieldsToFill);
+	data.threadId = "RichPush";
 
-	// if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
-	// 	return {
-	// 		// "data": set,
-	// 		"data": {
-	// 			"data": set
-	// 		},
-	// 		"notification": {
-	// 			"title": data.title,
-	// 			"body": data.body,
-	// 			"sound": "default",
-	// 			"priority": data.priority ? data.priority : "high"
-	// 		}
-	// 	};
-	// } else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
-	// 	const payload = {};
-	// 	payload[config.CONSTANT.SNS_SERVER_TYPE.DEV] = JSON.stringify({
-	// 		aps: set
-	// 	});
-	// 	return payload;
-	// }
 
-	let set = {};
-	let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+	data.title = data.title ? data.title : '';
+	data.body = data.message;
 
-	data.mutableContent = 1;
-	data.threadId = "womenCommunity";
-	data.priority = data.priority ? data.priority : "high";
-	data.image = data.icon ? data.icon : "";
-	data.contentType = "text";
-	data.badge = 1;
+	set = this.setInsertObject(data, set, fieldsToFill);
+	console.log('setsetsetsetsetset', set);
 
-	if (data.entityData !== undefined) data.entityData = data.entityData;
-	// data.category = "action"; // to show buttons
-	set = setInsertObject(data, set, fieldsToFill);
-	let notification = {
-		"title": data.title,
-		"body": data.message,
-		"sound": "default",
-		"priority": data.priority
+
+	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
+		return {
+			// "data": set,
+			"apn": {
+				alert: set,
+				"data": {
+					type: data.type
+				},
+			},
+			// "notification": {
+			// 	"title": data.title ? data.title : '',
+			// 	"body": data.message,
+			// 	"data": {
+			// 		type: data.type
+			// 	},
+			// },
+		};
+
+		// apns: {
+		// 	aps: { 
+		// 	  alert: { 
+		// 		title: "Pusher's Native Push Notifications API", 
+		// 		subtitle: "Bringing you iOS 10 support!", 
+		// 		body: "Now add more content to your Push Notifications!"
+		// 		}, 
+		// 		"mutable-content": 1,
+		// 		category: "pusher"
+		// 	  },
+		// 	data: {
+		// 	  "attachment-url": "https://pusher.com/static_logos/320x320.png"
+		// 	} 
+
+
+		// 	"title" : "",
+		// 	"subtitle" : "",
+		// 	"body" : "Bob wants to connect with you",
+		// 	"data" : {
+		// 		"userId" : "12345678"
+		// 	},
+		// 	"type" : 2,
+		//  },
+		//  "category" : "FRIEND_REQUEST"
+
+
+		// return {
+		// 	set={
+		// 		"data": set,
+		// 		"data": {
+		// 			"data": set
+		// 		},
+		// 		"notification": {
+		// 			"title": data.title,
+		// 			"body": data.body, // 	// 		  "body" : "Bob wants to connect with you",
+		// 			data: {
+		// 				userId: data.userId
+		// 			},
+		// 			type: data.type // notificatioj tyope : admin or user 1 or 2
+		// 		},
+		// 		category: data.category
+
+	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
+		const payload = {};
+		payload[config.CONSTANT.SNS_SERVER_TYPE.DEV] = JSON.stringify({
+			aps: set
+		});
+		return payload;
 	}
-	if (data.entityData !== undefined)
-		set = Object.assign(set, data.entityData);
 
-	return {
-		data: set,
-		notification: notification
-	};
+	// let set = {};
+	// let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+
+	// data.mutableContent = 1;
+	// data.threadId = "womenCommunity";
+	// data.priority = data.priority ? data.priority : "high";
+	// data.image = data.icon ? data.icon : "";
+	// data.contentType = "text";
+	// data.badge = 1;
+
+	// if (data.entityData !== undefined) data.entityData = data.entityData;
+	// // data.category = "action"; // to show buttons
+	// set = setInsertObject(data, set, fieldsToFill);
+	// let notification = {
+	// 	"title": data.title,
+	// 	"body": data.message,
+	// 	"sound": "default",
+	// 	"priority": data.priority
+	// }
+	// if (data.entityData !== undefined)
+	// 	set = Object.assign(set, data.entityData);
+
+	// return {
+	// 	data: set,
+	// 	notification: notification
+	// };
 
 };
 
@@ -628,6 +698,20 @@ const consolelog = (identifier: string, value: any, status: boolean) => {
 	}
 };
 
+const getLocationByIp = async (ipaddress: string) => {
+	try {
+		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+
+		// const lt_lng = await ipLocation('14.102.21.85');
+		const lt_lng = await geoip.lookup('14.102.21.85');
+		console.log('lt_lnglt_lnglt_lng', lt_lng);
+		return lt_lng;
+	} catch (error) {
+		return Promise.reject(error)
+	}
+}
+
+
 export {
 	verifyEmailFormat,
 	setInsertObject,
@@ -678,7 +762,8 @@ export {
 	mailAttachments,
 	consolelog,
 	generateOtp,
-	getShoutoutCard
+	getShoutoutCard,
+	getLocationByIp
 };
 
 
