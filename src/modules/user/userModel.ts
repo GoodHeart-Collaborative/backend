@@ -56,6 +56,7 @@ export interface IUser extends Document {
 	reportCount: number;
 	// memberType: number;
 	subscriptionType: string;
+	subscriptionEndDate: String;
 	// isAdminRejected: boolean;
 	// isAdminVerified: boolean;
 }
@@ -129,7 +130,7 @@ const userSchema = new Schema({
 		// default: config.CONSTANT.MEMBER_TYPE.FREE
 	}, // Free(Default rakho)
 	subscriptionEndDate: {
-		type: Date
+		type: String
 	},
 	memberShipStatus: { type: String },
 	myConnection: { type: Number, default: 0 },
@@ -165,7 +166,7 @@ const userSchema = new Schema({
 		]
 	},
 	countMember: { type: Number, default: 0 },
-	memberCreatedAt: { type: String },
+	memberCreatedAt: { type: Date },
 	isMemberOfDay: { type: Boolean, default: false },
 	members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
 	about: { type: String },

@@ -17,7 +17,6 @@ export class CronUtils {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			// request.get(baseUrl + "/common/appointment/upcoming");
 
-
 			cronJob.createMember()
 
 		}, { scheduled: false });
@@ -44,7 +43,7 @@ export class CronUtils {
 		const dataToUpdate = {
 			countMember: minMemberCount.memberOfDayCount + 1,
 			isMemberOfDay: true,
-			memberCreatedAt: Date.now()
+			memberCreatedAt: new Date()  // Date.now()
 		};
 
 		const getUsers = await userDao.aggregate('users', criteria, {});
