@@ -15,7 +15,7 @@ export const sendPush = async function (deviceId, deviceType, payload, category?
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 		message = {
 			"to": deviceId,
-			"data": payload.data,
+			"data": payload,
 			// "notification": payload.notification
 		};
 	}
