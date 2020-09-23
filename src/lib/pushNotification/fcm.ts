@@ -43,6 +43,8 @@ export const sendPush = async function (deviceId, deviceType, payload, category?
 					console.log(error);
 					// reject(error);
 				} else {
+					console.log('responseresponseresponse', response);
+
 					resolve(response);
 				}
 			});
