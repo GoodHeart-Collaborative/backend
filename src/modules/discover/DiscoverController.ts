@@ -119,7 +119,7 @@ class DiscoverController {
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     status = CONSTANT.DISCOVER_STATUS.ACCEPT
                 } else {
-                    // update 
+                    // update
                     status = CONSTANT.DISCOVER_STATUS.PENDING
                     await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status })
                 }
@@ -150,7 +150,7 @@ class DiscoverController {
     async getDiscoverStatus(params, tokenData) {
         try {
             const data = await discoverDao.getDiscoverStatus(params, tokenData);
-            console.log('data', data);
+            // console.log('data>>>>>>>>>>>>>>>>', data  );
             return data;
         } catch (error) {
             return Promise.reject(error);

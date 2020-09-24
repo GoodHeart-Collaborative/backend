@@ -142,7 +142,7 @@ export const discoverRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: DiscoverRequest.DiscoverRequestAdd = request.params;
             try {
-                const result = await discoverController.getDiscoverStatus({ ...payload }, { userId: tokenData.userId });
+                let result = await discoverController.getDiscoverStatus({ ...payload }, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

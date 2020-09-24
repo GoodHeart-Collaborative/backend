@@ -422,7 +422,15 @@ export class DiscoverDao extends BaseDao {
                 },
             });
             const data = await this.aggregate('users', aggPipe, {});
-            return data[0] ? data[0] : {};
+            console.log('datadatadatadata', data);
+
+            console.log('tokenDatatokenData', tokenData);
+
+            const makeData = { ...data[0], ...tokenData }
+
+            // data[0] = tokenData;
+
+            return makeData; // data[0] ? data[0] : {};
         } catch (error) {
             return Promise.reject(error);
 
