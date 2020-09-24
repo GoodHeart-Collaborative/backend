@@ -227,7 +227,9 @@ const createIOSPushPayload = function (data) {
 	if (data.category) {
 		data.category = data.category;
 	}
-	// data.type = data.type;
+	if (data['body']) {
+		data['body']['type'] = data.type;
+	}
 
 	set = this.setInsertObject(data, set, fieldsToFill);
 	console.log('setsetsetsetsetset', set);
@@ -237,9 +239,8 @@ const createIOSPushPayload = function (data) {
 			"data": set,
 			notification: set,
 			aps: {
-				data: {
-					type: data.type,
-				},
+				data:
+					data['body'],
 				alert: {
 					title: data.title ? data.title : '',
 					body: data.message,

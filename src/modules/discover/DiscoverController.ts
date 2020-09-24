@@ -106,7 +106,7 @@ class DiscoverController {
 
             params['title'] = 'Friend_request';
             params['body'] = {
-                userId: userId.userId
+                userId: userId.userId,
             };
             params['click_action'] = "FRIEND_REQUEST";
             params['message'] = `${name.name} wants to connect with you `;
