@@ -60,7 +60,7 @@ class DiscoverController {
                     params['body'] = {
                         userId: userId.userId,
                     };
-                    params['click_action'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
+                    params['click_action'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.category;
                     params['message'] = `${userId.firstName} accepted your friend request`;
                     params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type;
                     const data1111 = notificationManager.sendOneToOneNotification(params, userId);
@@ -94,12 +94,22 @@ class DiscoverController {
      * @description to accept the connection request
      * @param (DiscoverRequest.DiscoverRequestAdd)
      */
-    async saveDiscoverData(params: DiscoverRequest.DiscoverRequestAdd, userId) {
+    async saveDiscoverData(params: DiscoverRequest.DiscoverRequestAdd, userId, name?) {
         try {
             let checkQuery: any = {}
             let status: any = {}
             checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
+
+            params['title'] = 'Friend_request';
+            params['body'] = {
+                userId: userId.userId
+            };
+            params['click_action'] = "FRIEND_REQUEST";
+            params['message'] = `${name} wants to connect with you `;
+            params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
+            const data1111 = notificationManager.sendOneToOneNotification(params, userId)
+
             // { followerId: params.followerId, userId: userId.userId })
             if (checkDiscover) {
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
@@ -123,14 +133,7 @@ class DiscoverController {
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING;
 
-                params['title'] = 'Friend_request';
-                params['body'] = {
-                    userId: userId.userId
-                };
-                params['click_action'] = "FRIEND_REQUEST";
-                params['message'] = `${getData.data[0].user.name} wants to connect with you `;
-                params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
-                const data1111 = notificationManager.sendOneToOneNotification(params, userId)
+
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }
 

@@ -77,7 +77,7 @@ export const discoverRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: DiscoverRequest.DiscoverRequestAdd = request.payload;
             try {
-                const result = await discoverController.saveDiscoverData({ ...payload }, { userId: tokenData.userId });
+                const result = await discoverController.saveDiscoverData({ ...payload }, { userId: tokenData.userId }, { name: tokenData.firstName });
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
