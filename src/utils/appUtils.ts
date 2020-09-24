@@ -237,7 +237,9 @@ const createIOSPushPayload = function (data) {
 			"data": set,
 			notification: set,
 			aps: {
-				type: data.type,
+				data: {
+					type: data.type,
+				},
 				alert: {
 					title: data.title ? data.title : '',
 					body: data.message,

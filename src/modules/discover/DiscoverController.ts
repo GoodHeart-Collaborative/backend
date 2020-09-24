@@ -108,7 +108,7 @@ class DiscoverController {
             params['body'] = {
                 userId: userId.userId
             };
-            // params['click_action'] = "FRIEND_REQUEST";
+            params['click_action'] = "FRIEND_REQUEST";
             params['message'] = `${name.name} wants to connect with you `;
             params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
             params['userId'] = params.followerId;
