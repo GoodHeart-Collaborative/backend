@@ -441,7 +441,7 @@ export class DiscoverDao extends BaseDao {
                     discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
                     // name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                     _id: "$otherUserData._id",
-                    connectionCount: '$myConnection',
+                    connectionCount: '$otherUserData.myConnection',
                     // otherUserData: '$otherUserData',
                     // otherUserData: {
                     otherUserId: "$otherUserData._id",
