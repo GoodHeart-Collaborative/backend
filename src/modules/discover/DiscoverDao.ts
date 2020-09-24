@@ -3,6 +3,7 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
 import { CONSTANT } from "@config/index";
+import { userDao } from "@modules/user";
 
 
 export class DiscoverDao extends BaseDao {
@@ -365,13 +366,35 @@ export class DiscoverDao extends BaseDao {
 
     async getDiscoverStatus(params, tokenData) {
         try {
+            const { otherUserId } = params;
             const aggPipe = [];
+            // const otherUser = await userDao.findOne('users', { _id: params.otherUserId }, {}, {});
+
+            // let idKey: string = '$otherUserId'
+            // idKey = '$_idd'
 
             aggPipe.push({
                 $match: {
                     _id: appUtils.toObjectId(tokenData.userId),
                 }
             });
+            // const userIdd = otherUserId
+            aggPipe.push({
+                $lookup: {
+                    "from": "users",
+                    let: { "users": appUtils.toObjectId(otherUserId), "user": appUtils.toObjectId(tokenData.userId) },
+                    as: 'otherUserData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$users']
+                            }
+                        }
+                    }]
+                }
+            })
+
+            aggPipe.push({ '$unwind': { path: '$otherUserData', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({
                 $lookup: {
@@ -419,14 +442,25 @@ export class DiscoverDao extends BaseDao {
                     name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                     _id: "$_id",
                     connectionCount: '$myConnection',
+                    // otherUserData: '$otherUserData',
+                    otherUserData: {
+                        _id: "$_id",
+                        industryType: "$otherUserData.industryType",
+                        myConnection: "$otherUserData.myConnection",
+                        experience: "$otherUserData.experience",
+                        // discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                        name: { $concat: [{ $ifNull: ["$otherUserData.firstName", ""] }, " ", { $ifNull: ["$otherUserData.lastName", ""] }] },
+                        profilePicUrl: "$otherUserData.profilePicUrl",
+                        profession: { $ifNull: ["$otherUserData.profession", ""] },
+                        about: { $ifNull: ["$otherUserData.about", ""] }
+                    },
                 },
             });
             const data = await this.aggregate('users', aggPipe, {});
             console.log('datadatadatadata', data);
 
-            console.log('tokenDatatokenData', tokenData);
 
-            const makeData = { ...data[0], ...tokenData }
+            const makeData = { ...data[0], }
 
             // data[0] = tokenData;
 
