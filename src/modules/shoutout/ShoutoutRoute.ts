@@ -47,7 +47,7 @@ export const shoutoutRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: ShoutoutRequest.ShoutoutRequestAdd = request.payload;
             try {
-                const result = await shoutoutController.saveShoutoutData({ ...payload }, { userId: tokenData.userId });
+                const result = await shoutoutController.saveShoutoutData({ ...payload }, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
