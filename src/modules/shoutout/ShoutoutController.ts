@@ -91,7 +91,7 @@ class ShoutoutController {
             // notificationData['click_action'] = "FRIEND_REQUEST";
             notificationData['message'] = `${userId.firstName} send me a shout out `;
             notificationData['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.type;
-            notificationData['userId'] = ['5f32458da49d4610aeb6efd8'] // params.members;
+            notificationData['userId'] = params.members //['5f32458da49d4610aeb6efd8'] // params.members;
 
             notification.notificationManager.sendOneToOneNotification(notificationData, userId, false)
             return shoutoutConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(checkDiscover)
