@@ -601,10 +601,16 @@ class EventController {
                 event,
                 type: 1
             }
-            return [
-                FEATURED,
-                EVENTS,
-            ]
+            // return [
+            //     FEATURED,
+            //     EVENTS,
+            // ]
+            return {
+                featuredEvent,
+                event
+
+            }
+
         } catch (error) {
             return Promise.reject(error)
         }
