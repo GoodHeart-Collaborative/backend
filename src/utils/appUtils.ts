@@ -208,7 +208,7 @@ const createAndroidPushPayload = function (data) {
 
 const createIOSPushPayload = function (data) {
 	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type"];
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type", "body"];
 
 	console.log('datadata>>>>', data);
 
@@ -221,34 +221,34 @@ const createIOSPushPayload = function (data) {
 	data.sound = 'default';
 	// data.threadId = "RichPush";
 
-
 	data.title = data.title ? data.title : '';
-	data.body = data.message;
+	// data.body = data.message;
 	if (data.category) {
 		data.category = data.category;
 	}
-	if (data['body']) {
-		data['body']['type'] = data.type;
+	if (data.body) {
+		data.data = data.body;
+		data.type = data.type;
 	}
 
+	// data.type = data.type;
 	set = this.setInsertObject(data, set, fieldsToFill);
 	console.log('setsetsetsetsetset', set);
 
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {
-			"data": set,
-			notification: set,
-			aps: {
-				data:
-					data['body'],
-				alert: {
-					title: data.title ? data.title : '',
-					body: data.message,
-				},
-				"mutable-content": 1
+			"data": {
+				"category": data.category ? data.category : '',
+				"userId": data.userId ? data.userId : '',
+				"type": data.type,
+			},
+			"notification": {
+				"title": data.title,
+				"body": data.message,
+				"sound": data.sound,
+				"priority": data.priority
 			}
-		};
-
+		}
 		// return {
 		// 	set={
 		// 		"data": set,

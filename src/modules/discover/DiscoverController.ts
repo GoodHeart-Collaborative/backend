@@ -56,15 +56,6 @@ class DiscoverController {
                 query = { _id: checkDiscover._id }
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     // push
-                    params['title'] = 'Friend_request';
-                    params['body'] = {
-                        userId: userId.userId,
-                    };
-                    params['click_action'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.category;
-                    params['message'] = `${userId.firstName} accepted your friend request`;
-                    params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type;
-                    const data1111 = notificationManager.sendOneToOneNotification(params, userId);
-
                     await userDao.pushMember({ userId: userId.userId.toString(), followerId: params.followerId })
                     await userDao.pushMember({ userId: params.followerId, followerId: userId.userId.toString() })
 
@@ -75,6 +66,19 @@ class DiscoverController {
                         await userDao.pullMember({ userId: params.followerId, followerId: userId.userId.toString() })
                     }
                 }
+                if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                    params['title'] = 'Friend_request';
+                    params['body'] = {
+                        userId: userId.userId,
+                    };
+                    params['userId'] = params.followerId;
+                    params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.category;
+                    // params['click_action'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.category;
+                    params['message'] = `${userId.firstName} accepted your friend request`;
+                    params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type;
+                    const data1111 = notificationManager.sendOneToOneNotification(params, userId, true);
+                }
+
                 await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
                 userId = userId.userId.toString()
                 let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
@@ -103,16 +107,17 @@ class DiscoverController {
             checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
 
-
             params['title'] = 'Friend_request';
             params['body'] = {
                 userId: userId.userId,
             };
+            params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
             params['click_action'] = "FRIEND_REQUEST";
             params['message'] = `${name.name} wants to connect with you `;
             params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
             params['userId'] = params.followerId;
-            const data1111 = notificationManager.sendOneToOneNotification(params, userId)
+
+            const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
             // { followerId: params.followerId, userId: userId.userId })
             if (checkDiscover) {

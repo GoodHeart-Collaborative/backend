@@ -3,7 +3,7 @@ const request = require("request");
 // import { memberDao } from "@modules/admin/memberOfDay/v1/MemberDao";
 import * as config from "@config/index";
 import { userDao } from "@modules/user";
-
+import * as notification from '@utils/NotificationManager';
 const baseUrl = config.SERVER.APP_URL + config.SERVER.API_BASE_URL;
 let task;
 
@@ -16,8 +16,7 @@ export class CronUtils {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			// request.get(baseUrl + "/common/appointment/upcoming");
-
-			cronJob.createMember()
+			cronJob.createMember();
 
 		}, { scheduled: false });
 		task.start();
@@ -27,7 +26,6 @@ export class CronUtils {
 		const minMemberCount = await userDao.findOne('global_var', {}, {}, {}, {});
 
 		console.log('minMemberCountminMemberCountminMemberCount', minMemberCount);
-
 
 		const criteria = [
 			{
@@ -43,11 +41,13 @@ export class CronUtils {
 		const dataToUpdate = {
 			countMember: minMemberCount.memberOfDayCount + 1,
 			isMemberOfDay: true,
-			memberCreatedAt: new Date()  // Date.now()
+			memberCreatedAt: new Date()  // Date.now();
 		};
 
 		const getUsers = await userDao.aggregate('users', criteria, {});
 		console.log('getUsersgetUsers', getUsers);
+
+		const params: any = {};
 
 		if (!getUsers || !getUsers[0]) {
 			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
@@ -55,10 +55,30 @@ export class CronUtils {
 			return;
 		}
 		if (getUsers || getUsers[0]) {
+			params['userId'] = getUsers[0]._id;
+			params['title'] = 'Leader of Day';
+			// params['body'] = {
+			// 	userId: getUsers[0]._id,
+			// };
+			params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.category;
+			params['message'] = "Congratulate! You are selected as Leader of The Day";
+			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.type;
+			params['body'] = getUsers[0] ? {
+				_id: getUsers[0]._id,
+				name: getUsers[0].firstName + ' ' + getUsers[0].lastName,
+				profilePicUrl: getUsers[0].profilePicUrl,
+				profession: getUsers[0].profession,
+				industryType: getUsers[0].industryType,
+				experience: getUsers[0].experience,
+				about: getUsers[0].about,
+				myConnection: getUsers[0].myConnection
+			} : {};
 			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
 			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, {});
-			return;
 
+			const data1111 = notification.notificationManager.sendMemberOfDayNotification(params)
+
+			return;
 		}
 
 	}
@@ -72,6 +92,7 @@ export class CronUtils {
 }
 
 export const cronJob = new CronUtils()
+
 
 
 

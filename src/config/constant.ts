@@ -566,8 +566,8 @@ const SMS = {
 };
 
 const NOTIFICATION_TYPE = {
-	BULK_NOTIFICATION: "1",
-	ONE_TO_ONE: "2"
+	BULK_NOTIFICATION: 1,
+	ONE_TO_ONE: 2
 };
 
 const SNS_SERVER_TYPE = {
@@ -692,7 +692,7 @@ const NOTIFICATION_CATEGORY = {
 	},
 	SHOUTOUT_TAGGED_ME: {
 		type: 5,
-		category: 'SHOUTOUT_TAGGED_ME'
+		category: 'VIEW_SHOUTLIST_ACTION'
 	}
 }
 

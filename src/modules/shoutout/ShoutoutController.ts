@@ -4,7 +4,7 @@ import { shoutoutDao } from "./ShoutoutDao";
 import { discoverDao } from  '../discover/DiscoverDao'
 import * as environment from '@config/environment'
 import * as appUtils from "@utils/appUtils";
-
+import { } from '@utils/NotificationManager';
 class ShoutoutController {
 
     /**
@@ -23,12 +23,12 @@ class ShoutoutController {
     async getShoutouMyConnection(userId, query?) {
         try {
             let response:any = {}
-           let getData = await discoverDao.getDiscoverData({ShoutoutConnection: true, ...query}, userId, true ,);         
-        
-           if(query.pageNo == 1){
+           let getData = await discoverDao.getDiscoverData({ ShoutoutConnection: true, ...query }, userId, true ,);
+
+           if(query.pageNo == 1) {
             response = {
-                greetWord:  await appUtils.getShoutoutCard(),
-                list:getData['list'], //myconnection
+                greetWord: await appUtils.getShoutoutCard(),
+                list: getData['list'], //myconnection
                 "total": getData.total,
                 "page": getData.page,
                 "total_page": getData.total_page,
@@ -56,7 +56,7 @@ class ShoutoutController {
             // delete params.members
             let memberss = await discoverDao.getShoutoutMyConnection(userId)
             members.push(await appUtils.toObjectId(userId.userId))
-            if(memberss && memberss.length > 0) {
+            if (memberss && memberss.length > 0) {
                 for (let i = 0; i < memberss.length; i++) {
                     if(memberss[i].userId.toString() === userId.userId) {
                         members.push(memberss[i].followerId)
@@ -65,8 +65,8 @@ class ShoutoutController {
                     }
                 }
             }
-            let createArr:any  = []
-			for (let i = 0; i < params.members.length; i++) {
+            let createArr:any = []
+            for (let i = 0; i < params.members.length; i++) {
                 createArr.push({
                     userId: userId.userId,
                     description: params.description,
@@ -79,7 +79,7 @@ class ShoutoutController {
                     receiverId: await appUtils.toObjectId(params.members[i])
                 })
             }
-            
+            // params['members']          
             let checkDiscover = await shoutoutDao.saveBulkShoutout(createArr)
             return shoutoutConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(checkDiscover)
         } catch (error) {
