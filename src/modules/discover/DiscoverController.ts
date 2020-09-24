@@ -98,16 +98,20 @@ class DiscoverController {
         try {
             let checkQuery: any = {}
             let status: any = {}
+            console.log('namenamenamenamename', name);
+
             checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
+
 
             params['title'] = 'Friend_request';
             params['body'] = {
                 userId: userId.userId
             };
-            params['click_action'] = "FRIEND_REQUEST";
-            params['message'] = `${name} wants to connect with you `;
+            // params['click_action'] = "FRIEND_REQUEST";
+            params['message'] = `${name.name} wants to connect with you `;
             params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
+            params['userId'] = userId.userId;
             const data1111 = notificationManager.sendOneToOneNotification(params, userId)
 
             // { followerId: params.followerId, userId: userId.userId })

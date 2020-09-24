@@ -130,8 +130,6 @@ export class NotificationManager {
 					"payload": webPayload,
 					"deviceType": config.CONSTANT.DEVICE_TYPE.WEB
 				};
-				console.log('chunkNoticiationPayloadchunkNoticiationPayloadchunkNoticiationPayload', chunkNoticiationPayload);
-
 				const step6 = await pushManager.pushNotification(chunkNoticiationPayload);
 			});
 		}
@@ -144,6 +142,8 @@ export class NotificationManager {
 		];
 		let step1 = await baseDao.find("login_histories", { "userId": { "$in": [params.userId] }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 		step1 = step1.filter((data) => data.userId !== null);
+
+		console.log('paramsparamsparamsparams', params);
 
 		console.log('step1step1', step1);
 
