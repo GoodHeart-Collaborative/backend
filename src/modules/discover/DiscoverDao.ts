@@ -439,21 +439,21 @@ export class DiscoverDao extends BaseDao {
             aggPipe.push({
                 $project: {
                     discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
-                    name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+                    // name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                     _id: "$_id",
                     connectionCount: '$myConnection',
                     // otherUserData: '$otherUserData',
-                    otherUserData: {
-                        _id: "$_id",
-                        industryType: "$otherUserData.industryType",
-                        myConnection: "$otherUserData.myConnection",
-                        experience: "$otherUserData.experience",
-                        // discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
-                        name: { $concat: [{ $ifNull: ["$otherUserData.firstName", ""] }, " ", { $ifNull: ["$otherUserData.lastName", ""] }] },
-                        profilePicUrl: "$otherUserData.profilePicUrl",
-                        profession: { $ifNull: ["$otherUserData.profession", ""] },
-                        about: { $ifNull: ["$otherUserData.about", ""] }
-                    },
+                    // otherUserData: {
+                    otherUserId: "$otherUserData._id",
+                    industryType: "$otherUserData.industryType",
+                    myConnection: "$otherUserData.myConnection",
+                    experience: "$otherUserData.experience",
+                    // discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                    name: { $concat: [{ $ifNull: ["$otherUserData.firstName", ""] }, " ", { $ifNull: ["$otherUserData.lastName", ""] }] },
+                    profilePicUrl: "$otherUserData.profilePicUrl",
+                    profession: { $ifNull: ["$otherUserData.profession", ""] },
+                    about: { $ifNull: ["$otherUserData.about", ""] }
+                    // },
                 },
             });
             const data = await this.aggregate('users', aggPipe, {});
