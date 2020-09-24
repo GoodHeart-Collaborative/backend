@@ -93,7 +93,7 @@ class ShoutoutController {
             notificationData['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.type;
             notificationData['userId'] = ['5f32458da49d4610aeb6efd8'] // params.members;
 
-            notification.notificationManager.sendOneToOneNotification(params, userId, false)
+            notification.notificationManager.sendOneToOneNotification(notificationData, userId, false)
             return shoutoutConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(checkDiscover)
         } catch (error) {
             throw error;
