@@ -674,11 +674,26 @@ const MAIL_SENDING_TYPE = {
 };
 
 const NOTIFICATION_CATEGORY = {
-	ADMIN_STATUS_VERIFIED: 1,
-	FRIEND_REQUEST_SEND: 2,
-	FRIEND_REQUEST_APPROVED: 3,
-	LEADER_OF_DAY: 4,
-	SHOUTOUT_TAGGED_ME: 5
+	ADMIN_STATUS_VERIFIED: {
+		type: 1,
+		category: "ADMIN_STATUS_VERIFIED"
+	},
+	FRIEND_REQUEST_SEND: {
+		type: 2,
+		category: "FRIEND_REQUEST"
+	},
+	FRIEND_REQUEST_APPROVED: {
+		type: 3,
+		category: "VIEW_PROFILE"
+	},
+	LEADER_OF_DAY: {
+		type: 4,
+		category: "LEADER_OF_DAY"
+	},
+	SHOUTOUT_TAGGED_ME: {
+		type: 5,
+		category: 'SHOUTOUT_TAGGED_ME'
+	}
 }
 
 const SMS_SENDING_TYPE = {

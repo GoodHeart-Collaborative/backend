@@ -224,6 +224,9 @@ const createIOSPushPayload = function (data) {
 
 	data.title = data.title ? data.title : '';
 	data.body = data.message;
+	if (data.category) {
+		data.category = data.category;
+	}
 	// data.type = data.type;
 
 	set = this.setInsertObject(data, set, fieldsToFill);

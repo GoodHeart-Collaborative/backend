@@ -60,10 +60,10 @@ class DiscoverController {
                     params['body'] = {
                         userId: userId.userId,
                     };
-                    params['click_action'] = "VIEW_PROFILE";
+                    params['click_action'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
                     params['message'] = `${userId.firstName} accepted your friend request`;
-                    params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED;
-                    const data1111 = notificationManager.sendOneToOneNotification(params, userId)
+                    params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type;
+                    const data1111 = notificationManager.sendOneToOneNotification(params, userId);
 
                     await userDao.pushMember({ userId: userId.userId.toString(), followerId: params.followerId })
                     await userDao.pushMember({ userId: params.followerId, followerId: userId.userId.toString() })
@@ -129,7 +129,7 @@ class DiscoverController {
                 };
                 params['click_action'] = "FRIEND_REQUEST";
                 params['message'] = `${getData.data[0].user.name} wants to connect with you `;
-                params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND;
+                params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
                 const data1111 = notificationManager.sendOneToOneNotification(params, userId)
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }

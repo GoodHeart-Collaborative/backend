@@ -598,9 +598,9 @@ class AdminController {
 			// send push from here
 			params['title'] = 'request Approval';
 			params['body'] = {};
-			// params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED;
+			// params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
 			params['message'] = `your account has been ${params.adminStatus} successfully`;
-			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED;
+			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED.type;
 			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
 				const data1111 = await createPayload.notificationManager.sendOneToOneNotification(params, tokenData)
 			}
