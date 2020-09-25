@@ -14,7 +14,7 @@ export class CronUtils {
 	constructor() { }
 	init() {
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule("* * * * *", async function () {
+		task = cron.schedule("5 0 * * *", async function () {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			// request.get(baseUrl + "/common/appointment/upcoming");
@@ -70,23 +70,30 @@ export class CronUtils {
 			params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.category;
 			params['message'] = "Congratulate! You are selected as Leader of The Day";
 			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.type;
-			params['body'] = getUsers[0] ? {
-				// user: {
-				// _id: getUsers[0]._id,
-				// name: getUsers[0].firstName + ' ' + getUsers[0].lastName,
-				// profilePicUrl: getUsers[0].profilePicUrl,
-				// profession: getUsers[0].profession,
-				// industryType: getUsers[0].industryType,
-				// experience: getUsers[0].experience,
-				// about: getUsers[0].about,
-				// myConnection: getUsers[0].myConnection,
-				// likeCount: getUsers[0].likeCount,
-				// commentCount: getUsers[0].commentCount,
-				...getIsLike
-				// }
-			} : {};
+			params['body'] = getUsers[0] ?
+				{
+					user: {
+						// user: {
+						_id: getIsLike._id,
+						name: getIsLike.user.name,
+						profilePicUrl: getIsLike.user.profilePicUrl,
+						profession: getIsLike.user.profession,
+						industryType: getIsLike.user.industryType,
+						experience: getIsLike.user.experience,
+						about: getIsLike.user.about,
+
+					},
+					likeCount: getIsLike.likeCount,
+					commentCount: getIsLike.commentCount,
+					isLike: getIsLike.isLike,
+					isComment: getIsLike.isComment,
+					created: getIsLike.created,
+					_id: getIsLike._id,
+				}
+				: {};
+
 			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
-			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, {});
+			const data = await userDao.findOneAndUpdate('users', { _id: '5f6d84c5add1a361a8cad3ec' }, dataToUpdate, {});
 
 			const data1111 = notification.notificationManager.sendMemberOfDayNotification(params)
 
