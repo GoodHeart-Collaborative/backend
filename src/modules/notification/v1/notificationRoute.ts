@@ -12,7 +12,7 @@ import { responseHandler } from "@utils/ResponseHandler";
 export const notificationRoute: ServerRoute = [
 	{
 		method: "GET",
-		path: `${config.SERVER.API_BASE_URL}/v1/notification`,
+		path: `${config.SERVER.API_BASE_URL}/v1/user/notification`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 			const query: ListingRequest = request.query;

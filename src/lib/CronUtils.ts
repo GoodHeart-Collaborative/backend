@@ -57,12 +57,12 @@ export class CronUtils {
 			return;
 		}
 		if (getUsers || getUsers[0]) {
-			const getIsLike = await userDao1.userDao.getMemberOfDays({ userId: '5f6d84c5add1a361a8cad3ec' });
+			const getIsLike = await userDao1.userDao.getMemberOfDays({ userId: getUsers[0]._id });
 			console.log('getIsLikegetIsLike', getIsLike);
 			// isComment: {
 			// 	$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
 			// },
-			params['userId'] = '5f6d84c5add1a361a8cad3ec'; //getUsers[0]._id;
+			params['userId'] = getUsers[0]._id;
 			params['title'] = 'Leader of Day';
 			// params['body'] = {
 			// 	userId: getUsers[0]._id,
@@ -93,10 +93,8 @@ export class CronUtils {
 				: {};
 
 			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
-			const data = await userDao.findOneAndUpdate('users', { _id: '5f6d84c5add1a361a8cad3ec' }, dataToUpdate, {});
-
-			const data1111 = notification.notificationManager.sendMemberOfDayNotification(params)
-
+			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, {});
+			const data1111 = notification.notificationManager.sendMemberOfDayNotification(params);
 			return;
 		}
 
