@@ -11,6 +11,11 @@ export const MESSAGES = {
 				"type": "NOTIFICATION_LIST",
 				"data": data
 			};
+		},
+		NOTIFICATION_DELETE: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Notification Deleted successfull.",
+			"type": "NOTIFICATION_DELETE",
 		}
 	}
 };

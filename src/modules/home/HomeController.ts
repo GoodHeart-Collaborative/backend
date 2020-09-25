@@ -10,6 +10,7 @@ import { homeDao } from "./HomeDao";
 import * as config from "@config/index";
 import { errorReporter } from "@lib/flockErrorReporter";
 import { shoutoutDao } from "@modules/shoutout";
+import { notificationDao } from "@modules/notification";
 
 
 class HomeController {
@@ -88,7 +89,7 @@ class HomeController {
                 }
             }
             const isGratitudeFilled = await gratitudeJournalDao.checkTodaysGratitudeFilled(params, userId.tokenData)
-
+            const notificationCount = await notificationDao.unreadNotificationCount(userId)
             if (!params.type) {
                 return {
                     reportData: reoprtData1,
@@ -97,7 +98,8 @@ class HomeController {
                     subscriptionData: {
                         isSubscribed: (userId.tokenData.planType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
                         subscriptionType: userId.tokenData.subscriptionType,
-                        subscriptionEndDate: userId.tokenData.subscriptionEndDate
+                        subscriptionEndDate: userId.tokenData.subscriptionEndDate,
+                        unreadNotificationCount: notificationCount
                     }
                 }
             }
