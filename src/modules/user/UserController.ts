@@ -14,6 +14,7 @@ import * as sns from "@lib/pushNotification/sns";
 import * as tokenManager from "@lib/tokenManager";
 import * as userConstant from "@modules/user/userConstant";
 import { userDao } from "@modules/user/index";
+import * as  userDaoMember from '@modules/user/v1/UserDao';
 import { Types } from 'mongoose';
 import { verifyToken } from '@lib/tokenManager';
 import { gratitudeJournalDao } from "@modules/gratitudeJournal/GratitudeJournalDao";
@@ -21,6 +22,7 @@ import { discoverDao } from "../discover/DiscoverDao";
 import { CONSTANT } from "@config/index";
 import { forumtopicDao } from "@modules/forum/forumDao";
 import { errorReporter } from "@lib/flockErrorReporter";
+import { homeDao } from "@modules/home/HomeDao";
 
 var ObjectID = require('mongodb').ObjectID;
 export class UserController {
@@ -947,6 +949,19 @@ export class UserController {
 			}
 
 			return userConstant.MESSAGES.SUCCESS.CHANGE_PASSWORD;
+		} catch (error) {
+			errorReporter(error);
+			return Promise.reject(error);
+		}
+	}
+
+
+	async getMemberOfDayDetail(tokenData) {
+		try {
+			const data = await userDaoMember.userDao.getMemberOfDays({ userId: tokenData.userId })
+			console.log('datadatadata', data);
+
+			return data;
 		} catch (error) {
 			errorReporter(error);
 			return Promise.reject(error);
