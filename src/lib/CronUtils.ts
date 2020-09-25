@@ -3,6 +3,8 @@ const request = require("request");
 // import { memberDao } from "@modules/admin/memberOfDay/v1/MemberDao";
 import * as config from "@config/index";
 import { userDao } from "@modules/user";
+import * as  userDao1 from "@modules/user/v1/UserDao";
+
 import * as notification from '@utils/NotificationManager';
 const baseUrl = config.SERVER.APP_URL + config.SERVER.API_BASE_URL;
 let task;
@@ -12,7 +14,7 @@ export class CronUtils {
 	constructor() { }
 	init() {
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule("5 0 * * *", async function () {
+		task = cron.schedule("* * * * *", async function () {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			// request.get(baseUrl + "/common/appointment/upcoming");
@@ -55,7 +57,12 @@ export class CronUtils {
 			return;
 		}
 		if (getUsers || getUsers[0]) {
-			params['userId'] = getUsers[0]._id;
+			const getIsLike = await userDao1.userDao.getMemberOfDays({ userId: '5f6d84c5add1a361a8cad3ec' });
+			console.log('getIsLikegetIsLike', getIsLike);
+			// isComment: {
+			// 	$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+			// },
+			params['userId'] = '5f6d84c5add1a361a8cad3ec'; //getUsers[0]._id;
 			params['title'] = 'Leader of Day';
 			// params['body'] = {
 			// 	userId: getUsers[0]._id,
@@ -64,14 +71,19 @@ export class CronUtils {
 			params['message'] = "Congratulate! You are selected as Leader of The Day";
 			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.type;
 			params['body'] = getUsers[0] ? {
-				_id: getUsers[0]._id,
-				name: getUsers[0].firstName + ' ' + getUsers[0].lastName,
-				profilePicUrl: getUsers[0].profilePicUrl,
-				profession: getUsers[0].profession,
-				industryType: getUsers[0].industryType,
-				experience: getUsers[0].experience,
-				about: getUsers[0].about,
-				myConnection: getUsers[0].myConnection
+				// user: {
+				// _id: getUsers[0]._id,
+				// name: getUsers[0].firstName + ' ' + getUsers[0].lastName,
+				// profilePicUrl: getUsers[0].profilePicUrl,
+				// profession: getUsers[0].profession,
+				// industryType: getUsers[0].industryType,
+				// experience: getUsers[0].experience,
+				// about: getUsers[0].about,
+				// myConnection: getUsers[0].myConnection,
+				// likeCount: getUsers[0].likeCount,
+				// commentCount: getUsers[0].commentCount,
+				...getIsLike
+				// }
 			} : {};
 			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
 			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, {});
