@@ -52,7 +52,6 @@ export const notificationRoute: ServerRoute = [
 		path: `${config.SERVER.API_BASE_URL}/v1/user/notification`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-			const query: ListingRequest = request.query;
 			try {
 				const result = await notificationController.clearNotification(tokenData);
 				return responseHandler.sendSuccess(h, result);
