@@ -66,7 +66,7 @@ class DiscoverController {
                         await userDao.pullMember({ userId: params.followerId, followerId: userId.userId.toString() })
                     }
                 }
-                if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
+                if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     params['title'] = 'Friend_request';
                     params['body'] = {
                         user: {
