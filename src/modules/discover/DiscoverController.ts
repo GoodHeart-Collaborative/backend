@@ -69,7 +69,17 @@ class DiscoverController {
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     params['title'] = 'Friend_request';
                     params['body'] = {
-                        userId: userId.userId,
+                        user: {
+                            userId: userId.userId,
+                            name: userId.firstName,
+                            profilePicUrl: userId.profilePicUrl,
+                            profession: userId.profession,
+                            industryType: userId.industryType,
+                            experience: userId.experience,
+                            about: userId.about,
+                            myConnection: userId.myConnection
+                        }
+                        // userId: userId.userId,
                     };
                     params['userId'] = params.followerId;
                     params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.category;
@@ -98,7 +108,7 @@ class DiscoverController {
      * @description to accept the connection request
      * @param (DiscoverRequest.DiscoverRequestAdd)
      */
-    async saveDiscoverData(params: DiscoverRequest.DiscoverRequestAdd, userId, name?) {
+    async saveDiscoverData(params: DiscoverRequest.DiscoverRequestAdd, userId) {
         try {
             let checkQuery: any = {}
             let status: any = {}
@@ -109,11 +119,20 @@ class DiscoverController {
 
             params['title'] = 'Friend_request';
             params['body'] = {
-                userId: userId.userId,
+                user: {
+                    userId: userId.userId,
+                    name: userId.firstName,
+                    profilePicUrl: userId.profilePicUrl,
+                    profession: userId.profession,
+                    industryType: userId.industryType,
+                    experience: userId.experience,
+                    about: userId.about,
+                    myConnection: userId.myConnection
+                }
             };
             params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
             params['click_action'] = "FRIEND_REQUEST";
-            params['message'] = `${name.name} wants to connect with you `;
+            params['message'] = `${userId.firstName} wants to connect with you `;
             params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
             params['userId'] = params.followerId;
 
