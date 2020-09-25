@@ -2,92 +2,107 @@
 <html lang="en">
 
 <head>
-	<title>FAQ</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet"> -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+	<link rel="stylesheet" href="faq-new.css">
+	<title>Document</title>
 	<style>
-		/* @font-face {
-			font-family: quicksend;
-			src: url(../../public/fonts/Quicksand-Regular.ttf);
-		} */
-
-		/* body {
-			font-family: 'quicksend';
-		} */
-
-		.navbar-brand {
-			padding: 9px 15px;
-		}
-
-		.navbar-brand img {
-			width: 60px
-		}
-
-		.coll-box {
-			padding: 10px 0px 15px;
-			border-bottom: 1px solid #d3d3d3;
-			margin-bottom: 5px;
+		* {
+			box-sizing: border-box;
+			margin: 0px;
+			font-family: 'Open Sans';
 		}
 
 		.container {
-			padding: 20px;
-			width: 800px;
-			box-shadow: 0px 0px 4px 2px rgba(0, 0, 0, 0.1);
-			max-width: 90%;
 			margin-top: 20px;
 		}
 
-		.col-header {
-			padding-right: 15px;
+		.faq {
+			width: 500px;
+			max-width: 90%;
+			margin: auto;
+			background: #FFFFFF;
+			box-shadow: 0 0px 10px 2px rgba(0, 0, 0, 0.1);
+			border-radius: 4px;
+		}
+
+		.faq .card {
+			border: none;
+			background: none;
+			border-bottom: 1px dashed #84b7cc;
+			background: #f5f5f5;
+		}
+
+		.faq .card:last-child {
+			border-bottom: none;
+		}
+
+		.faq .card .card-header {
+			padding: 0px;
+			border: none;
+			background: none;
 			position: relative;
-			cursor: pointer;
 		}
 
-
-		.col-header span {
+		.faq .card .card-header .fa-chevron-right {
 			position: absolute;
-			right: 0px;
-			top: -4px;
-		}
-
-		.col-header span img {
 			width: 12px;
+			top: 22px;
+			right: 12px;
+			transition: .3s;
+			color: #ff4da6;
 		}
 
-		.col-header h3 {
-			font-size: 18px;
+		.faq .card .card-header .faq-title {
+			width: 100%;
+			text-align: left;
+			padding: 20px;
+			padding-right: 35px;
+			font-weight: 600;
+			font-size: 15px;
+			letter-spacing: 1px;
 			color: black;
-			margin: 0px;
-			font-weight: 700;
+			cursor: pointer;
+
 		}
 
-		.col-content {
-			padding-top: 5px;
+		.faq-title h2 {
+			position: relative;
+			margin-bottom: 45px;
+			display: inline-block;
+			font-weight: 600;
+			line-height: 1;
 		}
 
-		.col-content p {
-			font-size: 14px;
-			line-height: 20px;
+		.faq-title p {
+			padding: 0 190px;
+			margin-bottom: 10px;
 		}
 
-		.hide-col-con {
+		.faq .card .card-body {
+			padding: 20px;
+			font-weight: 400;
+			font-size: 16px;
+			color: black;
+			line-height: 28px;
+			letter-spacing: 1px;
+			background: white;
+			border-top: 1px solid #F3F8FF;
 			display: none;
 		}
 
-		.coll-box.show-con h3 {
-			color: #419ebb;
+		.faq .card .card-body p:not(:last-child) {
+			margin-bottom: 14px;
 		}
 
-		.show-con .hide-col-con {
+		.faq .card.open-detail .card-body {
 			display: block;
 		}
 
-		.navbar {
-			margin-bottom: 10px;
+		.faq .card.open-detail .fa-chevron-right {
+			transform: rotate(90deg);
 		}
 	</style>
 
@@ -95,24 +110,45 @@
 
 <body>
 	<div class="container">
-		{{{content}}}
+		<div class="faq">
+			{{{content}}}
+		</div>
 	</div>
+
+	<!-- <script>
+		$(document).ready(function () {
+			$(".card").click(function () {
+				if ($(this).parent().hasClass("open-detail")) {
+					$(this).parent().removeClass("open-detail");
+				}
+				else {
+					$(".card").removeClass("open-detail");
+					$(this).parent().addClass("open-detail")
+				}
+			})
+		});
+	</script> -->
+
+
+	<script>
+		$(document).click(function () {
+			$(".card").click(function () {
+				if ($(this).parent().hasClass("open-detail")) {
+					$(this).parent().removeClass("open-detail");
+					$(this).find("span img").attr("src", "http://goodgivedev.appskeeper.com/public/images/plus.svg")
+				}
+				else {
+					$(".coll-box").removeClass("open-detail");
+					$(".coll-box").find("span img").attr("src", "http://goodgivedev.appskeeper.com/public/images/plus.svg")
+					$(this).parent().addClass("open-detail")
+					$(this).find("span img").attr("src", "http://goodgivedev.appskeeper.com/public/images/cross.svg")
+				}
+			})
+		});
+	</script>
+
+
+
 </body>
-<script>
-	$(document).ready(function () {
-		$(".col-header").click(function () {
-			if ($(this).parent().hasClass("show-con")) {
-				$(this).parent().removeClass("show-con");
-				$(this).find("span img").attr("src", "http://goodgivedev.appskeeper.com/public/images/plus.svg")
-			}
-			else {
-				$(".coll-box").removeClass("show-con");
-				$(".coll-box").find("span img").attr("src", "http://goodgivedev.appskeeper.com/public/images/plus.svg")
-				$(this).parent().addClass("show-con")
-				$(this).find("span img").attr("src", "http://goodgivedev.appskeeper.com/public/images/cross.svg")
-			}
-		})
-	});
-</script>
 
 </html>
