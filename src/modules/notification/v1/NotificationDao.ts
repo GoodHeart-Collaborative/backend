@@ -54,7 +54,7 @@ export class NotificationDao extends BaseDao {
 	async clearNotification(tokenData) {
 		try {
 			const criteria = {
-				userId: tokenData.userId
+				receiverId: tokenData.userId
 			}
 			const data = await this.remove('notifications', criteria)
 			return notificationConstant.MESSAGES.SUCCESS.NOTIFICATION_DELETE;
@@ -67,7 +67,7 @@ export class NotificationDao extends BaseDao {
 		try {
 			const criteria = {
 				isRead: false,
-				userId: userId.tokenData.userId
+				receiverId: userId.tokenData.userId
 			}
 			const data = await this.count('notifications', criteria);
 			console.log('datadatadata', data);
