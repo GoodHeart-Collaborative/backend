@@ -70,7 +70,7 @@ class DiscoverController {
                     params['title'] = 'Friend_request';
                     params['body'] = {
                         user: {
-                            userId: userId.userId,
+                            _id: userId.userId,
                             name: userId.firstName,
                             profilePicUrl: userId.profilePicUrl,
                             profession: userId.profession,
