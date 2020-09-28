@@ -209,7 +209,6 @@ const createAndroidPushPayload = function (data) {
 const createIOSPushPayload = function (data) {
 	let set: any = {};
 	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type", "body"];
-
 	console.log('datadata>>>>', data);
 
 
@@ -220,6 +219,8 @@ const createIOSPushPayload = function (data) {
 	// data.mutableContent = 1;
 	data.sound = 'default';
 	// data.threadId = "RichPush";
+
+	// data['badge'] = data['countForBadge'];
 
 	data.title = data.title ? data.title : '';
 	// data.body = data.message;
@@ -246,6 +247,7 @@ const createIOSPushPayload = function (data) {
 				"title": data.title,
 				"body": data.message,
 				"sound": data.sound,
+				"badge": data['countForBadge'] ? data['countForBadge'] : 0,
 				"priority": data.priority
 			}
 		}
