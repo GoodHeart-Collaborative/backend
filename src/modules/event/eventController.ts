@@ -352,6 +352,24 @@ class EventController {
      * @params (UserEventRequest.userGetEvent)
      */
 
+    // let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
+    // let pickupLocation = [];
+    // let match: any = {}
+    // if (longitude != undefined && latitude != undefined) {
+    //     pickupLocation.push(latitude, longitude);
+    //     aggPipe.push(
+    //         {
+    //             '$geoNear': {
+    //                 near: { type: "Point", coordinates: pickupLocation },
+    //                 spherical: true,
+    //                 maxDistance: searchDistance,
+    //                 distanceField: "dist",
+    //             }
+    //         },
+    //         { "$sort": { dist: -1 } }
+    //     )
+    // }
+
     async getEvent(params: UserEventRequest.getEvents, tokenData) {
         try {
             const { distance, eventCategoryId, date, searchKey, getIpfromNtwk } = params;
@@ -371,10 +389,9 @@ class EventController {
                 ];
             }
             if (longitude == undefined && latitude == undefined) {
-                const lat_lng: any = await appUtils.getLocationByIp('14.102.21.85');
-
-                latitude = lat_lng.latitude;
-                longitude = lat_lng.longitude;
+                const lat_lng: any = await appUtils.getLocationByIp('103.79.170.73');
+                latitude = lat_lng.ll[1];
+                longitude = lat_lng.ll[0];
             }
 
             if (longitude != undefined && latitude != undefined) {
@@ -390,17 +407,30 @@ class EventController {
                     },
                     { "$sort": { dist: -1 } }
                 )
-                featureAggPipe.push(
-                    {
-                        '$geoNear': {
-                            near: { type: "Point", coordinates: pickupLocation },
-                            spherical: true,
-                            maxDistance: searchDistance,
-                            distanceField: "dist",
-                        }
-                    },
-                    { "$sort": { dist: -1, _id: -1 } }
-                )
+
+                // pickupLocation.push(latitude, longitude);
+                // aggPipe.push(
+                //     {
+                //         '$geoNear': {
+                //             near: { type: "Point", coordinates: pickupLocation },
+                //             spherical: true,
+                //             maxDistance: searchDistance,
+                //             distanceField: "dist",
+                //         }
+                //     },
+                //     { "$sort": { dist: -1 } }
+                // )
+                // featureAggPipe.push(
+                //     {
+                //         '$geoNear': {
+                //             near: { type: "Point", coordinates: pickupLocation },
+                //             spherical: true,
+                //             maxDistance: searchDistance,
+                //             distanceField: "dist",
+                //         }
+                //     },
+                //     { "$sort": { dist: -1, _id: -1 } }
+                // )
             }
             else {
                 aggPipe.push(

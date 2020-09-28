@@ -680,8 +680,8 @@ const getLocationByIp = async (ipaddress: string) => {
 	try {
 		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
 
-		// const lt_lng = await ipLocation('14.102.21.85');
-		const lt_lng = await geoip.lookup('14.102.21.85');
+		// const lt_lng = await ipLocation('103.79.170.73');
+		const lt_lng = await geoip.lookup('103.79.170.73');
 		console.log('lt_lnglt_lnglt_lng', lt_lng);
 		return lt_lng;
 	} catch (error) {
