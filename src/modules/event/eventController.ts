@@ -73,8 +73,6 @@ class EventController {
             const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
             // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
 
-
-
             // async forgotPasswordEmailToUser(params) {
             //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
             //         .compileFile({
@@ -370,12 +368,11 @@ class EventController {
                     { title: reg },
                 ];
             }
-            // if (longitude == undefined && latitude == undefined) {
-            // const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-
-            //     latitude = lat_lng.latitude;
-            //     longitude = lat_lng.longitude;
-            // }
+            if (longitude == undefined && latitude == undefined) {
+                const lat_lng: any = await appUtils.getLocationByIp('14.102.21.85');
+                latitude = lat_lng.latitude;
+                longitude = lat_lng.longitude;
+            }
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
