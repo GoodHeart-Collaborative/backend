@@ -370,12 +370,12 @@ class EventController {
                     { title: reg },
                 ];
             }
-            // if (longitude == undefined && latitude == undefined) {
-            // const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+            if (longitude == undefined && latitude == undefined) {
+                const lat_lng: any = await appUtils.getLocationByIp('14.102.21.85');
 
-            //     latitude = lat_lng.latitude;
-            //     longitude = lat_lng.longitude;
-            // }
+                latitude = lat_lng.latitude;
+                longitude = lat_lng.longitude;
+            }
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
