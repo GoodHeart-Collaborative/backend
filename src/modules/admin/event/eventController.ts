@@ -121,7 +121,7 @@ class EventController {
 
 
             aggPipe.push({ $match: match })
-            aggPipe.push({ $sort: { _id: -1 } });
+            // aggPipe.push({ $sort: { _id: -1 } });
             // aggPipe.push({
             //     $lookup: {
             //         from: 'categories',
