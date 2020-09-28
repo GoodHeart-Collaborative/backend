@@ -20,7 +20,7 @@ export interface Isubscription extends Document {
     subscriptionType: number;
     price: number;
     created: number;
-    subscriptionEndDate: string;
+    subscriptionEndDate: number;
 }
 
 
@@ -49,7 +49,7 @@ const subscriptionSchema = new Schema({
     },
     created: { type: Number },
     startDate: { type: Date, required: true, default: new Date() },
-    subscriptionEndDate: { type: String, required: true }
+    subscriptionEndDate: { type: Number, required: true }
 }, {
     versionKey: false,
     timestamps: true

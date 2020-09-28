@@ -9,7 +9,9 @@ import * as pushManager from "@lib/pushNotification/pushManager";
 export class NotificationManager {
 
 	async sendBulkNotification(params, tokenData: TokenData) {
-		const query: any = {};
+		let query: any = {};
+		console.log('paramsparamsparamsparams', params);
+
 		if (params.fromDate && !params.toDate) {
 			query.created = { "$gte": params.fromDate };
 		}
@@ -19,12 +21,16 @@ export class NotificationManager {
 		if (params.fromDate && params.toDate) {
 			query.created = { "$gte": params.fromDate, "$lte": params.toDate };
 		}
-		if (params.gender && params.gender !== config.CONSTANT.GENDER.ALL) {
-			query.gender = params.gender;
-		}
 		query.status = config.CONSTANT.STATUS.ACTIVE;
-		const step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
-		console.log('step1step1step1step1', step1.length);
+		let step1;
+		if (params.members) {
+			query = { _id: { $in: params.members } }
+			step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
+			console.log('step1step1step1step1', step1.length);
+		} else {
+			step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
+			console.log('step1step1step1step1', step1.length);
+		}
 
 		let bulkNotitification = [];
 		await step1.forEach(async (data) => {
@@ -180,6 +186,9 @@ export class NotificationManager {
 
 			}
 			if (iosUsers.length) {
+				const getCountForBadge = await notificationDao.count('notifications', { receiverId: params.userId, isRead: false });
+				console.log('getCountForBadgegetCountForBadge', getCountForBadge);
+				params['countForBadge'] = getCountForBadge;
 				iosPayload = appUtils.createIOSPushPayload(params);
 				console.log('iosPayloadiosPayload', iosPayload);
 			}

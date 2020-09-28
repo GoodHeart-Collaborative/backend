@@ -29,6 +29,13 @@ export interface Ievent extends Document {
     eventCategoryName: string;
     eventCategoryId: string;
 }
+var geoSchema = new Schema({
+    // location: { type: String, trim: true, required: true, default: '' },
+    type: { type: String, default: "Point" },
+    coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
+}, {
+    _id: false
+});
 
 const eventSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, required: true, ref: 'users', index: true },
@@ -49,11 +56,8 @@ const eventSchema = new Schema({
     },
     isFeatured: { type: Boolean, default: false, index: true },
     startDate: { type: Number, index: true },
-    endDate: { type: Number, indx: true },
-    location: {
-        type: { type: String, default: "Point" },
-        coordinates: [Number],
-    },
+    endDate: { type: Number, index: true },
+    location: geoSchema,
     address: { type: String, trim: true, required: true, index: true },
     price: { type: Number, default: 0 },
     title: { type: String, trim: true, required: true },
@@ -95,7 +99,9 @@ const eventSchema = new Schema({
     versionKey: false,
     timestamps: true
 });
-
+eventSchema.index({
+    location: '2dsphere'
+});
 eventSchema.set("toObject", {
     virtuals: true
 });

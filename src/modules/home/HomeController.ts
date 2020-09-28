@@ -96,11 +96,11 @@ class HomeController {
                     homeData: responseData,
                     isGratitudeJournalFilled: isGratitudeFilled,
                     subscriptionData: {
-                        isSubscribed: (userId.tokenData.planType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
+                        isSubscribed: true, // (userId.tokenData.planType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
                         subscriptionType: userId.tokenData.subscriptionType,
                         subscriptionEndDate: userId.tokenData.subscriptionEndDate,
-                        unreadNotificationCount: notificationCount
-                    }
+                    },
+                    unreadNotificationCount: notificationCount
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)

@@ -587,7 +587,7 @@ class AdminController {
 				const date = new Date();
 				date.setDate(date.getDate() + 365);
 				dataToUpdate['subscriptionType'] = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
-				dataToUpdate['subscriptionEndDate'] = moment(date).format('YYYY-MM-DD');
+				dataToUpdate['subscriptionEndDate'] = new Date().setHours(0, 0, 5, 0);  // moment(date).format('YYYY-MM-DD');
 				const updateSubscription = await subscriptionDao.saveSubscription(dataToUpdate, tokenData)
 			}
 

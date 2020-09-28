@@ -209,7 +209,6 @@ const createAndroidPushPayload = function (data) {
 const createIOSPushPayload = function (data) {
 	let set: any = {};
 	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type", "body"];
-
 	console.log('datadata>>>>', data);
 
 
@@ -220,6 +219,8 @@ const createIOSPushPayload = function (data) {
 	// data.mutableContent = 1;
 	data.sound = 'default';
 	// data.threadId = "RichPush";
+
+	// data['badge'] = data['countForBadge'];
 
 	data.title = data.title ? data.title : '';
 	// data.body = data.message;
@@ -246,6 +247,7 @@ const createIOSPushPayload = function (data) {
 				"title": data.title,
 				"body": data.message,
 				"sound": data.sound,
+				"badge": data['countForBadge'] ? data['countForBadge'] : 0,
 				"priority": data.priority
 			}
 		}
@@ -680,8 +682,8 @@ const getLocationByIp = async (ipaddress: string) => {
 	try {
 		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
 
-		// const lt_lng = await ipLocation('14.102.21.85');
-		const lt_lng = await geoip.lookup('14.102.21.85');
+		// const lt_lng = await ipLocation('103.79.170.73');
+		const lt_lng = await geoip.lookup('103.79.170.73');
 		console.log('lt_lnglt_lnglt_lng', lt_lng);
 		return lt_lng;
 	} catch (error) {

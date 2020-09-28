@@ -34,20 +34,24 @@ export class NotificationDao extends BaseDao {
 		aggPipe.push({ "$sort": { "_id": -1 } });
 
 		let result = await this.paginate('notifications', aggPipe, params.limit, params.pageNo, {}, true)
-		let arr = []
-		result && result.data && result.data.length > 0 && result.data.forEach(data => {
-			if (data.isRead === false) {
-				arr.push(data._id)
-			}
-		});
-		if (arr && arr.length > 0) {
-			let query: any = {}
-			query = {
-				receiverId: await toObjectId(tokenData.userId),
-				_id: { "$in": arr }
-			}
-			this.update('notifications', query, { "$set": { isRead: true } }, { multi: true })
-		}
+		// let arr = []
+		// result && result.data && result.data.length > 0 && result.data.forEach(data => {
+		// 	if (data.isRead === false) {
+		// 		arr.push(data._id)
+		// 	}
+		// });
+		// if (arr && arr.length > 0) {
+		// 	let query: any = {}
+		// 	query = {
+		// 		receiverId: await toObjectId(tokenData.userId),
+		// 		_id: { "$in": arr }
+		// 	}
+		// this.update('notifications', query, { "$set": { isRead: true } }, { multi: true })
+		this.update('notifications', { receiverId: await toObjectId(tokenData.userId) }, { "$set": { isRead: true } }, { multi: true })
+
+		// }
+
+
 		return result
 	}
 
