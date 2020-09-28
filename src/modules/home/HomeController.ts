@@ -99,8 +99,8 @@ class HomeController {
                         isSubscribed: true, // (userId.tokenData.planType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
                         subscriptionType: userId.tokenData.subscriptionType,
                         subscriptionEndDate: userId.tokenData.subscriptionEndDate,
-                        unreadNotificationCount: notificationCount
-                    }
+                    },
+                    unreadNotificationCount: notificationCount
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
