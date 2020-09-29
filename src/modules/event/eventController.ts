@@ -395,8 +395,8 @@ class EventController {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
                 console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
 
-                latitude = lat_lng.ll[1];
-                longitude = lat_lng.ll[0];
+                latitude = lat_lng.lat;
+                longitude = lat_lng.long;
             }
 
 
