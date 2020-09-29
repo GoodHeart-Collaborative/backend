@@ -3,11 +3,13 @@
 const FCM = require("fcm-node");
 
 import * as config from "@config/index";
+import { baseDao } from "@modules/base/BaseDao";
 
 const fcmServerKey = config.SERVER.FCM_SERVER_KEY; // put your server key here
+
 const fcm = new FCM(fcmServerKey);
 
-export const sendPush = async function (deviceId, deviceType, payload, category?) {
+export const sendPush = async function (deviceId, deviceType, payload, userId) {
 	console.log("======================>", deviceId);
 	console.log("======================>", deviceType);
 	console.log("======================>11111111111111111111111", payload.data);
@@ -19,12 +21,16 @@ export const sendPush = async function (deviceId, deviceType, payload, category?
 			// "notification": payload.data
 		};
 		console.log('messagemessagemessagemessagemessage', message, '------LLLLLLLLLL');
-
 	}
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.IOS) {
 		// if (payload.category) {
 		// 	payload['category'] = payload.category
 		// }
+		const badgeCount = await baseDao.count('notifications', { userId: userId, isRead: false })
+		console.log('badgeCountbadgeCountbadgeCount', badgeCount);
+
+		payload['notification']['badge'] = badgeCount;
+
 		message = {
 			"to": deviceId,
 			"data": payload.data,
