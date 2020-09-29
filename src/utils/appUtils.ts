@@ -247,7 +247,7 @@ const createIOSPushPayload = function (data) {
 				"title": data.title,
 				"body": data.message,
 				"sound": data.sound,
-				"badge": data['countForBadge'] ? data['countForBadge'] : 0,
+				// "badge": data['countForBadge'] ? data['countForBadge'] : 0,
 				"priority": data.priority
 			}
 		}

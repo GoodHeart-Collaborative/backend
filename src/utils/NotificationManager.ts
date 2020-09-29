@@ -13,7 +13,7 @@ export class NotificationManager {
 		console.log('paramsparamsparamsparams', params);
 
 		query.status = config.CONSTANT.STATUS.ACTIVE;
-		// query.adminStatus = config.CONSTANT.USER_ADMIN_STATUS.VERIFIED;
+		query.adminStatus = config.CONSTANT.USER_ADMIN_STATUS.VERIFIED;
 		// query.isEmailVerified = true
 		let step1;
 		if (params.members) {
@@ -265,18 +265,11 @@ export class NotificationManager {
 					"payload": iosPayload,
 					"deviceType": config.CONSTANT.DEVICE_TYPE.IOS
 				};
+				console.log('chunkNoticiationPayloadchunkNoticiationPayloadIOS>>>>>>', chunkNoticiationPayload);
+
 				const step4 = await pushManager.pushNotification(chunkNoticiationPayload);
 			});
 
-			// save web chunk data
-			await webUsers.forEach(async (data) => {
-				const chunkNoticiationPayload = {
-					"data": data,
-					"payload": webPayload,
-					"deviceType": config.CONSTANT.DEVICE_TYPE.WEB
-				};
-				const step5 = await pushManager.pushNotification(chunkNoticiationPayload);
-			});
 		}
 		return;
 	}
