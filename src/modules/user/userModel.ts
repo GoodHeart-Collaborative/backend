@@ -56,7 +56,8 @@ export interface IUser extends Document {
 	reportCount: number;
 	// memberType: number;
 	subscriptionType: string;
-	subscriptionEndDate: Number;
+	subscriptionEndDate: number;
+	badgeCount: number;
 	// isAdminRejected: boolean;
 	// isAdminVerified: boolean;
 }
@@ -181,6 +182,7 @@ const userSchema = new Schema({
 	location: geoSchema,
 	likeCount: { type: Number, default: 0 },
 	commentCount: { type: Number, default: 0 },
+	badgeCount: { type: Number, default: 0 },
 	// createdAt: { type: Date },
 	// updatedAt: { type: Date },
 	reportCount: { type: Number, default: 0 }

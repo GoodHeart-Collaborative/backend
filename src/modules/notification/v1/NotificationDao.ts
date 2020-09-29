@@ -47,10 +47,10 @@ export class NotificationDao extends BaseDao {
 		// 		_id: { "$in": arr }
 		// 	}
 		// this.update('notifications', query, { "$set": { isRead: true } }, { multi: true })
-		this.update('notifications', { receiverId: await toObjectId(tokenData.userId) }, { "$set": { isRead: true } }, { multi: true })
+		this.update('notifications', { receiverId: await toObjectId(tokenData.userId) }, { isRead: true }, { multi: true })
+		this.updateOne('users', { _id: await toObjectId(tokenData.userId) }, { badgeCount: 0 }, {});
 
 		// }
-
 
 		return result
 	}

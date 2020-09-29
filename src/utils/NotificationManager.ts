@@ -12,25 +12,15 @@ export class NotificationManager {
 		let query: any = {};
 		console.log('paramsparamsparamsparams', params);
 
-		if (params.fromDate && !params.toDate) {
-			query.created = { "$gte": params.fromDate };
-		}
-		if (params.toDate && !params.fromDate) {
-			query.created = { "$lte": params.toDate };
-		}
-		if (params.fromDate && params.toDate) {
-			query.created = { "$gte": params.fromDate, "$lte": params.toDate };
-		}
 		query.status = config.CONSTANT.STATUS.ACTIVE;
+		// query.adminStatus = config.CONSTANT.USER_ADMIN_STATUS.VERIFIED;
+		// query.isEmailVerified = true
 		let step1;
 		if (params.members) {
-			query = { _id: { $in: params.members } }
-			step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
-			console.log('step1step1step1step1', step1.length);
-		} else {
-			step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
-			console.log('step1step1step1step1', step1.length);
+			query['_id'] = { $in: params.members }
 		}
+		step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
+		console.log('step1step1step1step1', step1.length);
 
 		let bulkNotitification = [];
 		await step1.forEach(async (data) => {
@@ -69,8 +59,11 @@ export class NotificationManager {
 				{ path: "userId", model: config.CONSTANT.DB_MODEL_REF.USER, select: "_id" }
 			];
 			step3 = await baseDao.find("login_histories", { "userId": { "$in": users }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
-			// step3 = step3.filter((data) => data.userId !== null);
-			console.log('step3step3step3step3', step3);
+			console.log('step3step3step3>>>>>>>>>>>>>>>>>>>>>', step3);
+
+			step3 = step3.filter((data) => data.userId !== null);
+			const updateUserBadgeCount = await baseDao.updateMany('users', { _id: { '$in': users } }, { $inc: { badgeCount: 1 } }, {});
+			console.log('updateUserBadgeCountupdateUserBadgeCountupdateUserBadgeCount', updateUserBadgeCount);
 		}
 
 		// save data to notification history
@@ -93,6 +86,8 @@ export class NotificationManager {
 			const androidUserChunks = appUtils.splitArrayInToChunks(androidUsers);
 			const iosUserChunks = appUtils.splitArrayInToChunks(iosUsers);
 			const webUserChunks = appUtils.splitArrayInToChunks(webUsers);
+			console.log('iosUserChunksiosUserChunks', iosUserChunks);
+			console.log('androidUserChunksandroidUserChunksandroidUserChunks', androidUserChunks);
 
 			// create android and ios payload
 			let androidPayload, iosPayload, webPayload;
@@ -161,6 +156,7 @@ export class NotificationManager {
 				"type": params.type
 			};
 			const step2 = notificationDao.addNotification(noticiationData);
+			const updateUserBadgeCount = await baseDao.updateOne('users', { _id: params.userId }, { $inc: { badgeCount: 1 } }, {});
 
 			// save data to notification history
 			const androidUsers = [], iosUsers = [], webUsers = [];
@@ -236,6 +232,7 @@ export class NotificationManager {
 				"type": params.type
 			};
 			const step2 = notificationDao.addNotification(noticiationData);
+			const updateUserBadgeCount = await baseDao.updateOne('users', { _id: params.userId }, { $inc: { badgeCount: 1 } }, {});
 
 			// save data to notification history
 			const androidUsers = [], iosUsers = [], webUsers = [];
