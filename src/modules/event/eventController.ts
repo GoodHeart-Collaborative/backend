@@ -393,11 +393,12 @@ class EventController {
 
             if (longitude == undefined && latitude == undefined) {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                console.log('lat_lnglat_lng', lat_lng);
+                console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
 
                 latitude = lat_lng.ll[1];
                 longitude = lat_lng.ll[0];
             }
+
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
@@ -412,7 +413,6 @@ class EventController {
                     },
                     { "$sort": { dist: -1 } }
                 )
-
                 // pickupLocation.push(latitude, longitude);
                 // aggPipe.push(
                 //     {
@@ -453,6 +453,8 @@ class EventController {
                     },
                 );
             }
+            console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
+
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
             featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
 

@@ -22,6 +22,8 @@ import * as environment from '@config/environment'
 import * as config from "@config/index";
 import { logger } from "@lib/logger";
 const TAG = "rcc-uploads";
+import fetch from 'node-fetch';
+
 // import ipLocation from "iplocation";
 // import * as geoip from 'geoip-lite';
 
@@ -684,12 +686,21 @@ const getLocationByIp = async (ipaddress: string) => {
 		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
 		// const lt_lng = await ipLocation('103.79.170.73');
 		//req.connection.remoteAddress		
-		let ip = ipaddress || ''
+		let ip = ipaddress || '';
+
+		const request = {
+			method: 'post',
+			params: ipaddress,
+		};
 		let url = 'http://ip-api.com/json/' + ip
+
+		const response = await fetch('http://ip-api.com/json/', request);
+
 		// let options = http_options({ normal: true })
-		const response = await fetch(url,)
-		const json = await response.json();
-		console.log('jsonjson', json);
+		// const response = await fetch(url)
+
+		// const json = await response.json();
+		// console.log('jsonjson', json);
 
 		let theData = await response.json();
 		console.log('lt_lnglt_lnglt_lng', theData);
