@@ -402,6 +402,8 @@ class EventController {
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
+                console.log('pickupLocationpickupLocation', pickupLocation);
+
                 aggPipe.push(
                     {
                         '$geoNear': {
@@ -425,34 +427,34 @@ class EventController {
                 //     },
                 //     { "$sort": { dist: -1 } }
                 // )
-                // featureAggPipe.push(
-                //     {
-                //         '$geoNear': {
-                //             near: { type: "Point", coordinates: pickupLocation },
-                //             spherical: true,
-                //             maxDistance: searchDistance,
-                //             distanceField: "dist",
-                //         }
-                //     },
-                //     { "$sort": { dist: -1, _id: -1 } }
-                // )
-            }
-            else {
-                aggPipe.push(
-                    {
-                        $sort: {
-                            _id: -1
-                        },
-                    }
-                );
                 featureAggPipe.push(
                     {
-                        $sort: {
-                            _id: -1
-                        },
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
                     },
-                );
+                    { "$sort": { dist: -1, _id: -1 } }
+                )
             }
+            // else {
+            //     aggPipe.push(
+            //         {
+            //             $sort: {
+            //                 _id: -1
+            //             },
+            //         }
+            //     );
+            //     featureAggPipe.push(
+            //         {
+            //             $sort: {
+            //                 _id: -1
+            //             },
+            //         },
+            //     );
+            // }
             console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
 
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
