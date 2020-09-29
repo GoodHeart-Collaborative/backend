@@ -22,7 +22,7 @@ export const sendPush = async function (deviceId, deviceType, payload, userId) {
 			"data": payload.data,
 			// "notification": payload.data
 		};
-		console.log('messagemessagemessagemessagemessage', message, '------LLLLLLLLLL');
+		console.log('messagemessagemessageANDROIDANDROID', message, '------LLLLLLLLLL');
 	}
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.IOS) {
 		// if (payload.category) {
@@ -37,7 +37,7 @@ export const sendPush = async function (deviceId, deviceType, payload, userId) {
 			"data": payload.data,
 			"notification": payload.notification
 		};
-		console.log('messagemessage', message);
+		console.log('messagemessageIOSIOSIOSIOS', message);
 	}
 	return new Promise(async (resolve, reject) => {
 		try {
