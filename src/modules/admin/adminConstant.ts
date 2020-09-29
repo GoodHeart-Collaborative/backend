@@ -13,6 +13,11 @@ export const MESSAGES = {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Old password is invalid.",
 			"type": "INVALID_OLD_PASSWORD"
+		},
+		INVALID_ID: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Ivalid Id",
+			"type": "INVALID_ID_PROVIDED"
 		}
 	},
 	SUCCESS: {
@@ -51,7 +56,7 @@ export const MESSAGES = {
 		},
 		FORGOT_PASSWORD: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-			"message": "Please check your e-mail for password reset link.",
+			"message": "We've sent a password reset link to ******. Click the link to retrieve your lost password If you don't see the email, check your spam folder.",
 			"type": "FORGOT_PASSWORD"
 		},
 		CHANGE_FORGOT_PASSWORD: {

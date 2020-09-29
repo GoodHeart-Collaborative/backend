@@ -16,6 +16,205 @@ export class BaseDao {
 		}
 	}
 
+	async aggregateWithPagination(model: ModelNames, pipeline?: Array<Object>, limit?: number, page?: number, pageCount = true) {
+		try {
+			let ModelName: any = models[model];
+			if (limit) {
+				limit = Math.abs(limit);
+
+				// If limit exceeds max limit
+				if (limit > 100) {
+					limit = 100;
+				}
+
+			} else {
+				limit = 10;
+			}
+			if (page && (page != 0)) {
+				page = Math.abs(page);
+			} else {
+				page = 1;
+			}
+			let skip = (limit * (page - 1));
+			let promiseAll = [
+				await ModelName.aggregate(pipeline).allowDiskUse(true)
+			];
+
+			if (pageCount) {
+				for (let index = 0; index < pipeline.length; index++) {
+					if ('$skip' in pipeline[index]) {
+						pipeline = pipeline.slice(0, index);
+					} else {
+						pipeline = pipeline
+					}
+				}
+				pipeline.push({ $count: "total" });
+				promiseAll.push(ModelName.aggregate(pipeline).allowDiskUse(true))
+			}
+			let result = await Promise.all(promiseAll);
+			let next_hit = 0;
+			let total = 0;
+			let total_page = 0;
+
+			if (pageCount) {
+				total = result[1] && result[1][0] ? result[1][0]['total'] : 0;
+				total_page = Math.ceil(total / limit);
+			}
+
+			let data: any = result[0];
+			if (result[0].length > limit) {
+				next_hit = page + 1;
+				data = result[0].slice(0, limit);
+			}
+			console.log('next_hitnext_hitnext_hit', next_hit);
+
+			return {
+				list: data,
+				total: total,
+				page: page,
+				total_page: total_page,
+				next_hit: next_hit,
+				limit: limit
+			};
+		} catch (err) {
+			console.error(err);
+			throw new Error(err);
+		}
+	}
+
+	async aggreagtionWithPaginateTotal(model: ModelNames, pipeline?: Array<Object>, limit?: number, page?: number, pageCount = false) {
+		try {
+			let ModelName: any = models[model];
+			if (limit) {
+				limit = Math.abs(limit);
+
+				// If limit exceeds max limit
+				if (limit > 100) {
+					limit = 100;
+				}
+
+			} else {
+				limit = 10;
+			}
+			if (page && (page != 0)) {
+				page = Math.abs(page);
+			} else {
+				page = 1;
+			}
+			let skip = (limit * (page - 1));
+			let promiseAll = [
+				ModelName.aggregate(pipeline).allowDiskUse(true)
+			];
+
+			if (pageCount) {
+				for (let index = 0; index < pipeline.length; index++) {
+					if ('$skip' in pipeline[index]) {
+						pipeline = pipeline.slice(0, index);
+					} else {
+						pipeline = pipeline
+					}
+				}
+				pipeline.push({ $count: "total" });
+				promiseAll.push(ModelName.aggregate(pipeline).allowDiskUse(true))
+			}
+			let result = await Promise.all(promiseAll);
+			let next_hit = 0;
+			let total = 0;
+			let total_page = 0;
+
+			if (pageCount) {
+				total = result[1] && result[1][0] ? result[1][0]['total'] : 0;
+				total_page = Math.ceil(total / limit);
+			}
+
+			let data: any = result[0];
+			if (result[0].length > limit) {
+				next_hit = page + 1;
+				data = result[0].slice(0, limit);
+			}
+			return {
+				list: data,
+				total: total,
+				page: page,
+				total_page: total_page,
+				next_hit: next_hit,
+				limit: limit
+			};
+		} catch (err) {
+			console.error(err);
+			throw new Error(err);
+		}
+	}
+
+	async aggregateWithPagination1(model: ModelNames, pipeline?: Array<Object>, limit?: number, page?: number, pageCount = true) {
+		try {
+			let ModelName: any = models[model];
+			if (limit) {
+				limit = Math.abs(limit);
+
+				// If limit exceeds max limit
+				if (limit > 100) {
+					limit = 100;
+				}
+
+			} else {
+				limit = 10;
+			}
+			if (page && (page != 0)) {
+				page = Math.abs(page);
+			} else {
+				page = 1;
+			}
+			let skip = (limit * (page - 1));
+			let promiseAll = [
+				await ModelName.aggregate(pipeline).allowDiskUse(true)
+			];
+
+			if (pageCount) {
+				for (let index = 0; index < pipeline.length; index++) {
+					if ('$skip' in pipeline[index]) {
+						pipeline = pipeline.slice(0, index);
+					} else {
+						pipeline = pipeline
+					}
+				}
+				pipeline.push({ $count: "total" });
+				promiseAll.push(ModelName.aggregate(pipeline).allowDiskUse(true))
+			}
+			let result = await Promise.all(promiseAll);
+			let next_hit = 0;
+			let total = 0;
+			let total_page = 0;
+
+			if (pageCount) {
+				total = result[1] && result[1][0] ? result[1][0]['total'] : 0;
+				total_page = Math.ceil(total / limit);
+			}
+
+			let data: any = result[0];
+			if (result[0].length > limit) {
+				next_hit = page + 1;
+				data = result[0].slice(0, limit);
+			}
+			console.log('next_hitnext_hitnext_hit', next_hit);
+
+			return {
+				list: data,
+				total: total,
+				// page: page,
+				// total_page: total_page,
+				next_hit: next_hit,
+				// limit: limit
+			};
+		} catch (err) {
+			console.error(err);
+			throw new Error(err);
+		}
+	}
+
+
+
+
 	async find(model: ModelNames, query: any, projection: any, options: QueryFindOneAndUpdateOptions, sort, paginate, populateQuery: any) {
 		try {
 			const ModelName: any = models[model];
@@ -34,6 +233,15 @@ export class BaseDao {
 			return Promise.reject(error);
 		}
 	}
+	async findAll(model: ModelNames, query: any, projection: any, options: QueryFindOneAndUpdateOptions) {
+		try {
+			let ModelName: any = models[model];
+			let cehck = await ModelName.find(query, projection, options);
+			return cehck;
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
 
 	async distinct(model: ModelNames, path: string, query: any) {
 		try {
@@ -44,13 +252,25 @@ export class BaseDao {
 		}
 	}
 
-	async findOne(model: ModelNames, query: any, projection: any, options: any, populateQuery: any) {
+	async findOne(model: ModelNames, query: any, projection: any, options: any, populateQuery?: any) {
 		try {
 			const ModelName: any = models[model];
 			if (!_.isEmpty(populateQuery)) { // populate
 				return await ModelName.findOne(query, projection, options).populate(populateQuery).exec();
 			} else {
 				return await ModelName.findOne(query, projection, options);
+			}
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+	async findOneWithSort(model: ModelNames, query: any, projection: any, options: any, populateQuery?: any, sort?: any) {
+		try {
+			const ModelName: any = models[model];
+			if (!_.isEmpty(populateQuery)) { // populate
+				return await ModelName.findOne(query, projection, options).populate(populateQuery).exec();
+			} else {
+				return await ModelName.findOne(query, projection, options).sort(sort);
 			}
 		} catch (error) {
 			return Promise.reject(error);
@@ -75,8 +295,12 @@ export class BaseDao {
 		}
 	}
 
-	async update(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async update(model: ModelNames, query: any, update: any, options: any) {
 		try {
+			// if (!options) {
+			// 	options['new'] = true;
+			// 	options['lean'] = true;
+			// }
 			const ModelName: any = models[model];
 			return await ModelName.update(query, update, options);
 		} catch (error) {
@@ -86,6 +310,8 @@ export class BaseDao {
 
 	async updateOne(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
 		try {
+			console.log('optionsoptions', options);
+
 			const ModelName: any = models[model];
 			return await ModelName.updateOne(query, update, options);
 		} catch (error) {
@@ -153,7 +379,10 @@ export class BaseDao {
 
 	async insert(model: ModelNames, data, options: QueryFindOneAndUpdateOptions) {
 		try {
+			// data['createdAt'] = Date.now();
+			// data['updatedAt'] = Date.now();
 			const ModelName: any = models[model];
+
 			const obj = new ModelName(data);
 			await obj.save();
 			return obj;
@@ -241,7 +470,7 @@ export class BaseDao {
 		];
 	}
 
-	paginate = async (model: ModelNames, pipeline: Array<Object>, limit: number, pageNo: number, options: any = {}, pageCount = false) => {
+	paginate = async (model: ModelNames, pipeline: Array<Object>, limit: number, pageNo: number, options: any = {}, pageCount = true) => {
 		try {
 			pipeline = [...pipeline, ...this.addSkipLimit(limit, pageNo)];
 			let ModelName: any = models[model];
@@ -320,7 +549,6 @@ export class BaseDao {
 			const ModelName: any = models[model];
 			const changeStream = await ModelName.watch({fullDocument: "updateLookup"});
 			changeStream.on("change", (error, data) => {
-				console.log(data);
 			});
 			console.log(changeStream);
 			return changeStream;

@@ -1,6 +1,6 @@
 "use strict";
 
-import * as autoIncrement from "mongoose-auto-increment";
+// import * as autoIncrement from "@modules/category/node_modules/mongoose-auto-increment";
 // import * as bcrypt from "bcrypt";
 import * as mongoose from "mongoose";
 import { Schema, Model, Document } from "mongoose";
@@ -11,17 +11,21 @@ import { ElasticSearch } from "@lib/ElasticSearch";
 
 const elasticSearch = new ElasticSearch();
 
-const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
-autoIncrement.initialize(connection);
+// const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
+// autoIncrement.initialize(connection);
 
 export interface IUser extends Document {
-	sno: string;
+	// sno: string;
+	appleId: string;
+	isAppleLogin: boolean;
+	isAppleVerified: boolean;
+	isMobileVerified: boolean;
+	isEmailVerified: boolean;
 	facebookId: string;
 	isFacebookLogin: boolean;
 	googleId: string;
 	isGoogleLogin: boolean;
 	firstName: string;
-	middleName: string;
 	lastName: string;
 	email: string;
 	countryCode: string;
@@ -31,68 +35,164 @@ export interface IUser extends Document {
 	hash: string;
 	forgotToken: string;
 	gender: string;
-	age: number;
-	dob: number;
-	profilePicture: string;
+	dob: string;
+	profilePicUrl: [string];
 	address: Address;
 	status: string;
-	created: number;
+	mobileOtp: number;
+	preference: string;
+	industryType: string;
+	experience: number;
+	about: string;
+	userPrivacy: string;
+	loginToken: string;
+	// createdAt: number;
+	countMember: number;
+	memberCreatedAt: string;
+	isMemberOfDay: boolean;
+	likeCount: number,
+	commentCount: number,
+	adminStatus: string;
+	reportCount: number;
+	// memberType: number;
+	subscriptionType: string;
+	subscriptionEndDate: number;
+	badgeCount: number;
+	// isAdminRejected: boolean;
+	// isAdminVerified: boolean;
 }
 
-const geoSchema = new Schema({
-	address: { type: String, trim: true, required: true },
+var geoSchema = new Schema({
+	location: { type: String, trim: true, required: true, default: '' },
 	type: { type: String, default: "Point" },
-	coordinates: { type: [Number], index: "2dsphere" }// [longitude, latitude]
+	coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
 }, {
-		_id: false
-	});
+	_id: false
+});
 
 const userSchema = new Schema({
-	sno: { type: String, required: true },
-	_id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
+	mobileOtp: { type: Number },
 	// social data
+	isAppleLogin: { type: Boolean, default: false },
+	isMobileVerified: { type: Boolean, default: false },
+	isEmailVerified: { type: Boolean, default: false },
+	appleId: { type: String, trim: true, index: true },
 	facebookId: { type: String, trim: true, index: true },
 	isFacebookLogin: { type: Boolean, default: false },
 	googleId: { type: String, trim: true, index: true },
 	isGoogleLogin: { type: Boolean, default: false },
 	firstName: { type: String, trim: true, index: true, required: true },
-	middleName: { type: String, trim: true, index: true },
 	lastName: { type: String, trim: true, index: true },
-	email: { type: String, trim: true, index: true, lowercase: true, default: "" },
-	countryCode: { type: String, trim: true, index: true, default: "" },
-	mobileNo: { type: String, trim: true, index: true, default: "" },
+	email: { type: String, trim: true, index: true, lowercase: true },
+	countryCode: { type: String, trim: true, index: true, },
+	mobileNo: { type: String, trim: true, index: true },
 	fullMobileNo: { type: String, trim: true, index: true, default: "" },
 	salt: { type: String, required: false },
 	hash: { type: String, required: false },
 	forgotToken: { type: String },
+	loginToken: { type: String },
+	profession: {
+		type: String, enum: [
+			config.CONSTANT.PROFESSION_TYPE.CEO,
+			config.CONSTANT.PROFESSION_TYPE.Executive_Director,
+			config.CONSTANT.PROFESSION_TYPE.Founder,
+			config.CONSTANT.PROFESSION_TYPE.Managing_Director,
+		]
+	},
 	gender: {
 		type: String,
 		enum: [
+			config.CONSTANT.GENDER.FEMALE,
 			config.CONSTANT.GENDER.MALE,
-			config.CONSTANT.GENDER.FEMALE
 		]
 	},
-	age: { type: Number },
-	dob: { type: Number },
-	profilePicture: { type: String },
-	address: geoSchema,
+	dob: { type: String },
+	profilePicUrl: [Schema.Types.String],
 	status: {
 		type: String,
 		enum: [
 			config.CONSTANT.STATUS.BLOCKED,
-			config.CONSTANT.STATUS.UN_BLOCKED,
+			config.CONSTANT.STATUS.ACTIVE,
 			config.CONSTANT.STATUS.DELETED
 		],
-		default: config.CONSTANT.STATUS.UN_BLOCKED
+		default: config.CONSTANT.STATUS.ACTIVE
 	},
-	created: { type: Number }
+	subscriptionType: {
+		// memberType: {
+		type: Number, enum: [
+			// config.CONSTANT.MEMBER_TYPE.FREE,
+			// config.CONSTANT.MEMBER_TYPE.PREMIUM,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.YEARLY.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
+		],
+		default: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value
+		// default: config.CONSTANT.MEMBER_TYPE.FREE
+	}, // Free(Default rakho)
+	subscriptionEndDate: {
+		type: Number
+	},
+	memberShipStatus: { type: String },
+	myConnection: { type: Number, default: 0 },
+	emailOtp: { type: Number },
+	preference: { type: String },
+	industryType: {
+		type: Number,
+		enum: [
+			config.INDUSTRIES.NONPROFIT,
+			config.INDUSTRIES.EMERGENCY_SERVICES,
+			config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+			config.INDUSTRIES.LAW_ENFORCEMENT,
+			config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
+		],
+		default: config.INDUSTRIES.NONPROFIT
+	},
+	// isAdminVerified: { type: Boolean, default: false },
+	// isAdminRejected: { type: Boolean, default: false },
+
+	adminStatus: {
+		type: String, enum: [
+			config.CONSTANT.USER_ADMIN_STATUS.PENDING,
+			config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
+			config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+		],
+		default: config.CONSTANT.USER_ADMIN_STATUS.PENDING,
+	},
+	experience: {
+		type: String, enum: [
+			config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
+			config.CONSTANT.EXPERIENCE_LEVEL.MID,
+			config.CONSTANT.EXPERIENCE_LEVEL.SENIOR
+		]
+	},
+	countMember: { type: Number, default: 0 },
+	memberCreatedAt: { type: Date },
+	isMemberOfDay: { type: Boolean, default: false },
+	members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
+	about: { type: String },
+	userPrivacy: {
+
+		type: String, enum: [
+			config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+			config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+			config.CONSTANT.PRIVACY_STATUS.PUBLIC,
+		]
+	},
+	location: geoSchema,
+	likeCount: { type: Number, default: 0 },
+	commentCount: { type: Number, default: 0 },
+	badgeCount: { type: Number, default: 0 },
+	// createdAt: { type: Date },
+	// updatedAt: { type: Date },
+	reportCount: { type: Number, default: 0 }
 }, {
-		versionKey: false,
-		timestamps: true
-	});
+	versionKey: false,
+	timestamps: true
+});
 
 userSchema.set("toObject", {
-	virtuals: true
+	virtuals: true,
 });
 
 // Load password virtually
@@ -107,50 +207,54 @@ userSchema.virtual("password")
 		this.hash = appUtils.encryptHashPassword(password, salt);
 	});
 
-userSchema.virtual("fullName")
-	.get(function () {
-		if (this.middleName) {
-			this.firstName = this.firstName + " " + this.middleName;
-		} if (this.lastName) {
-			this.firstName = this.firstName + " " + this.lastName;
-		}
-		return this.firstName;
-	});
+// userSchema.virtual("fullName")
+// 	.get(function () {
+// 		if (this.middleName) {
+// 			this.firstName = this.firstName + " " + this.middleName;
+// 		} if (this.lastName) {
+// 			this.firstName = this.firstName + " " + this.lastName;
+// 		}
+// 		return this.firstName;
+// 	});
 
 // If elastic search engine is enabled
-if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
-	// save user data in elastic search db
-	userSchema.post("save", function (doc) {
-		doc = doc.toJSON();
-		const id = doc["_id"];
-		if (doc["_id"]) delete doc["_id"];
-		if (doc["password"]) delete doc["password"];
-		elasticSearch.addDocument("admin_rcc", id, "users", doc);
-	});
+// if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
+// 	// save user data in elastic search db
+// 	userSchema.post("save", function (doc) {
+// 		doc = doc.toJSON();
+// 		const id = doc["_id"];
+// 		if (doc["_id"]) delete doc["_id"];
+// 		if (doc["password"]) delete doc["password"];
+// 		elasticSearch.addDocument("admin_rcc", id, "users", doc);
+// 	});
 
-	// update user data in elastic search db
-	userSchema.post("findOneAndUpdate", async function (doc) {
-		doc = doc.toJSON();
-		const id = doc["_id"];
-		return await elasticSearch.deleteDocument("admin_rcc", id, "users")
-			.then(async () => {
-				if (doc["_id"]) delete doc["_id"];
-				if (doc["password"]) delete doc["password"];
-				return await elasticSearch.addDocument("admin_rcc", id, "users", doc);
-			});
-	});
-}
+// 	// update user data in elastic search db
+// 	userSchema.post("findOneAndUpdate", async function (doc) {
+// 		doc = doc.toJSON();
+// 		const id = doc["_id"];
+// 		return await elasticSearch.deleteDocument("admin_rcc", id, "users")
+// 			.then(async () => {
+// 				if (doc["_id"]) delete doc["_id"];
+// 				if (doc["password"]) delete doc["password"];
+// 				return await elasticSearch.addDocument("admin_rcc", id, "users", doc);
+// 			});
+// 	});
+// }
 
 userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
 	return object;
 };
+/* Crate 2dsphere index */
+userSchema.index({
+	location: '2dsphere'
+});
 
 // to set findAndModify false
 mongoose.set("useFindAndModify", false);
 
 // mongoose autoincrement
-userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
+// userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
 
 // Export user
 export const users: Model<IUser> = mongoose.model<IUser>(config.CONSTANT.DB_MODEL_REF.USER, userSchema);

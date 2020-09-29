@@ -1,12 +1,13 @@
 "use strict";
 
-import { adminDao } from "@modules/admin/v1/AdminDao";
+import { adminDao } from "@modules/admin/users/AdminDao";
 import { contentDao } from "@modules/content/v1/ContentDao";
 import * as config from "@config/index";
-import { CronUtils } from "@lib/CronUtils";
+import { cronJob } from "@lib/CronUtils";
 import { Database } from "@utils/Database";
 import { elasticSearch, rabbitMQ, redisClient, redisStorage } from "@lib/index";
 import * as socket from "@lib/socketManager";
+import { userDao } from "@modules/user";
 
 export class BootStrap {
 
@@ -16,6 +17,7 @@ export class BootStrap {
 
 		await this.dataBaseService.connectToDb();
 		await this.bootstrapSeedData();
+		await this.generateMemberOfDay()
 		// rabbitMQ.init();
 
 		// If elastic search engine is enabled
@@ -85,7 +87,59 @@ export class BootStrap {
 				const step10 = contentDao.addContent(data);
 			}
 
-			CronUtils.init();
+		} catch (error) {
+			return Promise.resolve();
+		}
+	}
+
+	async generateMemberOfDay() {
+		cronJob.init();
+
+		try {
+			let a = 0;
+			// if (globalVariable = 1) {
+			// 	countMember: a
+			// }
+			const criteria = [
+				{
+					$match: {
+						status: config.CONSTANT.STATUS.ACTIVE,
+						adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+						countMember: 0,
+					}
+				},
+				{ $sample: { size: 1 } } // You want to get 5 docs
+			];
+			const dataToUpdate = {
+				countMember: a,
+				isMemberOfDay: true,
+				memberCreatedAt: Date.now()
+			};
+
+			const getUsers = await userDao.aggregate('users', criteria, {});
+
+			if (getUsers && getUsers[0]) {
+				const criteria = {
+					_id: getUsers[0]._id
+				};
+				let startDate: any
+				let endDate: any
+				startDate = new Date();
+				startDate.setHours(0, 0, 0, 0);
+
+				endDate = new Date();
+				endDate.setHours(23, 59, 59, 999);
+				// await userDao.updateMany('users', { memberCreatedAt: { $gte: startDate, $lte: endDate } }, { "$unset": { memberCreatedAt: "" } }, {});
+				// await userDao.updateMany('users', { isMemberOfDay: true }, { "$set": { isMemberOfDay: false } }, {});
+				// const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
+			}
+
+			if (!getUsers && !getUsers[0]) {
+
+
+			}
+			// CronUtils.init();
+
 		} catch (error) {
 			return Promise.resolve();
 		}

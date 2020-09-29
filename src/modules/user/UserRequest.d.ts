@@ -7,9 +7,9 @@ declare namespace UserRequest {
 		mobileNo?: string;
 		fullMobileNo: string;
 		firstName: string;
-		middleName: string;
 		lastName: string;
-		created?: number;
+		createdAt?: number;
+		type: string;
 	}
 
 	export interface Login extends Device {
@@ -18,6 +18,9 @@ declare namespace UserRequest {
 		countryCode?: string;
 		mobileNo?: string;
 		hash?: string;
+		isEmailVerified?: boolean;
+		isMobileVerified?: boolean;
+
 	}
 
 	export interface SocialLogin extends Device {
@@ -41,6 +44,10 @@ declare namespace UserRequest {
 		dob: number;
 		age: number;
 		created: number;
+		isAppleLogin: boolean;
+		isEmailVerified?: boolean;
+		gender: string;
+		appleId: string;
 	}
 
 	export interface MultiBlock {
@@ -51,5 +58,20 @@ declare namespace UserRequest {
 
 	export interface ImportUsers {
 		file: any;
+	}
+
+	export interface SendOtp {
+		countryCode: string;
+		mobileNo: string;
+	}
+
+
+	export interface verifyOTP {
+		countryCode: string;
+		mobileNo: string;
+		otp: string;
+		type: string;
+		deviceId: string;
+		verificationFor: string;
 	}
 }

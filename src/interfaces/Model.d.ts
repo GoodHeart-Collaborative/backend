@@ -1,5 +1,6 @@
 declare interface UserId {
 	userId?: string;
+	Id?: string;
 }
 
 declare interface Device extends UserId {
@@ -78,7 +79,10 @@ declare interface Address {
 	coordinates: number[];
 }
 
-declare interface ListingRequest extends Pagination, Filter { }
+declare interface ListingRequest extends Pagination, Filter {
+	request_type?: number
+	platform?: string;
+}
 
 declare interface BlockRequest {
 	status: string;
@@ -106,7 +110,26 @@ declare type ModelNames =
 	"admin_notifications" |
 	"contacts" |
 	"contents" |
+	"likes" |
+	"comments" |
 	"login_histories" |
 	"notifications" |
 	"users" |
-	"versions";
+	"versions" |
+	"categories" |
+	"posts" |
+	"home" |
+	"inspiration" |
+	"unicorn" |
+	"gratitude_journals" |
+	'advice' |
+	'expert' |
+	'discover' |
+	'shoutout' |
+	'expert_post' |
+	'event' |
+	'event_interest' |
+	'forum' |
+	'report' |
+	'global_var' |
+	'subscription';

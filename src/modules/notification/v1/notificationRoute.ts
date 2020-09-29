@@ -12,7 +12,7 @@ import { responseHandler } from "@utils/ResponseHandler";
 export const notificationRoute: ServerRoute = [
 	{
 		method: "GET",
-		path: `${config.SERVER.API_BASE_URL}/v1/notification`,
+		path: `${config.SERVER.API_BASE_URL}/v1/user/notification`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 			const query: ListingRequest = request.query;
@@ -36,6 +36,38 @@ export const notificationRoute: ServerRoute = [
 					pageNo: Joi.number().required().description("Page no"),
 					limit: Joi.number().required().description("limit")
 				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+	{
+		method: "DELETE",
+		path: `${config.SERVER.API_BASE_URL}/v1/user/notification`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+			try {
+				const result = await notificationController.clearNotification(tokenData);
+				return responseHandler.sendSuccess(h, result);
+			} catch (error) {
+				return responseHandler.sendError(error);
+			}
+		},
+		config: {
+			tags: ["api", "notification"],
+			description: "Notification List",
+			// notes: "",
+			auth: {
+				strategies: ["UserAuth"]
+			},
+			validate: {
+				headers: validator.userAuthorizationHeaderObj,
 				failAction: appUtils.failActionFunction
 			},
 			plugins: {

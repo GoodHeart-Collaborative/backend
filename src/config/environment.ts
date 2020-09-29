@@ -4,10 +4,11 @@ import * as dotenv from "dotenv";
 import * as fs from "fs";
 import * as path from "path";
 
+// console.log('process.envprocess.env',process.env)
 const ENVIRONMENT = process.env.NODE_ENV.trim();
 
 switch (ENVIRONMENT) {
-	case "dev":
+	// case "dev":
 	case "development": {
 		if (fs.existsSync(path.join(process.cwd(), "/.env.development"))) {
 			dotenv.config({ path: ".env.development" });
@@ -21,6 +22,15 @@ switch (ENVIRONMENT) {
 	case "staging": {
 		if (fs.existsSync(path.join(process.cwd(), "/.env.staging"))) {
 			dotenv.config({ path: ".env.staging" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
+	case "test":
+	case "testing": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.testing"))) {
+			dotenv.config({ path: ".env.testing" });
 		} else {
 			process.exit(1);
 		}
@@ -61,21 +71,28 @@ switch (ENVIRONMENT) {
 }
 
 export const SERVER = Object.freeze({
-	APP_NAME: "RCC",
+	APP_NAME: "WC",
 	// BASE_PATH: process.cwd(),
 	TEMPLATE_PATH: process.cwd() + "/src/views/",
 	UPLOAD_DIR: process.cwd() + "/src/uploads/",
+	UPLOAD_IMAGE_DIR: process.cwd() + "/src/uploads/images/",
 	// ONE_DAY_TIME_STAMP: 24 * 60 * 60 * 1000, // 1 day
 	// LOGIN_TOKEN_EXPIRATION_TIME: "180d", // 180 days
 	LOGIN_TOKEN_EXPIRATION_TIME: 180 * 24 * 60 * 60 * 1000, // 180 days
+	// LOGIN_TOKEN_EXPIRATION_TIME: '20h', // 180 days
+
 	JWT_CERT_KEY: "g8b9(-=~Sdf)",
 	SALT_ROUNDS: 10,
+	SERVER_URL: process.env["SERVER_URL"],
 	// for private.key file use RS256, SHA256, RSA
 	JWT_ALGO: "HS256", // HS384
 	CHUNK_SIZE: 100,
 	APP_URL: process.env["APP_URL"],
 	ADMIN_URL: process.env["ADMIN_URL"],
+	ADMIN_RESST_PASSWORD_URL: "/auth/reset-password/token/",
 	API_BASE_URL: "",
+	API_URL: process.env['API_URL'],
+	flockApi: process.env['flock'],
 	// API_BASE_URL: "/rcc/api",
 	MONGO: {
 
@@ -96,7 +113,7 @@ export const SERVER = Object.freeze({
 		}
 	},
 	ADMIN_CREDENTIALS: {
-		EMAIL: "admin@rcc.com",
+		EMAIL: "adminwc@yopmail.com",
 		PASSWORD: "Admin@123",
 		NAME: "Rcc Admin"
 	},
@@ -121,10 +138,10 @@ export const SERVER = Object.freeze({
 			API_KEY: "Rajat@123"
 		},
 		SMTP: {
-			HOST: "mail.appinventive.com",
+			HOST: "smtp.gmail.com",
 			PORT: "587",
-			USER: "do-not-reply@mail.appinventive.com",
-			PASSWORD: "Appin123!@#"
+			USER: "womencommunite@gmail.com",
+			PASSWORD: "12345@women"
 		}
 	},
 	TWILIO: {
@@ -133,8 +150,8 @@ export const SERVER = Object.freeze({
 		TWILIO_NUMBER: process.env["TWILIO_NUMBER"]
 	},
 	BASIC_AUTH: {
-		NAME: "rcc",
-		PASS: "rcc@123"
+		NAME: "wc",
+		PASS: "wc@123"
 	},
 	API_KEY: "1234",
 	AWS_IAM_USER: {

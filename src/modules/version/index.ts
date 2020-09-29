@@ -3,7 +3,7 @@
 /// <reference path="VersionRequest.d.ts"/>
 
 export * from "./versionConstant";
-export { versionController } from "./v1/VersionController";
-export { versionDao } from "./v1/VersionDao";
+export { versionController } from "./VersionController";
+export { versionDao } from "./VersionDao";
 export { versions } from "./versionModel";
-export { versionRoute } from "./v1/versionRoute";
+export { versionRoute } from "./versionRoute";

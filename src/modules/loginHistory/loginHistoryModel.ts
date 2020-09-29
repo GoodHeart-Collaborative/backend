@@ -16,7 +16,7 @@ export interface ILoginHistory extends Document {
 	platform: string;
 	deviceToken: string;
 	refreshToken: string;
-	arn: string;
+	// arn: string;
 	created: number;
 }
 
@@ -44,9 +44,9 @@ const loginHistorySchema = new Schema({
 	arn: { type: String },
 	created: { type: Number }
 }, {
-		versionKey: false,
-		timestamps: true
-	});
+	versionKey: false,
+	timestamps: true
+});
 
 loginHistorySchema.set("toObject", {
 	virtuals: true

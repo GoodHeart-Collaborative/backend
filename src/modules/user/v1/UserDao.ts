@@ -5,6 +5,9 @@ import * as _ from "lodash";
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
 import { ElasticSearch } from "@lib/ElasticSearch";
+import * as appUtils from '@utils/appUtils'
+import * as mongoose from "mongoose";
+
 
 const elasticSearch = new ElasticSearch();
 
@@ -15,13 +18,235 @@ export class UserDao extends BaseDao {
 	 */
 	async findUserByEmailOrMobileNo(params) {
 		try {
-			const query: any = {};
+			let { mobileNo, countryCode, email } = params
+			let query: any = {};
+			// if (countryCode && mobileNo) {
+			// 	query = { "countryCode": countryCode, "mobileNo": mobileNo }
+			// } else {
+			// 	query = { "email": email }
+			// }
+			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
 			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
 
-			return await this.findOne("users", query, {}, options, {});
+			return await this.findOne("users", query, { mobileOtp: 0 }, options, {});
+		} catch (error) {
+			throw error;
+		}
+	}
+	/**
+	 * @description getmember of the day for the homeScreen
+	 * @param userId 
+	 */
+
+	async getMemberOfDays(userId) {
+		try {
+			let match: any = {};
+			let aggPipe = [];
+			let result: any = {}
+			match["status"] = config.CONSTANT.STATUS.ACTIVE
+			match["isMemberOfDay"] = true
+			aggPipe.push({ "$match": match });
+			aggPipe.push({
+				$lookup: {
+					from: "likes",
+					let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$and: [
+										{
+											$eq: ["$postId", "$$post"]
+										},
+										{
+											$eq: ["$userId", "$$user"]
+										},
+										{
+											$eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+										},
+										{
+											$eq: ["$type", config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY]
+										}
+									]
+								}
+							}
+						}
+					],
+					as: "likeData"
+				}
+			})
+			aggPipe.push({
+				$lookup: {
+					from: "comments",
+					let: { "post": "$_id", "user": await appUtils.toObjectId(userId.userId) },
+					pipeline: [{
+						$match: {
+							$expr: {
+								$and: [
+									{
+										$eq: ["$postId", "$$post"]
+									},
+									{
+										$eq: ["$userId", "$$user"]
+									},
+									{
+										$eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+									},
+									{
+										$eq: ["$type", config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY]
+									}
+								]
+							}
+						}
+
+					}],
+					as: "commentData",
+				}
+			})
+			aggPipe.push({ "$addFields": { created: { "$subtract": ["$memberCreatedAt", new Date("1970-01-01")] } } });
+			aggPipe.push({
+				$lookup: {
+					from: "discovers",
+					let: { "users": "$_id", "user": mongoose.Types.ObjectId(userId.userId) },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$or: [
+										{
+											$and: [
+												{
+													$eq: ["$followerId", "$$user"]
+												},
+												{
+													$eq: ["$userId", "$$users"]
+												}
+											]
+										},
+										{
+											$and: [
+												{
+													$eq: ["$userId", "$$user"]
+												},
+												{
+													$eq: ["$followerId", "$$users"]
+												}
+											]
+										}
+									]
+								}
+							}
+						}
+					],
+					as: "DiscoverData"
+				}
+			})
+			aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+
+			aggPipe.push({
+				$project:
+				{
+					_id: 1,
+					likeCount: 1,
+					commentCount: 1,
+					created: 1,
+					createdAt: 1,
+					user: {
+						_id: "$_id",
+						industryType: "$industryType",
+						myConnection: "$myConnection",
+						experience: "$experience",
+						discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+						name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+						profilePicUrl: "$profilePicUrl",
+						profession: { $ifNull: ["$profession", ""] },
+						about: { $ifNull: ["$about", ""] }
+					},
+					isComment: {
+						$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+					},
+					isLike:
+					{
+						$cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
+					}
+				}
+			})
+			result = await this.aggregate("users", aggPipe, {})
+			result[0]["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
+			return result[0]
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async checkUser(params) {
+		try {
+			return await this.findOne('users', params, {}, {});
+		} catch (error) {
+			throw error;
+		}
+	}
+	async updateLikeAndCommentCount(query, update) {
+		try {
+			return await this.updateOne('users', query, update, {});
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async findVerifiedEmailOrMobile(params: UserRequest.Login) {
+		try {
+			let query: any = {};
+
+
+			if (params.email && params.mobileNo && params.countryCode) {
+				query["$or"] = [{ "email": params.email, isEmailVerified: true }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
+
+			} else {
+				if (params.email) {
+					query = { "email": params.email, isEmailVerified: true };
+				}
+				if (params.mobileNo) {
+					query = { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true };
+				}
+			}
+
+			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			let options = { lean: true };
+
+			const data = await this.findOne("users", query, { hash: 0, salt: 0, mobileOtp: 0 }, options, {});
+			return data;
+
+		} catch (error) {
+			throw error;
+		}
+	}
+	// for gorgot password
+	async findForGotVerifiedEmailOrMobile(params: ForgotPasswordRequest) {
+		try {
+			let query: any = {};
+
+			if (params.email && params.mobileNo && params.countryCode) {
+				query["$or"] = [{ "email": params.email, isEmailVerified: true }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true }];
+
+			} else {
+				if (params.email) {
+					query = { "email": params.email, isEmailVerified: true };
+				}
+				if (params.mobileNo) {
+					query = { "countryCode": params.countryCode, "mobileNo": params.mobileNo, isMobileVerified: true };
+				}
+			}
+
+			query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			let options = { lean: true };
+
+			const data = await this.findOne("users", query, {}, options, {});
+			return data;
+
 		} catch (error) {
 			throw error;
 		}
@@ -49,12 +274,26 @@ export class UserDao extends BaseDao {
 	/**
 	 * @function signup
 	 */
-	async signup(params: UserRequest.Signup) {
+	async signup(params: UserRequest.Signup, userData?) {
 		try {
+			// if (userData) {
+			// 	if (userData.email === params.email && (!userData.isFacebookLogin || !userData.isGoogleLogin || !userData.isFacebookLogin || !userData.isEmailVerified)) {
+			// 		// remove the email from previous one
+
+			// 		const data = userDao.updateOne('users', { _id: userData._id }, { $set: { email: "" } }, {})
+			// 	}
+			// 	if (userData.mobileNo === params.mobileNo && !userData.isMobileVerified) {
+			// 		// remove the email from previous one
+
+			// 		const data = userDao.updateOne('users', { _id: userData._id }, { $set: { mobileNo: "", fullMobileNo: "" } }, {})
+			// 	}
+			// }
+
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = Date.now();
+			// params.createdAt = Date.now();
+			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;
@@ -67,10 +306,21 @@ export class UserDao extends BaseDao {
 	async checkSocialId(params) {
 		try {
 			const query: any = {};
+			// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
+			// 	query.facebookId = params.socialId;
+			// } else {
+			// 	query.googleId = params.socialId;
+			// }
+
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				query.facebookId = params.socialId;
-			} else {
+				// query.isFacebookLogin = true;
+			} else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE) {
+				query.appleId = params.socialId;
+				// query.isAppleLogin = true;
+			} else { // Config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE
 				query.googleId = params.socialId;
+				// query.isGoogleLogin = true;
 			}
 			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
@@ -90,15 +340,52 @@ export class UserDao extends BaseDao {
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				params.facebookId = params.socialId;
 				params.isFacebookLogin = true;
-			} else {
+			} else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE) {
+				params.appleId = params.socialId;
+				params.isAppleLogin = true;
+			}
+			else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE) {
 				params.googleId = params.socialId;
 				params.isGoogleLogin = true;
 			}
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = Date.now();
+			params.created = new Date().getTime();
+			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
+
 			return await this.save("users", params);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async mergeAccountAndCheck(step1, params: UserRequest.SocialSignup) {
+		try {
+			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
+				params.facebookId = params.socialId;
+				params.isFacebookLogin = true;
+			} else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE) {
+				params.appleId = params.socialId;
+				params.isAppleLogin = true;
+			}
+			else if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE) {
+				params.googleId = params.socialId;
+				params.isGoogleLogin = true;
+			}
+			if (params.countryCode && params.mobileNo) {
+				params.fullMobileNo = params.countryCode + params.mobileNo;
+			}
+			// params.created = new Date();
+			if (step1.email === params.email) {
+				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
+				// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+			}
+			else {
+				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
+				// return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+			}
+			return params;
 		} catch (error) {
 			throw error;
 		}
@@ -169,283 +456,50 @@ export class UserDao extends BaseDao {
 	}
 
 	/**
-	 * @function userList
-	 */
-	async userList(params: ListingRequest) {
+		 * @function dashboardGraph
+		 */
+	async dashboardGraph() {
 		try {
-			const { pageNo, limit, searchKey, sortBy, sortOrder, status, fromDate, toDate } = params;
-			const aggPipe = [];
+			const promise = [];
 
-			const match: any = {};
-			if (searchKey) {
-				match["$or"] = [
-					{ "firstName": { "$regex": searchKey, "$options": "-i" } },
-					{ "middleName": { "$regex": searchKey, "$options": "-i" } },
-					{ "lastName": { "$regex": searchKey, "$options": "-i" } },
-					{ "email": { "$regex": searchKey, "$options": "-i" } }
-				];
-			}
-			if (status) {
-				match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
-			} else {
-				match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-			}
-			if (fromDate && !toDate) {
-				match.created = { "$gte": fromDate };
-			}
-			if (toDate && !fromDate) {
-				match.created = { "$lte": toDate };
-			}
-			if (fromDate && toDate) {
-				match.created = { "$gte": fromDate, "$lte": toDate };
-			}
-			aggPipe.push({ "$match": match });
-
-			const project = {
-				_id: 1, firstName: 1, middleName: 1, lastName: 1, email: 1, countryCode: 1, mobileNo: 1, dob: 1, gender: 1,
-				created: 1, status: 1
-			};
-			aggPipe.push({ "$project": project });
-
-			let sort = {};
-			if (sortBy && sortOrder) {
-				if (sortBy === "firstName") {
-					sort = { "firstName": sortOrder };
-				} else if (sortBy === "middleName") {
-					sort = { "middleName": sortOrder };
-				} else if (sortBy === "lastName") {
-					sort = { "lastName": sortOrder };
-				} else if (sortBy === "dob") {
-					sort = { "dob": sortOrder };
-				} else {
-					sort = { "created": sortOrder };
-				}
-			} else {
-				sort = { "created": -1 };
-			}
-			aggPipe.push({ "$sort": sort });
-
-			return await this.paginate("users", aggPipe, limit, pageNo, true);
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
-	 * @function exportUser
-	 */
-	async exportUser(params: ListingRequest) {
-		try {
-			const { searchKey, sortBy, sortOrder, status, fromDate, toDate } = params;
-			const aggPipe = [];
-
-			const match: any = {};
-			if (searchKey) {
-				match["$or"] = [
-					{ "firstName": { "$regex": searchKey, "$options": "-i" } },
-					{ "middleName": { "$regex": searchKey, "$options": "-i" } },
-					{ "lastName": { "$regex": searchKey, "$options": "-i" } },
-					{ "email": { "$regex": searchKey, "$options": "-i" } }
-				];
-			}
-			if (status) {
-				match["$and"] = [{ status: status }, { "$ne": config.CONSTANT.STATUS.DELETED }];
-			} else {
-				match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-			}
-			if (fromDate && !toDate) {
-				match.created = { "$gte": fromDate };
-			}
-			if (toDate && !fromDate) {
-				match.created = { "$lte": toDate };
-			}
-			if (fromDate && toDate) {
-				match.created = { "$gte": fromDate, "$lte": toDate };
-			}
-			aggPipe.push({ "$match": match });
-
-			const project = {
-				_id: 1, firstName: 1, middleName: 1, lastName: 1, email: 1, countryCode: 1, mobileNo: 1, dob: 1, gender: 1,
-				created: 1, status: 1
-			};
-			aggPipe.push({ "$project": project });
-
-			let sort = {};
-			if (sortBy && sortOrder) {
-				if (sortBy === "firstName") {
-					sort = { "firstName": sortOrder };
-				} else if (sortBy === "middleName") {
-					sort = { "middleName": sortOrder };
-				} else if (sortBy === "lastName") {
-					sort = { "lastName": sortOrder };
-				} else if (sortBy === "dob") {
-					sort = { "dob": sortOrder };
-				} else {
-					sort = { "created": sortOrder };
-				}
-			} else {
-				sort = { "created": -1 };
-			}
-			aggPipe.push({ "$sort": sort });
-
-			return await this.aggregate("users", aggPipe, {});
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
-	 * @function userListWithElasticSearch
-	 */
-	async userListWithElasticSearch(params: ListingRequest) {
-		try {
-			const { pageNo, limit, searchKey, sortBy, status, fromDate, toDate } = params;
-			let { sortOrder } = params;
-			const payload = {};
-			const query = {};
-			query["bool"] = {};
-
-			const query1 = {
-				"must_not": {
-					"term": { "status": config.CONSTANT.STATUS.DELETED }
-				}
-			};
-			query["bool"] = { ...query1 };
-
-			let query2 = {};
-			if (searchKey) {
-				query2 = {
-					"must": {
-						"query_string": {
-							"query": `*${searchKey}*`,
-							"fields": ["firstName", "middleName", "lastName", "email"]
-						}
+			const query = {
+				$or: [
+					{
+						status: config.CONSTANT.STATUS.ACTIVE,
+					}, {
+						status: config.CONSTANT.STATUS.BLOCKED
 					}
-				};
-				query["bool"] = { ...query["bool"], ...query2 };
+				]
 			}
+			var date = new Date();
+			var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+			var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-			const filter = [];
-			if (status) {
-				filter.push({ "term": { "status": status } });
-			}
-			if (fromDate && !toDate) {
-				filter.push({ "range": { "created": { "gte": fromDate } } });
-			}
-			if (toDate && !fromDate) {
-				filter.push({ "range": { "created": { "lte": toDate } } });
-			}
-			if (toDate && fromDate) {
-				filter.push({ "range": { "created": { "gte": fromDate, "lte": toDate } } });
-			}
+			promise.push(this.count("users", query));
 
-			let query3 = {};
-			if (status || fromDate || toDate) {
-				query3 = {
-					"filter": {
-						"bool": {
-							"must": filter
-						}
+			const newUsers = {
+				$or: [
+					{
+						status: config.CONSTANT.STATUS.ACTIVE,
+					}, {
+						status: config.CONSTANT.STATUS.BLOCKED
 					}
-				};
-				query["bool"] = { ...query["bool"], ...query3 };
+				],
+				createdAt: { $gt: firstDay }
 			}
 
-			let sort = [];
-			if (sortBy && sortOrder) {
-				sortOrder = sortOrder === 1 ? "asc" : "desc";
-				if (sortBy === "firstName") {
-					sort.push({ "firstName": { "order": sortOrder } });
-				} else if (sortBy === "middleName") {
-					sort.push({ "middleName": { "order": sortOrder } });
-				} else if (sortBy === "lastName") {
-					sort.push({ "lastName": { "order": sortOrder } });
-				} else if (sortBy === "dob") {
-					sort.push({ "dob": { "order": sortOrder } });
-				} else {
-					sort.push({ "created": { "order": sortOrder } });
-				}
-			} else {
-				sort.push({ "created": { "order": "desc" } });
+			promise.push(this.count("users", newUsers));
+
+			const [userCount, newUser,] = await Promise.all(promise);
+			return {
+				totalUsers: userCount,
+				newUser
 			}
 
-			payload["query"] = { ...query };
-			if (pageNo && limit) {
-				payload["from"] = (pageNo - 1) * limit;
-				payload["size"] = limit;
-			}
-			payload["_source"] = ["firstName", "middleName", "lastName", "email", "countryCode", "mobileNo", "dob", "gender", "status", "created"];
-			payload["sort"] = sort;
-
-			return await elasticSearch.searchWithDSL("admin_rcc", "users", payload);
 		} catch (error) {
 			throw error;
 		}
 	}
-
-	/**
-	 * @function blockUnblock
-	 */
-	async blockUnblock(params: BlockRequest) {
-		try {
-			const query: any = {};
-			query._id = params.userId;
-
-			const update = {};
-			update["$set"] = {
-				"status": params.status
-			};
-
-			const options = { new: true };
-
-			return await this.findOneAndUpdate("users", query, update, options);
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
-	 * @function multiBlockUnblock
-	 */
-	async multiBlockUnblock(params: UserRequest.MultiBlock) {
-		try {
-			const query: any = {};
-			query._id = params.userId;
-
-			const update = {};
-			update["$set"] = {
-				"status": params.status
-			};
-
-			const options = { new: true };
-
-			return await this.findOneAndUpdate("users", query, update, options);
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
-	 * @function deleteUser
-	 */
-	async deleteUser(params: UserId) {
-		try {
-			const query: any = {};
-			query._id = params.userId;
-
-			const update = {};
-			update["$set"] = {
-				"status": config.CONSTANT.STATUS.DELETED
-			};
-
-			const options = { new: true };
-
-			return await this.findOneAndUpdate("users", query, update, options);
-		} catch (error) {
-			throw error;
-		}
-	}
-
 	/**
 	 * @function addUser
 	 */
@@ -454,7 +508,7 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params.created = Date.now();
+			params.created = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;
@@ -488,113 +542,151 @@ export class UserDao extends BaseDao {
 	// 	return await this.findOneAndUpdate("users", query, update, options);
 	// }
 
-	/**
-	 * @function contactSyncing
-	 */
-	async contactSyncing(params) {
+	async checkOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {
-			const query: any = {};
-			query["$or"] = [{ "fullMobileNo": params.mobileNo }, { "mobileNo": params.mobileNo }];
-			query._id = { "$not": { "$eq": params.userId } };
-			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-
-			return await this.findOne("users", query, {}, {}, {});
+			if (params.mobileNo) {
+				const mobleCriteria = {
+					_id: userData.userId,
+					countryCode: params.countryCode,
+					mobileNo: params.mobileNo,
+				};
+				const options = { lean: true };
+				const projection = { mobileOtp: 1 }
+				return await this.findOne('users', mobleCriteria, {}, options, {});
+			}
+			return;
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	/**
-	 * @function dashboardGraph
-	 */
-	async dashboardGraph(params: AdminRequest.Dashboard) {
+	async checkForgotOtp(params: UserRequest.verifyOTP, userData?: TokenData) {
 		try {
-			const aggPipe = [];
+			// if (params.mobileNo) {
+			const mobleCriteria = {
+				countryCode: params.countryCode,
+				mobileNo: params.mobileNo,
+			};
+			const options = { lean: true };
+			const projection = { mobileOtp: 1 }
+			return await this.findOne('users', mobleCriteria, {}, options, {});
 
-			const match1: any = {};
-			if (params.status) {
-				match1["$and"] = [{ status: { "$ne": config.CONSTANT.STATUS.DELETED } }, { status: params.status }];
-			} else {
-				match1.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-			}
-			aggPipe.push({ "$match": match1 });
-
-			aggPipe.push({
-				"$project": {
-					year: { "$year": "$createdAt" }, month: { "$month": "$createdAt" },
-					day: { "$dayOfMonth": "$createdAt" },
-					week: { "$add": [1, { "$floor": { "$divide": [{ "$dayOfMonth": "$createdAt" }, 7] } }] }, // week starts from monday
-					created: 1
-				}
-			});
-
-			const match2: any = {};
-			if (params.fromDate && !params.toDate) {
-				match2.created = { "$gte": params.fromDate };
-			}
-			if (params.toDate && !params.fromDate) {
-				match2.created = { "$lte": params.toDate };
-			}
-			if (params.fromDate && params.toDate) {
-				match2.created = { "$gte": params.fromDate, "$lte": params.toDate };
-			}
-			aggPipe.push({ "$match": match2 });
-
-			if (params.type === config.CONSTANT.GRAPH_TYPE.DAILY) {
-				aggPipe.push({ "$match": { year: params.year, month: params.month } });
-
-				aggPipe.push({
-					"$group": {
-						_id: { year: "$year", month: "$month", day: "$day" },
-						users: { "$push": { month: "$month", day: "$day" } }
-					}
-				});
-
-				aggPipe.push({ "$group": { _id: "$_id.year", data: { "$push": { day: "$_id.day", count: { "$size": "$users" } } } } });
-
-				aggPipe.push({ "$unwind": "$data" });
-
-				aggPipe.push({ "$replaceRoot": { newRoot: "$data" } });
-			}
-
-			if (params.type === config.CONSTANT.GRAPH_TYPE.WEEKLY) {
-				aggPipe.push({ "$match": { year: params.year, month: params.month } });
-
-				aggPipe.push({
-					"$group": {
-						_id: { year: "$year", month: "$month", week: "$week" },
-						users: { "$push": { month: "$month", week: "$week" } }
-					}
-				});
-
-				aggPipe.push({ "$group": { _id: "$_id.year", data: { "$push": { week: "$_id.week", count: { "$size": "$users" } } } } });
-
-				aggPipe.push({ "$unwind": "$data" });
-
-				aggPipe.push({ "$replaceRoot": { newRoot: "$data" } });
-			}
-
-			if (params.type === config.CONSTANT.GRAPH_TYPE.MONTHLY) {
-				aggPipe.push({ "$match": { year: params.year } });
-
-				aggPipe.push({ "$group": { _id: { year: "$year", month: "$month" }, users: { "$push": { month: "$month" } } } });
-
-				aggPipe.push({ "$group": { _id: "$_id.year", data: { "$push": { month: "$_id.month", count: { "$size": "$users" } } } } });
-
-				aggPipe.push({ "$unwind": "$data" });
-
-				aggPipe.push({ "$replaceRoot": { newRoot: "$data" } });
-			}
-
-			if (params.type === config.CONSTANT.GRAPH_TYPE.YEARLY) {
-				aggPipe.push({ "$group": { _id: { year: "$year" }, users: { "$push": { year: "$year" } } } });
-
-				aggPipe.push({ "$project": { year: "$_id.year", _id: 0, count: { "$size": "$users" } } });
-			}
-
-			return await this.aggregate("users", aggPipe, {});
 		} catch (error) {
 			throw error;
+		}
+	}
+
+	async getUsers(params) {
+		try {
+			// let { page, limit, sortBy, sortType } = params;
+			// const { searchTerm, userId, type, status, fromDate, toDate, isByAdmin } = params;
+			// if (!limit) { limit = config.CONSTANT.PAGINATION.limit }
+			// if (!page) { page = 1; }
+			// let sortingType = {};
+			// sortType = !sortType ? -1 : sortType;
+			// const matchObject: any = { $match: {} };
+			// let searchCriteria = {};
+
+
+			// sortingType = {
+			// 	createdAt: sortType,
+			// };
+			// if (searchTerm) {
+			// 	// for filtration
+			// 	searchCriteria = {
+			// 		$match: {
+			// 			$or: [
+			// 				{ email: new RegExp('.*' + searchTerm + '.*', 'i') },
+			// 				{ firstName: new RegExp('.*' + searchTerm + '.*', 'i') },
+			// 				{ lastName: new RegExp('.*' + searchTerm + '.*', 'i') },
+			// 			],
+			// 		},
+			// 	};
+			// }
+			// else {
+			// 	searchCriteria = {
+			// 		$match: {
+			// 		},
+			// 	};
+			// }
+
+			// if (!status) {
+			// 	matchObject.$match = {
+			// 		$or: [{
+			// 			status: config.CONSTANT.STATUS.ACTIVE,
+			// 		}, {
+			// 			status: config.CONSTANT.STATUS.BLOCKED,
+			// 		},
+			// 		],
+			// 	};
+			// }
+
+			// // if (userId) { matchObject.$match._id = Types.ObjectId(userId); }
+			// // if (isByAdmin) {
+			// //     matchObject.$match['type'] = { $ne: Constant.DATABASE.USER_TYPE.TENANT.TYPE };
+			// // }
+			// if (status) { matchObject.$match['status'] = status; }
+
+			// // Date filters
+			// if (fromDate && toDate) { matchObject.$match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+			// if (fromDate && !toDate) { matchObject.$match['createdAt'] = { $gte: fromDate }; }
+			// if (!fromDate && toDate) { matchObject.$match['createdAt'] = { $lte: toDate }; }
+
+			// const query = [
+			// 	matchObject,
+			// 	searchCriteria,
+			// 	{
+			// 		$sort: sortingType,
+			// 	},
+			// ];
+			// const data = await this.paginate('users', query, limit, page, {}, true);
+			// return data;
+
+			const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate } = params;
+			const aggPipe = [];
+
+
+			const match: any = {};
+			// match['dob'] = { $exists: true };
+			// match['experience'] = { $exists: true };
+			// match['profession'] = { $exists: true };
+
+			// match.adminType = config.CONSTANT.ADMIN_TYPE.SUB_ADMIN;
+			if (status) {
+				match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
+			} else {
+				match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			}
+			if (searchTerm) {
+				match['$or'] = [
+					{ email: new RegExp('.*' + searchTerm + '.*', 'i') },
+					{ firstName: new RegExp('.*' + searchTerm + '.*', 'i') },
+					{ lastName: new RegExp('.*' + searchTerm + '.*', 'i') },
+				]
+			}
+
+			if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
+			if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
+			if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
+			aggPipe.push({ "$match": match });
+
+			let sort = {};
+			if (sortBy && sortOrder) {
+				if (sortBy === "name") {
+					sort = { "firstName": sortOrder };
+				} else {
+					sort = { "createdAt": sortOrder };
+				}
+			} else {
+				sort = { "createdAt": -1 };
+			}
+			aggPipe.push({ "$sort": sort });
+
+			const data = await userDao.paginate('users', aggPipe, limit, page, {}, true);
+			return data;
+
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 }

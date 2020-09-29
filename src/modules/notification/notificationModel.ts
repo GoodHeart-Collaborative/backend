@@ -11,7 +11,7 @@ export interface INotification extends Document {
 	receiverId: mongoose.Schema.Types.ObjectId;
 	title: string;
 	message: string;
-	type: string;
+	type: Number;
 	isRead: boolean;
 	created: number;
 }
@@ -31,10 +31,15 @@ const notificationSchema = new Schema({
 	title: { type: String, required: true },
 	message: { type: String, required: true },
 	type: {
-		type: String,
+		type: Number,
 		enum: [
 			config.CONSTANT.NOTIFICATION_TYPE.BULK_NOTIFICATION,
-			config.CONSTANT.NOTIFICATION_TYPE.ONE_TO_ONE
+			config.CONSTANT.NOTIFICATION_TYPE.ONE_TO_ONE,
+			// config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type,
 		],
 		required: true
 	},

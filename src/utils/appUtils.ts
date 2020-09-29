@@ -18,10 +18,14 @@ import * as randomstring from "randomstring";
 import * as path from "path";
 import * as TinyURL from "tinyurl";
 import * as validator from "validator";
-
+import * as environment from '@config/environment'
 import * as config from "@config/index";
 import { logger } from "@lib/logger";
 const TAG = "rcc-uploads";
+// import ipLocation from "iplocation";
+import * as geoip from 'geoip-lite';
+
+
 
 const verifyEmailFormat = function (value: string) {
 	return validator.isEmail(value);
@@ -36,6 +40,18 @@ const setInsertObject = function (source, destination, fields) {
 
 	return destination;
 };
+
+const createMembersArray = function (members) {
+	try {
+		let membersMembers = []
+		for (const userId of members) {
+			membersMembers.push({ userId: userId })
+		}
+		return membersMembers
+	} catch (error) {
+		throw error
+	}
+}
 
 const unsetInsertObject = function (source, destination, fields) {
 	_.each(fields, function (value, index) {
@@ -97,6 +113,19 @@ const genRandomString = function (length) {
 		.slice(0, length);   /** return required number of characters */
 };
 
+const getShoutoutCard = function () {
+	let stringArr = ["Happy Birthday! ", "Congratulations! ", "Way to go! ", "Keep on Shining!", "So proud of you!", "Grateful for your passion!", "You go girl!", "You got this!", "Awesome job!"]
+	let response: any = []
+	for (let i = 0; i < stringArr.length; i++) {
+		response.push({
+			id: i + 1,
+			title: stringArr[i],
+			gif: `${environment.SERVER.API_URL}/images/card_${i + 1}.png`
+		})
+	}
+	return response
+};
+
 const encryptHashPassword = function (password: string, salt: string) {
 	// return bcrypt.hashSync(password, salt);
 	const hash = crypto.createHmac("sha512", salt); /** Hashing algorithm sha512 */
@@ -141,24 +170,34 @@ const splitArrayInToChunks = function (data) {
 
 const createAndroidPushPayload = function (data) {
 	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "priority", "sound", "click_action"];
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "priority", "sound", "click_action", "title", "message", "notification_type"];
+	console.log('datadata', data);
 
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
 	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
 	data.category = "action";
+	// data.body = {};
+	data.notification_type = data.type;
+	data.message = data.message;
+	// data.notification_type = data.notification_type;
+	data.title = data.title ? data.title : "";
+	data.body = data.body;
+
+	// category
 	// data.click_action = "FLUTTER_NOTIFICATION_CLICK";
 	set = this.setInsertObject(data, set, fieldsToFill);
 
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {
-			"data": set,
+			// "data": set,
 			// "body": set,
-			"notification": {
-				"title": data.title,
-				"body": data.body
-			}
-		};
+			// "notification": {
+			// 	"title": data.title,
+			// 	"body": data.body
+			data: set,
+			// notification: set,
+		}
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {
 			data: set
@@ -169,29 +208,65 @@ const createAndroidPushPayload = function (data) {
 
 const createIOSPushPayload = function (data) {
 	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound"];
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type", "body"];
+	console.log('datadata>>>>', data);
+
 
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
-	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
-	data.category = "action"; // to show buttons
-	data.mutableContent = 1;
-	data.threadId = "RichPush";
+	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
+	// data.category = "action"; // to show buttons
+	// data.mutableContent = 1;
+	data.sound = 'default';
+	// data.threadId = "RichPush";
+
+	// data['badge'] = data['countForBadge'];
+
+	data.title = data.title ? data.title : '';
+	// data.body = data.message;
+	if (data.category) {
+		data.category = data.category;
+	}
+	if (data.body) {
+		data.data = data.body;
+		data.type = data.type;
+	}
+
+	// data.type = data.type;
 	set = this.setInsertObject(data, set, fieldsToFill);
+	console.log('setsetsetsetsetset', set);
 
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {
-			// "data": set,
 			"data": {
-				"data": set
+				"category": data.category ? data.category : '',
+				"userId": data.userId ? data.userId : '',
+				"type": data.type,
 			},
 			"notification": {
 				"title": data.title,
-				"body": data.body,
-				"sound": "default",
-				"priority": data.priority ? data.priority : "high"
+				"body": data.message,
+				"sound": data.sound,
+				"badge": data['countForBadge'] ? data['countForBadge'] : 0,
+				"priority": data.priority
 			}
-		};
+		}
+		// return {
+		// 	set={
+		// 		"data": set,
+		// 		"data": {
+		// 			"data": set
+		// 		},
+		// 		"notification": {
+		// 			"title": data.title,
+		// 			"body": data.body, // 	// 		  "body" : "Bob wants to connect with you",
+		// 			data: {
+		// 				userId: data.userId
+		// 			},
+		// 			type: data.type // notificatioj tyope : admin or user 1 or 2
+		// 		},
+		// 		category: data.category
+
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {};
 		payload[config.CONSTANT.SNS_SERVER_TYPE.DEV] = JSON.stringify({
@@ -199,6 +274,34 @@ const createIOSPushPayload = function (data) {
 		});
 		return payload;
 	}
+
+	// let set = {};
+	// let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+
+	// data.mutableContent = 1;
+	// data.threadId = "womenCommunity";
+	// data.priority = data.priority ? data.priority : "high";
+	// data.image = data.icon ? data.icon : "";
+	// data.contentType = "text";
+	// data.badge = 1;
+
+	// if (data.entityData !== undefined) data.entityData = data.entityData;
+	// // data.category = "action"; // to show buttons
+	// set = setInsertObject(data, set, fieldsToFill);
+	// let notification = {
+	// 	"title": data.title,
+	// 	"body": data.message,
+	// 	"sound": "default",
+	// 	"priority": data.priority
+	// }
+	// if (data.entityData !== undefined)
+	// 	set = Object.assign(set, data.entityData);
+
+	// return {
+	// 	data: set,
+	// 	notification: notification
+	// };
+
 };
 
 const createWebPushPayload = function (data) {
@@ -264,9 +367,14 @@ const tinyUrl = (url: string) => {
 	});
 };
 
-const getRandomOtp = function () {
-	return randomstring.generate({ charset: "numeric", length: 6 });
-};
+// const getRandomOtp = function () {
+// 	return randomstring.generate({ charset: "numeric", length: 6 });
+// };
+
+const generateOtp = async function () {
+	let otp = (Math.floor(1000 + Math.random() * 9000));
+	return otp
+}
 
 const isValidEmail = function (email: string) {
 	const pattern = config.CONSTANT.REGEX.EMAIL;
@@ -304,8 +412,8 @@ const clean = function (object) {
 			delete object[propName];
 		}
 	}
-	delete object["createdAt"];
-	delete object["updatedAt"];
+	// delete object["createdAt"];
+	// delete object["updatedAt"];
 	return object;
 };
 
@@ -570,6 +678,20 @@ const consolelog = (identifier: string, value: any, status: boolean) => {
 	}
 };
 
+const getLocationByIp = async (ipaddress: string) => {
+	try {
+		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+
+		// const lt_lng = await ipLocation('103.79.170.73');
+		const lt_lng = await geoip.lookup('103.79.170.73');
+		console.log('lt_lnglt_lnglt_lng', lt_lng);
+		return lt_lng;
+	} catch (error) {
+		return Promise.reject(error)
+	}
+}
+
+
 export {
 	verifyEmailFormat,
 	setInsertObject,
@@ -591,7 +713,8 @@ export {
 	encodeToBase64,
 	decodeBase64,
 	tinyUrl,
-	getRandomOtp,
+	createMembersArray,
+	// getRandomOtp,
 	isValidEmail,
 	stringToBoolean,
 	stringReplace,
@@ -617,5 +740,56 @@ export {
 	isTimeExpired,
 	generatePassword,
 	mailAttachments,
-	consolelog
+	consolelog,
+	generateOtp,
+	getShoutoutCard,
+	getLocationByIp
 };
+
+
+
+// const createAndroidPushPayload = function (data) {
+// 	let set = {};
+// 	let fieldsToFill = ["type", "title", "message", "priority", "sound", "image", "contentType", "category", "click_action", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+
+// 	data.priority = data.priority ? data.priority : "high";
+// 	data.image = data.icon ? data.icon : "";
+// 	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
+// 	// data.category = "action";
+// 	// data.click_action = "FLUTTER_NOTIFICATION_CLICK";
+// 	set = setInsertObject(data, set, fieldsToFill);
+// 	// if(data.entityData !== undefined) {
+// 	// 	set = Object.assign(set, {entityData: data.entityData })
+// 	// }
+
+// 	return set;
+// };
+
+// const createIOSPushPayload = function (data) {
+// 	let set = {};
+// 	let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
+
+// 	data.mutableContent = 1;
+// 	data.threadId = "nowccrowd";
+// 	data.priority = data.priority ? data.priority : "high";
+// 	data.image = data.icon ? data.icon : "";
+// 	data.contentType = "text";
+// 	data.badge = 1;
+
+// 	if (data.entityData !== undefined) data.entityData = data.entityData;
+// 	// data.category = "action"; // to show buttons
+// 	set = setInsertObject(data, set, fieldsToFill);
+// 	let notification = {
+// 		"title": data.title,
+// 		"body": data.message,
+// 		"sound": "default",
+// 		"priority": data.priority
+// 	}
+// 	if (data.entityData !== undefined)
+// 		set = Object.assign(set, data.entityData);
+
+// 	return {
+// 		data: set,
+// 		notification: notification
+// 	};
+// };

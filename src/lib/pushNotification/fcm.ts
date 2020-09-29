@@ -7,24 +7,30 @@ import * as config from "@config/index";
 const fcmServerKey = config.SERVER.FCM_SERVER_KEY; // put your server key here
 const fcm = new FCM(fcmServerKey);
 
-export const sendPush = async function (deviceId, deviceType, payload) {
+export const sendPush = async function (deviceId, deviceType, payload, category?) {
 	console.log("======================>", deviceId);
 	console.log("======================>", deviceType);
-	console.log("======================>", payload);
+	console.log("======================>11111111111111111111111", payload.data);
 	let message = {};
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 		message = {
 			"to": deviceId,
 			"data": payload.data,
-			"notification": payload.notification
+			// "notification": payload.data
 		};
+		console.log('messagemessagemessagemessagemessage', message, '------LLLLLLLLLL');
+
 	}
 	if (deviceType === config.CONSTANT.DEVICE_TYPE.IOS) {
+		// if (payload.category) {
+		// 	payload['category'] = payload.category
+		// }
 		message = {
 			"to": deviceId,
 			"data": payload.data,
 			"notification": payload.notification
 		};
+		console.log('messagemessage', message);
 	}
 	return new Promise(async (resolve, reject) => {
 		try {
@@ -35,6 +41,8 @@ export const sendPush = async function (deviceId, deviceType, payload) {
 					console.log(error);
 					// reject(error);
 				} else {
+					console.log('responseresponseresponse', response);
+
 					resolve(response);
 				}
 			});

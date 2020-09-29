@@ -19,6 +19,7 @@ declare namespace ContentRequest {
 
 	export interface View {
 		type: string;
+		from: string;
 	}
 
 	export interface AddFaq {

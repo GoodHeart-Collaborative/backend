@@ -11,9 +11,17 @@ export class NotificationController {
 	async notificationList(params: ListingRequest, tokenData: TokenData) {
 		try {
 			let step1 = await notificationDao.notificationList(params, tokenData);
-			return notificationConstant.MESSAGES.SUCCESS.NOTIFICATION_LIST({ "notificationList": step1 });
+			return notificationConstant.MESSAGES.SUCCESS.NOTIFICATION_LIST(step1);
 		} catch (error) {
 			throw error;
+		}
+	}
+
+	async clearNotification(tokenData) {
+		try {
+			return await notificationDao.clearNotification(tokenData);
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 }

@@ -51,10 +51,10 @@ const adminSchema = new Schema({
 		type: String,
 		enum: [
 			config.CONSTANT.STATUS.BLOCKED,
-			config.CONSTANT.STATUS.UN_BLOCKED,
+			config.CONSTANT.STATUS.ACTIVE,
 			config.CONSTANT.STATUS.DELETED
 		],
-		default: config.CONSTANT.STATUS.UN_BLOCKED
+		default: config.CONSTANT.STATUS.ACTIVE
 	},
 	created: { type: Number }
 }, {
@@ -101,12 +101,6 @@ adminSchema.virtual("password")
 		this.hash = appUtils.encryptHashPassword(password, salt);
 	});
 
-// adminSchema.set('toObject', {
-// 	transform: function (doc, ret){
-// 		console.log(ret);
-// 	}
-// });
-// OR
 adminSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
 	return object;

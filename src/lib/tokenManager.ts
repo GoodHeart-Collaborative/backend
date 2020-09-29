@@ -8,14 +8,15 @@ import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { redisClient } from "@lib/redis/RedisClient";
 import { responseHandler } from "@utils/ResponseHandler";
-import { userDao } from "@modules/user/v1/UserDao";
+import { userDao } from "@modules/user/UserDao";
 
 export const generateAdminToken = async function (params) {
 	try {
 		if (params.type === "CREATE_ADMIN" || params.type === "FORGOT_PASSWORD") {
-			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: "10m" }); // 10 min
+			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: "20h" }); // 10 min
 		} else if (params.type === "ADMIN_LOGIN") {
-			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000 }); // 180 days (in secs)
+			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: 43200000 }); // 180 days (in secs)
+			// return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000 }); // 180 days (in secs)
 		}
 	} catch (error) {
 		return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.TOKEN_GENERATE_ERROR(error)));

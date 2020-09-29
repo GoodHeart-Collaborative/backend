@@ -4,13 +4,13 @@ import * as _ from "lodash";
 import * as AuthBearer from "hapi-auth-bearer-token";
 import { Request, ResponseToolkit } from "hapi";
 
-import { adminDao } from "@modules/admin/v1/AdminDao";
+import { adminDao } from "@modules/admin/users/AdminDao";
 import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { redisClient } from "@lib/redis/RedisClient";
 import { responseHandler } from "@utils/ResponseHandler";
 import * as tokenManager from "@lib/tokenManager";
-import { userDao } from "@modules/user/v1/UserDao";
+import { userDao } from "@modules/user/UserDao";
 
 // Register Authorization Plugin
 export const plugin = {
@@ -28,10 +28,12 @@ export const plugin = {
 			validate: async (request: Request, accessToken: string, h: ResponseToolkit) => {
 				try {
 					const isValid = await apiKeyFunction(request.headers.api_key);
+
 					if (!isValid) {
 						return ({ isValid: false, credentials: { accessToken: accessToken, tokenData: {} } });
 					} else {
 						const tokenData = await tokenManager.verifyToken({ accessToken }, config.CONSTANT.ACCOUNT_LEVEL.ADMIN, true);
+
 						let adminData = await adminDao.findAdminById({ "userId": tokenData.userId });
 						if (!adminData) {
 							return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));
@@ -67,13 +69,16 @@ export const plugin = {
 			allowChaining: false,
 			validate: async (request: Request, accessToken: string, h: ResponseToolkit) => {
 				try {
+
 					const isValid = await apiKeyFunction(request.headers.api_key);
 					if (!isValid) {
+
 						return ({ isValid: false, credentials: { accessToken: accessToken, tokenData: {} } });
 					} else {
 						// const jwtPayload = JSON.parse(appUtils.decodeBase64(accessToken.split('.')[1]));
 						const jwtPayload = await tokenManager.decodeToken({ accessToken });
 						const tokenData = await tokenManager.verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, true);
+
 						if (config.SERVER.IS_REDIS_ENABLE) {
 							const step1 = await redisClient.getValue(accessToken);
 							if (!step1) {
@@ -90,19 +95,23 @@ export const plugin = {
 							}
 						}
 						let userData = await userDao.findUserById({ "userId": tokenData.userId });
+
 						if (!userData) {
 							return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));
 						} else {
 							delete userData._id, delete userData.createdAt;
 							if (userData.status === config.CONSTANT.STATUS.BLOCKED) {
-								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.BLOCKED));
-							} else {
+								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.USER_BLOCKED));
+							} else if (userData.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.ADMIN_REJECTED_USER));
+							}
+							else {
 								const step3 = await loginHistoryDao.findDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId, "salt": jwtPayload.payload.salt });
 								if (!step3) {
 									return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
 								} else {
 									userData = _.extend(userData, { "deviceId": tokenData.deviceId, "accountLevel": tokenData.accountLevel, "platform": tokenData.platform, "userId": tokenData.userId, "lastLogin": step3.lastLogin });
-									tokenData["userData"] = userData;
+									tokenData["userData"] = userData;	
 									return ({ isValid: true, credentials: { accessToken: accessToken, tokenData: tokenData } });
 								}
 							}
@@ -163,7 +172,6 @@ export const plugin = {
 			// accessTokenName: "accessToken",
 			// tokenType: "Basic" || "Bearer" || "bearer",
 			validate: async (request: Request, accessToken, h: ResponseToolkit) => {
-				console.log('accessToken11111111111111111111111', accessToken);
 
 				const checkFunction = await basicAuthFunction(accessToken);
 				if (checkFunction) {
@@ -248,7 +256,6 @@ const apiKeyFunction = async function (apiKey) {
 };
 
 const basicAuthFunction = async function (accessToken) {
-	console.log('accessTokenaccessTokenaccessToken,accessToken', accessToken);
 
 	const credentials = Buffer.from(accessToken, "base64").toString("ascii");
 	const [username, password] = credentials.split(":");

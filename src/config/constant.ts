@@ -10,6 +10,10 @@ const SWAGGER_DEFAULT_RESPONSE_MESSAGES = [
 	{ code: 500, message: "Internal Server Error" }
 ];
 
+const ENUM = {
+	SORT_TYPE: [1, -1],
+};
+
 const HTTP_STATUS_CODE = {
 	OK: 200,
 	CREATED: 201,
@@ -23,6 +27,7 @@ const HTTP_STATUS_CODE = {
 	METHOD_NOT_ALLOWED: 405,
 	UNREGISTERED: 410,
 	PAYLOAD_TOO_LARGE: 413,
+	BLOCKED_USER: 420,
 	CONCURRENT_LIMITED_EXCEEDED: 429,
 	// TOO_MANY_REQUESTS: 429,
 	INTERNAL_SERVER_ERROR: 500,
@@ -31,13 +36,75 @@ const HTTP_STATUS_CODE = {
 	// custom
 	INVALID_TOKEN: 419,
 	SESSION_EXPIRED: 423, // LOGIN_SESSION_EXPIRED
-	SOCIAL_ACCOUNT_ALREADY_EXIST: 424
+	SOCIAL_ACCOUNT_ALREADY_EXIST: 424,
+
+	EMAIL_NOT_REGISTER: 400,//411,
+	MOBILE_NOT_REGISTER: 400,//412,
+
+	EMAIL_NOT_VERIFIED: 411,
+	MOBILE_NO_NOT_VERIFY: 412,
+	REGISTER_BDAY: 413,             // accessToken
+	ADMIN_ACCOUNT_SCREENING: 414,
+	ADMIN_REJECT_ACCOUNT: 415,
+	LOGIN_STATUS_HOME_SCREEN: 416,
+	ADMIN_REJECTED_USER: 421,
 };
 
+const EVENT_INTEREST = {
+	GOING: 1,
+	INTEREST: 2,
+	MY_EVENT: 3
+}
+
+const MEMBER_TYPE = {
+	FREE: 'Free',
+	PREMIUM: 'Premium'
+}
+
+const USER_SUBSCRIPTION_PLAN = {
+	FREE: {
+		price: 0,
+		value: 1
+	},
+	MONTHLY: {
+		price: 8,
+		value: 2
+	},
+	YEARLY: {
+		price: 78,
+		value: 3
+	},
+	NONE: {
+		price: 0,
+		value: 4
+	}
+}
+
+// const USER_SUBSCRIPTION_PLAN_PRICE = {
+// 	FREE: 0,
+// 	MONTHLY: 8,
+// 	YEARLY: 787,
+// 	NONE: 0,
+// }
+
+
+const USER_ADMIN_STATUS = {
+	PENDING: 'pending',
+	VERIFIED: 'verified',
+	REJECTED: 'rejected',
+}
 const ACCOUNT_LEVEL = {
 	ADMIN: "admin",
 	USER: "user"
 };
+
+const DATE_FILTER = {
+	LAST_WEEK: 1,
+	LAST_MONTH: 2,
+	TODAY: 3,
+	TOMORROW: 4,
+	WEEKEND: 5,
+}
 
 const DB_MODEL_REF = {
 	ADMIN: "admin",
@@ -48,8 +115,28 @@ const DB_MODEL_REF = {
 	LOG: "log",
 	NOTIFICATION: "notification",
 	USER: "user",
+	GRATITUDE_JOURNAL: "gratitude_journal",
 	LOGIN_HISTORY: "login_history",
-	VERSION: "version"
+	VERSION: "version",
+	POST: "posts",
+	CATEGORY: "categories",
+	INSPIRATION: 'inspiration',
+	HOME: 'home',
+	DISCOVER: 'discover',
+	SHOUTOUT: 'shoutout',
+	UNICORN: 'unicorn',
+	COMMENT: "comment",
+	LIKE: "like",
+	ADVICE: 'advice',
+	MEMBER: 'member',
+	EXPERT: 'expert',
+	EXPERT_POST: 'expert_post',
+	EVENT: 'event',
+	EVENT_INTEREST: 'event_interest',
+	FORUM: 'forum',
+	REPORT: 'report',
+	GLOBAL_VARIABLE: 'global_var',
+	SUBSCRIPTION: 'subscription'
 };
 
 const DEVICE_TYPE = {
@@ -64,44 +151,234 @@ const ADMIN_TYPE = {
 	SUB_ADMIN: "sub"
 };
 
+
+// const EVENT_CATEGORY = {
+// 	EVENTS: {
+// 		TYPE: 'events',
+// 		VALUE: 1,
+// 		DISPLAY_NAME: 'EVENTS'
+// 	},
+
+const REPORT_MESSAGE = {
+	Explicit_photos: {
+		reason: "Explicit photos",
+		id: 1
+	},
+	Offensive_content: {
+		reason: "Offensive content",
+		id: 2
+	},
+	Impostor_accounts: {
+		reason: "Impostor accounts",
+		id: 3
+	},
+	Other: {
+		reason: "Other",
+		id: 4
+	}
+}
+
 const GENDER = {
 	MALE: "male",
 	FEMALE: "female",
 	ALL: "all"
+	// TRANSG
 };
+
+const EXPERIENCE_LEVEL = {
+	JUNIOR: 'Junior',
+	MID: 'Mid',
+	SENIOR: 'Senior',
+}
+
+// export const INDUSTRIES = {
+// 	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
+// 	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
+// 	// Wellness_Coaches: "Wellness Coaches",
+// 	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
+// 	// Compassion_Fatigue: 'Compassion Fatigue',
+// 	Nonprofit: 'Nonprofit',
+// 	Emergency_Services: 'Emergency Services',
+// 	Social_And_Community_Services: 'Social and Community Services',
+// 	Law_Enforcement: "Law Enforcement",
+// 	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
+// };
+
+export const INDUSTRIES = {
+	NONPROFIT: 1,
+	EMERGENCY_SERVICES: 2,
+	SOCIAL_AND_COMMUNITY_SERVICES: 3,
+	LAW_ENFORCEMENT: 4,
+	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5
+};
+
+export const PROFESSION_TYPE = {
+	Founder: "Founder",
+	CEO: "CEO",
+	Executive_Director: 'Executive Director',
+	Managing_Director: 'Managing Director'
+}
 
 const SOCIAL_LOGIN_TYPE = {
 	FACEBOOK: "facebook",
 	GOOGLE: "google",
 	INSTA: "instagram",
 	TWITTER: "twitter",
-	LINKED_IN: "linkedin"
+	LINKED_IN: "linkedin",
+	APPLE: "apple"
 };
 
 const STATUS = {
 	BLOCKED: "blocked",
-	UN_BLOCKED: "unblocked",
+	ACTIVE: "active",
 	DELETED: "deleted"
 };
+const COMMENT_CATEGORY = {
+	POST: 1,
+	COMMENT: 2
+};
+const DISCOVER_STATUS = {
+	PENDING: 1,
+	ACCEPT: 2,
+	REJECT: 3,
+	NO_ACTION: 4
+};
+const USER_PROFILE_TYPE = {
+	GRATITUDE_JOURNAL: 1,
+	POST: 2,
+	DISCOVER: 3
+};
 
+// const COMMENT_TYPE = {
+// 	UNICORN: 1,
+// 	INSPIRATION: 2,
+// 	DAILY_ADVICE: 3,
+// 	GENERAL_GRATITUDE: 4,
+// 	MEMBER_OF_DAY: 5
+// };
+// const COMMENT_TYPE = {
+// 	UNICORN: 1,
+// 	INSPIRATION: 2,
+// 	DAILY_ADVICE: 3,nnec
+// 	GENERAL_GRATITUDE: 4,
+// 	MEMBER_OF_DAY: 5
+// };
+
+const REQUEST_TYPE = {
+	RECEIVED_REQUEST: 0,
+	SEND_REQUEST: 1
+}
+const HOME_TYPE = {
+	UNICORN: 1,
+	INSPIRATION: 2,
+	DAILY_ADVICE: 3,
+	GENERAL_GRATITUDE: 4,
+	MEMBER_OF_DAY: 5,
+	CONGRATS: 6,
+	EXPERTS_POST: 7,
+	SHOUTOUT: 8,
+	FORUM_TOPIC: 9,
+	USER: 10
+};
+
+const HOME_TYPES = {
+	UNICORN: 'Daily smiles',
+	INSPIRATION: 'Inspiring women',
+	DAILY_ADVICE: 'Daily pep talk',
+	GENERAL_GRATITUDE: 'General gratitude',
+	MEMBER_OF_DAY: 'Leader of the day'
+};
+
+
+const EXPERT_CONTENT_TYPE = {
+	VIDEO: {
+		TYPE: 'video',
+		VALUE: 2,
+		DISPLAY_NAME: 'VIDEO'
+	},
+	ARTICLE: {
+		TYPE: 'article',
+		VALUE: 3,
+		DISPLAY_NAME: 'ARTICLE'
+	},
+	IMAGE: {
+		TYPE: 'image',
+		VALUE: 1,
+		DISPLAY_NAME: 'IMAGE'
+	},
+	VOICE_NOTE: {
+		TYPE: 'voice_note',
+		VALUE: 4,
+		DISPLAY_NAME: 'VOICE_NOTE'
+	},
+	// NONE: {
+	// 	TYPE: 'none',
+	// 	VALUE: 4,
+	// 	DISPLAY_NAME: 'NONE'
+	// },
+
+}
+const MEDIA_TYPE = {
+	IMAGE: 1,
+	VIDEO: 2,
+	NONE: 5
+};
+
+const PRIVACY_STATUS = {
+	PUBLIC: 'public',
+	PRIVATE: 'private',
+	PROTECTED: 'protected'
+};
+
+const EVENT_CATEGORY = {
+	EVENTS: {
+		TYPE: 'events',
+		VALUE: 1,
+		DISPLAY_NAME: 'EVENTS'
+	},
+	CLASSES: {
+		TYPE: 'classes',
+		VALUE: 2,
+		DISPLAY_NAME: 'CLASSES'
+	},
+	TRAINING: {
+		TYPE: 'training',
+		VALUE: 3,
+		DISPLAY_NAME: 'TRAINING'
+	},
+	MEETUP: {
+		TYPE: 'meetup',
+		VALUE: 4,
+		DISPLAY_NAME: 'MEETUP'
+	}
+}
+
+// const EVENT_CATEGORY = {
+// 	EVENTS: 'events',
+// 	CLASSES: 'classes',
+// 	TRAINING: 'training',
+// 	MEETUP: 'meetup'
+// }
 const VALIDATION_CRITERIA = {
 	FIRST_NAME_MIN_LENGTH: 3,
-	FIRST_NAME_MAX_LENGTH: 10,
+	FIRST_NAME_MAX_LENGTH: 20,
 	MIDDLE_NAME_MIN_LENGTH: 3,
 	MIDDLE_NAME_MAX_LENGTH: 10,
 	LAST_NAME_MIN_LENGTH: 3,
-	LAST_NAME_MAX_LENGTH: 10,
+	LAST_NAME_MAX_LENGTH: 20,
 	NAME_MIN_LENGTH: 3,
 	COUNTRY_CODE_MIN_LENGTH: 1,
 	COUNTRY_CODE_MAX_LENGTH: 4,
-	PASSWORD_MIN_LENGTH: 3,
+	PASSWORD_MIN_LENGTH: 8,
 	PASSWORD_MAX_LENGTH: 30
 };
+
+const BYPASS_OTP = '4242';
 
 const MESSAGES = {
 	ERROR: {
 		UNAUTHORIZED_ACCESS: {
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
 			"message": "You are not authorized to perform this action.",
 			"type": "UNAUTHORIZED_ACCESS"
 		},
@@ -111,9 +388,10 @@ const MESSAGES = {
 			"type": "INTERNAL_SERVER_ERROR"
 		},
 		INVALID_TOKEN: {
-			// "statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Token is invalid.",
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
+			// "statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			// "message": "Token is invalid.",
+			"message": "Your login session has expired. Please login again",
 			"type": "INVALID_TOKEN"
 		},
 		TOKEN_EXPIRED: {
@@ -130,18 +408,43 @@ const MESSAGES = {
 		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please register your email address.",
+			"message": "Oops! It looks like you are not registered on the network",
 			"type": "EMAIL_NOT_REGISTERED"
+		},
+		EMAIL_NOT_VERIFIED: {
+			"statusCode": HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
+			"message": "Your email is not verified. Please check your email for email verification instruction.",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
+		EMAIL_ALREADY_VERIFIED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Email already verified.",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
+		MOBILE_NOT_VERIFIED: {
+			"statusCode": HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
+			"message": "Please verify your mobile number",
+			"type": "MOBILE_NO_NOT_VERIFY"
 		},
 		BLOCKED: {
 			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
 			"message": "Your account have been blocked by admin.",
 			"type": "USER_BLOCKED"
 		},
+		USER_BLOCKED: {
+			"statusCode": HTTP_STATUS_CODE.BLOCKED_USER,
+			"message": "Your account has been blocked by admin",
+			"type": "USER_BLOCKED"
+		},
 		DELETED: {
 			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Your account have been blocked by admin.",
+			"message": "Your account have been deleted by admin.",
 			type: "DELETED"
+		},
+		ADMIN_REJECTED_USER: {
+			statusCode: HTTP_STATUS_CODE.ADMIN_REJECTED_USER,
+			"message": "Your account is rejected in the verification process.",
+			type: "REJECTED"
 		},
 		INCORRECT_PASSWORD: {
 			"statusCode": HTTP_STATUS_CODE.ACCESS_FORBIDDEN,
@@ -173,6 +476,11 @@ const MESSAGES = {
 			"message": "Your login session has been expired.",
 			"type": "SESSION_EXPIRED"
 		},
+		INVALID_OTP: {
+			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"message": "Invalid otp",
+			"type": "INVALID_OTP"
+		},
 		FIELD_REQUIRED: (value) => {
 			return {
 				"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
@@ -187,6 +495,21 @@ const MESSAGES = {
 			"message": "Success",
 			"type": "DEFAULT"
 		},
+		SUCCESSFULLY_ADDED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully added",
+			"type": "DEFAULT"
+		},
+		SUCCESSFULLY_UPDATED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully updated",
+			"type": "DEFAULT"
+		},
+		SUCCESSFULLY_DELETED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "Successfully deleted",
+			"type": "SUCCESSFULLY_DELETED"
+		},
 		REFRESH_TOKEN: (data) => {
 			return {
 				"statusCode": HTTP_STATUS_CODE.OK,
@@ -194,7 +517,16 @@ const MESSAGES = {
 				"type": "REFRESH_TOKEN",
 				"data": data
 			};
-		}
+		},
+		MOBILE_NOT_VERIFIED: (data) => {
+			data['message'] = "Please verify your mobile number"
+			return {
+				"statusCode": HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
+				"message": "Please verify your mobile number",
+				"type": "MOBILE_NO_NOT_VERIFY",
+				data: data,
+			}
+		},
 	}
 };
 
@@ -209,10 +541,10 @@ const EMAIL_TEMPLATE = {
 		FORGOT_PWD_EMAIL: "Reset Password Request",
 		RESET_PASSWORD: "Reset password link",
 		VERIFY_EMAIL: "Verify e-mail address",
-		WELCOME: "Welcome to RCC!",
+		WELCOME: "Welcome to Women community!",
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
-	BCC_MAIL: ["rajat.maheshwari@appinventiv.com"],
+	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
 	FROM_MAIL: "do-not-reply@mail.appinventive.com"
 };
 
@@ -234,8 +566,8 @@ const SMS = {
 };
 
 const NOTIFICATION_TYPE = {
-	BULK_NOTIFICATION: "1",
-	ONE_TO_ONE: "2"
+	BULK_NOTIFICATION: 1,
+	ONE_TO_ONE: 2
 };
 
 const SNS_SERVER_TYPE = {
@@ -278,7 +610,8 @@ const REGEX = {
 	URL: /^(https?|http|ftp|torrent|image|irc):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i,
 	SSN: /^(?!219-09-9999|078-05-1120)(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$/, // US SSN
 	ZIP_CODE: /^[0-9]{5}(?:-[0-9]{4})?$/,
-	PASSWORD: /(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=[^0-9]*[0-9]).{8,}/, // Minimum 6 characters, At least 1 lowercase alphabetical character, At least 1 uppercase alphabetical character, At least 1 numeric character, At least one special character
+	// PASSWORD: /(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=[^0-9]*[0-9]).{8,}/, // Minimum 6 characters, At least 1 lowercase alphabetical character, At least 1 uppercase alphabetical character, At least 1 numeric character, At least one special character
+	// PASSWORD: /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/,
 	COUNTRY_CODE: /^\d{1,4}$/,
 	MOBILE_NUMBER: /^\d{6,16}$/,
 	STRING_REPLACE: /[-+ ()*_$#@!{}|\/^%`~=?,.<>:;'"]/g,
@@ -340,6 +673,29 @@ const MAIL_SENDING_TYPE = {
 	AMAZON: 3
 };
 
+const NOTIFICATION_CATEGORY = {
+	ADMIN_STATUS_VERIFIED: {
+		type: 1,
+		category: "ADMIN_STATUS_VERIFIED"
+	},
+	FRIEND_REQUEST_SEND: {
+		type: 2,
+		category: "FRIEND_REQUEST"
+	},
+	FRIEND_REQUEST_APPROVED: {
+		type: 3,
+		category: "VIEW_PROFILE"
+	},
+	LEADER_OF_DAY: {
+		type: 4,
+		category: "LEADER_OF_DAY"
+	},
+	SHOUTOUT_TAGGED_ME: {
+		type: 5,
+		category: 'VIEW_SHOUTLIST_ACTION'
+	}
+}
+
 const SMS_SENDING_TYPE = {
 	TWILIO: 1,
 	AWS_SDK: 2
@@ -365,12 +721,17 @@ const NOTIFICATION_DATA = {
 const DEEPLINK = {
 	DEFAULT_FALLBACK_URL: "https://google.com",
 	// for android deeplink
-	ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
+	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
+	ANDROID_SCHEME: "com.goodheart://",
 	// for ios user deeplink
-	IOS_SCHEME: "ustandbyuser:///", // ustandbyuser:///appointment@token=&status=
+	IOS_SCHEME: "com.goodheart://",
 	// for ios sp deeplink
 	IOS_STORE_LINK: "https://itunes.apple.com",
-	ANDROID_PACKAGE_NAME: "com.appinventiv.ustandby" // when app is not installed redirect to google playstore
+	ANDROID_PACKAGE_NAME: "com.goodheart", // when app is not installed redirect to google playstore
+	IOS_PACKAGE_NAME: "com.goodheart"
+};
+const WEBSITE_URL = {
+	ADMIN_URL: "http://womenappdevadmin.appskeeper.com"
 };
 
 let SOCKET = {
@@ -471,6 +832,17 @@ const TEMPLATES = {
 				<div class= "col-content hide-col-con">
 				${answer} </div>
 			</div>`;
+
+		// return `<div class="card">
+		// 	<div class="card-header">
+		// 		<h5 class="faq-title">${question}</h5>
+		// 		<i class="fa fa-chevron-right" aria-hidden="true"></i>
+		// 	</div>
+		// 	<div class="card-body">
+		// 		<p>${answer}</p>
+		// 	</div>
+		// </div>`;
+
 	}
 };
 
@@ -503,6 +875,11 @@ const JOB_SCHEDULER_TYPE = {
 	AUTO_SESSION_EXPIRE: "AUTO_SESSION_EXPIRE"
 };
 
+const PAGINATION = {
+	limit: 10,
+	page: 1
+}
+
 export const CONSTANT = Object.freeze({
 	SWAGGER_DEFAULT_RESPONSE_MESSAGES: SWAGGER_DEFAULT_RESPONSE_MESSAGES,
 	HTTP_STATUS_CODE: HTTP_STATUS_CODE,
@@ -517,6 +894,7 @@ export const CONSTANT = Object.freeze({
 	MESSAGES: MESSAGES,
 	EMAIL_TEMPLATE: EMAIL_TEMPLATE,
 	SMS: SMS,
+	HOME_TYPE: HOME_TYPE,
 	NOTIFICATION_TYPE: NOTIFICATION_TYPE,
 	SNS_SERVER_TYPE: SNS_SERVER_TYPE,
 	CONTENT_TYPE: CONTENT_TYPE,
@@ -537,5 +915,29 @@ export const CONSTANT = Object.freeze({
 	MONTHS: MONTHS,
 	MONTH_NAME: MONTH_NAME,
 	JOB_SCHEDULER_TYPE: JOB_SCHEDULER_TYPE,
-	DEFAULT_PASSWORD: "String@123"
+	DEFAULT_PASSWORD: "String@123",
+	BYPASS_OTP,
+	WEBSITE_URL,
+	PAGINATION,
+	PRIVACY_STATUS,
+	ENUM,
+	MEMBER_TYPE,
+	USER_ADMIN_STATUS,
+	COMMENT_CATEGORY: COMMENT_CATEGORY,
+	// COMMENT_TYPE: COMMENT_TYPE,
+	MEDIA_TYPE: MEDIA_TYPE,
+	EXPERT_CONTENT_TYPE,
+	PROFESSION_TYPE,
+	DISCOVER_STATUS,
+	USER_PROFILE_TYPE,
+	EVENT_CATEGORY,
+	HOME_TYPES,
+	EVENT_INTEREST,
+	EXPERIENCE_LEVEL,
+	DATE_FILTER,
+	REQUEST_TYPE,
+	REPORT_MESSAGE,
+	NOTIFICATION_CATEGORY,
+	USER_SUBSCRIPTION_PLAN,
+	// USER_SUBSCRIPTION_PLAN_PRICE
 });

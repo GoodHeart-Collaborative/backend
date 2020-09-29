@@ -122,12 +122,27 @@ export class MailManager {
 		}
 	}
 
+	// async forgotPasswordEmailToAdmin(params) {
+	// 		`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
+	// 		`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`);
+
+	// 	const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
+	// 		.compileFile({
+	// 			"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
+	// 				`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
+	// 				`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`,
+	// 			"year": new Date().getFullYear(),
+	// 			"name": params.name,
+	// 			"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
+	// 		});
+	// 	await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+	// }
+
 	async forgotPasswordEmailToAdmin(params) {
+		console.log('params.name', params.name);
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
-				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}` +
-					`/forgot-password/${params.accessToken}&token=${params.accessToken}&type=forgot&accountLevel=` +
-					`${config.CONSTANT.ACCOUNT_LEVEL.ADMIN}&name=${params.name}`,
+				"url": `${config.SERVER.API_URL}/v1/admin/verifyLink/${params.accessToken}`,
 				"year": new Date().getFullYear(),
 				"name": params.name,
 				"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
@@ -138,14 +153,32 @@ export class MailManager {
 	async forgotPasswordEmailToUser(params) {
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
-				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-					`?token=${params.token}&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}token@${params.token}&token=${params.token}` +
-					`&type=forgot&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.middleName + " " + params.lastName}`,
-				"name": params.firstName + " " + params.middleName + " " + params.lastName,
+				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
+					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
+					`&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
+				"name": params.firstName + " " + params.lastName,
 				"year": new Date().getFullYear(),
-				"validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
+				"validity": appUtils.timeConversion(10 * 60 * 1000), // 10 mins
+				"logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png",
 			});
 		await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
+	}
+
+	async sendRegisterMailToUser(params) {
+		const lastName = params.lastName ? params.lastName : ''
+
+		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "verifyEmail.html"))
+			.compileFile({
+				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
+					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
+					`&type=verifyEmail&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}` +
+					`&userId=${params.userId}`,
+				"name": params.firstName + " " + lastName,
+				"year": new Date().getFullYear(),
+				"userId": params.userId
+				// "validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
+			});
+		await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.VERIFY_EMAIL, "content": mailContent });
 	}
 
 	async sendPassword(payload) {

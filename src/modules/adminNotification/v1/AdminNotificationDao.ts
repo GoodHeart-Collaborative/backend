@@ -15,7 +15,7 @@ export class AdminNotificationDao extends BaseDao {
 			const query: any = {};
 			query._id = params.notificationId;
 
-			const projection = { created: 0, createdAt: 0, updatedAt: 0 };
+			const projection = { updatedAt: 0 };
 
 			const options: any = { lean: true };
 
@@ -30,7 +30,7 @@ export class AdminNotificationDao extends BaseDao {
 	 */
 	async addNotification(params: AdminNotificationRequest.Add) {
 		try {
-			params.created = Date.now();
+			params["created"] = new Date().getTime()
 			return await this.save("admin_notifications", params);
 		} catch (error) {
 			throw error;
@@ -61,13 +61,26 @@ export class AdminNotificationDao extends BaseDao {
 	 */
 	async notificationList(params: ListingRequest) {
 		try {
+			const { fromDate, toDate, platform, searchKey } = params;
 			const aggPipe = [];
 
-			if (params.searchKey) {
-				const match: any = {};
-				match.title = { "$regex": params.searchKey, "$options": "-i" };
-				aggPipe.push({ "$match": match });
+			const match: any = {};
+
+			if (platform) {
+				match.platform = platform;
 			}
+			if (searchKey) {
+				match.title = { "$regex": params.searchKey, "$options": "-i" };
+			}
+			console.log('matchmatch', match);
+
+			aggPipe.push({ "$match": match });
+
+			if (fromDate && toDate) { match['created'] = { $gte: fromDate, $lte: toDate }; }
+			if (fromDate && !toDate) { match['created'] = { $gte: fromDate }; }
+			if (!fromDate && toDate) { match['created'] = { $lte: toDate }; }
+
+
 
 			let sort = {};
 			if (params.sortBy && params.sortOrder) {
@@ -83,7 +96,7 @@ export class AdminNotificationDao extends BaseDao {
 			}
 			aggPipe.push({ "$sort": sort });
 
-			return await this.paginate("admin_notifications", aggPipe, params.limit, params.pageNo, true);
+			return await this.paginate('admin_notifications', aggPipe, params.limit, params.pageNo, {}, true)
 		} catch (error) {
 			throw error;
 		}

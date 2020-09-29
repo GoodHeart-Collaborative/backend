@@ -2,8 +2,8 @@
 
 import * as config from "@config/constant";
 import * as contactConstant from "@modules/contact/contactConstant";
-import { contactController } from "@modules/contact/v1/ContactController";
-import { contactDao } from "@modules/contact/v1/ContactDao";
+import { contactController } from "@modules/contact/ContactController";
+import { contactDao } from "@modules/contact/ContactDao";
 
 export const contactSyncListeners = async function (socket) {
 	/**
@@ -43,13 +43,13 @@ const contactSync = async (socket, data) => {
 	try {
 		const reqParams = { ...socket.user };
 		const addContact = await contactController.addContact(data, reqParams);
-		if (addContact.contacts.length) {
-			addContact["statusCode"] = config.CONSTANT.HTTP_STATUS_CODE.CREATED;
-			socket.emit(config.CONSTANT.SOCKET.EVENT.CONTACT_SYNC, config.CONSTANT.SOCKET.SUCCESS.CONTACT_SYNCING(addContact));
-		} else {
-			addContact["statusCode"] = 210;
-			socket.emit(config.CONSTANT.SOCKET.EVENT.CONTACT_SYNC, config.CONSTANT.SOCKET.SUCCESS.CONTACT_SYNCING(addContact));
-		}
+		// if (addContact.contacts.length) {
+		// 	addContact["statusCode"] = config.CONSTANT.HTTP_STATUS_CODE.CREATED;
+		// 	socket.emit(config.CONSTANT.SOCKET.EVENT.CONTACT_SYNC, config.CONSTANT.SOCKET.SUCCESS.CONTACT_SYNCING(addContact));
+		// } else {
+		// 	addContact["statusCode"] = 210;
+		// 	socket.emit(config.CONSTANT.SOCKET.EVENT.CONTACT_SYNC, config.CONSTANT.SOCKET.SUCCESS.CONTACT_SYNCING(addContact));
+		// }
 		console.log(JSON.stringify(config.CONSTANT.SOCKET.SUCCESS.CONTACT_SYNCING(addContact)));
 	} catch (error) {
 		socket.emit(config.CONSTANT.SOCKET.EVENT.SOCKET_ERROR, config.CONSTANT.SOCKET.ERROR.SOCKET);
