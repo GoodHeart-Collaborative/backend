@@ -382,6 +382,11 @@ const MESSAGES = {
 			"message": "You are not authorized to perform this action.",
 			"type": "UNAUTHORIZED_ACCESS"
 		},
+		SOMETHING_WENT_WRONG: {
+			"statusCode": HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+			"message": "Something went wrong",
+			"type": "SOMETHING_WENT_WRONG"
+		},
 		INTERNAL_SERVER_ERROR: {
 			"statusCode": HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
 			"message": "Please try after some time.",
@@ -878,7 +883,21 @@ const JOB_SCHEDULER_TYPE = {
 const PAGINATION = {
 	limit: 10,
 	page: 1
-}
+};
+
+const IN_APP = {
+	ANDROID: {
+		SUBSCRIPTIONS: {
+
+		},
+		ANDROID_PACKAGE_NAME: process.env["ANDROID_PACKAGE_NAME"]
+	},
+	IOS: {
+		SANDBOXURL: process.env["SANDBOX_URL"],
+		LIVE_URL: process.env["LIVE_URL"],
+		LIVE_SHARED_SECRET: process.env["LIVE_SHARED_SECRET"]
+	},
+};
 
 export const CONSTANT = Object.freeze({
 	SWAGGER_DEFAULT_RESPONSE_MESSAGES: SWAGGER_DEFAULT_RESPONSE_MESSAGES,
@@ -939,5 +958,6 @@ export const CONSTANT = Object.freeze({
 	REPORT_MESSAGE,
 	NOTIFICATION_CATEGORY,
 	USER_SUBSCRIPTION_PLAN,
+	IN_APP
 	// USER_SUBSCRIPTION_PLAN_PRICE
 });
