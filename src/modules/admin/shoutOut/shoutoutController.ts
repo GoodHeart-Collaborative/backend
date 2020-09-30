@@ -90,7 +90,7 @@ class AdminShoutOut {
             const aggPipe = [];
             const match: any = {};
 
-            match['_id'] = appUtils.toObjectId(shoutOutId);
+            match['_id'] = { $eq: appUtils.toObjectId(shoutOutId) }
 
             aggPipe.push({ "$match": match });
             aggPipe.push({
