@@ -27,6 +27,11 @@ export const MESSAGES = {
 				data: data
 			}
 		},
+		CAN_NOT_CHANGE_MOBILE: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "mobile Number can not be changed",
+			"type": "BLOCKED_USER"
+		},
 		USER_ACCOUNT_SCREENING: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING,
 			"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
