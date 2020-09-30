@@ -714,8 +714,13 @@ const getLocationByIp = async (ipaddress: string) => {
 	}
 }
 
+const formatDate = async (date) => {
+	return moment(date).format("YYYY-MM-DD");
+};
+
 
 export {
+	formatDate,
 	verifyEmailFormat,
 	setInsertObject,
 	unsetInsertObject,
