@@ -83,7 +83,12 @@ class CategoryController {
                     pipeline: [{
                         '$match': {
                             '$expr': {
-                                '$eq': ['$categoryId', '$$cId']
+                                $and: [{
+                                    $eq: ['$categoryId', '$$cId']
+                                },
+                                {
+                                    $ne: ['$status', config.CONSTANT.STATUS.DELETED]
+                                }]
                             }
                         }
                     }],
