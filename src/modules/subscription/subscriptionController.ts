@@ -16,7 +16,7 @@ class SubscriptionController {
             console.log(params);
             // let getData = await subscriptionDao.insert()
             // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
-            return {};
+            return { subscriptionEndDate: 1601461508613 , isSubscribed: true , subscriptionType: params.subscriptionType };
         } catch (error) {
             throw error;
         }

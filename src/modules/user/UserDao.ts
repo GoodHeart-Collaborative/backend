@@ -207,14 +207,14 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params["location"] = {
-				"location": "Noida, Uttar Pradesh, India",
-				"type": "Point",
-				"coordinates": [
-					77.3619782,
-					28.6060713
-				]
-			}
+			// params["location"] = {
+			// 	"location": "Noida, Uttar Pradesh, India",
+			// 	"type": "Point",
+			// 	"coordinates": [
+			// 		77.3619782,
+			// 		28.6060713
+			// 	]
+			// }
 			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
@@ -374,6 +374,30 @@ export class UserDao extends BaseDao {
 			const options = { new: true };
 
 			return await this.findOneAndUpdate("users", query, update, options);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async changeUserLocation(params: UserRequest.Location, tokenData: TokenData) {
+		try {
+			let query: any = {};
+			query._id = tokenData.userId;
+
+			let update = {};
+			// params["location"] = {
+			// 	"location": "Noida, Uttar Pradesh, India",
+			// 	"type": "Point",
+			// 	"coordinates": [
+			// 		params.longitude,
+			// 		params.latitude
+			// 	]
+			// }
+			update["$set"] = {"location" : {
+				"type": "Point",
+				"coordinates": [params.longitude, params.latitude]
+			}};
+			return await this.findOneAndUpdate("users", query, update, { new: true });
 		} catch (error) {
 			throw error;
 		}

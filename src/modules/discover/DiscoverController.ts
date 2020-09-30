@@ -28,6 +28,15 @@ class DiscoverController {
     }
     async getUserData(params, userId) {
         try {
+            if(params.longitude == undefined && params.latitude == undefined) {
+                let getUserInfo = await discoverDao.getUserById(userId)
+                if(getUserInfo) {
+                    if(getUserInfo && getUserInfo.location && getUserInfo.location.coordinates && getUserInfo.location.coordinates.length > 0) {
+                        params.longitude = getUserInfo.location.coordinates[0]
+                        params.latitude = getUserInfo.location.coordinates[1]
+                    }
+            }
+            }
             let getData = await discoverDao.getUserData(params, userId)
             return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA(getData)
         } catch (error) {

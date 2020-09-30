@@ -277,11 +277,11 @@ export const MESSAGES = {
 				"data": data
 			}
 		},
-		// FORGET_PASSWORD: {
-		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-		// 	"message": "Please check your number for password reset link.",
-		// 	"type": "FORGOT_PASSWORD_ON_PHONE",
-		// },
+		CHANGE_LOCATION: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Location enable successfully.",
+			"type": "CHANGE_LOCATION",
+		},
 		CHANGE_FORGOT_PASSWORD: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "Password changed successfully.",

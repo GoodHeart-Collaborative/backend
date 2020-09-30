@@ -77,6 +77,11 @@ let resendOTP = Joi.object({
     // email: Joi.string().lowercase().trim(),
 });
 
+let localtion = Joi.object({
+    longitude: Joi.number().required(),
+    latitude: Joi.number().required()
+});
+
 let verifyForGotOtp = Joi.object({
     mobileNo: Joi.string(),
     countryCode: Joi.string().trim()
@@ -301,5 +306,6 @@ export {
     validateUserIdParams,
     validateProfileHome,
     updateProfileUser,
+    localtion,
     changePassword
 };
