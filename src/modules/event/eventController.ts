@@ -402,8 +402,6 @@ class EventController {
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
-                console.log('pickupLocationpickupLocation', pickupLocation);
-
                 aggPipe.push(
                     {
                         '$geoNear': {
@@ -413,7 +411,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { dist: -1 } }
+                    { "$sort": { _id: -1 } }
                 )
                 // pickupLocation.push(latitude, longitude);
                 // aggPipe.push(
@@ -436,7 +434,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { dist: -1, _id: -1 } }
+                    { "$sort": { _id: -1, } }
                 )
             }
             // else {
@@ -578,7 +576,7 @@ class EventController {
                             }
                         }
                     },
-                    users: 1,
+                    // users: 1,
                 }
             };
 
@@ -586,7 +584,6 @@ class EventController {
             featureAggPipe.push(FilterForGoingAndIntereset);
             featureAggPipe.push(projection);
 
-            aggPipe.push(projection)
             // aggPipe.push({
             //     $addFields: {
             //         isHostedByMe: {
