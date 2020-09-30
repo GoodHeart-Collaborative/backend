@@ -233,7 +233,7 @@ export class DiscoverDao extends BaseDao {
                 // aggPipe.push({ "$match": { industryType: { $in: industryType } } })
             }
             if (searchKey) {
-                match["firstName"] = { "$regex": searchKey, "$options": "-i" }
+                match["firstName"] = { "$regex": searchKey, "$options": "i" }
                 // aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
             }
             aggPipe.push({ "$match": match })
