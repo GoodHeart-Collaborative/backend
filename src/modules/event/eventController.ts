@@ -38,6 +38,13 @@ class EventController {
             params['interestCount'] = 1;
             const data = await eventDao.insert("event", params, {});
 
+            params["location"] = {
+                "type": "Point",
+                "coordinates": [
+                    77.3619782,
+                    28.6060713
+                ]
+            }
             const updateEventAndGoing = [
                 {
                     userId: appUtils.toObjectId(params['userId']),
@@ -72,8 +79,6 @@ class EventController {
 
             const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
             // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
-
-
 
             // async forgotPasswordEmailToUser(params) {
             //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
@@ -401,7 +406,7 @@ class EventController {
 
 
             if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(longitude, latitude);
+                pickupLocation.push(latitude, longitude);
                 aggPipe.push(
                     {
                         '$geoNear': {
