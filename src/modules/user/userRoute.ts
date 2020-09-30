@@ -45,6 +45,37 @@ export const
 			}
 		},
 		{
+			method: "PUT",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/location`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				let userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				let payload: UserRequest.Location = request.payload;
+				try {
+					const result = await userController.updateUserLocation(payload, userData);
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			options: {
+				tags: ["api", "user"],
+				description: "Set user location",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					headers: validator.userAuthorizationHeaderObj,
+					payload: validateUser.localtion,
+					failAction: appUtils.failActionFunction,
+				},
+				plugins: {
+					"hapi-swagger": {
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+		{
 			method: "POST",
 			path: `${config.SERVER.API_BASE_URL}/v1/user/login`,
 			handler: async (request: Request, h: ResponseToolkit) => {

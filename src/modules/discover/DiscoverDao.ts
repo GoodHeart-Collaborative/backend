@@ -192,7 +192,7 @@ export class DiscoverDao extends BaseDao {
             let pickupLocation = [];
             let match: any = {}
             if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(latitude, longitude);
+                pickupLocation.push(longitude, latitude);
                 aggPipe.push(
                     {
                         '$geoNear': {
@@ -471,6 +471,17 @@ export class DiscoverDao extends BaseDao {
         }
 
     }
+
+    async getUserById(params) {
+		try {
+			let { userId } = params
+			let query: any = {}
+			query["_id"] = await appUtils.toObjectId(userId)
+			return await this.findOne('users', query, {}, {});
+		} catch (error) {
+			throw error;
+		}
+	}
 }
 
 export const discoverDao = new DiscoverDao();
