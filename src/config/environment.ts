@@ -208,3 +208,17 @@ export const SERVER = Object.freeze({
 	IS_ELASTIC_SEARCH_ENABLE: false,
 	IS_SINGLE_DEVICE_LOGIN: true
 });
+
+export const IN_APP = {
+	ANDROID: {
+		SUBSCRIPTIONS: {
+
+		},
+		ANDROID_PACKAGE_NAME: process.env["ANDROID_PACKAGE_NAME"]
+	},
+	IOS: {
+		SANDBOXURL: process.env["SANDBOX_URL"],
+		LIVE_URL: process.env["LIVE_URL"],
+		LIVE_SHARED_SECRET: process.env["LIVE_SHARED_SECRET"]
+	},
+};
