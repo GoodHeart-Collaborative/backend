@@ -147,14 +147,21 @@ export class ContentDao extends BaseDao {
 	async faqList(params?) {
 		try {
 			console.log('paramsparams', params);
-
+			const { sortBy, sortOrder } = params;
+			let sort: any = {};
 			const query: any = {};
 			query.type = config.CONSTANT.CONTENT_TYPE.FAQ;
 			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const projection: any = { question: 1, answer: 1, createdAt: 1 };
 
-			const options: any = { lean: true };
+			if (sortBy && sortOrder) {
+				sort = { "_id": sortOrder };
+			} else {
+				sort = { "_id": -1 };
+			}
+
+			const options: any = { sort, lean: true };
 			if (params && params.searchKey) {
 				// const reg = new RegExp(searchKey, 'ig');
 				query['$or'] = [
@@ -169,6 +176,8 @@ export class ContentDao extends BaseDao {
 				if (params.fromDate && !params.toDate) { query['createdAt'] = { $gte: params.fromDate }; }
 				if (!params.fromDate && params.toDate) { query['createdAt'] = { $lte: params.toDate }; }
 			}
+
+
 
 			const step1 = this.find("contents", query, projection, options, {}, {}, {});
 			const step2 = this.countDocuments("contents", query);
