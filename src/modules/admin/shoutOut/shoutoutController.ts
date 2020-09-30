@@ -40,7 +40,7 @@ class AdminShoutOut {
             const aggPipe = [];
             const match: any = {};
 
-            match['userId'] = userId
+            match['userId'] = appUtils.toObjectId(userId);
             if (status) {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             } else {
