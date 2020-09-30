@@ -16,8 +16,9 @@ export const subscriptionRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: Subscription.AddSubscription = request.payload;
+            const { platform } = request.headers;
             try {
-                const result = await subscriptionController.createSubscription({ ...payload, ...{ userId: tokenData.userId } });
+                const result = await subscriptionController.createSubscription({ ...payload, platform, ...{ userId: tokenData.userId } });
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

@@ -13,8 +13,10 @@ class SubscriptionController {
      */
     async createSubscription(params) {
         try {
+            console.log(params);
             // let getData = await subscriptionDao.insert()
             // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
+            return {};
         } catch (error) {
             throw error;
         }
