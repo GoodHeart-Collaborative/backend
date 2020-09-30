@@ -31,6 +31,10 @@ class AdminFeedController {
                 match.privacy = params.privacy;
             }
 
+            const paginateOptions = {
+                limit: limit || 10,
+                page: page || 1
+            }
 
             let sort = {};
             if (sortBy && sortOrder) {
@@ -102,16 +106,16 @@ class AdminFeedController {
                 });
             }
 
+            let data;
             aggPipe.push({ '$unwind': { path: '$userData' } });
             if (type == config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
-                const data = await gratitudeJournalDao.aggreagtionWithPaginateTotal('gratitude_journals', aggPipe, limit, page, true);
-                return data;
+                data = await gratitudeJournalDao.paginate('gratitude_journals', aggPipe, paginateOptions.limit, paginateOptions.page, true);
             }
 
             if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
-                const data = await shoutoutDao.aggreagtionWithPaginateTotal('shoutout', aggPipe, limit, page, true);
-                return data;
+                data = await shoutoutDao.paginate('shoutout', aggPipe, paginateOptions.limit, paginateOptions.page, true);
             }
+            return data;
 
         } catch (error) {
             return Promise.reject(error);
