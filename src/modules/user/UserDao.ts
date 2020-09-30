@@ -207,14 +207,13 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			// params["location"] = {
-			// 	"location": "Noida, Uttar Pradesh, India",
-			// 	"type": "Point",
-			// 	"coordinates": [
-			// 		77.3619782,
-			// 		28.6060713
-			// 	]
-			// }
+			params["location"] = {
+				"type": "Point",
+				"coordinates": [
+					77.3619782,
+					28.6060713
+				]
+			}
 			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
