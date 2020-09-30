@@ -85,8 +85,12 @@ export const userEventRoutes: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: UserEventRequest.getEvents = request.query;
             console.log(' request.info. request.info.', request.info);
-            const getIpfromNtwk = request.info.remoteAddress;
-            payload['getIpfromNtwk'] = getIpfromNtwk;
+
+            const xFF = request.headers['x-forwarded-for']
+
+            console.log('xFFxFFxFFxFFxFFxFFxFF', xFF);
+            const ip = xFF ? xFF.split(',')[0] : request.info.remoteAddress;
+            payload['getIpfromNtwk'] = ip;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.getEvent(payload, tokenData);

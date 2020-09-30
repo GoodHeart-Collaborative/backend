@@ -22,8 +22,11 @@ import * as environment from '@config/environment'
 import * as config from "@config/index";
 import { logger } from "@lib/logger";
 const TAG = "rcc-uploads";
+import fetch from 'node-fetch';
+
 // import ipLocation from "iplocation";
-import * as geoip from 'geoip-lite';
+// import * as geoip from 'geoip-lite';
+
 
 
 
@@ -247,7 +250,7 @@ const createIOSPushPayload = function (data) {
 				"title": data.title,
 				"body": data.message,
 				"sound": data.sound,
-				"badge": data['countForBadge'] ? data['countForBadge'] : 0,
+				// "badge": data['countForBadge'] ? data['countForBadge'] : 0,
 				"priority": data.priority
 			}
 		}
@@ -681,11 +684,31 @@ const consolelog = (identifier: string, value: any, status: boolean) => {
 const getLocationByIp = async (ipaddress: string) => {
 	try {
 		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-
 		// const lt_lng = await ipLocation('103.79.170.73');
-		const lt_lng = await geoip.lookup('103.79.170.73');
-		console.log('lt_lnglt_lnglt_lng', lt_lng);
-		return lt_lng;
+		//req.connection.remoteAddress		
+		let ip = ipaddress || '';
+
+		const request = {
+			method: 'post',
+			params: ipaddress,
+		};
+		let url = 'http://ip-api.com/json/' + ip
+
+		const response = await fetch('http://ip-api.com/json/', request);
+
+		// let options = http_options({ normal: true })
+		// const response = await fetch(url)
+
+		// const json = await response.json();
+		// console.log('jsonjson', json);
+
+		let theData = await response.json();
+		console.log('lt_lnglt_lnglt_lng', theData);
+		return {
+			lat: theData.lat || 0.0,
+			long: theData.lon || 0.0
+		}
+
 	} catch (error) {
 		return Promise.reject(error)
 	}

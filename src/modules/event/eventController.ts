@@ -46,14 +46,15 @@ class EventController {
                     created: Date.now(),
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                }, {
-                    userId: appUtils.toObjectId(params['userId']),
-                    eventId: appUtils.toObjectId(data._id),
-                    type: config.CONSTANT.EVENT_INTEREST.INTEREST,
-                    created: Date.now(),
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                }
+                },
+                // {
+                //     userId: appUtils.toObjectId(params['userId']),
+                //     eventId: appUtils.toObjectId(data._id),
+                //     type: config.CONSTANT.EVENT_INTEREST.INTEREST,
+                //     created: Date.now(),
+                //     createdAt: new Date(),
+                //     updatedAt: new Date(),
+                // }
             ];
 
             const updateISGoing = await eventDao.insertMany('event_interest', updateEventAndGoing, {})
@@ -387,11 +388,17 @@ class EventController {
                     { title: reg },
                 ];
             }
-            // if (longitude == undefined && latitude == undefined) {
-            //     const lat_lng: any = await appUtils.getLocationByIp('103.79.170.73');
-            //     latitude = lat_lng.ll[1];
-            //     longitude = lat_lng.ll[0];
-            // }
+
+            console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
+
+            if (longitude == undefined && latitude == undefined) {
+                const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
+
+                latitude = lat_lng.lat;
+                longitude = lat_lng.long;
+            }
+
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(latitude, longitude);
@@ -404,9 +411,8 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { dist: -1 } }
+                    { "$sort": { _id: -1 } }
                 )
-
                 // pickupLocation.push(latitude, longitude);
                 // aggPipe.push(
                 //     {
@@ -419,34 +425,36 @@ class EventController {
                 //     },
                 //     { "$sort": { dist: -1 } }
                 // )
-                // featureAggPipe.push(
-                //     {
-                //         '$geoNear': {
-                //             near: { type: "Point", coordinates: pickupLocation },
-                //             spherical: true,
-                //             maxDistance: searchDistance,
-                //             distanceField: "dist",
-                //         }
-                //     },
-                //     { "$sort": { dist: -1, _id: -1 } }
-                // )
-            }
-            else {
-                aggPipe.push(
-                    {
-                        $sort: {
-                            _id: -1
-                        },
-                    }
-                );
                 featureAggPipe.push(
                     {
-                        $sort: {
-                            _id: -1
-                        },
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
                     },
-                );
+                    { "$sort": { _id: -1, } }
+                )
             }
+            // else {
+            //     aggPipe.push(
+            //         {
+            //             $sort: {
+            //                 _id: -1
+            //             },
+            //         }
+            //     );
+            //     featureAggPipe.push(
+            //         {
+            //             $sort: {
+            //                 _id: -1
+            //             },
+            //         },
+            //     );
+            // }
+            console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
+
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
             featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
 
@@ -568,7 +576,7 @@ class EventController {
                             }
                         }
                     },
-                    users: 1,
+                    // users: 1,
                 }
             };
 
@@ -576,7 +584,6 @@ class EventController {
             featureAggPipe.push(FilterForGoingAndIntereset);
             featureAggPipe.push(projection);
 
-            aggPipe.push(projection)
             // aggPipe.push({
             //     $addFields: {
             //         isHostedByMe: {

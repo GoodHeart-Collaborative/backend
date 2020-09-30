@@ -13,7 +13,7 @@ export class NotificationManager {
 		console.log('paramsparamsparamsparams', params);
 
 		query.status = config.CONSTANT.STATUS.ACTIVE;
-		// query.adminStatus = config.CONSTANT.USER_ADMIN_STATUS.VERIFIED;
+		query.adminStatus = config.CONSTANT.USER_ADMIN_STATUS.VERIFIED;
 		// query.isEmailVerified = true
 		let step1;
 		if (params.members) {
@@ -77,15 +77,11 @@ export class NotificationManager {
 				if (step3[i].platform === config.CONSTANT.DEVICE_TYPE.IOS) {
 					iosUsers.push({ "userId": step3[i].userId._id, "deviceToken": step3[i].deviceToken });
 				}
-				if (step3[i].platform === config.CONSTANT.DEVICE_TYPE.WEB) {
-					webUsers.push({ "userId": step3[i].userId._id, "deviceToken": step3[i].deviceToken });
-				}
 			}
 
 			// separate android user data and ios user data to android user chunks and ios user chunks
 			const androidUserChunks = appUtils.splitArrayInToChunks(androidUsers);
 			const iosUserChunks = appUtils.splitArrayInToChunks(iosUsers);
-			const webUserChunks = appUtils.splitArrayInToChunks(webUsers);
 			console.log('iosUserChunksiosUserChunks', iosUserChunks);
 			console.log('androidUserChunksandroidUserChunksandroidUserChunks', androidUserChunks);
 
@@ -99,9 +95,6 @@ export class NotificationManager {
 			if (iosUserChunks.length) {
 				iosPayload = appUtils.createIOSPushPayload(params);
 				console.log('iosPayloadiosPayloadiosPayloadiosPayload', iosPayload);
-			}
-			if (webUserChunks.length) {
-				webPayload = appUtils.createWebPushPayload(params);
 			}
 
 			// save android chunk data
@@ -121,17 +114,9 @@ export class NotificationManager {
 					"payload": iosPayload,
 					"deviceType": config.CONSTANT.DEVICE_TYPE.IOS
 				};
-				const step5 = await pushManager.pushNotification(chunkNoticiationPayload);
-			});
+				console.log('chunkNoticiationPayloadchunkNoticiationPayloadchunkNoticiationPayload', chunkNoticiationPayload);
 
-			// save web chunk data
-			await webUserChunks.forEach(async (data) => {
-				const chunkNoticiationPayload = {
-					"data": data,
-					"payload": webPayload,
-					"deviceType": config.CONSTANT.DEVICE_TYPE.WEB
-				};
-				const step6 = await pushManager.pushNotification(chunkNoticiationPayload);
+				const step5 = await pushManager.pushNotification(chunkNoticiationPayload);
 			});
 		}
 		return step3.length;
@@ -182,9 +167,9 @@ export class NotificationManager {
 
 			}
 			if (iosUsers.length) {
-				const getCountForBadge = await notificationDao.count('notifications', { receiverId: params.userId, isRead: false });
-				console.log('getCountForBadgegetCountForBadge', getCountForBadge);
-				params['countForBadge'] = getCountForBadge;
+				// const getCountForBadge = await notificationDao.count('notifications', { receiverId: params.userId, isRead: false });
+				// console.log('getCountForBadgegetCountForBadge', getCountForBadge);
+				// params['countForBadge'] = getCountForBadge;
 				iosPayload = appUtils.createIOSPushPayload(params);
 				console.log('iosPayloadiosPayload', iosPayload);
 			}
@@ -280,18 +265,11 @@ export class NotificationManager {
 					"payload": iosPayload,
 					"deviceType": config.CONSTANT.DEVICE_TYPE.IOS
 				};
+				console.log('chunkNoticiationPayloadchunkNoticiationPayloadIOS>>>>>>', chunkNoticiationPayload);
+
 				const step4 = await pushManager.pushNotification(chunkNoticiationPayload);
 			});
 
-			// save web chunk data
-			await webUsers.forEach(async (data) => {
-				const chunkNoticiationPayload = {
-					"data": data,
-					"payload": webPayload,
-					"deviceType": config.CONSTANT.DEVICE_TYPE.WEB
-				};
-				const step5 = await pushManager.pushNotification(chunkNoticiationPayload);
-			});
 		}
 		return;
 	}
