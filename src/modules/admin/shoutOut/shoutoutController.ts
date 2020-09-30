@@ -74,38 +74,6 @@ class AdminShoutOut {
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": sort });
-            // aggPipe.push({
-            //     $lookup: {
-            //         from: 'users',
-            //         let: { uId: '$userId' },
-            //         pipeline: [{
-            //             $match: {
-            //                 $expr: {
-            //                     $and: [
-            //                         {
-            //                             $eq: ['$_id', '$$uId']
-            //                         },
-            //                         {
-            //                             $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-            //                         }
-            //                     ]
-            //                 }
-            //             }
-            //         },
-            //         {
-            //             $project: {
-            //                 firstName: 1,
-            //                 lastName: 1,
-            //                 email: 1,
-            //                 status: 1,
-            //             }
-            //         }
-
-            //         ],
-            //         as: 'userData'
-            //     }
-            // })
-            // aggPipe.push({ '$unwind': { path: '$userData' } });
 
             const data = await shoutoutDao.paginate('shoutout', aggPipe, limit, page, true);
             return data;
@@ -118,15 +86,95 @@ class AdminShoutOut {
 
     async getShoutOutDetail(params) {
         try {
-            const { cardId } = params;
-            const criteria = {
-                _id: cardId
-            }
-            const data = await shoutoutDao.findOne('shoutout', criteria, {}, {});
-            return data;
+            const { shoutOutId } = params;
+            const aggPipe = [];
+            const match: any = {};
+
+            match['_id'] = appUtils.toObjectId(shoutOutId);
+
+            aggPipe.push({ "$match": match });
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { uId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$uId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            firstName: 1,
+                            lastName: 1,
+                            email: 1,
+                            status: 1,
+                        }
+                    }
+
+                    ],
+                    as: 'senderData'
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$senderData' } });
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { uId: '$userId', mId: '$members' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $in: ['$_id', '$$mId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            firstName: 1,
+                            lastName: 1,
+                            email: 1,
+                            status: 1,
+                        }
+                    }
+
+                    ],
+                    as: 'memberData'
+                }
+            })
+
+
+            const data = await shoutoutDao.aggregate('shoutout', aggPipe, {});
+            return data[0] ? data[0] : {};
+
         } catch (error) {
             return Promise.reject(error);
         }
+        // try {
+        //     const { cardId } = params;
+        //     const criteria = {
+        //         _id: cardId
+        //     }
+        //     const data = await shoutoutDao.findOne('shoutout', criteria, {}, {});
+        //     return data;
+        // } catch (error) {
+        //     return Promise.reject(error);
+        // }
     }
     // async updateForumTopic(params: AdminForumRequest.UpdateForum) {
     //     try {
