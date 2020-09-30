@@ -3,6 +3,7 @@
 import { google, androidpublisher_v3 } from "googleapis";
 import * as CONFIG from "../config";
 const key = require("./../../google_auth.json");
+import { IN_APP } from "@config/environment";
 import { CONSTANT } from "@config/constant";
 import * as request from "request-promise";
 import * as appUtils from "@utils/appUtils";
@@ -32,12 +33,12 @@ export class InAppSubscription {
      */
     async verifyAndroidSubscription(subscriptionId: any, purchaseToken: string, ack: boolean = true) {
         try {
-            console.log("*****************", CONSTANT.IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
-                CONSTANT.IN_APP.ANDROID.ANDROID_PACKAGE_NAME, subscriptionId, purchaseToken);
+            console.log("*****************", IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
+                IN_APP.ANDROID.ANDROID_PACKAGE_NAME, subscriptionId, purchaseToken);
             let subscription = await this.publisher.get({
-                subscriptionId: CONSTANT.IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
+                subscriptionId: IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
                 token: purchaseToken,
-                packageName: CONSTANT.IN_APP.ANDROID.ANDROID_PACKAGE_NAME
+                packageName: IN_APP.ANDROID.ANDROID_PACKAGE_NAME
             });
 
             if (!subscription.config && subscription.config.data) {
@@ -67,9 +68,9 @@ export class InAppSubscription {
     async acknowledgeAndroidSubscription(subscriptionId: string, purchaseToken: string) {
         try {
             const ack = await this.publisher.acknowledge({
-                subscriptionId: CONSTANT.IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
+                subscriptionId: IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
                 token: purchaseToken,
-                packageName: CONSTANT.IN_APP.ANDROID.ANDROID_PACKAGE_NAME
+                packageName: IN_APP.ANDROID.ANDROID_PACKAGE_NAME
             });
             console.log("acknowlegded ***************", ack);
             return ack;
@@ -84,10 +85,10 @@ export class InAppSubscription {
         try {
             let data: any = await request({
                 method: "POST",
-                uri: CONSTANT.IN_APP.IOS.LIVE_URL,
+                uri: IN_APP.IOS.LIVE_URL,
                 body: {
                     "receipt-data": receipt,
-                    "password": CONSTANT.IN_APP.IOS.LIVE_SHARED_SECRET // APP_SECRETS.INAPPAPPLESECRET
+                    "password": IN_APP.IOS.LIVE_SHARED_SECRET // APP_SECRETS.INAPPAPPLESECRET
                 },
                 json: true // Automatically stringifies the body to JSON
             });
@@ -95,10 +96,10 @@ export class InAppSubscription {
             if (!data.latest_receipt_info) {
                 data = await request({
                     method: "POST",
-                    uri: CONSTANT.IN_APP.IOS.SANDBOXURL,
+                    uri: IN_APP.IOS.SANDBOXURL,
                     body: {
                         "receipt-data": receipt,
-                        "password": CONSTANT.IN_APP.IOS.LIVE_SHARED_SECRET // APP_SECRETS.INAPPAPPLESECRET
+                        "password": IN_APP.IOS.LIVE_SHARED_SECRET // APP_SECRETS.INAPPAPPLESECRET
                     },
                     json: true // Automatically stringifies the body to JSON
                 });
