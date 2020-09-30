@@ -22,7 +22,7 @@ let getShoutOut = Joi.object({
 }).unknown()
 
 let getShoutOutById = Joi.object({
-    cardId: Joi.string().required().trim().regex(config.CONSTANT.REGEX.MONGO_ID),
+    shoutOutId: Joi.string().required().trim().regex(config.CONSTANT.REGEX.MONGO_ID),
 })
 
 export {

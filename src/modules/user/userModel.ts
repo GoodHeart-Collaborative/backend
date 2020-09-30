@@ -63,7 +63,7 @@ export interface IUser extends Document {
 }
 
 var geoSchema = new Schema({
-	location: { type: String, trim: true, required: true, default: '' },
+	// location: { type: String, trim: true, required: true, default: '' },
 	type: { type: String, default: "Point" },
 	coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
 }, {

@@ -968,6 +968,21 @@ export class UserController {
 		}
 	}
 
+		/**
+	 * @function updateUserLocation
+	 */
+	async updateUserLocation(params: UserRequest.Location, tokenData: TokenData) {
+		try {
+			let getUser = await userDao.findUserById(tokenData); // get user details
+			if(getUser && getUser.status === CONSTANT.STATUS.ACTIVE) {
+				await userDao.changeUserLocation(params, tokenData);
+			}
+			return userConstant.MESSAGES.SUCCESS.CHANGE_LOCATION;
+		} catch (error) {
+			throw error;
+		}
+	}
+
 }
 
 export const userController = new UserController();

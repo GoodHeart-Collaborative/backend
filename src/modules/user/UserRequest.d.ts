@@ -11,6 +11,10 @@ declare namespace UserRequest {
 		createdAt?: number;
 		type: string;
 	}
+	export interface Location extends Device {
+		longitude: number;
+		latitude: number;
+	}
 
 	export interface Login extends Device {
 		email?: string;

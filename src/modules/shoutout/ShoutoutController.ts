@@ -69,7 +69,7 @@ class ShoutoutController {
             let createArr: any = []
             for (let i = 0; i < params.members.length; i++) {
                 createArr.push({
-                    userId: userId.userId,
+                    userId: appUtils.toObjectId(userId.userId),
                     description: params.description,
                     title: params.title,
                     privacy: params.privacy,
