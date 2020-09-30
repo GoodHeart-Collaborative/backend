@@ -51,9 +51,9 @@ const subscriptionSchema = new Schema({
     startDate: { type: Date, required: true, default: new Date() },
     subscriptionEndDate: { type: Number, required: true }
 }, {
-    versionKey: false,
-    timestamps: true
-});
+        versionKey: false,
+        timestamps: true
+    });
 
 subscriptionSchema.set("toObject", {
     virtuals: true,

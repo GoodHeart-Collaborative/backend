@@ -144,7 +144,7 @@ class DiscoverController {
                 } else {
                     // update
                     status = CONSTANT.DISCOVER_STATUS.PENDING
-                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status })
+                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status, userId: userId.userId, followerId: params.followerId })
                 }
                 let param: any = {}
                 param["_id"] = params.followerId
