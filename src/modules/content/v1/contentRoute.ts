@@ -322,7 +322,11 @@ export const contentRoute: ServerRoute = [
 					page: Joi.number(),
 					searchKey: Joi.string(),
 					fromDate: Joi.string(),
-					toDate: Joi.string()
+					toDate: Joi.string(),
+					sortOrder: Joi.number().valid([
+						config.CONSTANT.ENUM.SORT_TYPE
+					]),
+					sortBy: Joi.string().valid('createdAt').default('createdAt'),
 				},
 				headers: validator.adminAuthorizationHeaderObj,
 				failAction: appUtils.failActionFunction

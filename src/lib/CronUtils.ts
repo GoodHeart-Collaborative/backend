@@ -63,12 +63,12 @@ export class CronUtils {
 			// 	$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
 			// },
 			params['userId'] = getUsers[0]._id;
-			params['title'] = 'Leader of Day';
+			params['title'] = 'Leader of The Day';
 			// params['body'] = {
 			// 	userId: getUsers[0]._id,
 			// };
 			params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.category;
-			params['message'] = "Congratulate! You are selected as Leader of The Day";
+			params['message'] = "Congratulations! You are selected as Leader of The Day";
 			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.type;
 			params['body'] = getUsers[0] ?
 				{
