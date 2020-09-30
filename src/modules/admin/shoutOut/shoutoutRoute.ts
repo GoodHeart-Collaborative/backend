@@ -46,7 +46,7 @@ export const AdminShoutOut: ServerRoute[] = [
 
     {
         method: "GET",
-        path: `${config.SERVER.API_BASE_URL}/v1/admin/shoutout/{cardId}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/admin/shoutout/{shoutOutId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload = request.params;
