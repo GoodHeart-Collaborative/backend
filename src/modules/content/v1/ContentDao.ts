@@ -146,8 +146,6 @@ export class ContentDao extends BaseDao {
 	 */
 	async faqList(params?) {
 		try {
-			console.log('paramsparams', params);
-			const { sortBy, sortOrder } = params;
 			let sort: any = {};
 			const query: any = {};
 			query.type = config.CONSTANT.CONTENT_TYPE.FAQ;
@@ -155,8 +153,8 @@ export class ContentDao extends BaseDao {
 
 			const projection: any = { question: 1, answer: 1, createdAt: 1 };
 
-			if (sortBy && sortOrder) {
-				sort = { "_id": sortOrder };
+			if (params && params.sortBy && params.sortOrder) {
+				sort = { "_id": params.sortOrder };
 			} else {
 				sort = { "_id": -1 };
 			}
