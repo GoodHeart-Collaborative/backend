@@ -633,6 +633,25 @@ export class UserController {
 			const updateCriteria = {
 				_id: userData.userId
 			};
+			let checkUser = await userDao.findUserByEmailOrMobileNo({ mobileNo: params.mobileNo, countryCode: params.countryCode })
+			console.log('checkUser', checkUser);
+
+			if (userData.isEmailVerified === false && userData.mobileNo !== params.mobileNo) {
+				console.log('1111111111111');
+				return Promise.reject(userConstant.MESSAGES.ERROR.CAN_NOT_CHANGE_MOBILE)
+			} else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
+				console.log('22222222222222222222222');
+				if (checkUser && checkUser._id !== userData.userId && checkUser.isMobileVerified === true) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
+				}
+			} else if (userData.isEmailVerified === true && userData.isMobileVerified === true) {
+				console.log('333333333333333333333333333333333');
+				if (checkUser && checkUser.isMobileVerified === false && checkUser._id !== userData.userId) {
+					console.log('444444444444444444444444');
+					const removePhoneNo = await userDao.findOneAndUpdate('users', { _id: checkUser._id }, { mobileNo: params.mobileNo }, {});
+					// const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
+				}
+			}
 			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
 			const dataToUpdate = {
 				dob: params.dob,
@@ -968,13 +987,13 @@ export class UserController {
 		}
 	}
 
-		/**
-	 * @function updateUserLocation
-	 */
+	/**
+ * @function updateUserLocation
+ */
 	async updateUserLocation(params: UserRequest.Location, tokenData: TokenData) {
 		try {
 			let getUser = await userDao.findUserById(tokenData); // get user details
-			if(getUser && getUser.status === CONSTANT.STATUS.ACTIVE) {
+			if (getUser && getUser.status === CONSTANT.STATUS.ACTIVE) {
 				await userDao.changeUserLocation(params, tokenData);
 			}
 			return userConstant.MESSAGES.SUCCESS.CHANGE_LOCATION;

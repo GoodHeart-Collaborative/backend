@@ -241,7 +241,7 @@ let updateProfileUser = Joi.object({
     lastName: Joi.string().allow(''),
     profilePicUrl: Joi.string().required(),
 
-    mobileNumber: Joi.string().required(),
+    mobileNo: Joi.string().required(),
     // countryCode: Joi.string().required(),
     countryCode: Joi.string().trim()
         .regex(config.CONSTANT.REGEX.COUNTRY_CODE)
