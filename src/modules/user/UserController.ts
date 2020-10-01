@@ -640,7 +640,7 @@ export class UserController {
 				console.log('1111111111111');
 				return Promise.reject(userConstant.MESSAGES.ERROR.CAN_NOT_CHANGE_MOBILE)
 			} else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
-				console.log('22222222222222222222222');
+				console.log('22222222222222222222222>>>>>>>>>>>>');
 				if (checkUser && checkUser._id !== userData.userId && checkUser.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
 				}
@@ -659,7 +659,7 @@ export class UserController {
 				email: params.email,
 				firstName: params.firstName,
 				lastName: params.lastName,
-				mobileNumber: params.mobileNumber,
+				mobileNo: params.mobileNo,
 				countryCode: params.countryCode,
 				industryType: params.industryType,
 				experience: params.experience,
@@ -988,7 +988,7 @@ export class UserController {
 	}
 
 	/**
- * @function updateUserLocation
+     * @function updateUserLocation
  */
 	async updateUserLocation(params: UserRequest.Location, tokenData: TokenData) {
 		try {
