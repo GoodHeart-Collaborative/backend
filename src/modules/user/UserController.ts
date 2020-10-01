@@ -633,6 +633,8 @@ export class UserController {
 			const updateCriteria = {
 				_id: userData.userId
 			};
+			let dataToUpdate: any = {};
+
 			let checkUser = await userDao.findUserByEmailOrMobileNo({ mobileNo: params.mobileNo, countryCode: params.countryCode })
 			console.log('checkUser', checkUser);
 
@@ -652,8 +654,12 @@ export class UserController {
 					// const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
 				}
 			}
+			if (checkUser && checkUser.mobileNo !== params.mobileNo) {
+				dataToUpdate['isMobileVerified'] = false;
+
+			}
 			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
-			const dataToUpdate = {
+			dataToUpdate = {
 				dob: params.dob,
 				profession: params.profession,
 				email: params.email,
@@ -666,6 +672,8 @@ export class UserController {
 				about: params.about,
 				'profilePicUrl.0': params.profilePicUrl,
 			}
+			console.log('dataToUpdatedataToUpdatedataToUpdate', dataToUpdate);
+
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
 			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE(data);
