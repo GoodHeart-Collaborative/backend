@@ -407,7 +407,7 @@ class EventController {
 
 
             if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(longitude, latitude);
+                pickupLocation.push(latitude, longitude);
                 aggPipe.push(
                     {
                         '$geoNear': {
