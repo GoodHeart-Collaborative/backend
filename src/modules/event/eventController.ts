@@ -321,7 +321,8 @@ class EventController {
                 }
             });
 
-            defaultAndInterestEveent.push({ $sort: { startDate: -1 } });
+            defaultAndInterestEveent.push({ $sort: { endDate: -1 } });
+            typeAggPipe.push({ $sort: { endDate: -1 } });
 
             typeAggPipe = [...typeAggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
@@ -416,7 +417,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { _id: -1 } }
+                    { "$sort": { endDate: -1 } }
                 )
                 // pickupLocation.push(latitude, longitude);
                 // aggPipe.push(
@@ -439,7 +440,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { _id: -1, } }
+                    { "$sort": { endDate: -1, } }
                 )
             }
             // else {

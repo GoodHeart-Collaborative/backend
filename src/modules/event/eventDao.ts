@@ -95,18 +95,18 @@ export class EventDao extends BaseDao {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { dist: -1 } }
+                    { "$sort": { endDate: -1 } }
                 )
             }
-            else {
-                aggPipe.push(
-                    {
-                        $sort: {
-                            _id: -1
-                        },
-                    }
-                );
-            }
+            // else {
+            //     aggPipe.push(
+            //         {
+            //             $sort: {
+            //                 _id: -1
+            //             },
+            //         }
+            //     );
+            // }
             aggPipe.push({ $match: match })
 
             const unwind = {
