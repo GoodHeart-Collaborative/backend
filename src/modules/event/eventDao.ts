@@ -225,6 +225,7 @@ export class EventDao extends BaseDao {
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
             const event = await eventDao.aggregateWithPagination('event', aggPipe);
+            console.log('eventeventeventeventeventevent', event);
 
             const filterdata: any = {}
             const privacy1 = [];
@@ -243,15 +244,22 @@ export class EventDao extends BaseDao {
                 }
             }
             filterdata['eventCategory'] = eventCategory1
-            let events = {
-                ...event,
-                type: 1
-            }
-            const forFilter = {
-                filterdata,
-                type: 2
-            }
-            return paginateOptions.pageNo === 1 ? [events, forFilter] : [events];
+            // let events = {
+            //     ...event,
+            //     type: 1
+            // }
+            // const forFilter = {
+            //     filterdata,
+            //     type: 2
+            // }
+
+            // "total": 8,
+            //     "page": 1,
+            //         "total_page": 1,
+            //             "next_hit": 0,
+            //                 "limit": 10
+
+            return paginateOptions.pageNo === 1 ? { event: event.list, total: event.total, page: event.total, total_page: event.total_page, next_hit: event.next_hit, limit: event.limit, filterdata } : event;
 
         } catch (error) {
             return Promise.reject(error)
