@@ -663,20 +663,20 @@ export class UserController {
 				dataToUpdate['isMobileVerified'] = false;
 			}
 			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
-			dataToUpdate = {
-				dob: params.dob,
-				profession: params.profession,
-				email: params.email,
-				firstName: params.firstName,
-				lastName: params.lastName,
-				mobileNo: params.mobileNo,
-				countryCode: params.countryCode,
-				industryType: params.industryType,
-				experience: params.experience,
-				about: params.about,
-				'profilePicUrl.0': params.profilePicUrl,
-			}
-			console.log('dataToUpdatedataToUpdatedataToUpdate', dataToUpdate);
+			// dataToUpdate = {
+			dataToUpdate['dob'] = params.dob;
+			dataToUpdate['profession'] = params.profession;
+			dataToUpdate['email'] = params.email,
+				dataToUpdate['firstName'] = params.firstName,
+				dataToUpdate['lastName'] = params.lastName;
+			dataToUpdate['mobileNo'] = params.mobileNo;
+			dataToUpdate['countryCode'] = params.countryCode;
+			dataToUpdate['industryType'] = params.industryType;
+			dataToUpdate['experience'] = params.experience;
+			dataToUpdate['about'] = params.about;
+			dataToUpdate['profilePicUrl.0'] = params.profilePicUrl,
+				// }
+				console.log('dataToUpdatedataToUpdatedataToUpdate', dataToUpdate);
 
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
