@@ -461,6 +461,7 @@ class EventController {
             // }
             console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            match['endDate'] = { $gt: new Date().getTime() }
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
             featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
 

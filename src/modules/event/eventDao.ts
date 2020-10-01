@@ -37,6 +37,7 @@ export class EventDao extends BaseDao {
 
             let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            match['endDate'] = { $gt: new Date().getTime() }
 
             if (eventCategoryId) {
                 match['eventCategory'] = eventCategoryId;
@@ -95,7 +96,7 @@ export class EventDao extends BaseDao {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { endDate: -1 } }
+                    { "$sort": { endDate: 1 } }
                 )
             }
             // else {
