@@ -417,7 +417,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { endDate: -1 } }
+                    { "$sort": { endDate: 1 } }
                 )
                 // pickupLocation.push(latitude, longitude);
                 // aggPipe.push(
@@ -440,7 +440,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { endDate: -1, } }
+                    { "$sort": { endDate: 1, } }
                 )
             }
             // else {
