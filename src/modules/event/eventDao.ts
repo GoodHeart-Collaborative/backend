@@ -195,7 +195,7 @@ export class EventDao extends BaseDao {
                     isHostedByMe: {
                         $cond: {
                             if: {
-                                $eq: ['userId', appUtils.toObjectId(tokenData.userId)]
+                                $eq: ['$userId', appUtils.toObjectId(tokenData.userId)]
                             },
                             then: true,
                             else: false
