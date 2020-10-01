@@ -4,7 +4,8 @@ import * as _ from "lodash";
 import { categoryDao } from "./CategoryDao";
 import { eventDao } from "../../event/eventDao";
 import * as config from '@config/constant';
-import * as  CategoryConstant from '@modules/admin/catgeory/CategoryConstant';
+import * as  CategoryConstant from '@modules/admin/catgeory/';
+import * as apputils from '@utils/appUtils'
 class CategoryController {
 
 	/**
@@ -186,10 +187,10 @@ class CategoryController {
             }
             const data = await categoryDao.findOneAndUpdate('categories', criteria, dataToUpdate, { new: true });
             if (status === config.CONSTANT.STATUS.BLOCKED || status === config.CONSTANT.STATUS.DELETED) {
-                const updateEventCategory = await eventDao.update('event', { eventCategoryId: categoryId }, { eventCategoryName: "", status: config.CONSTANT.STATUS.BLOCKED }, {})
+                const updateEventCategory = await eventDao.updateMany('event', { eventCategoryId: apputils.toObjectId(categoryId) }, { eventCategoryName: "", status: config.CONSTANT.STATUS.BLOCKED }, {})
             }
             if (status === config.CONSTANT.STATUS.ACTIVE) {
-                const updateEventCategory = await eventDao.update('event', { eventCategoryId: categoryId }, { eventCategoryName: data.title, status: config.CONSTANT.STATUS.ACTIVE }, {})
+                const updateEventCategory = await eventDao.updateMany('event', { eventCategoryId: apputils.toObjectId(categoryId) }, { eventCategoryName: data.title, status: config.CONSTANT.STATUS.ACTIVE }, {})
             }
 
 
