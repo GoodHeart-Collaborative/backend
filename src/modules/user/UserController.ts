@@ -655,8 +655,12 @@ export class UserController {
 				}
 			}
 			if (checkUser && checkUser.mobileNo !== params.mobileNo) {
+				console.log('55555555555555555555555555555555');
 				dataToUpdate['isMobileVerified'] = false;
-
+			}
+			if (!checkUser && userData.mobileNo !== params.mobileNo) {
+				console.log('666666666666666666666666666666666666666');
+				dataToUpdate['isMobileVerified'] = false;
 			}
 			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
 			dataToUpdate = {
