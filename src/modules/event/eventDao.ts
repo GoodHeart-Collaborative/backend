@@ -36,6 +36,7 @@ export class EventDao extends BaseDao {
             let match: any = {}
 
             let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
 
             if (eventCategoryId) {
                 match['eventCategory'] = eventCategoryId;
@@ -43,9 +44,10 @@ export class EventDao extends BaseDao {
 
             if (isFeaturedEvent) {
                 match['isFeatured'] = true;
-            } else {
-                match['isFeatured'] = false;
             }
+            // else {
+            //     match['isFeatured'] = false;
+            // }
 
             const start = new Date();
             start.setHours(0, 0, 0, 0);
@@ -190,15 +192,15 @@ export class EventDao extends BaseDao {
                             }
                         }
                     },
-                    // isHostedByMe: {
-                    //     $cond: {
-                    //         if: {
-                    //             $eq: ['userId', appUtils.toObjectId(tokenData.userId)]
-                    //         },
-                    //         then: true,
-                    //         else: false
-                    //     }
-                    // },
+                    isHostedByMe: {
+                        $cond: {
+                            if: {
+                                $eq: ['userId', appUtils.toObjectId(tokenData.userId)]
+                            },
+                            then: true,
+                            else: false
+                        }
+                    },
                     users: 1,
                 }
             };
