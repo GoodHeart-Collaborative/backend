@@ -32,7 +32,7 @@ export interface Ievent extends Document {
 var geoSchema = new Schema({
     // location: { type: String, trim: true, required: true, default: '' },
     type: { type: String, default: "Point" },
-    coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
+    coordinates: { type: [Number], index: "2dsphere", default: [0, 0] }// [lngitude, latitude]
 }, {
     _id: false
 });
@@ -99,9 +99,9 @@ const eventSchema = new Schema({
     versionKey: false,
     timestamps: true
 });
-eventSchema.index({
-    location: '2dsphere'
-});
+// eventSchema.index({
+//     location: '2dsphere'
+// });
 eventSchema.set("toObject", {
     virtuals: true
 });

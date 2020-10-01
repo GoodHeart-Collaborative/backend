@@ -38,13 +38,13 @@ class EventController {
             params['interestCount'] = 1;
             const data = await eventDao.insert("event", params, {});
 
-            params["location"] = {
-                "type": "Point",
-                "coordinates": [
-                    77.3619782,
-                    28.6060713
-                ]
-            }
+            params['location']['coordinates'] = params['location']['coordinates'].reverse();
+            // location: Joi.object().keys({
+            //     type: Joi.string().valid(["Point"]),
+            //     coordinates: Joi.array().items(Joi.number())
+
+            console.log('paramsparamsparams', params);
+
             const updateEventAndGoing = [
                 {
                     userId: appUtils.toObjectId(params['userId']),
@@ -407,13 +407,14 @@ class EventController {
 
 
             if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(latitude, longitude);
+                pickupLocation.push(longitude, latitude);
                 aggPipe.push(
                     {
                         '$geoNear': {
                             near: { type: "Point", coordinates: pickupLocation },
                             spherical: true,
                             maxDistance: searchDistance,
+                            includeLocs: "dist.location",
                             distanceField: "dist",
                         }
                     },
@@ -924,6 +925,8 @@ class EventController {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             params['eventCategoryName'] = categoryData['title'];
+            params['location']['coordinates'] = params['location']['coordinates'].reverse();
+
             const updateEvent = await eventDao.findOneAndUpdate('event', criteria, params, { new: true });
             if (!updateEvent) {
                 return Promise.reject(eventConstant.MESSAGES.ERROR.EVENT_NOT_FOUND);
