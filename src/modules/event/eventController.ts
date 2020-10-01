@@ -407,7 +407,7 @@ class EventController {
 
 
             if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(longitude, latitude);
+                pickupLocation.push(latitude, longitude);
                 aggPipe.push(
                     {
                         '$geoNear': {
@@ -417,7 +417,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { endDate: -1 } }
+                    { "$sort": { _id: -1 } }
                 )
                 // pickupLocation.push(latitude, longitude);
                 // aggPipe.push(
@@ -440,7 +440,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { endDate: -1, } }
+                    { "$sort": { _id: -1, } }
                 )
             }
             // else {
