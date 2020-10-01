@@ -25,6 +25,7 @@ export interface IUser extends Document {
 	isFacebookLogin: boolean;
 	googleId: string;
 	isGoogleLogin: boolean;
+	isSubscribed: boolean;
 	firstName: string;
 	lastName: string;
 	email: string;
@@ -63,7 +64,7 @@ export interface IUser extends Document {
 }
 
 var geoSchema = new Schema({
-	// location: { type: String, trim: true, required: true, default: '' },
+	// location: { type: String, trim: true, required: true, default: "" },
 	type: { type: String, default: "Point" },
 	coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
 }, {
@@ -81,6 +82,7 @@ const userSchema = new Schema({
 	isFacebookLogin: { type: Boolean, default: false },
 	googleId: { type: String, trim: true, index: true },
 	isGoogleLogin: { type: Boolean, default: false },
+	isSubscribed: { type: Boolean, default: false },
 	firstName: { type: String, trim: true, index: true, required: true },
 	lastName: { type: String, trim: true, index: true },
 	email: { type: String, trim: true, index: true, lowercase: true },
@@ -169,7 +171,7 @@ const userSchema = new Schema({
 	countMember: { type: Number, default: 0 },
 	memberCreatedAt: { type: Date },
 	isMemberOfDay: { type: Boolean, default: false },
-	members: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
+	members: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
 	about: { type: String },
 	userPrivacy: {
 
@@ -247,7 +249,7 @@ userSchema.methods.toJSON = function () {
 };
 /* Crate 2dsphere index */
 userSchema.index({
-	location: '2dsphere'
+	location: "2dsphere"
 });
 
 // to set findAndModify false

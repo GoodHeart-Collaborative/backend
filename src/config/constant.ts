@@ -57,8 +57,8 @@ const EVENT_INTEREST = {
 }
 
 const MEMBER_TYPE = {
-	FREE: 'Free',
-	PREMIUM: 'Premium'
+	FREE: "Free",
+	PREMIUM: "Premium"
 }
 
 const USER_SUBSCRIPTION_PLAN = {
@@ -89,9 +89,9 @@ const USER_SUBSCRIPTION_PLAN = {
 
 
 const USER_ADMIN_STATUS = {
-	PENDING: 'pending',
-	VERIFIED: 'verified',
-	REJECTED: 'rejected',
+	PENDING: "pending",
+	VERIFIED: "verified",
+	REJECTED: "rejected",
 }
 const ACCOUNT_LEVEL = {
 	ADMIN: "admin",
@@ -120,23 +120,23 @@ const DB_MODEL_REF = {
 	VERSION: "version",
 	POST: "posts",
 	CATEGORY: "categories",
-	INSPIRATION: 'inspiration',
-	HOME: 'home',
-	DISCOVER: 'discover',
-	SHOUTOUT: 'shoutout',
-	UNICORN: 'unicorn',
+	INSPIRATION: "inspiration",
+	HOME: "home",
+	DISCOVER: "discover",
+	SHOUTOUT: "shoutout",
+	UNICORN: "unicorn",
 	COMMENT: "comment",
 	LIKE: "like",
-	ADVICE: 'advice',
-	MEMBER: 'member',
-	EXPERT: 'expert',
-	EXPERT_POST: 'expert_post',
-	EVENT: 'event',
-	EVENT_INTEREST: 'event_interest',
-	FORUM: 'forum',
-	REPORT: 'report',
-	GLOBAL_VARIABLE: 'global_var',
-	SUBSCRIPTION: 'subscription'
+	ADVICE: "advice",
+	MEMBER: "member",
+	EXPERT: "expert",
+	EXPERT_POST: "expert_post",
+	EVENT: "event",
+	EVENT_INTEREST: "event_interest",
+	FORUM: "forum",
+	REPORT: "report",
+	GLOBAL_VARIABLE: "global_var",
+	SUBSCRIPTION: "subscription"
 };
 
 const DEVICE_TYPE = {
@@ -154,9 +154,9 @@ const ADMIN_TYPE = {
 
 // const EVENT_CATEGORY = {
 // 	EVENTS: {
-// 		TYPE: 'events',
+// 		TYPE: "events",
 // 		VALUE: 1,
-// 		DISPLAY_NAME: 'EVENTS'
+// 		DISPLAY_NAME: "EVENTS"
 // 	},
 
 const REPORT_MESSAGE = {
@@ -186,9 +186,9 @@ const GENDER = {
 };
 
 const EXPERIENCE_LEVEL = {
-	JUNIOR: 'Junior',
-	MID: 'Mid',
-	SENIOR: 'Senior',
+	JUNIOR: "Junior",
+	MID: "Mid",
+	SENIOR: "Senior",
 }
 
 // export const INDUSTRIES = {
@@ -196,10 +196,10 @@ const EXPERIENCE_LEVEL = {
 // 	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
 // 	// Wellness_Coaches: "Wellness Coaches",
 // 	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
-// 	// Compassion_Fatigue: 'Compassion Fatigue',
-// 	Nonprofit: 'Nonprofit',
-// 	Emergency_Services: 'Emergency Services',
-// 	Social_And_Community_Services: 'Social and Community Services',
+// 	// Compassion_Fatigue: "Compassion Fatigue",
+// 	Nonprofit: "Nonprofit",
+// 	Emergency_Services: "Emergency Services",
+// 	Social_And_Community_Services: "Social and Community Services",
 // 	Law_Enforcement: "Law Enforcement",
 // 	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
 // };
@@ -215,8 +215,8 @@ export const INDUSTRIES = {
 export const PROFESSION_TYPE = {
 	Founder: "Founder",
 	CEO: "CEO",
-	Executive_Director: 'Executive Director',
-	Managing_Director: 'Managing Director'
+	Executive_Director: "Executive Director",
+	Managing_Director: "Managing Director"
 }
 
 const SOCIAL_LOGIN_TYPE = {
@@ -282,39 +282,39 @@ const HOME_TYPE = {
 };
 
 const HOME_TYPES = {
-	UNICORN: 'Daily smiles',
-	INSPIRATION: 'Inspiring women',
-	DAILY_ADVICE: 'Daily pep talk',
-	GENERAL_GRATITUDE: 'General gratitude',
-	MEMBER_OF_DAY: 'Leader of the day'
+	UNICORN: "Daily smiles",
+	INSPIRATION: "Inspiring women",
+	DAILY_ADVICE: "Daily pep talk",
+	GENERAL_GRATITUDE: "General gratitude",
+	MEMBER_OF_DAY: "Leader of the day"
 };
 
 
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
-		TYPE: 'video',
+		TYPE: "video",
 		VALUE: 2,
-		DISPLAY_NAME: 'VIDEO'
+		DISPLAY_NAME: "VIDEO"
 	},
 	ARTICLE: {
-		TYPE: 'article',
+		TYPE: "article",
 		VALUE: 3,
-		DISPLAY_NAME: 'ARTICLE'
+		DISPLAY_NAME: "ARTICLE"
 	},
 	IMAGE: {
-		TYPE: 'image',
+		TYPE: "image",
 		VALUE: 1,
-		DISPLAY_NAME: 'IMAGE'
+		DISPLAY_NAME: "IMAGE"
 	},
 	VOICE_NOTE: {
-		TYPE: 'voice_note',
+		TYPE: "voice_note",
 		VALUE: 4,
-		DISPLAY_NAME: 'VOICE_NOTE'
+		DISPLAY_NAME: "VOICE_NOTE"
 	},
 	// NONE: {
-	// 	TYPE: 'none',
+	// 	TYPE: "none",
 	// 	VALUE: 4,
-	// 	DISPLAY_NAME: 'NONE'
+	// 	DISPLAY_NAME: "NONE"
 	// },
 
 }
@@ -325,39 +325,39 @@ const MEDIA_TYPE = {
 };
 
 const PRIVACY_STATUS = {
-	PUBLIC: 'public',
-	PRIVATE: 'private',
-	PROTECTED: 'protected'
+	PUBLIC: "public",
+	PRIVATE: "private",
+	PROTECTED: "protected"
 };
 
 const EVENT_CATEGORY = {
 	EVENTS: {
-		TYPE: 'events',
+		TYPE: "events",
 		VALUE: 1,
-		DISPLAY_NAME: 'EVENTS'
+		DISPLAY_NAME: "EVENTS"
 	},
 	CLASSES: {
-		TYPE: 'classes',
+		TYPE: "classes",
 		VALUE: 2,
-		DISPLAY_NAME: 'CLASSES'
+		DISPLAY_NAME: "CLASSES"
 	},
 	TRAINING: {
-		TYPE: 'training',
+		TYPE: "training",
 		VALUE: 3,
-		DISPLAY_NAME: 'TRAINING'
+		DISPLAY_NAME: "TRAINING"
 	},
 	MEETUP: {
-		TYPE: 'meetup',
+		TYPE: "meetup",
 		VALUE: 4,
-		DISPLAY_NAME: 'MEETUP'
+		DISPLAY_NAME: "MEETUP"
 	}
 }
 
 // const EVENT_CATEGORY = {
-// 	EVENTS: 'events',
-// 	CLASSES: 'classes',
-// 	TRAINING: 'training',
-// 	MEETUP: 'meetup'
+// 	EVENTS: "events",
+// 	CLASSES: "classes",
+// 	TRAINING: "training",
+// 	MEETUP: "meetup"
 // }
 const VALIDATION_CRITERIA = {
 	FIRST_NAME_MIN_LENGTH: 3,
@@ -373,7 +373,7 @@ const VALIDATION_CRITERIA = {
 	PASSWORD_MAX_LENGTH: 30
 };
 
-const BYPASS_OTP = '4242';
+const BYPASS_OTP = "4242";
 
 const MESSAGES = {
 	ERROR: {
@@ -524,7 +524,7 @@ const MESSAGES = {
 			};
 		},
 		MOBILE_NOT_VERIFIED: (data) => {
-			data['message'] = "Please verify your mobile number"
+			data["message"] = "Please verify your mobile number"
 			return {
 				"statusCode": HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
 				"message": "Please verify your mobile number",
@@ -604,14 +604,14 @@ const EXCEL_KEY_MAP = {
 	"Email": "email",
 	"Country Code": "countryCode",
 	"Mobile Number": "mobileNo"
-	// 'Company Reg 1':{'parent':'companyReg', 'child':'registration1'}
+	// "Company Reg 1":{"parent":"companyReg", "child":"registration1"}
 };
 
 const REGEX = {
 	EMAIL: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/,
-	// EMAIL: /^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+	// EMAIL: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 	/* URL: /^(http?|ftp|https):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|\
-		int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/, */
+		int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?"\\+&%$#=~_-]+))*$/, */
 	URL: /^(https?|http|ftp|torrent|image|irc):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i,
 	SSN: /^(?!219-09-9999|078-05-1120)(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$/, // US SSN
 	ZIP_CODE: /^[0-9]{5}(?:-[0-9]{4})?$/,
@@ -619,7 +619,7 @@ const REGEX = {
 	// PASSWORD: /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/,
 	COUNTRY_CODE: /^\d{1,4}$/,
 	MOBILE_NUMBER: /^\d{6,16}$/,
-	STRING_REPLACE: /[-+ ()*_$#@!{}|\/^%`~=?,.<>:;'"]/g,
+	STRING_REPLACE: /[-+ ()*_$#@!{}|\/^%`~=?,.<>:;""]/g,
 	MONGO_ID: /^[a-f\d]{24}$/i
 };
 
@@ -697,7 +697,7 @@ const NOTIFICATION_CATEGORY = {
 	},
 	SHOUTOUT_TAGGED_ME: {
 		type: 5,
-		category: 'VIEW_SHOUTLIST_ACTION'
+		category: "VIEW_SHOUTLIST_ACTION"
 	}
 }
 

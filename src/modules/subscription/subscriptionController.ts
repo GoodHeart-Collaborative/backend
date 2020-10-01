@@ -1,8 +1,8 @@
 "use strict";
 import { subscriptionDao } from "./subscriptionDao";
-import { discoverDao } from "../discover/DiscoverDao"
 import * as environment from "@config/environment"
 import * as appUtils from "@utils/appUtils";
+import { CONSTANT } from "@config/constant";
 import { inAppSubscription } from "@utils/InAppSubscription";
 
 class SubscriptionController {
@@ -15,11 +15,40 @@ class SubscriptionController {
     async createSubscription(params) {
         try {
             console.log(params);
-            const tokenData = await inAppSubscription.verifyIosInAppToken(params.receiptToken);
+            let tokenData;
+            if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
+                tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscription_type, params.receiptToken);
+            } else if (params.platform == CONSTANT.DEVICE_TYPE.IOS) {
+                tokenData = await inAppSubscription.verifyIosInAppToken(params.receiptToken);
+                console.log("Subscription Data", tokenData);
+
+                if (! tokenData.flag) {
+                    return CONSTANT.MESSAGES.ERROR.INTERNAL_SERVER_ERROR;
+                }
+
+                console.log("////////////////// Token ///////////" , tokenData.data.latest_receipt_info[0]);
+                const purchaseInfo: any = tokenData.data.latest_receipt_info[0];
+                params.endDate = purchaseInfo.expires_date_ms;
+                params.isSubscribed = true;
+                await subscriptionDao.saveUserSubscription(params);
+            }
+
             console.log(tokenData);
             // let getData = await subscriptionDao.insert()
             // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
             return { subscriptionEndDate: 1601461508613 , isSubscribed: true , subscriptionType: params.subscriptionType };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async subscriptionCallback(params){
+        try {
+            console.log(params);
+            
+            // let getData = await subscriptionDao.insert()
+            // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
+            return params;
         } catch (error) {
             throw error;
         }

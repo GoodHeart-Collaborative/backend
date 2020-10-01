@@ -107,6 +107,7 @@ export class InAppSubscription {
 
             // process.exit(1);
             data.latest_receipt_info.sort((a, b) => b.purchase_date_ms - a.purchase_date_ms);
+            
             return { flag: true, data };
         } catch (error) {
             console.log("in app eror", error);
