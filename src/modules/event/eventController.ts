@@ -36,9 +36,10 @@ class EventController {
             params.created = new Date().getTime();
             params['goingCount'] = 1;
             params['interestCount'] = 1;
+            params['location']['coordinates'] = params['location']['coordinates'].reverse();
+
             const data = await eventDao.insert("event", params, {});
 
-            params['location']['coordinates'] = params['location']['coordinates'].reverse();
             // location: Joi.object().keys({
             //     type: Joi.string().valid(["Point"]),
             //     coordinates: Joi.array().items(Joi.number())
@@ -53,6 +54,7 @@ class EventController {
                     created: Date.now(),
                     createdAt: new Date(),
                     updatedAt: new Date(),
+
                 },
                 // {
                 //     userId: appUtils.toObjectId(params['userId']),
