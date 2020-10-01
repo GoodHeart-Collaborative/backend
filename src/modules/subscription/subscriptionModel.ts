@@ -17,6 +17,7 @@ const elasticSearch = new ElasticSearch();
 export interface Isubscription extends Document {
     // sno: string;
     userId: string;
+    receiptToken: string;
     subscriptionType: number;
     price: number;
     created: number;
@@ -49,6 +50,7 @@ const subscriptionSchema = new Schema({
     },
     amount: { type: Number },
     created: { type: Number },
+    receiptToken: { type: String },
     startDate: { type: Date, required: true, default: new Date() },
     subscriptionEndDate: { type: Number, required: true }
 }, {

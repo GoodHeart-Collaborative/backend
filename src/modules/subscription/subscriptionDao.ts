@@ -29,7 +29,8 @@ export class SubscriptionDao extends BaseDao {
         try {
             console.log("params", params);
             const query: any = {};
-            query.userId = params.userid;
+            query.userId = params.userId;
+            query.receiptToken = params.receiptToken;
             query.subscriptionType = params.subscriptionType;
             query.amount = params.amount || 0;
             query.startDate = params.startDate;

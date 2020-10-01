@@ -28,7 +28,7 @@ class SubscriptionController {
 
                 console.log("////////////////// Token ///////////" , tokenData.data.latest_receipt_info[0]);
                 const purchaseInfo: any = tokenData.data.latest_receipt_info[0];
-                params.endDate = purchaseInfo.expires_date_ms;
+                params.endDate = parseInt(purchaseInfo.expires_date_ms);
                 params.isSubscribed = true;
                 await subscriptionDao.saveUserSubscription(params);
             }
@@ -36,7 +36,7 @@ class SubscriptionController {
             console.log(tokenData);
             // let getData = await subscriptionDao.insert()
             // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
-            return { subscriptionEndDate: 1601461508613 , isSubscribed: true , subscriptionType: params.subscriptionType };
+            return { subscriptionEndDate: params.endDate, isSubscribed: true , subscriptionType: params.subscriptionType };
         } catch (error) {
             throw error;
         }
