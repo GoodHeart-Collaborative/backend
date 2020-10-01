@@ -321,7 +321,8 @@ class EventController {
                 }
             });
 
-            defaultAndInterestEveent.push({ $sort: { startDate: -1 } });
+            defaultAndInterestEveent.push({ $sort: { endDate: -1 } });
+            typeAggPipe.push({ $sort: { endDate: -1 } });
 
             typeAggPipe = [...typeAggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
@@ -416,7 +417,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { _id: -1 } }
+                    { "$sort": { endDate: 1 } }
                 )
                 // pickupLocation.push(latitude, longitude);
                 // aggPipe.push(
@@ -439,7 +440,7 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { _id: -1, } }
+                    { "$sort": { endDate: 1, } }
                 )
             }
             // else {
@@ -459,7 +460,8 @@ class EventController {
             //     );
             // }
             console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
-
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            match['endDate'] = { $gt: new Date().getTime() }
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
             featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
 

@@ -96,7 +96,7 @@ class HomeController {
                     homeData: responseData,
                     isGratitudeJournalFilled: isGratitudeFilled,
                     subscriptionData: {
-                        isSubscribed: true, // (userId.tokenData.planType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
+                        isSubscribed: (userId.tokenData.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
                         subscriptionType: userId.tokenData.subscriptionType,
                         subscriptionEndDate: userId.tokenData.subscriptionEndDate,
                     },

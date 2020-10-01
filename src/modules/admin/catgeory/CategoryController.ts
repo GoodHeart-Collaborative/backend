@@ -2,6 +2,7 @@
 
 import * as _ from "lodash";
 import { categoryDao } from "./CategoryDao";
+import { eventDao } from "../../event/eventDao";
 import * as config from '@config/constant';
 import * as  CategoryConstant from '@modules/admin/catgeory/CategoryConstant';
 class CategoryController {
@@ -183,7 +184,15 @@ class CategoryController {
             const dataToUpdate = {
                 status: params.status
             }
-            const data = await categoryDao.updateOne('categories', criteria, dataToUpdate, {});
+            const data = await categoryDao.findOneAndUpdate('categories', criteria, dataToUpdate, { new: true });
+            if (status === config.CONSTANT.STATUS.BLOCKED || status === config.CONSTANT.STATUS.DELETED) {
+                const updateEventCategory = await eventDao.update('event', { eventCategoryId: categoryId }, { eventCategoryName: "" }, {})
+            }
+            if (status === config.CONSTANT.STATUS.ACTIVE) {
+                const updateEventCategory = await eventDao.update('event', { eventCategoryId: categoryId }, { eventCategoryName: data.title }, {})
+            }
+
+
             if (data && status == config.CONSTANT.STATUS.DELETED) {
                 return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
             }
