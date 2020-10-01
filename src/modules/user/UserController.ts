@@ -633,6 +633,8 @@ export class UserController {
 			const updateCriteria = {
 				_id: userData.userId
 			};
+			let dataToUpdate: any = {};
+
 			let checkUser = await userDao.findUserByEmailOrMobileNo({ mobileNo: params.mobileNo, countryCode: params.countryCode })
 			console.log('checkUser', checkUser);
 
@@ -640,7 +642,7 @@ export class UserController {
 				console.log('1111111111111');
 				return Promise.reject(userConstant.MESSAGES.ERROR.CAN_NOT_CHANGE_MOBILE)
 			} else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
-				console.log('22222222222222222222222');
+				console.log('22222222222222222222222>>>>>>>>>>>>');
 				if (checkUser && checkUser._id !== userData.userId && checkUser.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
 				}
@@ -652,20 +654,30 @@ export class UserController {
 					// const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
 				}
 			}
-			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
-			const dataToUpdate = {
-				dob: params.dob,
-				profession: params.profession,
-				email: params.email,
-				firstName: params.firstName,
-				lastName: params.lastName,
-				mobileNumber: params.mobileNumber,
-				countryCode: params.countryCode,
-				industryType: params.industryType,
-				experience: params.experience,
-				about: params.about,
-				'profilePicUrl.0': params.profilePicUrl,
+			if (checkUser && checkUser.mobileNo !== params.mobileNo) {
+				console.log('55555555555555555555555555555555');
+				dataToUpdate['isMobileVerified'] = false;
 			}
+			if (!checkUser && userData.mobileNo !== params.mobileNo) {
+				console.log('666666666666666666666666666666666666666');
+				dataToUpdate['isMobileVerified'] = false;
+			}
+			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
+			// dataToUpdate = {
+			dataToUpdate['dob'] = params.dob;
+			dataToUpdate['profession'] = params.profession;
+			dataToUpdate['email'] = params.email,
+				dataToUpdate['firstName'] = params.firstName,
+				dataToUpdate['lastName'] = params.lastName;
+			dataToUpdate['mobileNo'] = params.mobileNo;
+			dataToUpdate['countryCode'] = params.countryCode;
+			dataToUpdate['industryType'] = params.industryType;
+			dataToUpdate['experience'] = params.experience;
+			dataToUpdate['about'] = params.about;
+			dataToUpdate['profilePicUrl.0'] = params.profilePicUrl,
+				// }
+				console.log('dataToUpdatedataToUpdatedataToUpdate', dataToUpdate);
+
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
 			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE(data);
@@ -988,7 +1000,7 @@ export class UserController {
 	}
 
 	/**
- * @function updateUserLocation
+     * @function updateUserLocation
  */
 	async updateUserLocation(params: UserRequest.Location, tokenData: TokenData) {
 		try {

@@ -827,26 +827,22 @@ const LOG_HISTORY_TYPE = {
 
 const TEMPLATES = {
 	FAQ: (question, answer) => {
-		return `<div class="coll-box">
-			<div class="col-header clearfix">
-			<span><img src="./public/images/plus.svg" > </span>
-			<h3>
-			${question}
-				</h3>
-				</div>
-				<div class= "col-content hide-col-con">
-				${answer} </div>
-			</div>`;
-
-		// return `<div class="card">
-		// 	<div class="card-header">
-		// 		<h5 class="faq-title">${question}</h5>
-		// 		<i class="fa fa-chevron-right" aria-hidden="true"></i>
-		// 	</div>
-		// 	<div class="card-body">
-		// 		<p>${answer}</p>
-		// 	</div>
-		// </div>`;
+		// return `<div class="coll-box">
+		// 	<div class="col-header clearfix">
+		// 	<span><img src="./public/images/plus.svg" > </span>
+		// 	<h3>
+		// 	${question}
+		// 		</h3>
+		// 		</div>
+		// 		<div class= "col-content hide-col-con">
+		// 		${answer} </div>
+		// 	</div>`;
+		return `<div class="panel_wrap">
+		<button class="accordion">${question}</button>
+		<div class="panel_body">
+			<p> ${answer}</p>
+		</div>
+	</div>`
 
 	}
 };
