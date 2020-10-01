@@ -25,6 +25,40 @@ export class SubscriptionDao extends BaseDao {
 
     }
 
+    async saveUserSubscription(params) {
+        try {
+            console.log("params", params);
+            const query: any = {};
+            query.userId = params.userid;
+            query.subscriptionType = params.subscriptionType;
+            query.amount = params.amount || 0;
+            query.startDate = params.startDate;
+            query.subscriptionEndDate = params.endDate;
+
+            return await this.save("subscription", query);
+        } catch (error) {
+            throw error;
+        }
+
+    }
+
+    async updateUserSubscription(params) {
+        try {
+            console.log("params", params);
+            const query: any = {};
+            const update: any = {};
+            query.userId = params.userid;
+
+            update.subscriptionType = params.subscriptionType;
+            update.subscriptionEndDate = params.endDate;
+            update.isSubscribed = params.isSubscribed;
+
+            return await this.updateOne("subscription", query, update, {});
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
 }
 
 export const subscriptionDao = new SubscriptionDao();

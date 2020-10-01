@@ -47,6 +47,7 @@ const subscriptionSchema = new Schema({
         default: config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.price,
 
     },
+    amount: { type: Number },
     created: { type: Number },
     startDate: { type: Date, required: true, default: new Date() },
     subscriptionEndDate: { type: Number, required: true }
