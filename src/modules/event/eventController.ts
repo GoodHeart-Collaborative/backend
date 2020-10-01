@@ -674,8 +674,8 @@ class EventController {
             let aggPipe = [];
 
             match['_id'] = appUtils.toObjectId(payload.eventId)
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
             aggPipe.push({ $match: match })
-
 
             aggPipe.push({
                 $lookup: {

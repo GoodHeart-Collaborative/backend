@@ -186,7 +186,7 @@ class CategoryController {
             }
             const data = await categoryDao.findOneAndUpdate('categories', criteria, dataToUpdate, { new: true });
             if (status === config.CONSTANT.STATUS.BLOCKED || status === config.CONSTANT.STATUS.DELETED) {
-                const updateEventCategory = await eventDao.update('event', { eventCategoryId: categoryId }, { eventCategoryName: "", status: config.CONSTANT.STATUS.ACTIVE }, {})
+                const updateEventCategory = await eventDao.update('event', { eventCategoryId: categoryId }, { eventCategoryName: "", status: config.CONSTANT.STATUS.BLOCKED }, {})
             }
             if (status === config.CONSTANT.STATUS.ACTIVE) {
                 const updateEventCategory = await eventDao.update('event', { eventCategoryId: categoryId }, { eventCategoryName: data.title, status: config.CONSTANT.STATUS.ACTIVE }, {})
