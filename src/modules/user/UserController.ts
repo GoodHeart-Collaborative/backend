@@ -674,9 +674,9 @@ export class UserController {
 			// dataToUpdate = {
 			dataToUpdate['dob'] = params.dob;
 			dataToUpdate['profession'] = params.profession;
-			dataToUpdate['email'] = params.email,
-				dataToUpdate['firstName'] = params.firstName,
-				dataToUpdate['lastName'] = params.lastName;
+			dataToUpdate['email'] = params.email;
+			dataToUpdate['firstName'] = params.firstName;
+			dataToUpdate['lastName'] = params.lastName;
 			dataToUpdate['mobileNo'] = params.mobileNo;
 			dataToUpdate['countryCode'] = params.countryCode;
 			dataToUpdate['industryType'] = params.industryType;
