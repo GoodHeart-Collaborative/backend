@@ -410,8 +410,10 @@ class AdminController {
 	async verifyLink(params) {
 		try {
 			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.payload.token });
+			console.log('jwtPayloadjwtPayloadjwtPayload', jwtPayload);
 
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			console.log('isExpireisExpireisExpire', isExpire);
 			if (isExpire) {
 				let step2;
 				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
@@ -420,6 +422,13 @@ class AdminController {
 				// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
 				// step2 = userDao.emptyForgotToken({ "token": params.token });
 				// }
+				return Promise.reject('LinkExpired');
+			}
+			const criteriaToken = {
+				email: jwtPayload.payload.email,
+			};
+			const getAdmindata = await adminDao.findAdminById({ userId: jwtPayload.payload.userId })
+			if (getAdmindata.forgotToken !== params.payload.token || getAdmindata.forgotToken === "") {
 				return Promise.reject('LinkExpired');
 			}
 			// if (params.type === "forgot") {
@@ -475,12 +484,8 @@ class AdminController {
 			} else {
 				const step1 = await adminDao.findOne('admins', { _id: jwtPayload.payload.userId }, {}, {});
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-
-				// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-				// } else {
 				let salt;
 				salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
 					"name": step1.name,
@@ -490,11 +495,8 @@ class AdminController {
 					"adminType": step1.adminType
 				});
 				const adminObject = appUtils.buildToken(tokenData);
-
 				const accessToken = await tokenManager.generateAdminToken({ "type": "ADMIN_LOGIN", "object": adminObject });
-
 				const step3 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-
 				const step4 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
 
 				const loginObj = {
@@ -510,7 +512,7 @@ class AdminController {
 
 				delete step1.salt, delete step1.hash;
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-
+				const clearForGotToken = await adminDao.updateOne('admins', { _id: jwtPayload.payload.userId }, { forgotToken: "" }, {})
 				// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
 				// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
 				// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
@@ -535,7 +537,6 @@ class AdminController {
 
 				return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
 			}
-
 		}
 		catch (error) {
 			throw error;

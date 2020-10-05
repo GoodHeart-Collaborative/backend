@@ -262,6 +262,7 @@ export class UserController {
 						delete step1['memberCreatedAt'];
 						delete step1['isMemberOfDay'];
 						delete step1['reportCount'];
+						delete step1['status'];
 
 
 						step1['subscriptionData'] = {
@@ -272,7 +273,7 @@ export class UserController {
 						delete step1['subscriptionType'];
 						delete step1['subscriptionEndDate'];
 
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
 					}
 				}
 			}
