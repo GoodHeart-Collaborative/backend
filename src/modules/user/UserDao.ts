@@ -701,7 +701,7 @@ export class UserDao extends BaseDao {
 				};
 				const options = { lean: true, new: true };
 				// const projection = { mobileOtp: 1 }
-				const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0 };
+				const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0, likeCount: 0, commnectCount: 0, subscriptionEndDate: 0, mobileOtp: 0 };
 
 				return await this.findOne('users', mobleCriteria, projection, options, {});
 			}

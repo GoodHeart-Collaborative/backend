@@ -249,6 +249,20 @@ export class UserController {
 						delete step1['fullMobileNo']
 						delete step1['googleId'];
 						delete step1['facebookId'];
+						delete step1['badgeCount'];
+						delete step1['location'];
+						delete step1['likeCount'];
+						delete step1['commentCount'];
+						delete step1['refreshToken'];
+						delete step1['salt'];
+						delete step1['hash'];
+						delete step1['members'];
+						delete step1['myConnection']
+						delete step1['countMember'];
+						delete step1['memberCreatedAt'];
+						delete step1['isMemberOfDay'];
+						delete step1['reportCount'];
+
 
 						step1['subscriptionData'] = {
 							isSubscribed: (step1.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
@@ -688,6 +702,43 @@ export class UserController {
 
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
+			delete data['salt'];
+			delete data['hash'];
+			delete data['mobileOtp'];
+			delete data['forgotToken'];
+			delete data['isAdminRejected'];
+			delete data['isAdminVerified'];
+			delete data['adminStatus'];
+			delete data['forgotToken'];
+			delete data['fullMobileNo']
+			delete data['googleId'];
+			delete data['facebookId'];
+			delete data['badgeCount'];
+			delete data['location'];
+			delete data['likeCount'];
+			delete data['commentCount'];
+			delete data['refreshToken'];
+			delete data['salt'];
+			delete data['hash'];
+			delete data['members'];
+			delete data['myConnection']
+			delete data['countMember'];
+			delete data['memberCreatedAt'];
+			delete data['isMemberOfDay'];
+			delete data['reportCount'];
+
+
+			data['subscriptionData'] = {
+				isSubscribed: (data.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
+				subscriptionType: data.subscriptionType,
+				subscriptionEndDate: data.subscriptionEndDate,
+			};
+			delete data['subscriptionType'];
+			delete data['subscriptionEndDate'];
+
+			// delete data['']
+			// const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0 };
+
 			// const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0 };
 			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE(data);
 
