@@ -250,6 +250,14 @@ export class UserController {
 						delete step1['googleId'];
 						delete step1['facebookId'];
 
+						step1['subscriptionData'] = {
+							isSubscribed: (step1.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
+							subscriptionType: step1.subscriptionType,
+							subscriptionEndDate: step1.subscriptionEndDate,
+						};
+						delete step1['subscriptionType'];
+						delete step1['subscriptionEndDate'];
+
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
 					}
 				}
@@ -680,6 +688,7 @@ export class UserController {
 
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
+			// const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0 };
 			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE(data);
 
 		} catch (error) {
