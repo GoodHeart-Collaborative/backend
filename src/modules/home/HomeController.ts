@@ -100,7 +100,8 @@ class HomeController {
                         subscriptionType: userId.tokenData.subscriptionType,
                         subscriptionEndDate: userId.tokenData.subscriptionEndDate,
                     },
-                    unreadNotificationCount: notificationCount
+                    unreadNotificationCount: notificationCount,
+                    isEmailVerified: userId.tokenData.isEmailVerified,
                 }
             }
             return homeConstants.MESSAGES.SUCCESS.HOME_DATA(responseData)
