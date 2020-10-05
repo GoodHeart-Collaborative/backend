@@ -2,7 +2,7 @@ declare namespace AdminEventRequest {
 
     interface location {
         type: string,
-        coordinates: [number]
+        coordinates: number[]
     }
     export interface IEventAdd extends Device {
         // userId: string,
