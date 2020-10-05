@@ -143,12 +143,11 @@ export const
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 
-				const headers: Device = request.headers;
-
+				const headers = request.headers;
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {
 					const result = await userController.verifyOTP({ ...headers, ...payload }, userData);
-					result["data"] = {}
+					// result["data"] = {}
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);

@@ -714,6 +714,10 @@ export class UserController {
 
 	async verifyOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {
+			const headers = params.authorization;
+			const accessToken = headers.substr(headers.indexOf(" ") + 1);
+			console.log('accessTokenaccessToken', accessToken);
+			// const accessToken = params.substr(oriuginal.indexOf(" ") + 1);
 			// if (config.SERVER.ENVIRONMENT === 'development') {
 			// 	if (params.otp === config.CONSTANT.BYPASS_OTP) {
 			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
@@ -731,7 +735,11 @@ export class UserController {
 							isMobileVerified: true,
 						}
 						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
-						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+						// return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+						if (data && !data.dob || !data.dob == null && data.industryType) {
+							return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+						}
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...data });
 					}
 					else if (params.type === 'email') {
 						const dataToUpdate = {
@@ -753,7 +761,12 @@ export class UserController {
 							mobileOtp: 0
 						}
 						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
-						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({})
+						// return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({})
+						// return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
+						if (data && !data.dob || !data.dob == null && data.industryType) {
+							return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+						}
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...data });
 					};
 				}
 

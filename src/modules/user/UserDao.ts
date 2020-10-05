@@ -392,10 +392,12 @@ export class UserDao extends BaseDao {
 			// 		params.latitude
 			// 	]
 			// }
-			update["$set"] = {"location" : {
-				"type": "Point",
-				"coordinates": [params.longitude, params.latitude]
-			}};
+			update["$set"] = {
+				"location": {
+					"type": "Point",
+					"coordinates": [params.longitude, params.latitude]
+				}
+			};
 			return await this.findOneAndUpdate("users", query, update, { new: true });
 		} catch (error) {
 			throw error;
@@ -691,13 +693,13 @@ export class UserDao extends BaseDao {
 
 	async checkOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {
-			if (params.mobileNo) {
+			if (params.type === 'mobile') {
 				const mobleCriteria = {
 					_id: userData.userId,
-					countryCode: params.countryCode,
-					mobileNo: params.mobileNo,
+					countryCode: userData.countryCode,
+					mobileNo: userData.mobileNo,
 				};
-				const options = { lean: true };
+				const options = { lean: true, new: true };
 				const projection = { mobileOtp: 1 }
 				return await this.findOne('users', mobleCriteria, {}, options, {});
 			}

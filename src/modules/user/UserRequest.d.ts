@@ -77,5 +77,6 @@ declare namespace UserRequest {
 		type: string;
 		deviceId: string;
 		verificationFor: string;
+		authorization: string
 	}
 }
