@@ -44,7 +44,7 @@ const notificationSchema = new Schema({
 		],
 		required: true
 	},
-	postId: { type: Schema.Types.ObjectId },
+	postId: { type: Schema.Types.ObjectId },  // for the notification list memberof the day reposne only
 	isRead: { type: Boolean, default: false },
 	created: { type: Number }
 }, {

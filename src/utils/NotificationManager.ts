@@ -138,7 +138,8 @@ export class NotificationManager {
 				"receiverId": [params.userId],
 				"title": params.title,
 				"message": params.message,
-				"type": params.type
+				"type": params.type,
+				// postId: params.postId
 			};
 			const step2 = notificationDao.addNotification(noticiationData);
 			const updateUserBadgeCount = await baseDao.updateOne('users', { _id: params.userId }, { $inc: { badgeCount: 1 } }, {});
@@ -214,7 +215,8 @@ export class NotificationManager {
 				"receiverId": [params.userId],
 				"title": params.title,
 				"message": params.message,
-				"type": params.type
+				"type": params.type,
+				postId: params.userId
 			};
 			const step2 = notificationDao.addNotification(noticiationData);
 			const updateUserBadgeCount = await baseDao.updateOne('users', { _id: params.userId }, { $inc: { badgeCount: 1 } }, {});
