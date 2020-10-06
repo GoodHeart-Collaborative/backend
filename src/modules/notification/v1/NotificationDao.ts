@@ -74,7 +74,7 @@ export class NotificationDao extends BaseDao {
 					profilePicUrl: '$users.profilePicUrl',
 					profession: { $ifNull: ["$users.profession", ""] },
 					industryType: '$users.industryType',
-					experience: '$users.industryType',
+					experience: '$users.experience',
 					about: '$users.about',
 					myConnection: '$users.myConnection',
 				},
