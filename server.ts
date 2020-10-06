@@ -75,6 +75,19 @@ const start = async () => {
 			}
 		}
 	});
+
+	// server.route({
+	// 	method: "GET",
+	// 	path: "./views/images/{path*}",
+	// 	options: {
+	// 		handler: {
+	// 			directory: {
+	// 				path: process.cwd() + "/src/views/",
+	// 				listing: false
+	// 			}
+	// 		}
+	// 	}
+	// });
 };
 
 routes.push(
@@ -91,6 +104,22 @@ routes.push(
 		},
 	}
 )
+
+routes.push(
+	{
+		method: 'GET',
+		path: '/src/views/'.toString() + `{path*}`, // ' /views/uploads/image/{path*}',
+		options: {
+			handler: {
+				directory: {
+					path: process.cwd() + '/src/views/'.toString(),
+					listing: false,
+				},
+			},
+		},
+	}
+)
+
 
 start();
 
