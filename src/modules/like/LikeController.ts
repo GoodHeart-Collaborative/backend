@@ -161,6 +161,12 @@ class LikeController {
             let data: any = {};
             let getComment: any = {}
 
+            if (params.userId) {
+                if (params['subscriptionEndDate'] < new Date().getTime() || params['subscriptionEndDate'] == "") {
+                    return Promise.reject(likeConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
+                }
+            }
+
             let incOrDec: number = 1
             query = { _id: await appUtils.toObjectId(params.postId) }
             if (params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {

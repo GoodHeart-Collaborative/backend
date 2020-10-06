@@ -58,5 +58,14 @@ export const MESSAGES = {
                 "type": "DEFAULT"
             }
         },
+
+        SUBSCRIPTION_NONE: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.SUBSCRIPTION_EXPIRE_ERROR_CODE,
+                "message": "please purchase subscription",
+                "type": "SUBSCRIPTION_NONE",
+                data: data
+            }
+        },
     },
 };

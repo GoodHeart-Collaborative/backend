@@ -31,6 +31,12 @@ class CommentController {
             let query: any = {}
             let getComment: any = {}
             let data: any = {};
+
+            if (params.userId) {
+                if (params['subscriptionEndDate'] < new Date().getTime() || params['subscriptionEndDate'] == "") {
+                    return Promise.reject(commentConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
+                }
+            }
             query = { _id: await appUtils.toObjectId(params.postId) }
             if (params.type === CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
                 getPost = await userDao.checkUser(query)

@@ -106,6 +106,10 @@ eventSchema.set("toObject", {
     virtuals: true
 });
 
+// eventSchema.index({
+//     location: '2dsphere'
+// });
+
 
 eventSchema.methods.toJSON = function () {
     const object = appUtils.clean(this.toObject());
