@@ -72,7 +72,7 @@ export class NotificationDao extends BaseDao {
 					name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
 					// name: "$users.firstName",
 					profilePicUrl: '$users.profilePicUrl',
-					profession: { $ifNull: ["$users.profession", ""] },
+					profession: "$users.profession",
 					industryType: '$users.industryType',
 					experience: '$users.experience',
 					about: '$users.about',
@@ -85,9 +85,31 @@ export class NotificationDao extends BaseDao {
 				message: 1,
 				type: 1,
 				created: 1,
-				postId: 1
+				postId: 1,
+				receiverId: 1
 			}
 		})
+
+		aggPipe.push({
+			$project: {
+				likeCount: '$likeCount',
+				commentCount: '$commentCount',
+				user: {
+					$cond: {
+						if: { $eq: ['$user.name', " "] }, then: '$$REMOVE', else: '$user'
+					}
+				},
+				isRead: 1,
+				title: 1,
+				message: 1,
+				type: 1,
+				created: 1,
+				postId: 1,
+				receiverId: 1
+			}
+		})
+
+
 		// senderId: 0, receiverId: 0, createdAt: 0, updatedAt: 0 } })
 
 		let result = await this.paginate('notifications', aggPipe, params.limit, params.pageNo, {}, true)

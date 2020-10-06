@@ -211,7 +211,7 @@ export class NotificationManager {
 
 		if (step1.length) {
 			const noticiationData = {
-				"senderId": '5f6c961dda61cf3887f2a079',
+				"senderId": params.userId,
 				"receiverId": [params.userId],
 				"title": params.title,
 				"message": params.message,
