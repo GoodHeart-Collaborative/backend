@@ -28,14 +28,14 @@ class DiscoverController {
     }
     async getUserData(params, userId) {
         try {
-            if(params.longitude == undefined && params.latitude == undefined) {
+            if (params.longitude == undefined && params.latitude == undefined) {
                 let getUserInfo = await discoverDao.getUserById(userId)
-                if(getUserInfo) {
-                    if(getUserInfo && getUserInfo.location && getUserInfo.location.coordinates && getUserInfo.location.coordinates.length > 0) {
+                if (getUserInfo) {
+                    if (getUserInfo && getUserInfo.location && getUserInfo.location.coordinates && getUserInfo.location.coordinates.length > 0) {
                         params.longitude = getUserInfo.location.coordinates[0]
                         params.latitude = getUserInfo.location.coordinates[1]
                     }
-            }
+                }
             }
             let getData = await discoverDao.getUserData(params, userId)
             return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA(getData)
@@ -80,7 +80,8 @@ class DiscoverController {
                     params['body'] = {
                         user: {
                             _id: userId.userId,
-                            name: userId.firstName,
+                            name: (userId.firstName) + " " + (userId.lastName ? userId.lastName : ""),
+                            // name: userId.firstName,
                             profilePicUrl: userId.profilePicUrl,
                             profession: userId.profession,
                             industryType: userId.industryType,
@@ -128,8 +129,9 @@ class DiscoverController {
             params['title'] = 'Friend_request';
             params['body'] = {
                 user: {
+                    name: (userId.firstName) + " " + (userId.lastName ? userId.lastName : ""),
                     userId: userId.userId,
-                    name: userId.firstName,
+                    // name: userId.firstName,
                     profilePicUrl: userId.profilePicUrl,
                     profession: userId.profession,
                     industryType: userId.industryType,
