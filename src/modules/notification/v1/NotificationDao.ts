@@ -45,28 +45,38 @@ export class NotificationDao extends BaseDao {
 						}
 					}
 				},
-				{
-					$project: {
-						_id: 1,
-						name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
-						// name: { $ifNull: ["$firstName", ""] },
-						profilePicUrl: 1,
-						profession: { $ifNull: ["$profession", ""] },
-						insustryType: 1,
-						experience: 1,
-						about: 1,
-						myConnection: 1,
-						likeCount: 1,
-						commentCount: 1
-					}
-				}],
+					// {
+					// 	$project: {
+					// 		_id: 1,
+					// 		name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+					// 		// name: { $ifNull: ["$firstName", ""] },
+					// 		profilePicUrl: 1,
+					// 		profession: { $ifNull: ["$profession", ""] },
+					// 		insustryType: 1,
+					// 		experience: 1,
+					// 		about: 1,
+					// 		myConnection: 1,
+					// 		likeCount: 1,
+					// 		commentCount: 1
+					// 	}
+					// }
+				],
 			}
 		})
 		aggPipe.push({ $unwind: { path: '$users', preserveNullAndEmptyArrays: true } })
 
 		aggPipe.push({
 			$project: {
-				users: '$users',
+				user: {
+					// name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
+					name: "$users.firstName",
+					profilePicUrl: '$users.profilePicUrl',
+					profession: { $ifNull: ["$profession", ""] },
+					industryType: '$users.industryType',
+					experience: '$users.industryType',
+					about: '$users.about',
+					myConnection: '$users.myConnection',
+				},
 				likeCount: '$users.likeCount',
 				commentCount: '$users.commentCount',
 				isRead: 1,
