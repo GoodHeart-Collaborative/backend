@@ -68,10 +68,11 @@ export class NotificationDao extends BaseDao {
 		aggPipe.push({
 			$project: {
 				user: {
+					_id: '$users._id',
 					// name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
 					name: "$users.firstName",
 					profilePicUrl: '$users.profilePicUrl',
-					profession: { $ifNull: ["$profession", ""] },
+					profession: { $ifNull: ["users.profession", ""] },
 					industryType: '$users.industryType',
 					experience: '$users.industryType',
 					about: '$users.about',
