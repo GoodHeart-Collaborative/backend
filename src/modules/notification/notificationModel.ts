@@ -14,6 +14,7 @@ export interface INotification extends Document {
 	type: Number;
 	isRead: boolean;
 	created: number;
+	postId: string;
 }
 
 /**
@@ -43,6 +44,7 @@ const notificationSchema = new Schema({
 		],
 		required: true
 	},
+	postId: { type: Schema.Types.ObjectId },
 	isRead: { type: Boolean, default: false },
 	created: { type: Number }
 }, {

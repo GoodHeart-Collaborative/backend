@@ -33,6 +33,52 @@ export class NotificationDao extends BaseDao {
 		aggPipe.push({ "$match": { receiverId: await toObjectId(tokenData.userId) } })
 		aggPipe.push({ "$sort": { "_id": -1 } });
 
+		aggPipe.push({
+			$lookup: {
+				from: 'users',
+				let: { uId: '$senderId' },
+				as: 'users',
+				pipeline: [{
+					$match: {
+						$expr: {
+							$eq: ['$_id', '$$uId']
+						}
+					}
+				},
+				{
+					$project: {
+						_id: 1,
+						name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+						// name: { $ifNull: ["$firstName", ""] },
+						profilePicUrl: 1,
+						profession: { $ifNull: ["$profession", ""] },
+						insustryType: 1,
+						experience: 1,
+						about: 1,
+						myConnection: 1,
+						likeCount: 1,
+						commentCount: 1
+					}
+				}],
+			}
+		})
+		aggPipe.push({ $unwind: { path: '$users', preserveNullAndEmptyArrays: true } })
+
+		aggPipe.push({
+			$project: {
+				users: '$users',
+				likeCount: '$users.likeCount',
+				commentCount: '$users.commentCount',
+				isRead: 1,
+				title: 1,
+				message: 1,
+				type: 1,
+				created: 1,
+				postId: 1
+			}
+		})
+		// senderId: 0, receiverId: 0, createdAt: 0, updatedAt: 0 } })
+
 		let result = await this.paginate('notifications', aggPipe, params.limit, params.pageNo, {}, true)
 		// let arr = []
 		// result && result.data && result.data.length > 0 && result.data.forEach(data => {
