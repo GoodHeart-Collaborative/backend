@@ -69,8 +69,8 @@ export class NotificationDao extends BaseDao {
 			$project: {
 				user: {
 					_id: '$users._id',
-					// name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
-					name: "$users.firstName",
+					name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
+					// name: "$users.firstName",
 					profilePicUrl: '$users.profilePicUrl',
 					profession: { $ifNull: ["$users.profession", ""] },
 					industryType: '$users.industryType',
