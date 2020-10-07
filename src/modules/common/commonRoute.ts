@@ -74,10 +74,10 @@ export const commonRoute: ServerRoute = [
 	},
 	{
 		method: "GET",
-		path: `${config.SERVER.API_BASE_URL}/v1/common/resetPasswordWeb`,
+		path: `${config.SERVER.API_BASE_URL}/v1/common/resetPasswordWeb/`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			// const query: Device = request.params;
-			const payload = request.params;
+			const payload = request.query;
 			console.log('payloadpayloadpayload', payload);
 			try {
 				const tokenData = await tokenManager.verifyToken({ ...payload }, "common", false);
@@ -100,7 +100,7 @@ export const commonRoute: ServerRoute = [
 			// },
 			validate: {
 				// headers: validator.headerObject["required"],
-				params: {
+				query: {
 					accessToken: Joi.string().required().description("access token of user")
 				},
 				failAction: appUtils.failActionFunction

@@ -728,7 +728,7 @@ const NOTIFICATION_DATA = {
 
 const DEEPLINK = {
 	DEFAULT_FALLBACK_URL: "https://google.com",
-	RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/",
+	RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/?",
 	// for android deeplink
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
 	ANDROID_SCHEME: "com.goodheart://",
