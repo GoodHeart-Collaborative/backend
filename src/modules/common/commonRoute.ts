@@ -99,7 +99,7 @@ export const commonRoute: ServerRoute = [
 				strategies: ["BasicAuth"]
 			},
 			validate: {
-				headers: validator.headerObject["required"],
+				// headers: validator.headerObject["required"],
 				query: {
 					accessToken: Joi.string().required().description("access token of user")
 				},
