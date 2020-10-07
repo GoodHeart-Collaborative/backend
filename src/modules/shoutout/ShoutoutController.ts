@@ -83,13 +83,13 @@ class ShoutoutController {
             // params['members']          
             let checkDiscover = await shoutoutDao.saveBulkShoutout(createArr)
             const notificationData: any = {};
-            notificationData['title'] = config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.category;;
+            notificationData['title'] = "Shoutout";;
             // notificationData['body'] = {
             //     userId: userId.userId,
             // };
             notificationData['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.category;
             // notificationData['click_action'] = "FRIEND_REQUEST";
-            notificationData['message'] = `${userId.firstName} send me a shout out `;
+            notificationData['message'] = `${userId.firstName} has sent you a shoutout`;
             notificationData['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.type;
             notificationData['members'] = params.members //['5f32458da49d4610aeb6efd8'] // params.members;
 

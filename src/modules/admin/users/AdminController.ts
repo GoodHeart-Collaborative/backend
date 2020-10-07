@@ -596,7 +596,7 @@ class AdminController {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}
 			// send push from here
-			params['title'] = 'request Approval';
+			params['title'] = 'Request Approval';
 			params['body'] = {};
 			// params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
 			params['message'] = `your account has been ${params.adminStatus} successfully`;

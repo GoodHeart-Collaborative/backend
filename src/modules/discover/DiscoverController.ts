@@ -76,7 +76,7 @@ class DiscoverController {
                     }
                 }
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
-                    params['title'] = 'Friend_request';
+                    params['title'] = 'Friend Request';
                     params['body'] = {
                         user: {
                             _id: userId.userId,
@@ -126,7 +126,7 @@ class DiscoverController {
             checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
 
-            params['title'] = 'Friend_request';
+            params['title'] = 'Friend Request';
             params['body'] = {
                 user: {
                     name: (userId.firstName) + " " + (userId.lastName ? userId.lastName : ""),
@@ -142,7 +142,7 @@ class DiscoverController {
             };
             params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
             params['click_action'] = "FRIEND_REQUEST";
-            params['message'] = `${userId.firstName} wants to connect with you `;
+            params['message'] = `${userId.firstName} wants to connect with you`;
             params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
             params['userId'] = params.followerId;
 
