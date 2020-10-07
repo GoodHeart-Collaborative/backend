@@ -72,6 +72,50 @@ export const commonRoute: ServerRoute = [
 			}
 		}
 	},
+	{
+		method: "GET",
+		path: `${config.SERVER.API_BASE_URL}/v1/common/resetPasswordWeb`,
+		handler: async (request: Request, h: ResponseToolkit) => {
+			const query: Device = request.query;
+			const payload = request.query;
+			console.log('payloadpayloadpayload', payload);
+			try {
+				const tokenData = await tokenManager.verifyToken({ ...query }, "common", false);
+				console.log('tokenDatatokenDatatokenDatatokenDatatokenData>>>>>>>>>>>>>>>>', tokenData);
+				let result;
+				result = await userController.redirectResetPassword(payload);
+				// const message = "Your link has been expired. Please regenerate your link again.";
+				return h.view("reset-passsword-web.html", { "name": request.query.name, "message": "message", "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
+				// return responseHandler.sendSuccess(h, result);
+			} catch (error) {
+				return responseHandler.sendError(error);
+			}
+		},
+		config: {
+			tags: ["api", "common"],
+			description: "Change Forgot Password",
+			notes: "Change forgot password API for (admin/user)",
+			auth: {
+				strategies: ["BasicAuth"]
+			},
+			validate: {
+				headers: validator.headerObject["required"],
+				query: {
+					accessToken: Joi.string().required().description("access token of user")
+				},
+				failAction: appUtils.failActionFunction
+			},
+			plugins: {
+				"hapi-swagger": {
+					// payloadType: 'form',
+					responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+				}
+			}
+		}
+	},
+
+
+
 	// {
 	// 	method: "POST",
 	// 	path: `${config.SERVER.API_BASE_URL}/v1/common/refresh-token`,

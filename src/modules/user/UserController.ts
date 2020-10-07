@@ -534,6 +534,16 @@ export class UserController {
 		}
 	}
 
+
+
+	async redirectResetPassword(token) {
+		try {
+			return;
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
 	/**
 	 * @function refreshToken
 	 */
