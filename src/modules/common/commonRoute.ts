@@ -19,10 +19,10 @@ export const commonRoute: ServerRoute = [
 		method: "POST",
 		path: `${config.SERVER.API_BASE_URL}/v1/common/change-forgot-password`,
 		handler: async (request: Request, h: ResponseToolkit) => {
-			const query: Device = request.query;
-			const payload: ChangeForgotPasswordRequest = request.payload;
+			// const query: Device = request.query;
+			const payload = request.payload;
 			try {
-				const tokenData = await tokenManager.verifyToken({ ...query }, "common", false);
+				const tokenData = await tokenManager.verifyToken({ ...payload }, "common", false);
 				let result;
 				if (tokenData.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
 					result = await adminController.changeForgotPassword(payload, tokenData);
@@ -32,11 +32,11 @@ export const commonRoute: ServerRoute = [
 				return responseHandler.sendSuccess(h, result);
 			} catch (error) {
 				let step1;
-				const jwtPayload = await tokenManager.decodeToken({ "accessToken": query.accessToken });
+				const jwtPayload = await tokenManager.decodeToken({ "accessToken": payload.accessToken });
 				if (jwtPayload.payload.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-					step1 = adminDao.emptyForgotToken({ "token": query.accessToken });
+					step1 = adminDao.emptyForgotToken({ "token": payload.accessToken });
 				} else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
-					step1 = userDao.emptyForgotToken({ "token": query.accessToken });
+					step1 = userDao.emptyForgotToken({ "token": payload.accessToken });
 				}
 				return responseHandler.sendError(error);
 			}
@@ -45,15 +45,17 @@ export const commonRoute: ServerRoute = [
 			tags: ["api", "common"],
 			description: "Change Forgot Password",
 			notes: "Change forgot password API for (admin/user)",
-			auth: {
-				strategies: ["BasicAuth"]
-			},
+			// auth: {
+			// 	strategies: ["BasicAuth"]
+			// },
+
 			validate: {
-				headers: validator.headerObject["required"],
-				query: {
-					accessToken: Joi.string().required().description("access token of (admin/user)")
-				},
+				// headers: validator.headerObject["required"],
+				// query: {
+				// 	accessToken: Joi.string().required().description("access token of (admin/user)")
+				// },
 				payload: {
+					accessToken: Joi.string().required().description("access token of (admin/user)"),
 					password: Joi.string()
 						.trim()
 						// .regex(config.CONSTANT.REGEX.PASSWORD)
