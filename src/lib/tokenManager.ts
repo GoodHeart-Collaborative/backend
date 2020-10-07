@@ -28,7 +28,7 @@ export const generateUserToken = async function (params) {
 		if (params.type === "USER_SIGNUP" || params.type === "USER_LOGIN") {
 			return await Jwt.sign(params.object, params.salt, { algorithm: config.SERVER.JWT_ALGO, expiresIn: config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000 }); // 180 days
 		} else if (params.type === "FORGOT_PASSWORD") {
-			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: "10m" }); // 10 min
+			return await Jwt.sign(params.object, config.SERVER.JWT_CERT_KEY, { algorithm: config.SERVER.JWT_ALGO, expiresIn: "50m" }); // 10 min
 		}
 	} catch (error) {
 		return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.TOKEN_GENERATE_ERROR(error)));

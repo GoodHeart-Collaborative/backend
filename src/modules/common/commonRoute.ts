@@ -76,11 +76,11 @@ export const commonRoute: ServerRoute = [
 		method: "GET",
 		path: `${config.SERVER.API_BASE_URL}/v1/common/resetPasswordWeb`,
 		handler: async (request: Request, h: ResponseToolkit) => {
-			const query: Device = request.query;
-			const payload = request.query;
+			// const query: Device = request.params;
+			const payload = request.params;
 			console.log('payloadpayloadpayload', payload);
 			try {
-				const tokenData = await tokenManager.verifyToken({ ...query }, "common", false);
+				const tokenData = await tokenManager.verifyToken({ ...payload }, "common", false);
 				console.log('tokenDatatokenDatatokenDatatokenDatatokenData>>>>>>>>>>>>>>>>', tokenData);
 				let result;
 				result = await userController.redirectResetPassword(payload);
@@ -95,12 +95,12 @@ export const commonRoute: ServerRoute = [
 			tags: ["api", "common"],
 			description: "Change Forgot Password",
 			notes: "Change forgot password API for (admin/user)",
-			auth: {
-				strategies: ["BasicAuth"]
-			},
+			// auth: {
+
+			// },
 			validate: {
 				// headers: validator.headerObject["required"],
-				query: {
+				params: {
 					accessToken: Joi.string().required().description("access token of user")
 				},
 				failAction: appUtils.failActionFunction
