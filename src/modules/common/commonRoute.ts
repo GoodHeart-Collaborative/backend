@@ -85,7 +85,7 @@ export const commonRoute: ServerRoute = [
 				let result;
 				result = await userController.redirectResetPassword(payload);
 				// const message = "Your link has been expired. Please regenerate your link again.";
-				return h.view("reset-passsword-web.html", { "name": request.query.name, "message": "message", "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
+				return h.view("reset-password-web", { "name": request.query.name, "message": "message", "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
 				// return responseHandler.sendSuccess(h, result);
 			} catch (error) {
 				return responseHandler.sendError(error);
