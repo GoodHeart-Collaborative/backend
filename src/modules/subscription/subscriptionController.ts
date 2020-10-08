@@ -44,6 +44,7 @@ class SubscriptionController {
 
     async subscriptionCallback(params){
         try {
+            console.log("************************************Subscription Callback response from ios inapp purchase *******************");
             console.log(params);
             
             // let getData = await subscriptionDao.insert()
