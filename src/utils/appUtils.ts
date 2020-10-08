@@ -689,7 +689,7 @@ const getLocationByIp = async (ipaddress: string) => {
 		let ip = ipaddress || '';
 
 		const request = {
-			method: 'post',
+			method: 'GET',
 			params: ipaddress,
 		};
 		let url = 'http://ip-api.com/json/' + ip
