@@ -23,8 +23,9 @@ export class EventDao extends BaseDao {
 
     async getEventList(params, tokenData) {
         try {
-            const { pageNo, limit, date, searchKey, longitude, privacy, latitude, distance, eventCategoryId, isFeaturedEvent } = params;
+            const { pageNo, limit, date, searchKey, privacy, distance, eventCategoryId, isFeaturedEvent, getIpfromNtwk } = params;
             console.log('tokenDatatokenData', tokenData.userId);
+            let { longitude, latitude, } = params;
 
             const paginateOptions = {
                 limit: limit || 10,
@@ -84,6 +85,16 @@ export class EventDao extends BaseDao {
                     { title: reg },
                 ];
             }
+
+
+            if (longitude == undefined && latitude == undefined) {
+                const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
+
+                latitude = lat_lng.lat;
+                longitude = lat_lng.long;
+            }
+
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(longitude, latitude);
