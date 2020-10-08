@@ -693,8 +693,11 @@ const getLocationByIp = async (ipaddress: string) => {
 			params: ipaddress,
 		};
 		let url = 'http://ip-api.com/json/' + ip
+		console.log('urlurlurl', url);
 
-		const response = await fetch('http://ip-api.com/json/', request);
+		// const response = await fetch('http://ip-api.com/json/', request);
+		const response = await fetch(url, request);
+		console.log('responseresponseresponse', response);
 
 		// let options = http_options({ normal: true })
 		// const response = await fetch(url)
