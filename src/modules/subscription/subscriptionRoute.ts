@@ -43,7 +43,7 @@ export const subscriptionRoute: ServerRoute[] = [
         }
     },
     {
-        method: "GET",
+        method: "POST",
         path: `${config.SERVER.API_BASE_URL}/v1/subscription/callback`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const payload: any = request.payload;
