@@ -9,6 +9,7 @@ import { eventDao } from "@modules/event/eventDao";
 import * as appUtils from "@utils/appUtils";
 import * as XLSX from 'xlsx'
 import { categoryDao } from "../catgeory";
+import { eventInterestDao } from "@modules/eventInterest/eventInterestDao";
 
 class EventController {
 
@@ -163,7 +164,9 @@ class EventController {
             const datatoUpdate = {
                 status: status
             };
-            const data = await eventDao.updateOne('event', criteria, datatoUpdate, {})
+            const data = await eventDao.updateOne('event', criteria, datatoUpdate, {});
+            const updateEventInterest = await eventInterestDao.updateMany('event', { eventId: Id }, datatoUpdate, {})
+
             if (data && status == config.CONSTANT.STATUS.DELETED) {
                 return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
             }
