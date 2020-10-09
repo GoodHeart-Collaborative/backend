@@ -13,7 +13,7 @@ let addForum = Joi.object({
         config.CONSTANT.MEDIA_TYPE.IMAGE,
         config.CONSTANT.MEDIA_TYPE.VIDEO,
         config.CONSTANT.MEDIA_TYPE.NONE,
-    ]),
+    ]).default(config.CONSTANT.MEDIA_TYPE.NONE),
     thumbnailUrl: Joi.string(),
     description: Joi.string().required(),
     postAnonymous: Joi.boolean().default(false),

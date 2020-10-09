@@ -20,10 +20,10 @@ class AdminHomeController {
     async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
             if (params.postedAt) {
-                params["postedAt"] = params.postedAt;
-                // params.postedAt = new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
+                // params["postedAt"] = params..postedAt;
+                params.postedAt = moment(new Date(params.postedAt)).format('YYYY-MM-DD HH:mm:ss')
             } else {
-                params["postedAt"] = new Date()
+                params["postedAt"] = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') //  new Date()
                 // params.postedAt = new Date()//moment(new Date()).format('YYYY-MM-DD')
             }
             // if (!params.postedAt) {

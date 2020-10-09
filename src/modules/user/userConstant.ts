@@ -62,6 +62,11 @@ export const MESSAGES = {
 			"message": "Mobile No. is not registered with us.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
+		PLEASE_CONTACT_ADMIN: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Please contact admin regarding technical issue with your account",
+			"type": "PLEASE_CONTACT_ADMIN"
+		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_REGISTER,
 			"message": "Email is not registered with us.",

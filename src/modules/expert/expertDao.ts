@@ -251,10 +251,15 @@ export class ExpertDao extends BaseDao {
 
             const EXPERTS1 = await expertDao.aggregate('categories', expertPipline, {});
 
+            // if (CategoryLIST.length > 0) {
             CATEGORIES = {
                 CategoryLIST,
                 type: 0,
             }
+            // }
+            console.log('CategoryLISTCategoryLISTCategoryLISTCategoryLIST', CategoryLIST);
+
+            console.log('getNewlyAddedExpertsgetNewlyAddedExpertsgetNewlyAddedExperts', getNewlyAddedExperts);
 
             // const data: any = await categoryDao.aggregate('categories', pipeline, {})
 
@@ -267,15 +272,19 @@ export class ExpertDao extends BaseDao {
                 key['type'] = 2
             }
 
-            EXPERTS1.unshift({
-                onBoardData: getNewlyAddedExperts,
-                type: 1
-            })
-            EXPERTS1.unshift({
-                categoryData: CATEGORIES.CategoryLIST,
-                type: 0
-            })
+            if (getNewlyAddedExperts.length > 0) {
+                EXPERTS1.unshift({
+                    onBoardData: getNewlyAddedExperts,
+                    type: 1
+                })
+            }
 
+            if (CategoryLIST.length > 0) {
+                EXPERTS1.unshift({
+                    categoryData: CATEGORIES.CategoryLIST,
+                    type: 0
+                })
+            }
             return EXPERTS1;
 
         } catch (error) {
@@ -485,7 +494,7 @@ export class ExpertDao extends BaseDao {
                 //     $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000))
                 // }
             }
-            else if (payload.posted == 2) {
+            else if (payload.posted === 2) {
                 var date = new Date(), y = date.getFullYear(), m = date.getMonth() - 1;
                 var firstDay = new Date(y, m, 1);
                 console.log('firstDay', firstDay);
