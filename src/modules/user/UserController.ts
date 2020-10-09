@@ -132,6 +132,8 @@ export class UserController {
 			}
 			else {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
+				console.log('step1step1step1step1step1step1step1>>>>>>>>>>>>>>>>', step1);
+
 				if (!step1) {
 					if (params.email) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
@@ -139,6 +141,9 @@ export class UserController {
 					if (params.mobileNo)
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
+					if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
+					}
 					if (step1 && step1.hash == null && !step1.hash) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
 					}
