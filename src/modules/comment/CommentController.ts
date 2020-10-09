@@ -37,6 +37,8 @@ class CommentController {
                     return Promise.reject(commentConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
                 }
             }
+            delete params['subscriptionEndDate'];
+
             query = { _id: await appUtils.toObjectId(params.postId) }
             if (params.type === CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
                 getPost = await userDao.checkUser(query)
