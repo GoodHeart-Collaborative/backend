@@ -17,7 +17,7 @@ export const commentRoute: ServerRoute[] = [
             const payload: CommentRequest.AddCommentRequest = request.payload;
             const query: CommentRequest.AddCommentRequest = request.query;
             try {
-                const result = await commentController.addComment({ ...payload, ...query, ...tokenData });
+                const result = await commentController.addComment({ ...payload, ...query, ...{ userId: tokenData.userId, subscriptionEndDate: tokenData['subscriptionEndDate'] } });
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
