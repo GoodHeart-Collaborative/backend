@@ -13,7 +13,8 @@ export class SubscriptionDao extends BaseDao {
             const insertData = {
                 ...params,
                 created: Date.now(),
-                userId: appUtils.toObjectId(userId.userId)
+                userId: appUtils.toObjectId(userId.userId),
+                subscriptionPlatform: params.platform
             };
             console.log('insertDatainsertData', insertData);
 
@@ -53,6 +54,7 @@ export class SubscriptionDao extends BaseDao {
             update.subscriptionType = params.subscriptionType;
             update.subscriptionEndDate = params.endDate;
             update.isSubscribed = params.isSubscribed;
+
 
             return await this.updateOne("users", query, update, {});
         } catch (error) {

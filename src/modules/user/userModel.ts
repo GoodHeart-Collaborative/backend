@@ -59,6 +59,7 @@ export interface IUser extends Document {
 	subscriptionType: string;
 	subscriptionEndDate: number;
 	badgeCount: number;
+	subscriptionPlatform: string;
 	// isAdminRejected: boolean;
 	// isAdminVerified: boolean;
 }
@@ -135,6 +136,12 @@ const userSchema = new Schema({
 	subscriptionEndDate: {
 		type: Number
 	},
+	subscriptionPlatform: {
+		type: String, enum: [
+			config.CONSTANT.DEVICE_TYPE.ANDROID,
+			config.CONSTANT.DEVICE_TYPE.IOS,
+		]
+	},
 	memberShipStatus: { type: String },
 	myConnection: { type: Number, default: 0 },
 	emailOtp: { type: Number },
@@ -174,7 +181,6 @@ const userSchema = new Schema({
 	members: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
 	about: { type: String },
 	userPrivacy: {
-
 		type: String, enum: [
 			config.CONSTANT.PRIVACY_STATUS.PRIVATE,
 			config.CONSTANT.PRIVACY_STATUS.PROTECTED,

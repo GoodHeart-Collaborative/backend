@@ -740,8 +740,6 @@ class EventController {
             })
             aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
 
-
-
             aggPipe.push({
                 $lookup: {
                     from: 'event_interests',

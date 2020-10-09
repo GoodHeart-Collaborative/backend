@@ -269,15 +269,16 @@ export class UserController {
 						delete step1['reportCount'];
 						delete step1['status'];
 
-
 						step1['subscriptionData'] = {
 							isSubscribed: (step1.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
 							subscriptionType: step1.subscriptionType,
 							subscriptionEndDate: step1.subscriptionEndDate,
-						};
+							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : step1.subscriptionPlatform
+						}
+
 						delete step1['subscriptionType'];
 						delete step1['subscriptionEndDate'];
-
+						delete step1['subscriptionPlatform'];
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
 					}
 				}
@@ -1089,8 +1090,8 @@ export class UserController {
 	}
 
 	/**
-     * @function updateUserLocation
- */
+	 * @function updateUserLocation
+	*/
 	async updateUserLocation(params: UserRequest.Location, tokenData: TokenData) {
 		try {
 			let getUser = await userDao.findUserById(tokenData); // get user details
