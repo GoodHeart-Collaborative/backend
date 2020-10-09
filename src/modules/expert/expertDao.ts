@@ -251,15 +251,15 @@ export class ExpertDao extends BaseDao {
 
             const EXPERTS1 = await expertDao.aggregate('categories', expertPipline, {});
 
-            if (CategoryLIST.length > 0) {
-                CATEGORIES = {
-                    CategoryLIST,
-                    type: 0,
-                }
+            // if (CategoryLIST.length > 0) {
+            CATEGORIES = {
+                CategoryLIST,
+                type: 0,
             }
-            console.log('CategoryLISTCategoryLISTCategoryLISTCategoryLIST', CategoryLIST);
+            // }
+            // console.log('CategoryLISTCategoryLISTCategoryLISTCategoryLIST', CategoryLIST);
 
-            console.log('getNewlyAddedExpertsgetNewlyAddedExpertsgetNewlyAddedExperts', getNewlyAddedExperts);
+            // console.log('getNewlyAddedExpertsgetNewlyAddedExpertsgetNewlyAddedExperts', getNewlyAddedExperts);
 
             // const data: any = await categoryDao.aggregate('categories', pipeline, {})
 
@@ -272,18 +272,18 @@ export class ExpertDao extends BaseDao {
                 key['type'] = 2
             }
 
-            if (getNewlyAddedExperts.length > 0) {
-                EXPERTS1.unshift({
-                    onBoardData: getNewlyAddedExperts,
-                    type: 1
-                })
-            }
-            if (CategoryLIST.lengh > 0) {
-                EXPERTS1.unshift({
-                    categoryData: CATEGORIES.CategoryLIST,
-                    type: 0
-                })
-            }
+            // if (getNewlyAddedExperts.length > 0) {
+            EXPERTS1.unshift({
+                onBoardData: getNewlyAddedExperts,
+                type: 1
+            })
+            // }
+            // if (CategoryLIST.lengh > 0) {
+            EXPERTS1.unshift({
+                categoryData: CATEGORIES.CategoryLIST,
+                type: 0
+            })
+            // }
             return EXPERTS1;
 
         } catch (error) {
