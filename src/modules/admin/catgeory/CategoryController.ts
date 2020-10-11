@@ -20,17 +20,16 @@ class CategoryController {
 
             const name = params.title.toLowerCase();
             var result = name.replace(/ /g, "_");
-            const findCategory = await categoryDao.findOne('categories', { name: result }, {}, {});
-            if (findCategory) {
-                return Promise.reject(CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST);
-            }
+            // const findCategory = await categoryDao.findOne('categories', { name: result }, {}, {});
+            // if (findCategory) {
+            //     return Promise.reject(CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST);
+            // }
             params['name'] = result;
             const data = await categoryDao.insert('categories', params, {});
             if (data) {
                 return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED
             }
-            return
-
+            return;
         } catch (error) {
             throw error;
         }
