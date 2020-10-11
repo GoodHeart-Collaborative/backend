@@ -259,7 +259,11 @@ class EventController {
                                 $expr: {
                                     $and: [{
                                         $eq: ['$_id', '$$eId']
-                                    }]
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }
+                                    ]
                                 }
                             }
                         },
