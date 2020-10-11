@@ -165,7 +165,7 @@ class EventController {
                 status: status
             };
             const data = await eventDao.updateOne('event', criteria, datatoUpdate, {});
-            const updateEventInterest = await eventInterestDao.updateMany('event', { eventId: Id }, datatoUpdate, {})
+            const updateEventInterest = await eventInterestDao.updateMany('event_interest', { eventId: Id }, datatoUpdate, {})
 
             if (data && status == config.CONSTANT.STATUS.DELETED) {
                 return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
