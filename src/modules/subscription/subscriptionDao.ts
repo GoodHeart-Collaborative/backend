@@ -34,7 +34,7 @@ export class SubscriptionDao extends BaseDao {
             query.subscriptionType = params.subscriptionType;
             query.amount = params.amount || 0;
             query.startDate = params.startDate;
-            query.subscriptionEndDate = params.endDate;
+            query.subscriptionEndDate = params.endDate || 0;
 
             return await this.save("subscription", query);
         } catch (error) {
