@@ -14,8 +14,8 @@ export interface Ievent extends Document {
     location: any;
     title: string,
     privacy: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: number;
+    endDate: number;
     price: number;
     url: string;
     allowSharing: number;
@@ -55,8 +55,8 @@ const eventSchema = new Schema({
         ]
     },
     isFeatured: { type: Boolean, default: false, index: true },
-    startDate: { type: Date, index: true },
-    endDate: { type: Date, index: true },
+    startDate: { type: Number, index: true },
+    endDate: { type: Number, index: true },
     location: geoSchema,
     address: { type: String, trim: true, required: true, index: true },
     price: { type: Number, default: 0 },
