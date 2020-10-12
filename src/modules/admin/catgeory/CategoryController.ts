@@ -139,7 +139,7 @@ class CategoryController {
             if (findData.name !== result) {
                 const findName = await categoryDao.findOne('categories', { name: result }, {}, {});
                 if (findName) {
-                    return CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST
+                    return Promise.reject(CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST)
                 }
                 params['name'] = result;
                 const data = await categoryDao.updateOne('categories', criteria, params, {});
