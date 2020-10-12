@@ -6,6 +6,7 @@ import { userDao } from "@modules/user";
 import * as  userDao1 from "@modules/user/v1/UserDao";
 
 import * as notification from '@utils/NotificationManager';
+import * as appUtils from '@utils/appUtils'
 const baseUrl = config.SERVER.APP_URL + config.SERVER.API_BASE_URL;
 let task;
 
@@ -32,13 +33,15 @@ export class CronUtils {
 		const criteria = [
 			{
 				$match: {
+					// _id: appUtils.toObjectId('5f32458da49d4610aeb6efd8'),
 					status: config.CONSTANT.STATUS.ACTIVE,
 					adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
 					countMember: minMemberCount.memberOfDayCount,
 					profession: { $ne: "" },
+					// profession: { $ne: "" },
 				}
 			},
-			{ $sample: { size: 1 } } // You want to get 5 docs
+			{ $sample: { size: 1 } } //	 You want to get 5 docs
 		];
 		const dataToUpdate = {
 			countMember: minMemberCount.memberOfDayCount + 1,
@@ -57,14 +60,23 @@ export class CronUtils {
 			return;
 		}
 		if (getUsers || getUsers[0]) {
-			const getIsLike = await userDao1.userDao.getMemberOfDays({ userId: getUsers[0]._id });
+			const getIsLike = await userDao1.userDao.getMemberOfDays({ userId: getUsers[0]._id })// getUsers[0]._id });
+
+
+			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
+			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, { new: true });
+			console.log('datadatadatadatadatadatadatadatadatadata', data);
+
+
+
 			console.log('getIsLikegetIsLike', getIsLike);
 			// isComment: {
 			// 	$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
 			// },
 			params['userId'] = getUsers[0]._id;
 			params['title'] = 'Leader of The Day';
-			// params['body'] = {
+			params['postId'] = getUsers[0]._id;
+			// params['body'] = {  
 			// 	userId: getUsers[0]._id,
 			// };
 			params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.category;
@@ -74,26 +86,29 @@ export class CronUtils {
 				{
 					user: {
 						// user: {
-						_id: getIsLike._id,
-						name: getIsLike.user.name,
-						profilePicUrl: getIsLike.user.profilePicUrl,
-						profession: getIsLike.user.profession,
-						industryType: getIsLike.user.industryType,
-						experience: getIsLike.user.experience,
-						about: getIsLike.user.about,
+						_id: data._id,
+						name: (data.firstName) + " " + (data.lastName ? data.lastName : ""),
+						// name: data.name, //  getIsLike.user.name,
+						profilePicUrl: data.profilePicUrl, //  getIsLike.user.profilePicUrl,
+						profession: data.profession,     //getIsLike.user.profession,
+						industryType: data.industryType,  //   // getIsLike.user.industryType,
+						experience: data.experience,    // getIsLike.user.experience,
+						about: data.about   //   getIsLike.user.about,
 
 					},
 					likeCount: getIsLike.likeCount,
 					commentCount: getIsLike.commentCount,
 					isLike: getIsLike.isLike,
 					isComment: getIsLike.isComment,
-					created: getIsLike.created,
+					created: data.memberCreatedAt,  //  getIsLike.created,
 					_id: getIsLike._id,
 				}
 				: {};
 
-			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
-			const data = await userDao.findOneAndUpdate('users', { _id: getUsers[0]._id }, dataToUpdate, {});
+
+
+			console.log('datadata', data);
+
 			const data1111 = notification.notificationManager.sendMemberOfDayNotification(params);
 			return;
 		}
