@@ -1,6 +1,8 @@
 "use strict";
 
 import { SERVER } from "@config/environment";
+// import * as config from "@config/index";
+// ${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/
 
 const SWAGGER_DEFAULT_RESPONSE_MESSAGES = [
 	{ code: 200, message: "OK" },
@@ -728,7 +730,8 @@ const NOTIFICATION_DATA = {
 
 const DEEPLINK = {
 	DEFAULT_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb",
-	RESET_PASSWORD_FALLBACK_URL: `${this.SERVER.APP_URL}+${this.SERVER.API_BASE_URL}?accessToken=`,
+	RESET_PASSWORD_FALLBACK_URL: `${SERVER.API_BASE_URL}?accessToken=`,
+
 	// RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/?accessToken=",
 
 	// for android deeplink
