@@ -97,7 +97,7 @@ export class CommonController {
 									url: params.android || "", // android scheme,
 									iosLink: params.ios || "", // ios scheme
 									// fallback: params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,
-									fallback: "http://womencomstgapi.appskeeper.com/v1/common/resetPasswordWeb/?accessToken=" + params.token,
+									fallback: params.fallback || config.SERVER.API_URL + "/v1/common/resetPasswordWeb/?accessToken=" + params.token,
 									title: config.SERVER.APP_NAME,
 									android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
 									ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
