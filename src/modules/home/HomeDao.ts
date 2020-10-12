@@ -16,6 +16,7 @@ export class HomeDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             let endDateee = new Date();
+            // let endDateee = moment().utc().endOf('day').toDate();
             console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
 
             let idKey: string = '$_id'
@@ -40,6 +41,7 @@ export class HomeDao extends BaseDao {
                         likeCount: { $first: "$likeCount" },
                         commentCount: { $first: "$commentCount" },
                         // status: { $first : "$status" },
+                        thumbnailUrl: { $first: '$thumbnailUrl' },
                         type: { $first: "$type" },
                         mediaType: { $first: "$mediaType" },
                         created: { $first: "$created" },
@@ -113,7 +115,7 @@ export class HomeDao extends BaseDao {
                 type: "$type",
                 mediaType: "$mediaType",
                 mediaUrl: "$mediaUrl",
-                // thumbnailUrl: "$",
+                thumbnailUrl: "$thumbnailUrl",
                 title: "$title",
                 // createdd:"$created",
                 // isPostLater: "$isPostLater",
