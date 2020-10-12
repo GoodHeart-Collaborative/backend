@@ -727,8 +727,10 @@ const NOTIFICATION_DATA = {
 };
 
 const DEEPLINK = {
-	DEFAULT_FALLBACK_URL: "https://google.com",
-	RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/?accessToken=",
+	DEFAULT_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb",
+	RESET_PASSWORD_FALLBACK_URL: `${this.SERVER.APP_URL}+${this.SERVER.API_BASE_URL}?accessToken=`,
+	// RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/?accessToken=",
+
 	// for android deeplink
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
 	ANDROID_SCHEME: "com.goodheart://",
