@@ -6,7 +6,7 @@ import * as appUtils from '@utils/appUtils'
 
 export class ForumTopic extends BaseDao {
 
-    async getforumList(params, tokenData?) {
+    async getforumList(params, tokenData) {
         try {
             const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId, userId } = params;
             let aggPipe = [];
@@ -14,6 +14,9 @@ export class ForumTopic extends BaseDao {
             if (userId) {
                 match['createrId'] = await appUtils.toObjectId(userId);
             }
+
+            // params["userId"] = tokenData.userId
+
             if (categoryId) {
                 match['categoryId'] = await appUtils.toObjectId(categoryId);
             }
