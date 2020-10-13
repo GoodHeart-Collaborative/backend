@@ -516,7 +516,7 @@ export class ExpertDao extends BaseDao {
                     $in: aa
                 }
             };
-            match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PRIVATE;
+            match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC;
 
             expertPostspipeline = [
                 {
