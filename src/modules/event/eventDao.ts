@@ -235,7 +235,7 @@ export class EventDao extends BaseDao {
             aggPipe.push(projection);
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
-            const event = await eventDao.aggregateWithPagination('event', aggPipe, limit, pageNo, true);
+            const event = await eventDao.aggregateWithPagination('event', aggPipe, limit, pageNo,);
             console.log('eventeventeventeventeventevent', event);
 
             const filterdata: any = {}
@@ -270,8 +270,10 @@ export class EventDao extends BaseDao {
             //             "next_hit": 0,
             //                 "limit": 10
 
-            return paginateOptions.pageNo === 1 ? { event: event.list, total: event.total, page: event.total, total_page: event.total_page, next_hit: event.next_hit, limit: event.limit, filterdata } : event;
-
+            return paginateOptions.pageNo === 1 ? { event: event.list, total: event.total, page: event.page, total_page: event.total_page, next_hit: event.next_hit, limit: event.limit, filterdata } :
+                {
+                    event: event.list, total: event.total, page: event.page, total_page: event.total_page, next_hit: event.next_hit, limit: event.limit
+                };
         } catch (error) {
             return Promise.reject(error)
         }
