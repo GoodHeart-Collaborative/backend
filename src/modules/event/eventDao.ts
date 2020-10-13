@@ -235,7 +235,7 @@ export class EventDao extends BaseDao {
             aggPipe.push(projection);
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
-            const event = await eventDao.aggregateWithPagination('event', aggPipe);
+            const event = await eventDao.aggregateWithPagination('event', aggPipe, limit, pageNo, true);
             console.log('eventeventeventeventeventevent', event);
 
             const filterdata: any = {}
