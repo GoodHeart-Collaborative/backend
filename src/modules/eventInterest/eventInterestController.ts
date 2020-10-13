@@ -178,18 +178,19 @@ class InterestController {
                     //         badgeCount: 0,
                     //         fullMobileNo: 0,
                     //         status: 0,
-                    users: {
-                        _id: '$userData._id',
-                        status: '$userData.status',
-                        industryType: "$userData.industryType",
-                        myConnection: "$userData.myConnection",
-                        experience: "$userData.experience",
-                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
-                        name: { $concat: [{ $ifNull: ["$userData.firstName", ""] }, " ", { $ifNull: ["$userData.lastName", ""] }] },
-                        profilePicUrl: "$userData.profilePicUrl",
-                        profession: { $ifNull: ["$userData.profession", ""] },
-                        about: { $ifNull: ["$userData.about", ""] }
-                    }
+                    // users: {
+
+                    _id: '$userData._id',
+                    status: '$userData.status',
+                    industryType: "$userData.industryType",
+                    myConnection: "$userData.myConnection",
+                    experience: "$userData.experience",
+                    discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                    name: { $concat: [{ $ifNull: ["$userData.firstName", ""] }, " ", { $ifNull: ["$userData.lastName", ""] }] },
+                    profilePicUrl: "$userData.profilePicUrl",
+                    profession: { $ifNull: ["$userData.profession", ""] },
+                    about: { $ifNull: ["$userData.about", ""] }
+                    // }
                 }
             })
 
