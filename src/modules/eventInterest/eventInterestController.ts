@@ -43,7 +43,7 @@ class InterestController {
                 await eventInterestDao.insert('event_interest', criteria, {})
                 // const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {}, {}, {}, {});
             }
-            const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {}, {}, {}, {});
+            const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId, type: type }, {}, {}, {}, {}, {});
 
             if (type == config.CONSTANT.EVENT_INTEREST.GOING) {
                 data = await eventDao.findByIdAndUpdate('event', { _id: eventId }, { $inc: { goingCount: incOrDec } }, { new: true, lean: true })

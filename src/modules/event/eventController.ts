@@ -35,7 +35,7 @@ class EventController {
             params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
             params['goingCount'] = 1;
-            params['interestCount'] = 1;
+            // params['interestCount'] = 1;
             params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const data = await eventDao.insert("event", params, {});
@@ -52,18 +52,10 @@ class EventController {
                     eventId: appUtils.toObjectId(data._id),
                     type: config.CONSTANT.EVENT_INTEREST.GOING,
                     created: Date.now(),
+                    status: config.CONSTANT.STATUS.ACTIVE,
                     createdAt: new Date(),
-                    updatedAt: new Date(),
-
-                },
-                // {
-                //     userId: appUtils.toObjectId(params['userId']),
-                //     eventId: appUtils.toObjectId(data._id),
-                //     type: config.CONSTANT.EVENT_INTEREST.INTEREST,
-                //     created: Date.now(),
-                //     createdAt: new Date(),
-                //     updatedAt: new Date(),
-                // }
+                    updatedAt: new Date()
+                }
             ];
 
             const updateISGoing = await eventDao.insertMany('event_interest', updateEventAndGoing, {})
