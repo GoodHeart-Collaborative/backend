@@ -6,4 +6,10 @@ declare namespace EventInterest {
         userId: string;
     }
 
+    export interface interestAndGoingUser {
+        page: number;
+        limit: number;
+        type: number;
+        eventId: string;
+    }
 }

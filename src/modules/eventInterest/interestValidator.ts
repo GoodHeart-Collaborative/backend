@@ -10,6 +10,20 @@ let addEventInterest = Joi.object({
     ]),
 }).unknown()
 
+let getUserGoingAndInterest = Joi.object({
+    limit: Joi.number(),
+    page: Joi.number(),
+    eventId: Joi.string().required(),
+    type: Joi.number().allow([
+        // 'myInterest', 'myEvent',
+        config.CONSTANT.EVENT_INTEREST.INTEREST,
+        config.CONSTANT.EVENT_INTEREST.GOING,
+    ]).description(
+        'INTEREST- 2, GOING- 1'
+    ),
+})
+
 export {
-    addEventInterest
+    addEventInterest,
+    getUserGoingAndInterest
 };

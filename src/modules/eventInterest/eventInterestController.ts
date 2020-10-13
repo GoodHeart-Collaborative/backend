@@ -8,6 +8,7 @@ import * as config from "@config/index";
 import { eventInterestDao } from "@modules/eventInterest/eventInterestDao";
 import * as appUtils from "@utils/appUtils";
 import { eventDao } from "@modules/event/eventDao";
+import { baseDao } from "@modules/base/BaseDao";
 
 class InterestController {
 
@@ -96,6 +97,97 @@ class InterestController {
             return data;
         } catch (error) {
             return Promise.reject(error);
+        }
+    }
+
+
+    async interestAndGoingUser(params: EventInterest.interestAndGoingUser, tokenData) {
+        try {
+            const { limit, page, type, eventId } = params;
+
+            let match: any = {};
+            let aggPipe = [];
+
+            match['eventId'] = appUtils.toObjectId(eventId);
+            match['type'] = type;
+
+            aggPipe.push({ $match: match });
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { uId: '$userId' },
+                    as: 'userData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$uId'],
+                            }
+                        }
+                    }]
+                }
+            });
+            aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: true } });
+
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$userId", "user": appUtils.toObjectId(tokenData.userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$$users"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({
+                '$project': {
+                    members: 0,
+                    adminStatus: 0,
+                    hash: 0,
+                    location: 0,
+                    createdAt: 0,
+                    updatedAt: 0,
+                    badgeCount: 0,
+                    fullMobileNo: 0,
+                    status: 0,
+
+                }
+            })
+
+
+            const data = await baseDao.paginate('event_interest', aggPipe, limit, page, true)
+            console.log('data>>>>>>>>>>>>>>>>>>>', data);
+            return data;
+
+        } catch (error) {
+            return Promise.reject(error)
         }
     }
 
