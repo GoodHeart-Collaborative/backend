@@ -166,24 +166,35 @@ class InterestController {
                 }
             })
             aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
+
             aggPipe.push({
                 '$project': {
-                    members: 0,
-                    adminStatus: 0,
-                    hash: 0,
-                    location: 0,
-                    createdAt: 0,
-                    updatedAt: 0,
-                    badgeCount: 0,
-                    fullMobileNo: 0,
-                    status: 0,
-
+                    //         members: 0,
+                    //         adminStatus: 0,
+                    //         hash: 0,
+                    //         location: 0,
+                    //         createdAt: 0,
+                    //         updatedAt: 0,
+                    //         badgeCount: 0,
+                    //         fullMobileNo: 0,
+                    //         status: 0,
+                    users: {
+                        _id: 1,
+                        status: '$userData.status',
+                        industryType: "$userData.industryType",
+                        myConnection: "$userData.myConnection",
+                        experience: "$userData.experience",
+                        discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                        name: { $concat: [{ $ifNull: ["$userData.firstName", ""] }, " ", { $ifNull: ["$userData.lastName", ""] }] },
+                        profilePicUrl: "$userData.profilePicUrl",
+                        profession: { $ifNull: ["$userData.profession", ""] },
+                        about: { $ifNull: ["$userData.about", ""] }
+                    }
                 }
             })
 
 
             const data = await baseDao.paginate('event_interest', aggPipe, limit, page, true)
-            console.log('data>>>>>>>>>>>>>>>>>>>', data);
             return data;
 
         } catch (error) {
