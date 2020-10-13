@@ -432,7 +432,7 @@ export class ExpertDao extends BaseDao {
             const pipeline = [
                 {
                     $match: {
-                        _id: appUtils.toObjectId(payload.expertId)
+                        _id: appUtils.toObjectId(payload.expertId),
                     }
                 },
                 {
@@ -516,6 +516,7 @@ export class ExpertDao extends BaseDao {
                     $in: aa
                 }
             };
+            match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PRIVATE;
 
             expertPostspipeline = [
                 {
@@ -671,7 +672,7 @@ export class ExpertDao extends BaseDao {
         try {
             const pipeline = [{
                 $match: {
-                    _id: appUtils.toObjectId(payload.postId)
+                    _id: appUtils.toObjectId(payload.postId),
                 }
             },
             {

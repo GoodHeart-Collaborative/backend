@@ -21,7 +21,6 @@ let validaExpertPostAdd = Joi.object({
     thumbnailUrl: Joi.string(),
     privacy: Joi.string().valid([
         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]).default(config.CONSTANT.PRIVACY_STATUS.PUBLIC)
 }).unknown()
