@@ -30,6 +30,7 @@ const HTTP_STATUS_CODE = {
 	UNREGISTERED: 410,
 	PAYLOAD_TOO_LARGE: 413,
 	BLOCKED_USER: 420,
+	DELETD_USER: 420,
 	CONCURRENT_LIMITED_EXCEEDED: 429,
 	// TOO_MANY_REQUESTS: 429,
 	INTERNAL_SERVER_ERROR: 500,
@@ -447,8 +448,8 @@ const MESSAGES = {
 			"type": "USER_BLOCKED"
 		},
 		DELETED: {
-			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Your account have been deleted by admin.",
+			statusCode: HTTP_STATUS_CODE.DELETD_USER,
+			"message": "Your account has been deleted by admin.",
 			type: "DELETED"
 		},
 		ADMIN_REJECTED_USER: {
