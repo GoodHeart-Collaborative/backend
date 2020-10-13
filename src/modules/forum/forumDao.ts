@@ -289,6 +289,7 @@ export class ForumTopic extends BaseDao {
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
                     user: {
+                        status: "$users.status",
                         _id: "$users._id",
                         industryType: "$users.industryType",
                         myConnection: "$users.myConnection",
@@ -627,6 +628,7 @@ export class ForumTopic extends BaseDao {
                     // comment: { $ifNull: ["$comments.comment", ""] },
                     // commentCreated: { $ifNull: ["$comments.created", ''] },
                     user: {
+                        status: "$users.status",
                         _id: "$users._id",
                         industryType: "$users.industryType",
                         myConnection: "$users.myConnection",

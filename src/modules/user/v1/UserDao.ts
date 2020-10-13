@@ -155,6 +155,7 @@ export class UserDao extends BaseDao {
 					created: 1,
 					createdAt: 1,
 					user: {
+						status: "$status",
 						_id: "$_id",
 						industryType: "$industryType",
 						myConnection: "$myConnection",

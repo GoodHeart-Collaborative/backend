@@ -180,6 +180,7 @@ export class GratitudeJournalDao extends BaseDao {
                     postedAt: 1,
                     createdAt: 1,
                     user: {
+                        status: "$users.status",
                         _id: "$users._id",
                         industryType: "$users.industryType",
                         myConnection: "$users.myConnection",

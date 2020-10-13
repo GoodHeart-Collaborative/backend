@@ -881,6 +881,7 @@ class EventController {
                     // hostUser: 1,
                     hostUser: {
                         _id: 1,
+                        status: "$hostUser.status",
                         industryType: "$hostUser.industryType",
                         myConnection: "$hostUser.myConnection",
                         experience: "$hostUser.experience",
