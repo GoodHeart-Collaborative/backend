@@ -179,7 +179,7 @@ class InterestController {
                     //         fullMobileNo: 0,
                     //         status: 0,
                     users: {
-                        _id: 1,
+                        _id: '$userData._id',
                         status: '$userData.status',
                         industryType: "$userData.industryType",
                         myConnection: "$userData.myConnection",
