@@ -8,9 +8,12 @@ export class ForumTopic extends BaseDao {
 
     async getforumList(params, tokenData?) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId, userId } = params;
             let aggPipe = [];
             const match: any = {};
+            if (userId) {
+                match['createrId'] = await appUtils.toObjectId(userId);
+            }
             if (categoryId) {
                 match['categoryId'] = await appUtils.toObjectId(categoryId);
             }
@@ -48,7 +51,7 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: 'users',
-                    let: { uId: '$userId' },
+                    let: { uId: '$createrId' },
                     pipeline: [{
                         $match: {
                             $expr: {
@@ -68,21 +71,21 @@ export class ForumTopic extends BaseDao {
             })
             aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: true } });
 
-            aggPipe.push({
-                $lookup: {
-                    from: 'admin',
-                    let: { aId: '$userId' },
-                    pipeline: [{
-                        $match: {
-                            $expr: {
-                                $eq: ['$_id', '$$aId']
-                            }
-                        }
-                    }],
-                    as: 'adminData'
-                }
-            })
-            aggPipe.push({ '$unwind': { path: '$adminData', preserveNullAndEmptyArrays: true } });
+            // aggPipe.push({
+            //     $lookup: {
+            //         from: 'admin',
+            //         let: { aId: '$createrId' },
+            //         pipeline: [{
+            //             $match: {
+            //                 $expr: {
+            //                     $eq: ['$_id', '$$aId']
+            //                 }
+            //             }
+            //         }],
+            //         as: 'adminData'
+            //     }
+            // })
+            // aggPipe.push({ '$unwind': { path: '$adminData', preserveNullAndEmptyArrays: true } });
 
 
             aggPipe.push({
@@ -139,7 +142,7 @@ export class ForumTopic extends BaseDao {
                         $cond: {
                             if: '$userData.firstName',
                             then: '$userData.firstName',
-                            else: '$adminData.name'
+                            else: 'Good Heart'
                         }
                     },
                     'userData.lastName': {
