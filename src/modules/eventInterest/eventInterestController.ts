@@ -43,7 +43,7 @@ class InterestController {
                 await eventInterestDao.insert('event_interest', criteria, {})
                 // const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {}, {}, {}, {});
             }
-            const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId, type: type }, {}, {}, {}, {}, {});
+            const userEvent = await eventInterestDao.findAll('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {});
 
             if (type == config.CONSTANT.EVENT_INTEREST.GOING) {
                 data = await eventDao.findByIdAndUpdate('event', { _id: eventId }, { $inc: { goingCount: incOrDec } }, { new: true, lean: true })
@@ -59,10 +59,11 @@ class InterestController {
                 userEvent.map(data1 => {
                     console.log('data1data1data1', data1);
 
-                    if (data1.type === 1) {
+
+                    if (data1.type === config.CONSTANT.EVENT_INTEREST.GOING) {
                         data['isGoing'] = true;
                     }
-                    if (data1.type === 2) {
+                    if (data1.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
                         data['isInterest'] = true;
                     }
                 })
