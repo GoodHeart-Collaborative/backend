@@ -190,7 +190,14 @@ class InterestController {
                     name: { $concat: [{ $ifNull: ["$userData.firstName", ""] }, " ", { $ifNull: ["$userData.lastName", ""] }] },
                     profilePicUrl: "$userData.profilePicUrl",
                     profession: { $ifNull: ["$userData.profession", ""] },
-                    about: { $ifNull: ["$userData.about", ""] }
+                    about: { $ifNull: ["$userData.about", ""] },
+                    isHostedByMe: {
+                        $cond: {
+                            if: { $eq: ['$createrId', appUtils.toObjectId(tokenData.userId)] },
+                            then: true,
+                            else: false
+                        },
+                    },
                     // }
                 }
             })

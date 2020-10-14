@@ -48,6 +48,7 @@ class EventController {
 
             const updateEventAndGoing = [
                 {
+                    createrId: appUtils.toObjectId(params['userId']),
                     userId: appUtils.toObjectId(params['userId']),
                     eventId: appUtils.toObjectId(data._id),
                     type: config.CONSTANT.EVENT_INTEREST.GOING,
