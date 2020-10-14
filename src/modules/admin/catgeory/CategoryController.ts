@@ -38,12 +38,12 @@ class CategoryController {
     /**
      * @function getCategory
      * @description admin get category list
-     * @param { CategoryRequest.IGetCategory  } params
+     * @param { CategoryRequest.IGetCategory  }
      * @author Shubham
     */
     async getCategory(params: CategoryRequest.IGetCategory) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, type } = params;
             const aggPipe = [];
             const match: any = {};
             if (status) {
@@ -51,7 +51,7 @@ class CategoryController {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
-            match['type'] = params.type;
+            match['type'] = type;
             if (searchTerm) {
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
