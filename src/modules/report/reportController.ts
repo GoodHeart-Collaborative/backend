@@ -24,6 +24,14 @@ class ReportController {
             const dataToSave = {
                 ...params
             };
+            if (params.type === config.CONSTANT.HOME_TYPE.USER) {
+                const findAlreadyReported = await reportDao.findOne('report', { postId: params.postId, userId: params.userId }, {}, {});
+                console.log('findAlreadyReportedfindAlreadyReported', findAlreadyReported);
+
+                if (findAlreadyReported) {
+                    return Promise.reject(reportConstant.MESSAGES.ERROR.ALREADY_REPORTED);
+                }
+            }
             const data = await reportDao.save('report', dataToSave);
             const inc = 1;
             const updateOne = {

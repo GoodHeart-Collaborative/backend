@@ -7,6 +7,11 @@ export const MESSAGES = {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
             "message": "Already like.",
             "type": "ALREADY_LIKE"
+        },
+        ALREADY_REPORTED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Already Reported",
+            "type": "ALREADY_REPORTED"
         }
     },
     SUCCESS: {

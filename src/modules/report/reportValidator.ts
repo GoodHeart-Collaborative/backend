@@ -11,7 +11,7 @@ let addReport = Joi.object({
         config.CONSTANT.HOME_TYPE.EXPERTS_POST,
         config.CONSTANT.HOME_TYPE.USER,
     ]),
-    reportOption: Joi.number().required().allow([
+    reportOption: Joi.number().allow([
         config.CONSTANT.REPORT_MESSAGE.Explicit_photos.id,
         config.CONSTANT.REPORT_MESSAGE.Offensive_content.id,
         config.CONSTANT.REPORT_MESSAGE.Impostor_accounts.id,

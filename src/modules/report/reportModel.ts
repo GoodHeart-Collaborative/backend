@@ -34,7 +34,7 @@ const reportSchema = new Schema({
             config.CONSTANT.REPORT_MESSAGE.Impostor_accounts.id,
             config.CONSTANT.REPORT_MESSAGE.Offensive_content.id,
             config.CONSTANT.REPORT_MESSAGE.Other.id,
-        ], required: true
+        ],
     },
     reason: { type: String, required: true },
     created: { type: Number, default: new Date() }
