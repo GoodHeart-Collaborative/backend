@@ -16,6 +16,10 @@ let addReport = Joi.object({
         config.CONSTANT.REPORT_MESSAGE.Offensive_content.id,
         config.CONSTANT.REPORT_MESSAGE.Impostor_accounts.id,
         config.CONSTANT.REPORT_MESSAGE.Other.id,
+        config.CONSTANT.REPORT_MESSAGE.Sexual_reason.id,
+        config.CONSTANT.REPORT_MESSAGE.is_Posting_Things_That_Violate_TOS.id,
+        config.CONSTANT.REPORT_MESSAGE.trying_to_coax_kids_into_bad_stuff.id
+
     ],
     ),
 
