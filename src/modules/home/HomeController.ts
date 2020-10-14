@@ -78,13 +78,17 @@ class HomeController {
             }
 
             const reoprtData1 = [];
+            const userReportData = [];
             for (var key in config.CONSTANT.REPORT_MESSAGE) {
                 console.log('keykey', key);
-
                 if (config.CONSTANT.REPORT_MESSAGE.hasOwnProperty(key)) {
                     var val = config.CONSTANT.REPORT_MESSAGE[key];
                     console.log(val);
-                    reoprtData1.push({ reason: val.reason, id: val.id })
+                    if (val.id >= 5) {
+                        userReportData.push({ reason: val.reason, id: val.id })
+                    } else {
+                        reoprtData1.push({ reason: val.reason, id: val.id })
+                    }
                 }
             }
             const isGratitudeFilled = await gratitudeJournalDao.checkTodaysGratitudeFilled(params, userId.tokenData)
@@ -92,6 +96,7 @@ class HomeController {
             if (!params.type) {
                 return {
                     reportData: reoprtData1,
+                    userReportData: userReportData,
                     homeData: responseData,
                     isGratitudeJournalFilled: isGratitudeFilled,
                     subscriptionData: {

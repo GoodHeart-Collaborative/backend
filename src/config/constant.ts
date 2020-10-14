@@ -181,6 +181,18 @@ const REPORT_MESSAGE = {
 	Other: {
 		reason: "Other",
 		id: 4
+	},
+	Sexual_reason: {
+		reason: "sexual reasons",
+		id: 5
+	},
+	is_Posting_Things_That_Violate_TOS: {
+		reason: "is posting things that violate TOS",
+		id: 6
+	},
+	trying_to_coax_kids_into_bad_stuff: {
+		reason: "trying to coax kids into bad stuff",
+		id: 7
 	}
 }
 
