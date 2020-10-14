@@ -207,13 +207,17 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			params["location"] = {
-				"type": "Point",
-				"coordinates": [
-					77.3619782,
-					28.6060713
-				]
-			}
+			// params["location"] = {
+			// 	"type": "Point",
+			// 	"coordinates": [
+			// 		77.3619782,
+			// 		28.6060713
+			// 	]
+			// }
+			const lat_lng: any = await appUtils.getLocationByIp(params.getIpfromNtwk);
+			console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
+			params['location']['coordinates'] = [lat_lng.long, lat_lng.lat];
+
 			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {

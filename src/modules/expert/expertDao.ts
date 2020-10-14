@@ -7,7 +7,7 @@ import { DataSync, Config } from "aws-sdk";
 import { categoryDao } from "@modules/admin/catgeory";
 import { expert } from "@modules/admin/expert/expertModel";
 import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
-
+import * as moment from 'moment';
 export class ExpertDao extends BaseDao {
 
     async getGratitudeJournalData(params) {
@@ -487,12 +487,16 @@ export class ExpertDao extends BaseDao {
             match['_id'] = {
                 $nin: reportedpost
             };
+            console.log("moment()>>>>>>>>>>>>>>>>>>>>>", moment().subtract(7, 'days').toDate());
+            console.log("dateFrom = moment().subtract(7,'d').format('YYYY-MM-DD');", moment().subtract(7, 'd').format('YYYY-MM-DD HH:mm:ss'));
 
             if (payload.posted === 1) {
                 console.log('last week');
-                // match['createdAt'] = {
-                //     $gte: new Date(new Date() - 7 * 60 * 60 * 24 * 1000))
-                // }
+                match['createdAt'] = {
+                    $gte: moment().subtract(7, 'days').toDate(),
+                    $lte: moment().startOf('day').toDate()
+                    // new Date(new Date() - 7 * 60 * 60 * 24 * 1000))
+                }
             }
             else if (payload.posted === 2) {
                 var date = new Date(), y = date.getFullYear(), m = date.getMonth() - 1;
