@@ -51,6 +51,7 @@ class CategoryController {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
+            match['type'] = params.type;
             if (searchTerm) {
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },

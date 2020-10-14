@@ -185,7 +185,7 @@ const REPORT_MESSAGE = {
 
 
 	PretendingToBeSomeOne: {
-		reason: "Pretending To Be SomeOne",
+		reason: "Pretending to be Someone",
 		id: 10
 	},
 	FAKE_ACCOUNT: {
@@ -201,7 +201,7 @@ const REPORT_MESSAGE = {
 		id: 13
 	},
 	SOMETHING_ELSE: {
-		reason: "Something else",
+		reason: "Other",
 		id: 14
 	}
 }
