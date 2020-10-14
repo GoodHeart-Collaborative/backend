@@ -46,7 +46,7 @@ class ReportController {
             }
             if (params.type === config.CONSTANT.HOME_TYPE.USER) {
                 const updateCount = await userDao.updateOne('users', criteria, updateOne, {})
-
+                return reportConstant.MESSAGES.SUCCESS.USER_REPORTED;
             }
             return reportConstant.MESSAGES.SUCCESS.POST_REPORTED(data);
 

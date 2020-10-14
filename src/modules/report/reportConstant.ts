@@ -28,6 +28,13 @@ export const MESSAGES = {
                 data: data
             }
         },
+        USER_REPORTED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "User reported successfully",
+                "type": "DEFAULT"
+            }
+        },
     }
 };
 

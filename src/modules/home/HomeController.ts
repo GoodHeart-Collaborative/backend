@@ -84,7 +84,7 @@ class HomeController {
                 if (config.CONSTANT.REPORT_MESSAGE.hasOwnProperty(key)) {
                     var val = config.CONSTANT.REPORT_MESSAGE[key];
                     console.log(val);
-                    if (val.id >= 5) {
+                    if (val.id >= 10) {
                         userReportData.push({ reason: val.reason, id: val.id })
                     } else {
                         reoprtData1.push({ reason: val.reason, id: val.id })

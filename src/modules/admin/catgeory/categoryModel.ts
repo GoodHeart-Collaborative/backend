@@ -13,6 +13,7 @@ export interface ICategory extends Document {
     name: string;
     imageUrl: string;
     created: number;
+    type: number;
     // createdAt: Date;
     // updatedAt: Date;
 }
@@ -28,6 +29,13 @@ const categorySchema = new Schema({
             config.CONSTANT.STATUS.BLOCKED,
             config.CONSTANT.STATUS.DELETED
         ], default: config.CONSTANT.STATUS.ACTIVE,
+    },
+    type: {
+        type: Number,
+        enum: [
+            config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+            config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY
+        ]
     },
     imageUrl: { type: String },
     created: { type: Number, default: Date.now() }

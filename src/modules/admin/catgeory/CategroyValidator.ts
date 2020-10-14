@@ -14,8 +14,11 @@ let AddCategory = Joi.object({
 
     // name: Joi.string().lowercase().required(),
     title: Joi.string().required(),
-    imageUrl: Joi.string().allow('')
-
+    imageUrl: Joi.string().allow(''),
+    type: Joi.number().allow([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY
+    ])
 })
 
 

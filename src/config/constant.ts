@@ -182,17 +182,27 @@ const REPORT_MESSAGE = {
 		reason: "Other",
 		id: 4
 	},
-	Sexual_reason: {
-		reason: "sexual reasons",
-		id: 5
+
+
+	PretendingToBeSomeOne: {
+		reason: "Pretending To Be SomeOne",
+		id: 10
 	},
-	is_Posting_Things_That_Violate_TOS: {
-		reason: "is posting things that violate TOS",
-		id: 6
+	FAKE_ACCOUNT: {
+		reason: "Fake account",
+		id: 11
 	},
-	trying_to_coax_kids_into_bad_stuff: {
-		reason: "trying to coax kids into bad stuff",
-		id: 7
+	FAKE_NAME: {
+		reason: "Fake name",
+		id: 12
+	},
+	POSTING_IN_APPROPRIATE_THINGS: {
+		reason: "Posting in appropriate things",
+		id: 13
+	},
+	SOMETHING_ELSE: {
+		reason: "Something else",
+		id: 14
 	}
 }
 
@@ -253,6 +263,12 @@ const STATUS = {
 	ACTIVE: "active",
 	DELETED: "deleted"
 };
+
+const CATEGORY_TYPE = {
+	EVENT_CAEGORY: 1,
+	OTHER_CATEGORY: 2
+};
+
 const COMMENT_CATEGORY = {
 	POST: 1,
 	COMMENT: 2
@@ -963,6 +979,7 @@ export const CONSTANT = Object.freeze({
 	REQUEST_TYPE,
 	REPORT_MESSAGE,
 	NOTIFICATION_CATEGORY,
-	USER_SUBSCRIPTION_PLAN
+	USER_SUBSCRIPTION_PLAN,
+	CATEGORY_TYPE
 	// USER_SUBSCRIPTION_PLAN_PRICE
 });

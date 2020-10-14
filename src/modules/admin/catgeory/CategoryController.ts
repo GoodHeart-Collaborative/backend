@@ -20,7 +20,7 @@ class CategoryController {
 
             const name = params.title.toLowerCase();
             var result = name.replace(/ /g, "_");
-            const findCategory = await categoryDao.findOne('categories', { name: result }, {}, {});
+            const findCategory = await categoryDao.findOne('categories', { name: result, type: params.type }, {}, {});
             if (findCategory) {
                 return Promise.reject(CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST);
             }
