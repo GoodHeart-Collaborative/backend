@@ -203,10 +203,12 @@ const GENDER = {
 	// TRANSG
 };
 
+
 const EXPERIENCE_LEVEL = {
-	JUNIOR: "Junior",
-	MID: "Mid",
-	SENIOR: "Senior",
+	years_0_2: "0-2 years",
+	years_2_5: "2-5 years",
+	years_5_10: "5-10 years",
+	year_10: "10+",
 }
 
 // export const INDUSTRIES = {
