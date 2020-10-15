@@ -309,14 +309,15 @@ export class ExpertDao extends BaseDao {
             // if (status) {
             // match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             // } else {
+
             const paginateOptions = {
                 limit: limit || 10,
                 pageNo: page || 1,
             };
+
             match['type'] = type;
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             // }
-
             if (searchTerm) {
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
@@ -324,15 +325,13 @@ export class ExpertDao extends BaseDao {
                 ];
             }
 
-
-
             console.log('paginateOptions', paginateOptions);
             categoryPipeline.push({
                 $match: match
             });
 
-            if (type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
-                categoryPipeline = [
+            if (!screenType && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
+                categoryPipeline.push(
                     {
                         $lookup: {
                             from: 'experts',
@@ -373,12 +372,12 @@ export class ExpertDao extends BaseDao {
                             _id: -1
                         }
                     }
-                ];
+                )
             }
-
-            if (screenType === 'addPost') {
+            if (screenType != 'addPost' && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
                 categoryPipeline.splice(2, 1);
             };
+
 
             // if (payload.categoryId) {
             //     // const a = {
@@ -388,7 +387,7 @@ export class ExpertDao extends BaseDao {
             //     // }
             //     categoryPipeline.splice(3, 3)
             // }
-            // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
+            console.log('categoryPipelinecategoryPipeline', JSON.stringify(categoryPipeline));
 
             categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)];
             let result = await this.aggregateWithPagination("categories", categoryPipeline, limit, page, true);
