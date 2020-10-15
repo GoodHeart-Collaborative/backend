@@ -139,7 +139,8 @@ export class NotificationManager {
 				"title": params.title,
 				"message": params.message,
 				"type": params.type,
-				// postId: params.postId
+				// postId: params.postId ,
+				eventId: params.eventId ? params.eventId : ''
 			};
 			const step2 = notificationDao.addNotification(noticiationData);
 			const updateUserBadgeCount = await baseDao.updateOne('users', { _id: params.userId }, { $inc: { badgeCount: 1 } }, {});

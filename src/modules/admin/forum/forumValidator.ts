@@ -31,6 +31,7 @@ let getForum = Joi.object({
     sortBy: Joi.string().allow([
         'createdAt'
     ]),
+    userId: Joi.string(),
     sortOrder: config.CONSTANT.ENUM.SORT_TYPE,
     fromDate: Joi.date(),
     toDate: Joi.date(),

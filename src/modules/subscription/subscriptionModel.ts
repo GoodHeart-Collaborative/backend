@@ -20,6 +20,7 @@ export interface Isubscription extends Document {
     receiptToken: string;
     subscriptionType: number;
     price: number;
+    status: number;
     created: number;
     subscriptionEndDate: number;
 }
@@ -48,15 +49,23 @@ const subscriptionSchema = new Schema({
         default: config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.price,
 
     },
+    status: {
+        type: Number, enum: [
+            config.CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
+            config.CONSTANT.SUBSCRIPTION_STATUS.INACTIVE,
+        ],
+        default: config.CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
+
+    },
     amount: { type: Number },
     created: { type: Number },
     receiptToken: { type: String },
     startDate: { type: Date, required: true, default: new Date() },
     subscriptionEndDate: { type: Number, required: true }
 }, {
-        versionKey: false,
-        timestamps: true
-    });
+    versionKey: false,
+    timestamps: true
+});
 
 subscriptionSchema.set("toObject", {
     virtuals: true,

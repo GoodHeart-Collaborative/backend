@@ -6,6 +6,7 @@ declare namespace userExpertRequest {
         page: number;
         searchTerm: string;
         screenType: string;
+        type: number;
     }
 
     export interface ICategoryRelatedExpert {

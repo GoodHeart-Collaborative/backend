@@ -170,9 +170,10 @@ const userSchema = new Schema({
 	},
 	experience: {
 		type: String, enum: [
-			config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
-			config.CONSTANT.EXPERIENCE_LEVEL.MID,
-			config.CONSTANT.EXPERIENCE_LEVEL.SENIOR
+			config.CONSTANT.EXPERIENCE_LEVEL.years_0_2,
+			config.CONSTANT.EXPERIENCE_LEVEL.years_2_5,
+			config.CONSTANT.EXPERIENCE_LEVEL.years_5_10,
+			config.CONSTANT.EXPERIENCE_LEVEL.year_10
 		]
 	},
 	countMember: { type: Number, default: 0 },

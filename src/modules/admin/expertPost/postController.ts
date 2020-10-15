@@ -74,9 +74,8 @@ class ExpertPostController {
                     }]
                 }
             })
-            aggPipe.push({
-                $unwind: '$categoryData'
-            })
+            aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } });
+
             aggPipe.push({
                 $lookup: {
                     from: 'experts',
@@ -104,10 +103,8 @@ class ExpertPostController {
                         }
                     }]
                 }
-            })
-            aggPipe.push({
-                $unwind: '$expertData'
-            })
+            });
+            aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } });
             const data = await expertPostDao.aggregate('expert_post', aggPipe, {})
             if (!data) {
                 return expertPostConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;

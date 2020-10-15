@@ -37,9 +37,9 @@ class AdminForumController {
         }
     }
 
-    async GetFormPosts(params: AdminForumRequest.GetForum) {
+    async GetFormPosts(params: AdminForumRequest.GetForum, tokenData) {
         try {
-            const data = await AdminForumDao.getforumList(params)
+            const data = await AdminForumDao.getforumList(params, tokenData)
             return data;
         } catch (error) {
             return Promise.reject(error);

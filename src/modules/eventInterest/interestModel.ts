@@ -16,6 +16,7 @@ export interface IeventInterest extends Document {
 const eventInterestSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
     eventId: { type: Schema.Types.ObjectId, ref: 'event' },
+    createrId: { type: Schema.Types.ObjectId, ref: 'users' },
     type: {
         type: Number, enum: [
             config.CONSTANT.EVENT_INTEREST.GOING,

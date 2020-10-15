@@ -23,7 +23,7 @@ let validateListUsers = Joi.object({
     searchKey: Joi.string().optional().description("Search by Name"),
     longitude: Joi.number().optional(),
     latitude: Joi.number().optional(),
-    distance: Joi.number().optional().default(1000),
+    distance: Joi.number().optional(),
     industryType: Joi.array().items(Joi.number().valid([
         config.INDUSTRIES.NONPROFIT,
         config.INDUSTRIES.EMERGENCY_SERVICES,

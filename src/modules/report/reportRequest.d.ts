@@ -5,5 +5,6 @@ declare namespace UserReportRequest {
         reason: string;
         type: number;
         reportOption: number;
+        userId: string;
     }
 }

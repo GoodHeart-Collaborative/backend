@@ -4,6 +4,7 @@ declare namespace CategoryRequest {
         title: string;
         imageUrl: string;
         name?: string
+        type: number
     }
 
     export interface ICategoryById {
@@ -20,6 +21,7 @@ declare namespace CategoryRequest {
         status: string
         fromDate: Date;
         toDate: Date;
+        type: number;
         privacy: string;
     }
 
