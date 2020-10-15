@@ -15,6 +15,7 @@ export interface INotification extends Document {
 	isRead: boolean;
 	created: number;
 	postId: string;
+	eventId: string;
 }
 
 /**
@@ -31,6 +32,10 @@ const notificationSchema = new Schema({
 	},
 	title: { type: String, required: true },
 	message: { type: String, required: true },
+	eventId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: config.CONSTANT.DB_MODEL_REF.EVENT
+	},
 	type: {
 		type: Number,
 		enum: [
@@ -41,6 +46,8 @@ const notificationSchema = new Schema({
 			config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
 			config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.type,
 			config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_GOING.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_INTEREST.type,
 		],
 		required: true
 	},
