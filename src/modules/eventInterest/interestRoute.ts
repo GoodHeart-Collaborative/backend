@@ -17,7 +17,7 @@ export const EventInterestRoute: ServerRoute[] = [
             payload['userId'] = tokenData['userId']
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-                const result = await interestController.addInterests(payload);
+                const result = await interestController.addInterests(payload, tokenData);
                 console.log('resultresultresult', result);
 
                 return responseHandler.sendSuccess(h, result);
