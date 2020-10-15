@@ -32,7 +32,12 @@ export class CategoryDao extends BaseDao {
             const aggPipe = [];
             const match: any = {};
 
-            match['categoryId'] = appUtils.toObjectId(categoryId);
+            if (type === 2) {
+                match['categoryId'] = appUtils.toObjectId(categoryId);
+            }
+            if (type === 1) {
+                match['eventCategoryId'] = appUtils.toObjectId(categoryId);
+            }
             if (status) {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             } else {
@@ -98,37 +103,37 @@ export class CategoryDao extends BaseDao {
                 aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } })
 
             }
-            if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
-                aggPipe.push({
-                    '$lookup': {
-                        from: 'events',
-                        let: {
-                            eId: '$userId'
-                        },
-                        pipeline: [{
-                            '$match': {
-                                '$expr': {
-                                    $and: [{
-                                        '$eq': ['$_id', '$$eId']
-                                    },
-                                    {
-                                        '$eq': ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    }
-                                    ]
-                                }
-                            },
+            // if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
+            //     aggPipe.push({
+            //         '$lookup': {
+            //             from: 'users',
+            //             let: {
+            //                 uId: '$userId'
+            //             },
+            //             pipeline: [{
+            //                 '$match': {
+            //                     '$expr': {
+            //                         $and: [{
+            //                             '$eq': ['$_id', '$$uId']
+            //                         },
+            //                         {
+            //                             '$eq': ['$status', config.CONSTANT.STATUS.ACTIVE]
+            //                         }
+            //                         ]
+            //                     }
+            //                 },
 
-                        },
-                        {
-                            $project:
-                                { "name": 1, "status": 1, profilePicUrl: 1 }
-                        }
-                        ],
-                        as: 'eventData'
-                    }
-                });
-                aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } })
-            }
+            //             },
+            //             {
+            //                 $project:
+            //                     { "title": 1, "description": 1, price: 1, startDate: 1, endDate: 1 }
+            //             }
+            //             ],
+            //             as: 'eventData'
+            //         }
+            //     });
+            //     aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } })
+            // }
 
 
             const findCategoryData = await categoryDao.findOne('categories', { _id: appUtils.toObjectId(params.categoryId) }, {}, {})
@@ -144,6 +149,8 @@ export class CategoryDao extends BaseDao {
             if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
                 console.log('222222222222222222222222222222222222');
                 data = await categoryDao.paginate('event', aggPipe, limit, page, {}, true);
+                console.log('paramsparamsparamsparams', params);
+
             }
             data['categoryData'] = findCategoryData;
             return data;

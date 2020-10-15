@@ -734,7 +734,19 @@ const NOTIFICATION_CATEGORY = {
 	SHOUTOUT_TAGGED_ME: {
 		type: 5,
 		category: "VIEW_SHOUTLIST_ACTION"
-	}
+	},
+	EVENT_GOING: {
+		type: 6,
+		category: "going"
+	},
+	EVENT_INTEREST: {
+		type: 7,
+		category: "interst events"
+	},
+	// EVENT_INTEREST :{
+	// 	type: 8,
+	// 	category: "VIEW_SHOUTLIST_ACTION"
+	// }
 }
 
 const SMS_SENDING_TYPE = {
