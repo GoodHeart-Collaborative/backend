@@ -52,7 +52,7 @@ const subscriptionSchema = new Schema({
     status: {
         type: Number, enum: [
             config.CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
-            config.CCONSTANT.SUBSCRIPTION_STATUS.INACTIVE,
+            config.CONSTANT.SUBSCRIPTION_STATUS.INACTIVE,
         ],
         default: config.CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
 

@@ -112,7 +112,7 @@ const DATE_FILTER = {
 	WEEKEND: 5,
 }
 
-const DB_MODEL_REF = {
+const DB_MODEL_REF: any = {
 	ADMIN: "admin",
 	ADMIN_NOTIFICATION: "admin_notification",
 	CONTACT: "contact",
@@ -264,16 +264,14 @@ const STATUS = {
 	DELETED: "deleted"
 };
 
-<<<<<<< HEAD
 const SUBSCRIPTION_STATUS = {
 	INACTIVE: 2,
 	ACTIVE: 1,
 	DELETED: 3
-=======
+}
 const CATEGORY_TYPE = {
 	EVENT_CAEGORY: 1,
 	OTHER_CATEGORY: 2
->>>>>>> 7faf76d010f29d28d21c4f4665504ceb67027c3f
 };
 
 const COMMENT_CATEGORY = {
@@ -750,6 +748,10 @@ const NOTIFICATION_CATEGORY = {
 		type: 7,
 		category: "interst events"
 	},
+	EVENT_REMINDER: {
+		type: 8,
+		category: "Event Reminder"
+	},
 	// EVENT_INTEREST :{
 	// 	type: 8,
 	// 	category: "VIEW_SHOUTLIST_ACTION"
@@ -1001,5 +1003,4 @@ export const CONSTANT = Object.freeze({
 	USER_SUBSCRIPTION_PLAN,
 	SUBSCRIPTION_STATUS,
 	CATEGORY_TYPE
-	// USER_SUBSCRIPTION_PLAN_PRICE
 });
