@@ -264,16 +264,14 @@ const STATUS = {
 	DELETED: "deleted"
 };
 
-<<<<<<< HEAD
 const SUBSCRIPTION_STATUS = {
 	INACTIVE: 2,
 	ACTIVE: 1,
 	DELETED: 3
-=======
+}
 const CATEGORY_TYPE = {
 	EVENT_CAEGORY: 1,
 	OTHER_CATEGORY: 2
->>>>>>> 7faf76d010f29d28d21c4f4665504ceb67027c3f
 };
 
 const COMMENT_CATEGORY = {
