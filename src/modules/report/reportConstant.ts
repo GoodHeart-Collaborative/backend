@@ -7,6 +7,11 @@ export const MESSAGES = {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
             "message": "Already like.",
             "type": "ALREADY_LIKE"
+        },
+        ALREADY_REPORTED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Already Reported",
+            "type": "ALREADY_REPORTED"
         }
     },
     SUCCESS: {
@@ -18,9 +23,16 @@ export const MESSAGES = {
         POST_REPORTED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "post reported successFully",
+                "message": "Post reported successfully",
                 "type": "DEFAULT",
                 data: data
+            }
+        },
+        USER_REPORTED: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "User reported successfully",
+                "type": "DEFAULT"
             }
         },
     }

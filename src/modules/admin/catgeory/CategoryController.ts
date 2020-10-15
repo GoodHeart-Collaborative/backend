@@ -20,7 +20,7 @@ class CategoryController {
 
             const name = params.title.toLowerCase();
             var result = name.replace(/ /g, "_");
-            const findCategory = await categoryDao.findOne('categories', { name: result }, {}, {});
+            const findCategory = await categoryDao.findOne('categories', { name: result, type: params.type }, {}, {});
             if (findCategory) {
                 return Promise.reject(CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST);
             }
@@ -29,8 +29,7 @@ class CategoryController {
             if (data) {
                 return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED
             }
-            return
-
+            return;
         } catch (error) {
             throw error;
         }
@@ -39,12 +38,12 @@ class CategoryController {
     /**
      * @function getCategory
      * @description admin get category list
-     * @param { CategoryRequest.IGetCategory  } params
+     * @param { CategoryRequest.IGetCategory  }
      * @author Shubham
     */
     async getCategory(params: CategoryRequest.IGetCategory) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, type } = params;
             const aggPipe = [];
             const match: any = {};
             if (status) {
@@ -52,6 +51,7 @@ class CategoryController {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
+            match['type'] = type;
             if (searchTerm) {
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
@@ -140,7 +140,7 @@ class CategoryController {
             if (findData.name !== result) {
                 const findName = await categoryDao.findOne('categories', { name: result }, {}, {});
                 if (findName) {
-                    return CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST
+                    return Promise.reject(CategoryConstant.MESSAGES.ERROR.ALRADY_EXIST)
                 }
                 params['name'] = result;
                 const data = await categoryDao.updateOne('categories', criteria, params, {});

@@ -7,8 +7,7 @@ import * as gratitudeJournalConstants from "./GratitudeJournalConstant";
 import { gratitudeJournalDao } from "./GratitudeJournalDao";
 import * as moment from 'moment';
 import * as appUtils from '@utils/appUtils'
-
-
+import * as config from '@config/constant';
 class GratitudeJournalController {
 
     /**
@@ -29,8 +28,9 @@ class GratitudeJournalController {
             params["postAt"] = moment(new Date(params.postAt)).format('YYYY-MM-DD')
             let checkGJ = await gratitudeJournalDao.checkGratitudeJournal({ userId: await appUtils.toObjectId(params.userId), postAt: params["postAt"] })
             if (checkGJ) {
-               await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
-                let getResponse = await gratitudeJournalDao.checkGratitudeJournal({_id: checkGJ._id})
+                params['status'] = config.CONSTANT.STATUS.ACTIVE;
+                await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
+                let getResponse = await gratitudeJournalDao.checkGratitudeJournal({ _id: checkGJ._id })
                 return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getResponse)
             } else {
                 let getGratitudeJournal: any = await gratitudeJournalDao.addGratitudeJournal(params)
@@ -55,7 +55,7 @@ class GratitudeJournalController {
                     }
                 }
                 let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
-                let getResponse = await gratitudeJournalDao.checkGratitudeJournal({_id: checkGJ._id})
+                let getResponse = await gratitudeJournalDao.checkGratitudeJournal({ _id: checkGJ._id })
                 return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getResponse)
             } else {
                 return gratitudeJournalConstants.MESSAGES.ERROR.GRATITUDE_JOURNAL_NOT_FOUND

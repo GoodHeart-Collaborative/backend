@@ -44,15 +44,15 @@ class AdminFeedController {
                     sort = { "created": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "_id": -1 };
             }
-            aggPipe.push({ "$sort": sort });
 
             if (fromDate && toDate) { match['createdAt'] = { $gte: fromDate, $lte: toDate }; }
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
             aggPipe.push({ "$match": match });
+            aggPipe.push({ "$sort": sort });
             aggPipe.push({
                 $lookup: {
                     from: 'users',

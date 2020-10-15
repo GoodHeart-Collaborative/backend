@@ -14,8 +14,11 @@ let AddCategory = Joi.object({
 
     // name: Joi.string().lowercase().required(),
     title: Joi.string().required(),
-    imageUrl: Joi.string().allow('')
-
+    imageUrl: Joi.string().allow(''),
+    type: Joi.number().allow([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY
+    ])
 })
 
 
@@ -33,7 +36,11 @@ let getCategory = Joi.object({
         config.CONSTANT.STATUS.DELETED
     ]),
     fromDate: Joi.date(),
-    toDate: Joi.date()
+    toDate: Joi.date(),
+    type: Joi.number().valid([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY
+    ]).required()
 })
 
 let GetCategoryDetailsList = Joi.object({
@@ -49,6 +56,10 @@ let GetCategoryDetailsList = Joi.object({
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
         config.CONSTANT.STATUS.DELETED
+    ]),
+    type: Joi.number().allow([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY,
     ]),
     fromDate: Joi.date(),
     toDate: Joi.date(),

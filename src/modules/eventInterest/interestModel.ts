@@ -10,16 +10,27 @@ export interface IeventInterest extends Document {
     eventId: string,
     created: number;
     type: number;
+    status: string;
 }
 
 const eventInterestSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
     eventId: { type: Schema.Types.ObjectId, ref: 'event' },
+    createrId: { type: Schema.Types.ObjectId, ref: 'users' },
     type: {
         type: Number, enum: [
             config.CONSTANT.EVENT_INTEREST.GOING,
             config.CONSTANT.EVENT_INTEREST.INTEREST,
         ]
+    },
+    status: {
+        type: String, enum: [
+            config.CONSTANT.STATUS.ACTIVE,
+            config.CONSTANT.STATUS.BLOCKED,
+            config.CONSTANT.STATUS.DELETED
+        ],
+        default: config.CONSTANT.STATUS.ACTIVE,
+
     },
     created: { type: Number },
 }, {

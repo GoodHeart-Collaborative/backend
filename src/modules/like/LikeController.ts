@@ -166,6 +166,7 @@ class LikeController {
                     return Promise.reject(likeConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
                 }
             }
+            delete params['subscriptionEndDate'];
 
             let incOrDec: number = 1
             query = { _id: await appUtils.toObjectId(params.postId) }

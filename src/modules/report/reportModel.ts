@@ -34,7 +34,13 @@ const reportSchema = new Schema({
             config.CONSTANT.REPORT_MESSAGE.Impostor_accounts.id,
             config.CONSTANT.REPORT_MESSAGE.Offensive_content.id,
             config.CONSTANT.REPORT_MESSAGE.Other.id,
-        ], required: true
+
+            config.CONSTANT.REPORT_MESSAGE.FAKE_ACCOUNT.id,
+            config.CONSTANT.REPORT_MESSAGE.FAKE_NAME.id,
+            config.CONSTANT.REPORT_MESSAGE.POSTING_IN_APPROPRIATE_THINGS.id,
+            config.CONSTANT.REPORT_MESSAGE.PretendingToBeSomeOne.id,
+            config.CONSTANT.REPORT_MESSAGE.SOMETHING_ELSE.id,
+        ],
     },
     reason: { type: String, required: true },
     created: { type: Number, default: new Date() }

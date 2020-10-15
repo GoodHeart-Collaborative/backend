@@ -20,6 +20,12 @@ export const
 				const headers: Device = request.headers;
 				const payload: UserRequest.Signup = request.payload;
 				try {
+					console.log(' request.info. request.info.', request.info);
+					const xFF = request.headers['x-forwarded-for']
+					console.log('xFFxFFxFFxFFxFFxFFxFF', xFF);
+					const ip = xFF ? xFF.split(',')[0] : request.info.remoteAddress;
+					payload['getIpfromNtwk'] = ip;
+
 					const result = await userController.signup({ ...headers, ...payload });
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {

@@ -72,11 +72,13 @@ export class CommonController {
 				} else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
 					step1 = await baseDao.findOne("users", { "forgotToken": params.token }, {}, {}, {});
 				}
+				console.log('PPPPPPPPPP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
 				if (!step1) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN);
 				} else {
 					const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
 					const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+					console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
 					if (isExpire) {
 						let step2;
 						if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
@@ -87,11 +89,15 @@ export class CommonController {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 					} else {
 						if (params.type === "forgot") {
+							console.log('params.typeparams.typeparams.typeparams.typeparams.type', params.type);
+							console.log(params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,);
+
 							const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 								.compileFile({
 									url: params.android || "", // android scheme,
 									iosLink: params.ios || "", // ios scheme
-									fallback: params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,
+									// fallback: params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,
+									fallback: params.fallback || config.SERVER.API_URL + "/v1/common/resetPasswordWeb/?accessToken=" + params.token,
 									title: config.SERVER.APP_NAME,
 									android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
 									ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
@@ -161,12 +167,13 @@ export class CommonController {
 
 				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
 				const step1 = await baseDao.updateOne("users", { _id: params.userId }, { isEmailVerified: true }, {});
+				console.log('step1step1step1step1step1step1', step1);
 
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 					.compileFile({
 						url: params.android || "", // android scheme,
 						iosLink: params.ios || "", // ios scheme
-						fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+						fallback: params.fallback || config.CONSTANT.DEEPLINK.WELCOME_FALLBACK,
 						title: config.SERVER.APP_NAME,
 						android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
 						ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK

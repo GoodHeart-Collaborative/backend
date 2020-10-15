@@ -28,11 +28,16 @@ export class CategoryDao extends BaseDao {
 
     async getCatgeoryPosts(params: CategoryRequest.IGetCategory) {
         try {
-            const { status, sortBy, privacy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId } = params;
+            const { status, sortBy, privacy, sortOrder, limit, page, searchTerm, fromDate, toDate, categoryId, type } = params;
             const aggPipe = [];
             const match: any = {};
 
-            match['categoryId'] = await appUtils.toObjectId(categoryId);
+            if (type === 2) {
+                match['categoryId'] = appUtils.toObjectId(categoryId);
+            }
+            if (type === 1) {
+                match['eventCategoryId'] = appUtils.toObjectId(categoryId);
+            }
             if (status) {
                 match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             } else {
@@ -66,39 +71,87 @@ export class CategoryDao extends BaseDao {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-
-            aggPipe.push({
-                '$lookup': {
-                    from: 'experts',
-                    let: {
-                        eId: '$expertId'
-                    },
-                    pipeline: [{
-                        '$match': {
-                            '$expr': {
-                                $and: [{
-                                    '$eq': ['$_id', '$$eId']
-                                },
-                                {
-                                    '$eq': ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                }
-                                ]
-                            }
+            if (type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
+                aggPipe.push({
+                    '$lookup': {
+                        from: 'experts',
+                        let: {
+                            eId: '$expertId'
                         },
+                        pipeline: [{
+                            '$match': {
+                                '$expr': {
+                                    $and: [{
+                                        '$eq': ['$_id', '$$eId']
+                                    },
+                                    {
+                                        '$eq': ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }
+                                    ]
+                                }
+                            },
 
-                    },
-                    {
-                        $project:
-                            { "name": 1, "status": 1, profilePicUrl: 1 }
+                        },
+                        {
+                            $project:
+                                { "name": 1, "status": 1, profilePicUrl: 1 }
+                        }
+                        ],
+                        as: 'expertData'
                     }
-                    ],
-                    as: 'expertData'
-                }
-            })
+                });
+                aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } })
 
-            aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } })
-            const findCategoryData = await categoryDao.findOne('categories', { _id: params.categoryId }, {}, {})
-            const data = await categoryDao.paginate('expert_post', aggPipe, limit, page, {}, true);
+            }
+            // if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
+            //     aggPipe.push({
+            //         '$lookup': {
+            //             from: 'users',
+            //             let: {
+            //                 uId: '$userId'
+            //             },
+            //             pipeline: [{
+            //                 '$match': {
+            //                     '$expr': {
+            //                         $and: [{
+            //                             '$eq': ['$_id', '$$uId']
+            //                         },
+            //                         {
+            //                             '$eq': ['$status', config.CONSTANT.STATUS.ACTIVE]
+            //                         }
+            //                         ]
+            //                     }
+            //                 },
+
+            //             },
+            //             {
+            //                 $project:
+            //                     { "title": 1, "description": 1, price: 1, startDate: 1, endDate: 1 }
+            //             }
+            //             ],
+            //             as: 'eventData'
+            //         }
+            //     });
+            //     aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } })
+            // }
+
+
+            const findCategoryData = await categoryDao.findOne('categories', { _id: appUtils.toObjectId(params.categoryId) }, {}, {})
+            console.log('findCategoryDatafindCategoryDatafindCategoryData', findCategoryData);
+
+            console.log('aggPipeaggPipeaggPipeaggPipeaggPipeaggPipe', JSON.stringify(aggPipe));
+
+            let data;
+            if (type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
+                console.log('1111111111111111111111111111');
+                data = await categoryDao.paginate('expert_post', aggPipe, limit, page, {}, true);
+            }
+            if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
+                console.log('222222222222222222222222222222222222');
+                data = await categoryDao.paginate('event', aggPipe, limit, page, {}, true);
+                console.log('paramsparamsparamsparams', params);
+
+            }
             data['categoryData'] = findCategoryData;
             return data;
 

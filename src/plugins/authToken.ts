@@ -104,6 +104,8 @@ export const plugin = {
 								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.USER_BLOCKED));
 							} else if (userData.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.ADMIN_REJECTED_USER));
+							} else if (userData.status === config.CONSTANT.STATUS.DELETED) {
+								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.DELETED));
 							}
 							else {
 								const step3 = await loginHistoryDao.findDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId, "salt": jwtPayload.payload.salt });
@@ -111,7 +113,7 @@ export const plugin = {
 									return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
 								} else {
 									userData = _.extend(userData, { "deviceId": tokenData.deviceId, "accountLevel": tokenData.accountLevel, "platform": tokenData.platform, "userId": tokenData.userId, "lastLogin": step3.lastLogin });
-									tokenData["userData"] = userData;	
+									tokenData["userData"] = userData;
 									return ({ isValid: true, credentials: { accessToken: accessToken, tokenData: tokenData } });
 								}
 							}

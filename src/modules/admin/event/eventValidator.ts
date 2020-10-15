@@ -15,6 +15,10 @@ let getEvents = Joi.object({
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
     ]),
+    type: Joi.number().valid([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY,
+    ]),
     // categoryId: Joi.string().trim(),
     status: Joi.string().allow([
         config.CONSTANT.STATUS.ACTIVE,

@@ -63,6 +63,7 @@ export class LikeDao extends BaseDao {
 				"createdAt": 1, 
                 "category": 1, 
                 user : {
+                    status: '$users.status',
                     _id: "$users._id",
                     name: { $ifNull:["$users.firstName", ""]}, 
                     profilePicUrl:  "$users.profilePicUrl",

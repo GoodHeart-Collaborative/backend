@@ -35,7 +35,7 @@ class EventController {
             params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
             params['goingCount'] = 1;
-            params['interestCount'] = 1;
+            // params['interestCount'] = 1;
             params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const data = await eventDao.insert("event", params, {});
@@ -48,22 +48,15 @@ class EventController {
 
             const updateEventAndGoing = [
                 {
+                    createrId: appUtils.toObjectId(params['userId']),
                     userId: appUtils.toObjectId(params['userId']),
                     eventId: appUtils.toObjectId(data._id),
                     type: config.CONSTANT.EVENT_INTEREST.GOING,
                     created: Date.now(),
+                    status: config.CONSTANT.STATUS.ACTIVE,
                     createdAt: new Date(),
-                    updatedAt: new Date(),
-
-                },
-                // {
-                //     userId: appUtils.toObjectId(params['userId']),
-                //     eventId: appUtils.toObjectId(data._id),
-                //     type: config.CONSTANT.EVENT_INTEREST.INTEREST,
-                //     created: Date.now(),
-                //     createdAt: new Date(),
-                //     updatedAt: new Date(),
-                // }
+                    updatedAt: new Date()
+                }
             ];
 
             const updateISGoing = await eventDao.insertMany('event_interest', updateEventAndGoing, {})
@@ -220,16 +213,19 @@ class EventController {
             // });
 
             match['userId'] = appUtils.toObjectId(tokenData.userId);
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
             //&& params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT
             // if ((params.type == config.CONSTANT.EVENT_INTEREST.INTEREST || !params.type) && params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
 
             // if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
             //     match['type'] = config.CONSTANT.EVENT_INTEREST.INTEREST;
             // }
-            typeAggPipe.push({ $match: match })
+            typeAggPipe.push({ $match: match });
+
             if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
                 defaultAndInterestEveent.push({
                     $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE,
                         userId: appUtils.toObjectId(tokenData.userId),
                         type: config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
@@ -256,7 +252,11 @@ class EventController {
                                 $expr: {
                                     $and: [{
                                         $eq: ['$_id', '$$eId']
-                                    }]
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }
+                                    ]
                                 }
                             }
                         },
@@ -737,8 +737,6 @@ class EventController {
             })
             aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
 
-
-
             aggPipe.push({
                 $lookup: {
                     from: 'event_interests',
@@ -876,6 +874,7 @@ class EventController {
                     // hostUser: 1,
                     hostUser: {
                         _id: 1,
+                        status: "$hostUser.status",
                         industryType: "$hostUser.industryType",
                         myConnection: "$hostUser.myConnection",
                         experience: "$hostUser.experience",

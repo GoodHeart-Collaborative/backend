@@ -10,6 +10,7 @@ declare namespace UserRequest {
 		lastName: string;
 		createdAt?: number;
 		type: string;
+		getIpfromNtwk: string;
 	}
 	export interface Location extends Device {
 		longitude: number;

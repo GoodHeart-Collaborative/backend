@@ -54,8 +54,7 @@ export const AdminForumRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload: AdminForumRequest.GetForum = request.query;
             try {
-                payload["userId"] = tokenData.userId
-                const result = await adminForumController.GetFormPosts(payload);
+                const result = await adminForumController.GetFormPosts(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

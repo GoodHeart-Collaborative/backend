@@ -1,6 +1,8 @@
 "use strict";
 
 import { SERVER } from "@config/environment";
+// import * as config from "@config/index";
+// ${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/
 
 const SWAGGER_DEFAULT_RESPONSE_MESSAGES = [
 	{ code: 200, message: "OK" },
@@ -28,6 +30,7 @@ const HTTP_STATUS_CODE = {
 	UNREGISTERED: 410,
 	PAYLOAD_TOO_LARGE: 413,
 	BLOCKED_USER: 420,
+	DELETD_USER: 420,
 	CONCURRENT_LIMITED_EXCEEDED: 429,
 	// TOO_MANY_REQUESTS: 429,
 	INTERNAL_SERVER_ERROR: 500,
@@ -178,6 +181,28 @@ const REPORT_MESSAGE = {
 	Other: {
 		reason: "Other",
 		id: 4
+	},
+
+
+	PretendingToBeSomeOne: {
+		reason: "Pretending to be Someone",
+		id: 10
+	},
+	FAKE_ACCOUNT: {
+		reason: "Fake account",
+		id: 11
+	},
+	FAKE_NAME: {
+		reason: "Fake name",
+		id: 12
+	},
+	POSTING_IN_APPROPRIATE_THINGS: {
+		reason: "Posting in appropriate things",
+		id: 13
+	},
+	SOMETHING_ELSE: {
+		reason: "Other",
+		id: 14
 	}
 }
 
@@ -188,10 +213,12 @@ const GENDER = {
 	// TRANSG
 };
 
+
 const EXPERIENCE_LEVEL = {
-	JUNIOR: "Junior",
-	MID: "Mid",
-	SENIOR: "Senior",
+	years_0_2: "0-2 years",
+	years_2_5: "2-5 years",
+	years_5_10: "5-10 years",
+	year_10: "10+",
 }
 
 // export const INDUSTRIES = {
@@ -237,10 +264,16 @@ const STATUS = {
 	DELETED: "deleted"
 };
 
+<<<<<<< HEAD
 const SUBSCRIPTION_STATUS = {
 	INACTIVE: 2,
 	ACTIVE: 1,
 	DELETED: 3
+=======
+const CATEGORY_TYPE = {
+	EVENT_CAEGORY: 1,
+	OTHER_CATEGORY: 2
+>>>>>>> 7faf76d010f29d28d21c4f4665504ceb67027c3f
 };
 
 const COMMENT_CATEGORY = {
@@ -452,8 +485,8 @@ const MESSAGES = {
 			"type": "USER_BLOCKED"
 		},
 		DELETED: {
-			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Your account have been deleted by admin.",
+			statusCode: HTTP_STATUS_CODE.DELETD_USER,
+			"message": "Your account has been deleted by admin.",
 			type: "DELETED"
 		},
 		ADMIN_REJECTED_USER: {
@@ -708,7 +741,19 @@ const NOTIFICATION_CATEGORY = {
 	SHOUTOUT_TAGGED_ME: {
 		type: 5,
 		category: "VIEW_SHOUTLIST_ACTION"
-	}
+	},
+	EVENT_GOING: {
+		type: 6,
+		category: "going"
+	},
+	EVENT_INTEREST: {
+		type: 7,
+		category: "interst events"
+	},
+	// EVENT_INTEREST :{
+	// 	type: 8,
+	// 	category: "VIEW_SHOUTLIST_ACTION"
+	// }
 }
 
 const SMS_SENDING_TYPE = {
@@ -734,8 +779,11 @@ const NOTIFICATION_DATA = {
 };
 
 const DEEPLINK = {
-	DEFAULT_FALLBACK_URL: "https://google.com",
-	RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/?accessToken=",
+	DEFAULT_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb",
+	RESET_PASSWORD_FALLBACK_URL: `${SERVER.API_BASE_URL}?accessToken=`,
+	WELCOME_FALLBACK: `${SERVER.APP_URL}/src/views/welcome-email.html`,
+	// RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/?accessToken=",
+
 	// for android deeplink
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
 	ANDROID_SCHEME: "com.goodheart://",
@@ -951,6 +999,7 @@ export const CONSTANT = Object.freeze({
 	REPORT_MESSAGE,
 	NOTIFICATION_CATEGORY,
 	USER_SUBSCRIPTION_PLAN,
-	SUBSCRIPTION_STATUS
+	SUBSCRIPTION_STATUS,
+	CATEGORY_TYPE
 	// USER_SUBSCRIPTION_PLAN_PRICE
 });

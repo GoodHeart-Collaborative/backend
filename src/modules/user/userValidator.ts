@@ -220,9 +220,14 @@ let updateProfile = Joi.object({
         config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
     ]),
     experience: Joi.string().valid([
-        config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
-        config.CONSTANT.EXPERIENCE_LEVEL.MID,
-        config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
+        // config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
+        // config.CONSTANT.EXPERIENCE_LEVEL.MID,
+        // config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
+        config.CONSTANT.EXPERIENCE_LEVEL.years_0_2,
+        config.CONSTANT.EXPERIENCE_LEVEL.years_2_5,
+        config.CONSTANT.EXPERIENCE_LEVEL.years_5_10,
+        config.CONSTANT.EXPERIENCE_LEVEL.year_10
+
     ]),
     about: Joi.string().allow('').default('')
 }).unknown()
@@ -256,9 +261,13 @@ let updateProfileUser = Joi.object({
         config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
     ]).required(),
     experience: Joi.string().valid([
-        config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
-        config.CONSTANT.EXPERIENCE_LEVEL.MID,
-        config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
+        // config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
+        // config.CONSTANT.EXPERIENCE_LEVEL.MID,
+        // config.CONSTANT.EXPERIENCE_LEVEL.SENIOR,
+        config.CONSTANT.EXPERIENCE_LEVEL.years_0_2,
+        config.CONSTANT.EXPERIENCE_LEVEL.years_2_5,
+        config.CONSTANT.EXPERIENCE_LEVEL.years_5_10,
+        config.CONSTANT.EXPERIENCE_LEVEL.year_10
     ]).required(),
     about: Joi.string().allow('').default('')
 }).unknown()

@@ -23,6 +23,8 @@ import * as config from "@config/index";
 import { logger } from "@lib/logger";
 const TAG = "rcc-uploads";
 import fetch from 'node-fetch';
+import * as  geoip from 'geoip-lite';
+
 
 // import ipLocation from "iplocation";
 // import * as geoip from 'geoip-lite';
@@ -697,7 +699,10 @@ const getLocationByIp = async (ipaddress: string) => {
 
 		// const response = await fetch('http://ip-api.com/json/', request);
 		const response = await fetch(url, request);
-		console.log('responseresponseresponse', response);
+		console.log('responseresponsereurlurlurlsponse', response);
+
+		// var geo = geoip.lookup(ip);
+		// console.log('geogeogeogeogeogeogeogeogeogeogeogeogeogeo', geo);
 
 		// let options = http_options({ normal: true })
 		// const response = await fetch(url)
