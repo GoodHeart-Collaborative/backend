@@ -58,7 +58,7 @@ class InterestController {
                 params['click_action'] = "Event Interest Received";
                 type == config.CONSTANT.EVENT_INTEREST.GOING ? params['message'] = `${tokenData.firstName} going in your event` : params['message'] = `${tokenData.firstName} shown interest in your event`;
 
-                params['type'] = params.type;
+                params['type'] = type;  //config.CONSTANT.EVENT_INTEREST.GOING ? config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_GOING : config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_INTEREST;
                 console.log('paramsparamsparamsparamsparamsparams', params);
 
                 params['userId'] = findCreatedUserId.userId;
