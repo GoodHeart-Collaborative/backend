@@ -20,6 +20,7 @@ export interface Isubscription extends Document {
     receiptToken: string;
     subscriptionType: number;
     price: number;
+    status: number;
     created: number;
     subscriptionEndDate: number;
 }
@@ -46,6 +47,14 @@ const subscriptionSchema = new Schema({
             config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.price,
         ],
         default: config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.price,
+
+    },
+    status: {
+        type: Number, enum: [
+            config.CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
+            config.CCONSTANT.SUBSCRIPTION_STATUS.INACTIVE,
+        ],
+        default: config.CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
 
     },
     amount: { type: Number },
