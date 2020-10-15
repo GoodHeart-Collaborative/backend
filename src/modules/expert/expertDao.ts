@@ -299,7 +299,7 @@ export class ExpertDao extends BaseDao {
      */
     async getCategory(payload: userExpertRequest.IgetCategory) {
         try {
-            const { searchTerm, screenType } = payload;
+            const { searchTerm, screenType, type } = payload;
             let { limit, page } = payload
             let criteria: any = {};
 
@@ -309,7 +309,12 @@ export class ExpertDao extends BaseDao {
             // if (status) {
             // match["$and"] = [{ status: status }, { status: { "$ne": config.CONSTANT.STATUS.DELETED } }];
             // } else {
-            match.status = config.CONSTANT.STATUS.ACTIVE;
+            const paginateOptions = {
+                limit: limit || 10,
+                pageNo: page || 1,
+            };
+            match['type'] = type;
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
             // }
 
             if (searchTerm) {
@@ -320,56 +325,56 @@ export class ExpertDao extends BaseDao {
             }
 
 
-            const paginateOptions = {
-                limit: limit || 10,
-                pageNo: page || 1,
-            };
-            console.log('paginateOptions', paginateOptions);
 
-            categoryPipeline = [
-                {
-                    $match: match
-                }, {
-                    $lookup: {
-                        from: 'experts',
-                        let: { cId: '$_id' },
-                        as: 'expertData',
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [{
-                                            $in: ['$$cId', '$categoryId'],
-                                        },
-                                        {
-                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+            console.log('paginateOptions', paginateOptions);
+            categoryPipeline.push({
+                $match: match
+            });
+
+            if (type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
+                categoryPipeline = [
+                    {
+                        $lookup: {
+                            from: 'experts',
+                            let: { cId: '$_id' },
+                            as: 'expertData',
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [{
+                                                $in: ['$$cId', '$categoryId'],
+                                            },
+                                            {
+                                                $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                            }
+                                            ]
                                         }
-                                        ]
                                     }
-                                }
-                            },
-                        ],
+                                },
+                            ],
+                        }
+                    },
+                    {
+                        $match: {
+                            expertData: { $ne: [] }
+                        }
+                    },
+                    {
+                        $project: {
+                            createdAt: 0,
+                            updatedAt: 0,
+                            status: 0,
+                            expertData: 0
+                        }
+                    },
+                    {
+                        $sort: {
+                            _id: -1
+                        }
                     }
-                },
-                {
-                    $match: {
-                        expertData: { $ne: [] }
-                    }
-                },
-                {
-                    $project: {
-                        createdAt: 0,
-                        updatedAt: 0,
-                        status: 0,
-                        expertData: 0
-                    }
-                },
-                {
-                    $sort: {
-                        _id: -1
-                    }
-                }
-            ];
+                ];
+            }
 
             if (screenType === 'addPost') {
                 categoryPipeline.splice(2, 1);
