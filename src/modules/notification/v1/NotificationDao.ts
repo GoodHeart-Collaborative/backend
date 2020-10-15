@@ -117,7 +117,7 @@ export class NotificationDao extends BaseDao {
 					created: 1,
 					postId: 1,
 					receiverId: 1,
-
+					eventId: 1,
 					isComment: 1,
 					isLike: 1,
 					isActive: {

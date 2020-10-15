@@ -53,13 +53,16 @@ class InterestController {
                 // const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {}, {}, {}, {});
                 params['title'] = 'event Interests';
                 params['body'] = {
-                    _id: eventId
+                    _id: eventId,
+                    // eventId: eventId
                 };
                 params['click_action'] = "Event Interest Received";
                 type == config.CONSTANT.EVENT_INTEREST.GOING ? params['message'] = `${tokenData.firstName} going in your event` : params['message'] = `${tokenData.firstName} shown interest in your event`;
 
                 params['type'] = config.CONSTANT.EVENT_INTEREST.GOING ? config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_GOING.type : config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_INTEREST.type;
                 console.log('paramsparamsparamsparamsparamsparams', params);
+
+                params['eventId'] = eventId;
 
                 params['userId'] = findCreatedUserId.userId;
 
