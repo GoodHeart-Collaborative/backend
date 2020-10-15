@@ -57,6 +57,10 @@ let GetCategoryDetailsList = Joi.object({
         config.CONSTANT.STATUS.BLOCKED,
         config.CONSTANT.STATUS.DELETED
     ]),
+    type: Joi.number().allow([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY,
+    ]),
     fromDate: Joi.date(),
     toDate: Joi.date(),
     privacy: Joi.string().allow([

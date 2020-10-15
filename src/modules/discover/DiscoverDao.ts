@@ -185,12 +185,21 @@ export class DiscoverDao extends BaseDao {
     }
     async getUserData(params, userId) {
         try {
-            let { pageNo, limit, searchKey, _id, longitude, latitude, distance, industryType } = params
+            let { pageNo, limit, searchKey, _id, longitude, latitude, distance, industryType, getIpfromNtwk } = params
             let aggPipe = [];
             let result: any = {}
             let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
             let pickupLocation = [];
-            let match: any = {}
+            let match: any = {};
+
+            if (longitude == undefined && latitude == undefined) {
+                const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
+
+                latitude = lat_lng.lat;
+                longitude = lat_lng.long;
+            }
+
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(longitude, latitude);
                 aggPipe.push(
@@ -281,6 +290,7 @@ export class DiscoverDao extends BaseDao {
                     _id: 1,
                     discover_status: { $ifNull: ["$discovers.discover_status", 4] },
                     user: {
+                        status: '$status',
                         _id: "$_id",
                         industryType: "$industryType",
                         myConnection: "$myConnection",
@@ -473,15 +483,15 @@ export class DiscoverDao extends BaseDao {
     }
 
     async getUserById(params) {
-		try {
-			let { userId } = params
-			let query: any = {}
-			query["_id"] = await appUtils.toObjectId(userId)
-			return await this.findOne('users', query, {}, {});
-		} catch (error) {
-			throw error;
-		}
-	}
+        try {
+            let { userId } = params
+            let query: any = {}
+            query["_id"] = await appUtils.toObjectId(userId)
+            return await this.findOne('users', query, {}, {});
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export const discoverDao = new DiscoverDao();
