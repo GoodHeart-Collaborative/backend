@@ -63,25 +63,68 @@ export class DiscoverDao extends BaseDao {
                 match["discover_status"] = discover_status
             }
             aggPipe.push({ "$match": match })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "userId",
+            //         "foreignField": "_id",
+            //         "as": "users"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "userId",
-                    "foreignField": "_id",
-                    "as": "users"
+                    "as": "users",
+                    let: { uId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$uId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
+
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "followerId",
+            //         "foreignField": "_id",
+            //         "as": "followers"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "followerId",
-                    "foreignField": "_id",
-                    "as": "followers"
+                    "as": "followers",
+                    let: { fId: '$followerId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$fId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
-            aggPipe.push({ '$unwind': { path: '$followers', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$followers', preserveNullAndEmptyArrays: false } })
             if (ShoutoutConnection) {
                 aggPipe.push({
                     $project:
@@ -213,6 +256,24 @@ export class DiscoverDao extends BaseDao {
                     { "$sort": { dist: -1 } }
                 )
             }
+
+            aggPipe.push({
+                $project: {
+                    _id: 1,
+                    status: 1,
+                    industryType: 1,
+                    myConnection: 1,
+                    experience: 1,
+                    name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+                    profilePicUrl: 1,
+                    profession: { $ifNull: ["$profession", ""] },
+                    about: { $ifNull: ["$about", ""] },
+                    created: 1,
+                    adminStatus: 1,
+                    createdAt: 1,
+                }
+            })
+
             userId = await appUtils.toObjectId(userId.userId)
             // aggPipe.push({ "$match": { _id: { "$ne": userId } } });
             if (_id) {
@@ -227,24 +288,29 @@ export class DiscoverDao extends BaseDao {
                     status: CONSTANT.STATUS.ACTIVE
                 }
             }
-            aggPipe.push({ "$sort": { "createdAt": 1 } })
-            aggPipe.push({
-                $lookup: {
-                    "from": "discovers",
-                    "localField": "_id",
-                    "foreignField": "followerId",
-                    "as": "discovers"
-                }
-            })
+
             if (industryType) {
                 match["industryType"] = { $in: industryType }
                 // aggPipe.push({ "$match": { industryType: { $in: industryType } } })
             }
             if (searchKey) {
-                match["firstName"] = { "$regex": searchKey, "$options": "i" }
+                match["name"] = { "$regex": searchKey, "$options": "i" }
                 // aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
             }
-            aggPipe.push({ "$match": match })
+            aggPipe.push({ "$match": match });
+            aggPipe.push({ "$sort": { "createdAt": 1 } });
+
+
+
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "discovers",
+            //         "localField": "_id",
+            //         "foreignField": "followerId",
+            //         "as": "discovers"
+            //     }
+            // })
+
             aggPipe.push({
                 $lookup: {
                     from: "discovers",
@@ -295,12 +361,12 @@ export class DiscoverDao extends BaseDao {
                         myConnection: "$myConnection",
                         experience: "$experience",
                         discover_status: { $ifNull: ["$discovers.discover_status", 4] },
-                        name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
+                        name: '$name',
                         profilePicUrl: "$profilePicUrl",
-                        profession: { $ifNull: ["$profession", ""] },
-                        about: { $ifNull: ["$about", ""] }
+                        profession: '$profession',
+                        about: "$about"
                     },
-                    created: 1
+                    created: '$created'
                 }
             })
             result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
@@ -396,8 +462,13 @@ export class DiscoverDao extends BaseDao {
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $eq: ['$_id', '$$users']
-                            }
+                                $and: [{
+                                    $eq: ['$_id', '$$users']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+                            },
                         }
                     }]
                 }
