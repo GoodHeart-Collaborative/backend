@@ -17,7 +17,9 @@ export class BootStrap {
 
 		await this.dataBaseService.connectToDb();
 		await this.bootstrapSeedData();
-		await this.generateMemberOfDay()
+		await this.generateMemberOfDay();
+
+		console.log("Init Request");
 		// rabbitMQ.init();
 
 		// If elastic search engine is enabled

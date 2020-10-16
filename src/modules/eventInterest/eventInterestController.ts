@@ -12,6 +12,7 @@ import { baseDao } from "@modules/base/BaseDao";
 import { userDao } from "@modules/user";
 import { discoverDao } from "@modules/discover";
 import { notificationManager } from '@utils/NotificationManager';
+import { eventController } from "@modules/event/eventController";
 class InterestController {
 
 
@@ -30,7 +31,7 @@ class InterestController {
                 type: type,
                 eventId: appUtils.toObjectId(eventId),
                 userId: appUtils.toObjectId(userId)
-            }
+            };
 
             const findCreatedUserId = await eventDao.findOne('event', { _id: appUtils.toObjectId(eventId) }, {}, {})
             console.log('findCreatedUserIdfindCreatedUserIdfindCreatedUserId', findCreatedUserId);
@@ -54,33 +55,16 @@ class InterestController {
                 params['title'] = 'event Interests';
                 params['body'] = {
                     _id: eventId,
-                    // eventId: eventId
                 };
                 params['click_action'] = "Event Interest Received";
                 type == config.CONSTANT.EVENT_INTEREST.GOING ? params['message'] = `${tokenData.firstName} going in your event` : params['message'] = `${tokenData.firstName} shown interest in your event`;
-
                 params['type'] = config.CONSTANT.EVENT_INTEREST.GOING ? config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_GOING.type : config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_INTEREST.type;
                 console.log('paramsparamsparamsparamsparamsparams', params);
-
                 params['eventId'] = eventId;
-
                 params['userId'] = findCreatedUserId.userId;
-
                 // params['userId'] = params.followerId;
                 const data1111 = notificationManager.sendOneToOneNotification(params, { userId: tokenData.userId }, true);
-
             }
-
-            const hostUserData = await userDao.findOne('users', { _id: findCreatedUserId.createrId }, {}, {});
-            console.log('userDatauserData', hostUserData);
-
-            // match["$or"] = [
-            //     { "userId": userId },
-            //     { "followerId": userId }
-            // ];
-
-            // const discoverStatus = await discoverDao.getDiscoverData('discovers', { })
-
 
             const userEvent = await eventInterestDao.findAll('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {});
 
@@ -91,33 +75,12 @@ class InterestController {
                 data = await eventDao.findByIdAndUpdate('event', { _id: eventId }, { $inc: { interestCount: incOrDec } }, { new: true, lean: true })
             }
 
-            data['isGoing'] = false;
-            data['isInterest'] = false;
-            if (userEvent.length > 0) {
-                userEvent.map(data1 => {
-                    console.log('data1data1data1', data1);
-                    if (data1.type === config.CONSTANT.EVENT_INTEREST.GOING) {
-                        data['isGoing'] = true;
-                    }
-                    if (data1.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
-                        data['isInterest'] = true;
-                    }
-                })
-            }
-            // data['hostUser']['status'] = hostUserData.status;
-            // data['industryType'] = hostUserData.industryType;
-            // data['myConnection'] = hostUserData.myConnection;
-            // data['myConnection'] = hostUserData.myConnection;
-            // data['experience'] = hostUserData.experience;
-            // // data['discover_status'] = { $ifNull: ["$DiscoverData.discover_status", 4] };
-            // data['name'] = hostUserData.firstName + " " + hostUserData.lastName;
-            // data['profilePicUrl'] = hostUserData.profilePicUrl;
-            // data['profession'] = hostUserData.profession;
-            // data['about'] = hostUserData.about;
-            return data;
+            const eventData = await eventController.getEventDetail({ eventId: params.eventId }, { userId: tokenData.userId });
+            // console.log('eventDataeventDataeventData', eventData);
 
+            return eventData;
 
-            return data;
+            // return data;
         } catch (error) {
             return Promise.reject(error);
         }
