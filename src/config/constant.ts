@@ -112,7 +112,7 @@ const DATE_FILTER = {
 	WEEKEND: 5,
 }
 
-const DB_MODEL_REF = {
+const DB_MODEL_REF: any = {
 	ADMIN: "admin",
 	ADMIN_NOTIFICATION: "admin_notification",
 	CONTACT: "contact",
@@ -748,6 +748,10 @@ const NOTIFICATION_CATEGORY = {
 		type: 7,
 		category: "interst events"
 	},
+	EVENT_REMINDER: {
+		type: 8,
+		category: "Event Reminder"
+	},
 	// EVENT_INTEREST :{
 	// 	type: 8,
 	// 	category: "VIEW_SHOUTLIST_ACTION"
@@ -999,5 +1003,4 @@ export const CONSTANT = Object.freeze({
 	USER_SUBSCRIPTION_PLAN,
 	SUBSCRIPTION_STATUS,
 	CATEGORY_TYPE
-	// USER_SUBSCRIPTION_PLAN_PRICE
 });

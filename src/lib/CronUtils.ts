@@ -4,15 +4,18 @@ const request = require("request");
 import * as config from "@config/index";
 import { userDao } from "@modules/user";
 import * as  userDao1 from "@modules/user/v1/UserDao";
-
+import { BaseDao } from "@modules/base/BaseDao";
 import * as notification from '@utils/NotificationManager';
+import { CONSTANT } from "@config/index";
+import * as appUtils from "@utils/appUtils";
 const baseUrl = config.SERVER.APP_URL + config.SERVER.API_BASE_URL;
 let task;
+let task2;
 
-export class CronUtils {
+export class CronUtils extends BaseDao {
 
-	constructor() { }
 	init() {
+		console.log("Cron job");
 		// this will execute on the server time at 00:01:00 each day by server time
 		task = cron.schedule("5 0 * * *", async function () {
 			// task = cron.schedule('* * * * * *', function () {
@@ -22,6 +25,12 @@ export class CronUtils {
 
 		}, { scheduled: false });
 		task.start();
+
+		task2 = cron.schedule("* * * * *", () => {
+			this.eventReminder();
+		}, { scheduled: false });
+
+		task2.start();
 	}
 
 	async createMember() {
@@ -104,6 +113,35 @@ export class CronUtils {
 		const findGlobalCount = await userDao.findOneAndUpdate('global_var', { _id: minMemberCount._id }, { memberOfDayCount: minMemberCount.memberOfDayCount + 1 }, {});
 		console.log('findGlobalCountfindGlobalCount', findGlobalCount);
 		this.createMember();
+	}
+
+	async eventReminder() {
+		console.log("************** Reminder cron has been started ***********")
+		const query: any = {};
+		query["$and"] = [{ startDate: { $gte: await appUtils.fiveMinuteBeforeTimeStampTime() } }, { startDate: { $lte: await appUtils.nextMinuteTimeStamp() } }];
+		query["status"] = CONSTANT.STATUS.ACTIVE;
+
+		const events = await this.find(CONSTANT.DB_MODEL_REF.EVENT, query, {}, {lean: true}, {}, {}, {});
+		events.forEach(async (element) => {
+			const eventIntrests = await this.find(CONSTANT.DB_MODEL_REF.EVENT, {eventId: element._id}, {}, {lean: true}, {}, {}, {});
+			const members: any = [];
+			console.log(eventIntrests);
+			eventIntrests.forEach( async (element) => {
+				members.push(element.userId);
+				console.log("Send Push Notification", element.userId);
+			});
+			if (members.length > 0) {
+				const params: any = {};
+				params.members = members;
+				params.title = "Event Reminder";
+				params.category = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.category;
+				params.message = "Your event is about to start in 5 min";
+				params.type = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.type;
+
+				notification.notificationManager.sendBulkNotification( params , {userId: ""});
+			}
+		});
+		console.log(events);
 	}
 
 }
