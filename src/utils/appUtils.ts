@@ -247,6 +247,7 @@ const createIOSPushPayload = function (data) {
 				"category": data.category ? data.category : '',
 				"userId": data.userId ? data.userId : '',
 				"type": data.type,
+				eventId: data.eventId ? data.eventId : ''
 			},
 			"notification": {
 				"title": data.title,
