@@ -103,6 +103,10 @@ export class ShoutoutDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             userId = await appUtils.toObjectId(userId.userId)
+            match['createdAt'] = {
+                $gt: new Date(new Date().getTime() - 60 * 60 * 24 * 1000)
+            };
+
             match["$or"] = [
                 { "members": { $all: [userId] }, privacy: CONSTANT.PRIVACY_STATUS.PUBLIC },
                 { "senderId": userId },
