@@ -40,7 +40,7 @@ export class LikeDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result:any = {}
-            match["userId"] = appUtils.toObjectId(userId)
+            // match["userId"] = appUtils.toObjectId(userId)
             match["postId"] = appUtils.toObjectId(postId)
             if(commentId) {
                 match["commentId"] = appUtils.toObjectId(commentId)
