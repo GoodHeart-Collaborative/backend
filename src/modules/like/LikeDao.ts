@@ -63,6 +63,7 @@ export class LikeDao extends BaseDao {
 				"createdAt": 1, 
                 "category": 1, 
                 // user : {
+                    myConnection: "$users.myConnection",
                     status: '$users.status',
                     _id: "$users._id",
                     name: { $ifNull:["$users.firstName", ""]}, 
@@ -71,7 +72,7 @@ export class LikeDao extends BaseDao {
                 // }
             } });
             aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
-            result = await this.aggregateWithPagination("likes", aggPipe, limit, pageNo, true)
+            result = await this.paginate("likes", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
             throw error;
