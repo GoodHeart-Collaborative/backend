@@ -72,7 +72,7 @@ export class LikeDao extends BaseDao {
                 // }
             } });
             aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
-            result = await this.paginate("likes", aggPipe, limit, pageNo, true)
+            result = await this.aggregateWithPagination("likes", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
             throw error;
