@@ -178,7 +178,7 @@ export class UserController {
 
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
-					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+					// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 
 
 					if (params.email && !step2) {
@@ -223,12 +223,13 @@ export class UserController {
 						let step3;
 						if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
 							const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-							step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
+							// step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
+							const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						} else {
 							const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
-							step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
+							// step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
 						}
-						params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken, "lastLogin": step3 });
+						params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken });
 						// const step4 = loginHistoryDao.createUserLoginHistory(params);
 						let step5, step6;
 						if (config.SERVER.IS_REDIS_ENABLE) {
@@ -244,7 +245,7 @@ export class UserController {
 							step6 = redisClient.createJobs(jobPayload);
 						}
 
-						const step7 = await promise.join(step4, step5, step6);
+						// const step7 = await promise.join(step4, step5, step6);
 						// const userData = { ...step1.isAppleLogin, ...step1.isMobileVerified, ...step1.isEmailVerified, ...step1.isFacebookLogin, ...step1.isGoogleLogin, ...step1.firstName, ...step1.lastName, ...step1.countryCode, ...step1.}
 						delete step1['salt'];
 						delete step1['hash'];
