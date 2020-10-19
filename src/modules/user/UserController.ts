@@ -90,6 +90,9 @@ export class UserController {
 
 				params = _.extend(params, { "salt": salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
 
+				const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step2._id });
+				console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
+
 				const step6 = await loginHistoryDao.createUserLoginHistory(params);
 
 				let step7, step8;
