@@ -62,13 +62,14 @@ export class LikeDao extends BaseDao {
             { "$project": { 
 				"createdAt": 1, 
                 "category": 1, 
-                // user : {
+               // user : {
                     myConnection: "$users.myConnection",
                     status: '$users.status',
                     _id: "$users._id",
                     name: { $ifNull:["$users.firstName", ""]}, 
                     profilePicUrl:  "$users.profilePicUrl",
-                    profession: { $ifNull:["$users.profession", ""]}
+                    profession: { $ifNull:["$users.profession", ""]},
+                    about:{ $ifNull:["$users.aboust", ""]}
                 // }
             } });
             aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
