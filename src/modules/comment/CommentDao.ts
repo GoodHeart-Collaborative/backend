@@ -178,6 +178,7 @@ export class CommentDao extends BaseDao {
                         "isLike": {
                             $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId)] }, then: true, else: false }
                         },
+                        postId: postId,
                         "comment": 1,
                         "createdAt": 1,
                         user: {
