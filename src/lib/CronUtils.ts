@@ -27,7 +27,7 @@ export class CronUtils extends BaseDao {
 		task.start();
 
 		task2 = cron.schedule("* * * * *", () => {
-			this.eventReminder();
+			// this.eventReminder();
 		}, { scheduled: false });
 
 		task2.start();
@@ -118,18 +118,20 @@ export class CronUtils extends BaseDao {
 	async eventReminder() {
 		console.log("************** Reminder cron has been started ***********")
 		const query: any = {};
-		query["$and"] = [{ startDate: { $gte: await appUtils.fiveMinuteBeforeTimeStampTime() } }, { startDate: { $lte: await appUtils.nextMinuteTimeStamp() } }];
+		query["$and"] = [{ startDate: { $gte: await appUtils.fiveMinuteBeforeTimeStampTime() } },]; //{ startDate: { $lte: await appUtils.nextMinuteTimeStamp() } }
 		query["status"] = CONSTANT.STATUS.ACTIVE;
 
-		const events = await this.find(CONSTANT.DB_MODEL_REF.EVENT, query, {}, {lean: true}, {}, {}, {});
+		const events = await this.find(CONSTANT.DB_MODEL_REF.EVENT, query, {}, { lean: true }, {}, {}, {});
 		events.forEach(async (element) => {
-			const eventIntrests = await this.find(CONSTANT.DB_MODEL_REF.EVENT, {eventId: element._id}, {}, {lean: true}, {}, {}, {});
+			const eventIntrests = await this.find(CONSTANT.DB_MODEL_REF.EVENT_INTEREST, { eventId: element._id }, {}, { lean: true }, {}, {}, {});
 			const members: any = [];
-			console.log(eventIntrests);
-			eventIntrests.forEach( async (element) => {
+			console.log('eventIntrestseventIntrests', eventIntrests);
+			eventIntrests.forEach(async (element) => {
 				members.push(element.userId);
 				console.log("Send Push Notification", element.userId);
 			});
+			console.log('membersmembersmembersmembers', members);
+
 			if (members.length > 0) {
 				const params: any = {};
 				params.members = members;
@@ -137,8 +139,8 @@ export class CronUtils extends BaseDao {
 				params.category = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.category;
 				params.message = "Your event is about to start in 5 min";
 				params.type = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.type;
-
-				notification.notificationManager.sendBulkNotification( params , {userId: ""});
+				params['eventId'] = element._id
+				notification.notificationManager.sendBulkNotification(params, { userId: "" });
 			}
 		});
 		console.log(events);
