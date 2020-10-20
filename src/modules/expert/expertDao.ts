@@ -374,7 +374,7 @@ export class ExpertDao extends BaseDao {
                     }
                 )
             }
-            if (screenType != 'addPost' && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
+            if (screenType != 'addPost') {
                 categoryPipeline.splice(2, 1);
             };
 
