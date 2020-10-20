@@ -146,6 +146,9 @@ class DiscoverController {
             params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
             params['userId'] = params.followerId;
 
+            console.log(' params params params params params', params);
+
+
             const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
             // { followerId: params.followerId, userId: userId.userId })
