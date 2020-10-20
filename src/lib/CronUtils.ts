@@ -27,7 +27,7 @@ export class CronUtils extends BaseDao {
 		task.start();
 
 		task2 = cron.schedule("* * * * *", () => {
-			this.eventReminder();
+			// this.eventReminder();
 		}, { scheduled: false });
 
 		task2.start();
