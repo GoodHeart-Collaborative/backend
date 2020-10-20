@@ -103,6 +103,10 @@ export class ShoutoutDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             userId = await appUtils.toObjectId(userId.userId)
+            match['createdAt'] = {
+                $gt: new Date(new Date().getTime() - 60 * 60 * 24 * 1000)
+            };
+
             match["$or"] = [
                 { "members": { $all: [userId] }, privacy: CONSTANT.PRIVACY_STATUS.PUBLIC },
                 { "senderId": userId },
@@ -189,14 +193,22 @@ export class ShoutoutDao extends BaseDao {
             let aggPipe = [];
             let result: any = {}
             userId = await appUtils.toObjectId(userId.userId)
-            match["$or"] = [
-                {
-                    "members": { $all: [userId] },
-                    privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
-                },
-                // { "senderId": userId },
-                { "receiverId": userId }
-            ];
+            match["$and"] = [{
+                status: config.CONSTANT.STATUS.ACTIVE,
+                ["$or"]: [
+                    {
+                        "members": { $all: [userId] },
+                        privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
+                    },
+                    // { "senderId": userId },
+                    { "receiverId": userId }
+                ],
+            }];
+            match['createdAt'] = {
+                $gt: new Date(new Date().getTime() - 60 * 60 * 24 * 1000)
+            };
+
+
             aggPipe.push({ "$sort": { "_id": -1 } })
             aggPipe.push({ "$match": match })
             aggPipe.push({

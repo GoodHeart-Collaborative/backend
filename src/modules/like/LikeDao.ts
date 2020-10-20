@@ -40,7 +40,7 @@ export class LikeDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result:any = {}
-            match["userId"] = appUtils.toObjectId(userId)
+            // match["userId"] = appUtils.toObjectId(userId)
             match["postId"] = appUtils.toObjectId(postId)
             if(commentId) {
                 match["commentId"] = appUtils.toObjectId(commentId)
@@ -62,13 +62,15 @@ export class LikeDao extends BaseDao {
             { "$project": { 
 				"createdAt": 1, 
                 "category": 1, 
-                user : {
+               // user : {
+                    myConnection: "$users.myConnection",
                     status: '$users.status',
                     _id: "$users._id",
                     name: { $ifNull:["$users.firstName", ""]}, 
                     profilePicUrl:  "$users.profilePicUrl",
-                    profession: { $ifNull:["$users.profession", ""]}
-                }
+                    profession: { $ifNull:["$users.profession", ""]},
+                    about:{ $ifNull:["$users.aboust", ""]}
+                // }
             } });
             aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
             result = await this.aggregateWithPagination("likes", aggPipe, limit, pageNo, true)
