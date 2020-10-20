@@ -728,17 +728,22 @@ const formatDate = async (date) => {
 };
 
 const fiveMinuteBeforeTimeStampTime = async () => {
-	const d = new Date();
-	const hours = d.getHours();
-	const minutes = d.getMinutes();
-	return new Date().setHours(hours, minutes - 5, 0, 0);
+	// const d = new Date();
+	// const hours = d.getHours();
+	// const minutes = d.getMinutes();
+	// return new Date().setHours(hours, minutes - 5, 0, 0);
+	var dt = new Date();
+	dt.setHours(dt.getHours() + 2);
+
 };
 
 const nextMinuteTimeStamp = async () => {
-	const d = new Date();
-	const hours = d.getHours();
-	const minutes = d.getMinutes();
-	return new Date().setHours(hours, minutes - 4, 0, 0);
+	// const d = new Date();
+	// const hours = d.getHours();
+	// const minutes = d.getMinutes();
+	// return new Date().setHours(hours, minutes - 4, 0, 0);
+	const OneHourLaterTime = new Date().setHours(new Date().getHours() + 1);
+	return OneHourLaterTime;
 };
 
 export {

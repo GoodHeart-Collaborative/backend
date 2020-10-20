@@ -26,8 +26,8 @@ export class CronUtils extends BaseDao {
 		}, { scheduled: false });
 		task.start();
 
-		task2 = cron.schedule("* * * * *", () => {
-			// this.eventReminder();
+		task2 = cron.schedule("0 */1 * * *", () => {  //every past 1 hour
+			this.eventReminder();
 		}, { scheduled: false });
 
 		task2.start();
@@ -118,7 +118,7 @@ export class CronUtils extends BaseDao {
 	async eventReminder() {
 		console.log("************** Reminder cron has been started ***********")
 		const query: any = {};
-		query["$and"] = [{ startDate: { $gte: await appUtils.fiveMinuteBeforeTimeStampTime() } },]; //{ startDate: { $lte: await appUtils.nextMinuteTimeStamp() } }
+		query["$and"] = [{ startDate: { $gte: new Date().getTime(), $lte: await appUtils.nextMinuteTimeStamp() } }]; //{  
 		query["status"] = CONSTANT.STATUS.ACTIVE;
 
 		const events = await this.find(CONSTANT.DB_MODEL_REF.EVENT, query, {}, { lean: true }, {}, {}, {});
