@@ -63,16 +63,16 @@ class EventController {
 
             // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
 
-            // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-            //     `&type=event`;
+            const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
+                `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
+                `&type=event`;
 
             // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}`;
             // console.log('eventUrl1eventUrl1', eventUrl1);
 
             // const eventUrl1 = `${config.SERVER.APP_URL}?type=event&eventId=5f5903250711f37999791887`
 
-            const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
+            // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
             // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
 
             // async forgotPasswordEmailToUser(params) {
@@ -416,22 +416,12 @@ class EventController {
                             near: { type: "Point", coordinates: pickupLocation },
                             spherical: true,
                             maxDistance: searchDistance,
-                            includeLocs: "dist.location",
+                            // includeLocs: "dist.location",
                             distanceField: "dist",
                         }
                     },
                     { "$sort": { endDate: 1 } }
                 )
-                // pickupLocation.push(latitude, longitude);
-                // aggPipe.push(
-                //     {
-                //         '$geoNear': {
-                //             near: { type: "Point", coordinates: pickupLocation },
-                //             spherical: true,
-                //             maxDistance: searchDistance,
-                //             distanceField: "dist",
-                //         }
-                //     },
                 //     { "$sort": { dist: -1 } }
                 // )
                 featureAggPipe.push(
@@ -446,22 +436,7 @@ class EventController {
                     { "$sort": { endDate: 1, } }
                 )
             }
-            // else {
-            //     aggPipe.push(
-            //         {
-            //             $sort: {
-            //                 _id: -1
-            //             },
-            //         }
-            //     );
-            //     featureAggPipe.push(
-            //         {
-            //             $sort: {
-            //                 _id: -1
-            //             },
-            //         },
-            //     );
-            // }
+
             console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['endDate'] = { $gt: new Date().getTime() }
@@ -629,7 +604,11 @@ class EventController {
             // eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
 
             const featuredEvent = await eventDao.aggregate('event', featureAggPipe, {})
+            console.log('featuredEventfeaturedEventfeaturedEventfeaturedEventfeaturedEvent', featuredEvent);
+
             const event = await eventDao.aggregate('event', aggPipe, {});
+            console.log('event event event event event event event event ', event);
+
             // const time = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
             // const TIMES = {
             //     time,
