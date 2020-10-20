@@ -23,6 +23,22 @@ export class NotificationManager {
 		console.log('step1step1step1step1', step1.length);
 
 		let bulkNotitification = [];
+		if (params.eventId) {
+			await step1.forEach(async (data) => {
+				bulkNotitification.push({
+					"senderId": tokenData.userId,
+					"receiverId": data._id,
+					"isRead": false,
+					"title": params.title,
+					"message": params.message,
+					"type": params.type,
+					eventId: params.eventId,
+					created: Date.now(),
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+			});
+		}
 		await step1.forEach(async (data) => {
 			bulkNotitification.push({
 				"senderId": tokenData.userId,
@@ -123,6 +139,8 @@ export class NotificationManager {
 	}
 
 	async sendOneToOneNotification(params, tokenData?: TokenData, otherUserId?: boolean) {
+		console.log('>>>>>>>><<<<<<<<<<<<<<<<<<<<paramsparamsparamsparams', params);
+
 		const populateQuery = [
 			{ path: "userId", model: config.CONSTANT.DB_MODEL_REF.USER, match: { status: config.CONSTANT.STATUS.ACTIVE }, select: "_id" }
 		];
