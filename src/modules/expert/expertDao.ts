@@ -804,6 +804,7 @@ export class ExpertDao extends BaseDao {
                 $in: ['categoryId', appUtils.toObjectId(payload.categoryId)]
             }
 
+
             console.log('paginateOptions', paginateOptions);
 
             let categoryPipeline: any = [
@@ -835,6 +836,11 @@ export class ExpertDao extends BaseDao {
                 {
                     $match: {
                         categoryData: { $ne: [] }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: -1
                     }
                 },
                 {
