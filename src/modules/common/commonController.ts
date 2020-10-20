@@ -121,7 +121,7 @@ export class CommonController {
 				.compileFile({
 					url: params.android || "", // android scheme,
 					iosLink: params.ios || "", // ios scheme
-					fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+					fallback: params.fallback || config.CONSTANT.DEEPLINK.GOOGLE,
 					title: config.SERVER.APP_NAME,
 					android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
 					ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK

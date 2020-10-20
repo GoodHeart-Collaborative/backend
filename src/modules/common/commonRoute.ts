@@ -303,6 +303,7 @@ export const commonRoute: ServerRoute = [
 					ios: Joi.string().trim().optional(),
 					fallback: Joi.string().trim().optional(),
 					type: Joi.string().trim().valid(["login", "event"]).optional(),
+					eventId: Joi.string().trim()
 				},
 				failAction: appUtils.failActionFunction
 			},
