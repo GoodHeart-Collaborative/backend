@@ -19,8 +19,8 @@ export class LikeDao extends BaseDao {
         } catch (error) {
             throw error;
         }
-	}
-	async removeLike(params) {
+    }
+    async removeLike(params) {
         try {
             return await this.remove("likes", params);
         } catch (error) {
@@ -28,21 +28,21 @@ export class LikeDao extends BaseDao {
         }
     }
     async checkLike(params) {
-		try {
-			return await this.findOne("likes", params, {}, {}, {});
-		} catch (error) {
-			throw error;
-		}
+        try {
+            return await this.findOne("likes", params, {}, {}, {});
+        } catch (error) {
+            throw error;
+        }
     }
     async getLikeList(params) {
         try {
-            let {pageNo, limit, userId, commentId, postId } = params
+            let { pageNo, limit, userId, commentId, postId } = params
             let match: any = {};
             let aggPipe = [];
-            let result:any = {}
+            let result: any = {}
             // match["userId"] = appUtils.toObjectId(userId)
             match["postId"] = appUtils.toObjectId(postId)
-            if(commentId) {
+            if (commentId) {
                 match["commentId"] = appUtils.toObjectId(commentId)
                 match["category"] = CONSTANT.COMMENT_CATEGORY.COMMENT
             } else {
@@ -51,29 +51,43 @@ export class LikeDao extends BaseDao {
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             aggPipe.push({ "$match": match });
             aggPipe.push({
-				$lookup: {
-					"from": "users",
-					"localField": "userId",
-					"foreignField": "_id",
-					"as": "users"
-				}
+                $lookup: {
+                    "from": "users",
+                    let: { uId: '$userId' },
+                    as: 'users',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+                            }
+                        }
+                    }]
+                }
             })
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } },
-            { "$project": { 
-				"createdAt": 1, 
-                "category": 1, 
-               // user : {
-                    myConnection: "$users.myConnection",
-                    status: '$users.status',
-                    _id: "$users._id",
-                    name: { $ifNull:["$users.firstName", ""]}, 
-                    profilePicUrl:  "$users.profilePicUrl",
-                    profession: { $ifNull:["$users.profession", ""]},
-                    about:{ $ifNull:["$users.about", ""]},
-                    industryType: "$users.industryType",
-                // }
-            } });
-            aggPipe = [...aggPipe,...await this.addSkipLimit( limit , pageNo )];
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } },
+                {
+                    "$project": {
+                        "createdAt": 1,
+                        "category": 1,
+                        // user : {
+                        myConnection: "$users.myConnection",
+                        status: '$users.status',
+                        _id: "$users._id",
+                        name: { $ifNull: ["$users.firstName", ""] },
+                        profilePicUrl: "$users.profilePicUrl",
+                        profession: { $ifNull: ["$users.profession", ""] },
+                        about: { $ifNull: ["$users.about", ""] },
+                        industryType: "$users.industryType",
+                        experience: "$users.experience"
+                        // }
+                    }
+                });
+            aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
             result = await this.aggregateWithPagination("likes", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
