@@ -196,6 +196,10 @@ class LikeController {
             if (params && params.commentId) {
                 params["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
                 console.log('params && params.commentId', params);
+            } else {
+                params["category"] = config.CONSTANT.COMMENT_CATEGORY.POST
+                console.log('like case>>>>>>>>>>>>post post post', params);
+
             }
             let getLike = await likeDao.checkLike(params);
             console.log('getLikegetLikegetLikegetLike', getLike);
