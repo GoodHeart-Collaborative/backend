@@ -174,6 +174,7 @@ class LikeController {
                 getPost = await userDao.checkUser(query)
             } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                 getPost = await gratitudeJournalDao.checkGratitudeJournal(query)
+                console.log(' getPost getPost getPost', getPost);
             } else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
                 getPost = await expertPostDao.checkExpertPost(query);
             }
@@ -194,15 +195,20 @@ class LikeController {
             }
             if (params && params.commentId) {
                 params["category"] = config.CONSTANT.COMMENT_CATEGORY.COMMENT
+                console.log('params && params.commentId', params);
             }
             let getLike = await likeDao.checkLike(params);
+            console.log('getLikegetLikegetLikegetLike', getLike);
 
             if (getLike) {
                 incOrDec = -1
                 data = await likeDao.removeLike(params)
+                console.log('removeLikeremoveLikeremoveLikeremoveLike', data);
 
             } else {
                 data = await likeDao.addLike(params);
+                console.log('addLikeaddLikeaddLikeaddLikeaddLike', data);
+
             }
             if (params && params.commentId) {
                 query = { _id: await appUtils.toObjectId(params.commentId) }
@@ -216,7 +222,10 @@ class LikeController {
                 if (params.type === config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
                     data = await userDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
                 } else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                    console.log('44444444444444444444444444444444444');
                     data = await gratitudeJournalDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
+                    console.log('4444444444444444444444444444444444444444444444444444444444444444444444', data);
+
                 }
                 else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
                     data = await expertPostDao.updateLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
@@ -225,6 +234,8 @@ class LikeController {
                     data = await forumtopicDao.updateForumLikeAndCommentCount(query, { "$inc": { likeCount: incOrDec } })
                 }
                 else {
+                    console.log(5555555555555555555555555555555555555555555);
+
                     data = await homeDao.updateHomePost(query, { "$inc": { likeCount: incOrDec } })
                 }
             }
