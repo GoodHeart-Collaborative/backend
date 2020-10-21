@@ -83,6 +83,7 @@ export class EventDao extends BaseDao {
                 match["$or"] = [
                     { address: reg },
                     { title: reg },
+                    { eventCategoryName: reg }
                 ];
             }
 
