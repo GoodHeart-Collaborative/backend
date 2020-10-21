@@ -301,8 +301,11 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
+
 			if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
+			} else if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
+				return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 			} else {
 				//  if email unverifiec false hai to 411 de dena hai
 				const tokenData = _.extend(params, {
@@ -417,6 +420,9 @@ export class UserController {
 				if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 				}
+				// if (step1.email === params.email) {
+
+				// }
 				if (step1) {
 					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
