@@ -38,6 +38,8 @@ export class UserDao extends BaseDao {
 
 	async findUserByEmailOrMobileNoForSocialSignUp(params, type?) {
 		try {
+			console.log('typetypetype', type);
+
 			let { mobileNo, countryCode, email } = params
 			let emailQuery: any = {};
 			let checkPhone: any = {};
@@ -51,7 +53,7 @@ export class UserDao extends BaseDao {
 			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
-			if (type === 'email') {
+			if (type && type.type === 'email') {
 				return await this.findOne("users", emailQuery, { mobileOtp: 0 }, options, {});
 			} else {
 				return await this.findOne("users", checkPhone, { mobileOtp: 0 }, options, {});

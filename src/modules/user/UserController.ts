@@ -424,7 +424,7 @@ export class UserController {
 					return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 				}
 				if (params.mobileNo && params.countryCode) {
-					let step2 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params);
+					let step2 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
 					console.log('mobileNo check case>>>>>>>>', step2);
 					if (step2 && step1._id !== step2._id && step2.isMobileVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
