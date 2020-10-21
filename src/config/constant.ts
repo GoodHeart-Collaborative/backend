@@ -587,7 +587,7 @@ const EMAIL_TEMPLATE = {
 		FORGOT_PWD_EMAIL: "Reset Password Request",
 		RESET_PASSWORD: "Reset password link",
 		VERIFY_EMAIL: "Verify e-mail address",
-		WELCOME: "Welcome to Women community!",
+		WELCOME: "Welcome to Good Heart Collaborative!",
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
 	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
