@@ -544,7 +544,11 @@ export class UserController {
 	 */
 	async changeForgotPassword(params: ChangeForgotPasswordRequest, tokenData: TokenData) {
 		try {
+
 			const step1 = await userDao.findUserById(tokenData); // get user details
+			if (step1 && step1.forgotToken) {
+
+			}
 			params.hash = appUtils.encryptHashPassword(params.password, step1.salt); // generate hash
 			const step2 = userDao.changeForgotPassword(params, tokenData);
 			const step3 = userDao.emptyForgotToken({ "userId": tokenData.userId });
