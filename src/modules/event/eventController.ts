@@ -36,7 +36,7 @@ class EventController {
             params.created = new Date().getTime();
             params['goingCount'] = 1;
             // params['interestCount'] = 1;
-            params['location']['coordinates'] = params['location']['coordinates'].reverse();
+            // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const data = await eventDao.insert("event", params, {});
 
@@ -920,7 +920,8 @@ class EventController {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             params['eventCategoryName'] = categoryData['title'];
-            params['location']['coordinates'] = params['location']['coordinates'].reverse();
+
+            // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const updateEvent = await eventDao.findOneAndUpdate('event', criteria, params, { new: true });
             if (!updateEvent) {
