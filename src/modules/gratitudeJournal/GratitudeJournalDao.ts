@@ -62,12 +62,25 @@ export class GratitudeJournalDao extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "userId",
-                    "foreignField": "_id",
-                    "as": "users"
+                    "as": "users",
+                    // "localField": "userId",
+                    // "foreignField": "_id",
+                    let: { uId: '$userId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
             aggPipe.push({
                 $lookup: {
                     from: "likes",
