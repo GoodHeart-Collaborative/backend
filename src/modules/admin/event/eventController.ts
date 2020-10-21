@@ -38,7 +38,7 @@ class EventController {
             // params.eventCategoryType = categoryData['name'];
             params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
-            params['location']['coordinates'] = params['location']['coordinates'].reverse();
+            // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const data = await eventDao.insert("event", params, {});
 
@@ -53,7 +53,7 @@ class EventController {
 
             // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
             //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-            //     `&type=event`;
+            //     `&type=eventhttp://womencomdevapi.appskeeper.com/v1/common/deepLink-share?ios=com.goodheart://?eventId=5f8eaa211ab6800fcdb6989e&type=event&android=com.goodheart://?eventId=5f8eaa211ab6800fcdb6989e&eventId=5f8eaa211ab6800fcdb6989e`;
 
             // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
             //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
@@ -213,7 +213,7 @@ class EventController {
             console.log('data1data1data1data1data1', result);
             // params['eventCategoryType'] = result['name'];
             params['eventCategoryName'] = result['title'];
-            params['location']['coordinates'] = params['location']['coordinates'].reverse();
+            // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const dataToUpdate = {
                 ...params
