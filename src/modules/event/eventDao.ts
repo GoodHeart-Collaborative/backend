@@ -191,20 +191,44 @@ export class EventDao extends BaseDao {
                     //         else: false
                     //     }
                     // },
+                    // shareUrl: {
+                    //     $cond: {
+                    //         if: {
+                    //             $or: [{
+                    //                 $eq: ['$isHostedByMe', true]
+                    //             },
+                    //             {
+                    //                 $eq: ['$allowSharing', 1]
+                    //             }
+                    //             ]
+                    //         }, then: '$shareUrl',
+                    //         else: ''
+                    //     }
+                    // },
                     shareUrl: {
                         $cond: {
                             if: {
-                                $or: [{
+                                $and: [{
                                     $eq: ['$isHostedByMe', true]
                                 },
-                                {
-                                    $eq: ['$allowSharing', 1]
-                                }
                                 ]
                             }, then: '$shareUrl',
-                            else: ''
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
                         }
                     },
+
                     users: 1,
                 }
             };

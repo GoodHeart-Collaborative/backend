@@ -539,43 +539,44 @@ class EventController {
                         }
                     },
                     isHostedByMe: '$isHostedByMe',
-                    // shareUrl: {
-                    //     $cond: {
-                    //         if: {
-                    //             $and: [{
-                    //                 $eq: ['$isHostedByMe', true]
-                    //             },
-                    //             ]
-                    //         }, then: '$shareUrl',
-                    //         else: {
-                    //             $cond: {
-                    //                 if: {
-                    //                     $and: [{
-                    //                         $eq: ['$isHostedByMe', false]
-                    //                     }, {
-                    //                         $eq: ['$allowSharing', 1]
-                    //                     }]
-                    //                 },
-                    //                 then: '$shareUrl',
-                    //                 else: ''
-                    //             }
-                    //         }
-                    // }
-                    // },
                     shareUrl: {
                         $cond: {
                             if: {
-                                $or: [{
+                                $and: [{
                                     $eq: ['$isHostedByMe', true]
                                 },
-                                {
-                                    $eq: ['$allowSharing', true]
-                                }
                                 ]
                             }, then: '$shareUrl',
-                            else: ''
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $and: [{
+                                            $eq: ['$isHostedByMe', false]
+                                        }, {
+                                            $eq: ['$allowSharing', 1]
+                                        }]
+                                    },
+                                    then: '$shareUrl',
+                                    else: ''
+                                }
+                            }
                         }
                     },
+
+                    // shareUrl: {
+                    //     $cond: {
+                    //         if: {
+                    //             $or: [{
+                    //                 $eq: ['$isHostedByMe', true]
+                    //             },
+                    //             {
+                    //                 $eq: ['$allowSharing', true]
+                    //             }
+                    //             ]
+                    //         }, then: '$shareUrl',
+                    //         else: ''
+                    //     }
+                    // },
                     // users: 1,
                 }
             };
