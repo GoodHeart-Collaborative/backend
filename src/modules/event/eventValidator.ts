@@ -32,7 +32,7 @@ let eventViewAllScreen = Joi.object({
     searchKey: Joi.string().optional().description("Search by Address"),
     longitude: Joi.number().optional(),
     latitude: Joi.number().optional(),
-    distance: Joi.number().optional(),
+    distance: Joi.number().optional().default(40),
     eventCategoryId: Joi.number().allow([
         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
         config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
