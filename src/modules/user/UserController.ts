@@ -245,10 +245,10 @@ export class UserController {
 							step6 = redisClient.createJobs(jobPayload);
 						}
 
+						step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
 						// const step7 = await promise.join(step4, step5, step6);
 						// const userData = { ...step1.isAppleLogin, ...step1.isMobileVerified, ...step1.isEmailVerified, ...step1.isFacebookLogin, ...step1.isGoogleLogin, ...step1.firstName, ...step1.lastName, ...step1.countryCode, ...step1.}
 						delete step1['salt'];
-						delete step1['hash'];
 						delete step1['mobileOtp'];
 						delete step1['forgotToken'];
 						delete step1['isAdminRejected'];
@@ -272,6 +272,7 @@ export class UserController {
 						delete step1['isMemberOfDay'];
 						delete step1['reportCount'];
 						delete step1['status'];
+
 
 						step1['subscriptionData'] = {
 							isSubscribed: (step1.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
@@ -384,6 +385,7 @@ export class UserController {
 					}
 					const step7 = await promise.join(step4, step5, step6);
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+					step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
 					delete step1['salt']; delete step1['hash']; delete step1['mobileOtp']; delete step1['forgotToken']; delete step1['isAdminRejected']; delete step1['isAdminVerified']; delete step1['forgotToken']; delete step1['fullMobileNo']; delete step1['googleId']; delete step1['facebookId'];
 					return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
 
@@ -820,6 +822,7 @@ export class UserController {
 						if (data && !data.dob || !data.dob == null && data.industryType) {
 							return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 						}
+						data['isPasswordAvailable'] = (data && data['hash']) ? true : false;
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...data });
 					}
 					else if (params.type === 'email') {

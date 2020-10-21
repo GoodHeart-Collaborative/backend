@@ -137,7 +137,7 @@ export class CronUtils extends BaseDao {
 				params.members = members;
 				params.title = "Event Reminder";
 				params.category = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.category;
-				params.message = "Your event is about to start in 5 min";
+				params.message = "Your event is about to start";
 				params.type = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.type;
 				params['eventId'] = element._id
 				notification.notificationManager.sendBulkNotification(params, { userId: "" });
