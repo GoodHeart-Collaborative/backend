@@ -36,6 +36,32 @@ export class UserDao extends BaseDao {
 		}
 	}
 
+	async findUserByEmailOrMobileNoForSocialSignUp(params, type?) {
+		try {
+			let { mobileNo, countryCode, email } = params
+			let emailQuery: any = {};
+			let checkPhone: any = {};
+			// if (countryCode && mobileNo) {
+			checkPhone = { "countryCode": countryCode, "mobileNo": mobileNo }
+			// } else {
+			emailQuery = { "email": email }
+			// }
+			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
+			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+
+			const options = { lean: true };
+			if (type === 'email') {
+				return await this.findOne("users", emailQuery, { mobileOtp: 0 }, options, {});
+			} else {
+				return await this.findOne("users", checkPhone, { mobileOtp: 0 }, options, {});
+			}
+		} catch (error) {
+			throw error;
+		}
+	}
+
+
 	async getMemberOfDays(userId) {
 		try {
 			let match: any = {};
