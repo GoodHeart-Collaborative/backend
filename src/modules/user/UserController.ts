@@ -414,7 +414,10 @@ export class UserController {
 				}
 				let step1 = await userDao.findUserByEmailOrMobileNo(params);
 				console.log('step1step1step1step1step1step1', step1);
-				if ((step1 && !step1.isGoogleLogin) || (step1 && !step1.isFacebookLogin) || (step1 && !step1.isAppleLogin)) {
+				if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
+				}
+				if (step1) {
 					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
 				}
@@ -466,8 +469,8 @@ export class UserController {
 					};
 					step5 = redisClient.createJobs(jobPayload);
 				}
-				const step6 = await promise.join(step3, step4, step5);
-				await userDao.updateLikeAndCommentCount({ _id: appUtils.toObjectId(step1._id) }, { "$set": { isEmailVerified: true } })
+				// const step6 = await promise.join(step3, step4, step5);
+				// await userDao.updateLikeAndCommentCount({ _id: appUtils.toObjectId(step1._id) }, { "$set": { isEmailVerified: true } })
 				return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
 			}
 		} catch (error) {
