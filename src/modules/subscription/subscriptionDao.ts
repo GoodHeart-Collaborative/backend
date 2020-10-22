@@ -49,7 +49,7 @@ export class SubscriptionDao extends BaseDao {
             console.log("params", params);
             const query: any = {};
             const update: any = {};
-            query.userId = params.userid;
+            query.userId = params.userId;
 
             update.subscriptionType = params.subscriptionType;
             update.subscriptionEndDate = params.endDate;

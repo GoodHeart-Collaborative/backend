@@ -136,7 +136,7 @@ export const MESSAGES = {
 		},
 		INVALID_OLD_PASSWORD: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Old password is invalid.",
+			"message": "Old password is incorrect.",
 			"type": "INVALID_OLD_PASSWORD"
 		},
 	},
