@@ -35,16 +35,17 @@ class SubscriptionController {
 
                 console.log("////////////////// Token ///////////", tokenData.data.latest_receipt_info[0]);
                 const purchaseInfo: any = tokenData.data.latest_receipt_info[0];
-                params.endDate = parseInt(purchaseInfo.expires_date_ms);
-                params.isSubscribed = true;
+                params['endDate'] = parseInt(purchaseInfo.expires_date_ms);
+                params['isSubscribed'] = true;
+                console.log('paramsparamsparamsparamsparamsIODSSSSSSSSSSSSSSSSs', params);
 
             }
-            console.log('paramsparamsparamsparamsparamsparams', params);
+            console.log('paramsparamsparamsparamsparamsparams222222222222', params);
 
             await subscriptionDao.saveUserSubscription(params);
             await subscriptionDao.updateUserSubscription(params);
 
-            console.log(tokenData);
+            // console.log(tokenData);
             // let getData = await subscriptionDao.insert()
             // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
             return { subscriptionEndDate: params.endDate, isSubscribed: true, subscriptionType: params.subscriptionType, subscriptionPlatform: params.platform };

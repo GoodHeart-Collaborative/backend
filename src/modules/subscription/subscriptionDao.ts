@@ -56,7 +56,7 @@ export class SubscriptionDao extends BaseDao {
             update.isSubscribed = params.isSubscribed;
 
 
-            return await this.updateOne("users", query, update, {});
+            return await this.findOneAndUpdate("users", query, update, {});
         } catch (error) {
             return Promise.reject(error);
         }
