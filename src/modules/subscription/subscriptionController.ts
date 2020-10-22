@@ -14,7 +14,7 @@ class SubscriptionController {
      */
     async createSubscription(params) {
         try {
-            console.log(params);
+            console.log('params>>>>>>>>>>>>>>>>>>', params);
             let tokenData;
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
                 tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscription_type, params.receiptToken);
@@ -39,6 +39,8 @@ class SubscriptionController {
                 params.isSubscribed = true;
 
             }
+            console.log('paramsparamsparamsparamsparamsparams', params);
+
             await subscriptionDao.saveUserSubscription(params);
             await subscriptionDao.updateUserSubscription(params);
 

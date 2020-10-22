@@ -46,7 +46,7 @@ export class SubscriptionDao extends BaseDao {
 
     async updateUserSubscription(params) {
         try {
-            console.log("params", params);
+            console.log("paramsupdateUserSubscriptionupdateUserSubscription", params);
             const query: any = {};
             const update: any = {};
             query.userId = params.userId;
