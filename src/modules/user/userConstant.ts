@@ -98,6 +98,12 @@ export const MESSAGES = {
 		// 	"message": "Account with this social id already exist.",
 		// 	"type": "SOCIAL_ACCOUNT_ALREADY_EXIST"
 		// },
+		MOBILE_ALREADY_IN_USER_SOCIAL_CASE: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Please try with another mobile No.",
+			"type": "SOCIAL_ACCOUNT_NOT_REGISTERED"
+		},
+
 		SOCIAL_ACCOUNT_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.SOCIAL_ACCOUNT_ALREADY_EXIST,
 			"message": "Account with this social id not registered.",

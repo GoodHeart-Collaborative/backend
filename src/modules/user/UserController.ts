@@ -186,6 +186,7 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
 					}
 
@@ -231,6 +232,8 @@ export class UserController {
 						}
 						params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken });
 						// const step4 = loginHistoryDao.createUserLoginHistory(params);
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+
 						let step5, step6;
 						if (config.SERVER.IS_REDIS_ENABLE) {
 							if (!config.SERVER.IN_ACTIVITY_SESSION)
@@ -415,14 +418,21 @@ export class UserController {
 				if (step) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_ALREADY_EXIST);
 				}
-				let step1 = await userDao.findUserByEmailOrMobileNo(params);
+				// let step1 = await userDao.findUserByEmailOrMobileNo(params);
+				let step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, { type: "email" });
+
+
 				console.log('step1step1step1step1step1step1', step1);
 				if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 				}
-				// if (step1.email === params.email) {
-
-				// }
+				if (params.mobileNo && params.countryCode) {
+					let step2 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
+					console.log('mobileNo check case>>>>>>>>', step2);
+					if (step2 && step1._id !== step2._id && step2.isMobileVerified === true) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
+					}
+				}
 				if (step1) {
 					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
@@ -546,8 +556,8 @@ export class UserController {
 		try {
 
 			const step1 = await userDao.findUserById(tokenData); // get user details
-			if (step1 && step1.forgotToken) {
-
+			if (step1 && !step1.forgotToken) {
+				return userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD;
 			}
 			params.hash = appUtils.encryptHashPassword(params.password, step1.salt); // generate hash
 			const step2 = userDao.changeForgotPassword(params, tokenData);
