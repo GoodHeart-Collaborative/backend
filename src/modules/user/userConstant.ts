@@ -90,7 +90,7 @@ export const MESSAGES = {
 		},
 		DELETED_USER_TRYING_TO_REGISTER: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "You are not authorized to register",
+			"message": "Sorry, this account has been deleted by admin. Please try again with other credentials.",
 			"type": "EMAIL_OR_PHONE_REQUIRED"
 		},
 		// SOCIAL_ACCOUNT_ALREADY_EXIST: {
@@ -100,7 +100,7 @@ export const MESSAGES = {
 		// },
 		MOBILE_ALREADY_IN_USER_SOCIAL_CASE: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please try with another mobile No.",
+			"message": "It seems this mobile no is already linked with some other account, please try again.",
 			"type": "SOCIAL_ACCOUNT_NOT_REGISTERED"
 		},
 
@@ -131,7 +131,7 @@ export const MESSAGES = {
 		},
 		CANNOT_LOGIN: {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			message: "You cannot login since you have logged in using Social Account.",
+			message: "You cannot login with given credentials as this account has been registered with Social Account",
 			type: "CANNOT_LOGIN"
 		},
 		INVALID_OLD_PASSWORD: {

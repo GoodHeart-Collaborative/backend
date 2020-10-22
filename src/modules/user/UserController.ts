@@ -198,6 +198,7 @@ export class UserController {
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+
 					}
 					// else if (step2.isAdminRejected) {
 					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
@@ -304,11 +305,11 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
-
-			if (!step1) {
-				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
-			} else if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
+			if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
+			}
+			else if (!step1) {
+				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
 				//  if email unverifiec false hai to 411 de dena hai
 				const tokenData = _.extend(params, {
@@ -429,7 +430,10 @@ export class UserController {
 				if (params.mobileNo && params.countryCode) {
 					let step2 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
 					console.log('mobileNo check case>>>>>>>>', step2);
-					if (step2 && step1._id !== step2._id && step2.isMobileVerified === true) {
+					if (step2 && !step1 && step2.isMobileVerified === true) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
+					}
+					if (step2 && step1 && step1._id !== step2._id && step2.isMobileVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
 					}
 				}
@@ -487,7 +491,40 @@ export class UserController {
 				}
 				// const step6 = await promise.join(step3, step4, step5);
 				// await userDao.updateLikeAndCommentCount({ _id: appUtils.toObjectId(step1._id) }, { "$set": { isEmailVerified: true } })
-				return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
+				step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
+
+				delete step1['salt'];
+				delete step1['mobileOtp'];
+				delete step1['forgotToken'];
+				delete step1['isAdminRejected'];
+				delete step1['isAdminVerified'];
+				delete step1['adminStatus'];
+				delete step1['forgotToken'];
+				delete step1['fullMobileNo']
+				delete step1['googleId'];
+				delete step1['facebookId'];
+				delete step1['badgeCount'];
+				delete step1['location'];
+				delete step1['likeCount'];
+				delete step1['commentCount'];
+				delete step1['refreshToken'];
+				delete step1['salt'];
+				delete step1['hash'];
+				delete step1['members'];
+				delete step1['myConnection']
+				delete step1['countMember'];
+				delete step1['memberCreatedAt'];
+				delete step1['isMemberOfDay'];
+				delete step1['reportCount'];
+				delete step1['status'];
+
+				if (step1 && step1._id && !step1.dob || !step1.dob == null && step1.industryType) {
+					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY });
+				}
+
+				return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
+
+				// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
 			}
 		} catch (error) {
 			throw error;

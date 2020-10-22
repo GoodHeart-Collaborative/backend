@@ -64,7 +64,7 @@ let login = Joi.object({
         // .default(config.CONSTANT.DEFAULT_PASSWORD)
         .required(),
     deviceId: Joi.string().trim().required(),
-    deviceToken: Joi.string().trim().required()
+    deviceToken: Joi.string().trim().allow('').required()
 })
 
 let resendOTP = Joi.object({
