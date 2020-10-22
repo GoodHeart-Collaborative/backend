@@ -64,7 +64,7 @@ export const MESSAGES = {
 		},
 		PLEASE_CONTACT_ADMIN: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please contact admin regarding technical issue with your account",
+			"message": "Sorry, your account has been deleted by admin. Please contact our team.",
 			"type": "PLEASE_CONTACT_ADMIN"
 		},
 		EMAIL_NOT_REGISTERED: {
