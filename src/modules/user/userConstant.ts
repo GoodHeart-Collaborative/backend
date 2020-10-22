@@ -90,7 +90,7 @@ export const MESSAGES = {
 		},
 		DELETED_USER_TRYING_TO_REGISTER: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "You are not authorized to register",
+			"message": "Sorry, this account has been deleted by admin. Please try again with other credentials.",
 			"type": "EMAIL_OR_PHONE_REQUIRED"
 		},
 		// SOCIAL_ACCOUNT_ALREADY_EXIST: {
