@@ -267,7 +267,7 @@ export class UserDao extends BaseDao {
 				query.googleId = params.socialId;
 				// query.isGoogleLogin = true;
 			}
-			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
 

@@ -305,11 +305,11 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
-
-			if (!step1) {
-				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
-			} else if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
+			if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
+			}
+			else if (!step1) {
+				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
 				//  if email unverifiec false hai to 411 de dena hai
 				const tokenData = _.extend(params, {
