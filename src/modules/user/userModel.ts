@@ -140,7 +140,9 @@ const userSchema = new Schema({
 		type: String, enum: [
 			config.CONSTANT.DEVICE_TYPE.ANDROID,
 			config.CONSTANT.DEVICE_TYPE.IOS,
-		]
+		],
+		default: config.CONSTANT.DEVICE_TYPE.IOS,
+
 	},
 	memberShipStatus: { type: String },
 	myConnection: { type: Number, default: 0 },

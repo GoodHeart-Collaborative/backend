@@ -46,17 +46,17 @@ export class SubscriptionDao extends BaseDao {
 
     async updateUserSubscription(params) {
         try {
-            console.log("params", params);
+            console.log("paramsupdateUserSubscriptionupdateUserSubscription", params);
             const query: any = {};
             const update: any = {};
-            query.userId = params.userid;
+            query.userId = params.userId;
 
             update.subscriptionType = params.subscriptionType;
             update.subscriptionEndDate = params.endDate;
             update.isSubscribed = params.isSubscribed;
 
 
-            return await this.updateOne("users", query, update, {});
+            return await this.findOneAndUpdate("users", query, update, {});
         } catch (error) {
             return Promise.reject(error);
         }

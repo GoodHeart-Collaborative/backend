@@ -14,7 +14,7 @@ class SubscriptionController {
      */
     async createSubscription(params) {
         try {
-            console.log(params);
+            console.log('params>>>>>>>>>>>>>>>>>>', params);
             let tokenData;
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
                 tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscription_type, params.receiptToken);
@@ -24,7 +24,7 @@ class SubscriptionController {
                     params.endDate = parseInt(tokenData.expiryTimeMillis);
                     params.isSubscribed = true;
                 }
-
+                console.log('CONSTANT.DEVICE_TYPE.ANDROIDCONSTANT.DEVICE_TYPE.ANDROID', params);
             } else if (params.platform == CONSTANT.DEVICE_TYPE.IOS) {
                 tokenData = await inAppSubscription.verifyIosInAppToken(params.receiptToken);
                 console.log("Subscription Data", tokenData);
@@ -35,14 +35,17 @@ class SubscriptionController {
 
                 console.log("////////////////// Token ///////////", tokenData.data.latest_receipt_info[0]);
                 const purchaseInfo: any = tokenData.data.latest_receipt_info[0];
-                params.endDate = parseInt(purchaseInfo.expires_date_ms);
-                params.isSubscribed = true;
+                params['endDate'] = parseInt(purchaseInfo.expires_date_ms);
+                params['isSubscribed'] = true;
+                console.log('paramsparamsparamsparamsparamsIODSSSSSSSSSSSSSSSSs', params);
 
             }
+            console.log('paramsparamsparamsparamsparamsparams222222222222', params);
+
             await subscriptionDao.saveUserSubscription(params);
             await subscriptionDao.updateUserSubscription(params);
 
-            console.log(tokenData);
+            // console.log(tokenData);
             // let getData = await subscriptionDao.insert()
             // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
             return { subscriptionEndDate: params.endDate, isSubscribed: true, subscriptionType: params.subscriptionType, subscriptionPlatform: params.platform };
