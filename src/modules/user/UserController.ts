@@ -186,6 +186,7 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
 					}
 
@@ -231,6 +232,8 @@ export class UserController {
 						}
 						params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken });
 						// const step4 = loginHistoryDao.createUserLoginHistory(params);
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+
 						let step5, step6;
 						if (config.SERVER.IS_REDIS_ENABLE) {
 							if (!config.SERVER.IN_ACTIVITY_SESSION)
