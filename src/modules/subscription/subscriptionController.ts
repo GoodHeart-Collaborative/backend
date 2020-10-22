@@ -24,7 +24,7 @@ class SubscriptionController {
                     params.endDate = parseInt(tokenData.expiryTimeMillis);
                     params.isSubscribed = true;
                 }
-
+                console.log('CONSTANT.DEVICE_TYPE.ANDROIDCONSTANT.DEVICE_TYPE.ANDROID', params);
             } else if (params.platform == CONSTANT.DEVICE_TYPE.IOS) {
                 tokenData = await inAppSubscription.verifyIosInAppToken(params.receiptToken);
                 console.log("Subscription Data", tokenData);

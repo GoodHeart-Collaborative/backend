@@ -17,6 +17,8 @@ export const subscriptionRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: Subscription.AddSubscription = request.payload;
             const { platform } = request.headers;
+            console.log('request.headersrequest.headersrequest.headers', request.headers);
+
             console.log('platformplatformplatformplatformplatform', platform);
 
             try {
