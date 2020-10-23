@@ -246,7 +246,8 @@ class EventController {
                     shareUrl: 1
                 }
             })
-            return await eventDao.aggregate('event', aggPipe, {})
+            const data = await eventDao.aggregate('event', aggPipe, {});
+            return data[0] ? data[0] : {}
         } catch (error) {
             return Promise.reject(error)
         }
