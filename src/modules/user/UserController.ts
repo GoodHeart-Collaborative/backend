@@ -305,7 +305,7 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
-			console.log('step1step1step1step1', step1.salt);
+			// console.log('step1step1step1step1', step1.salt);
 
 			if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
@@ -329,7 +329,7 @@ export class UserController {
 
 				const userObject = appUtils.buildToken(tokenData);
 				console.log('userObjectuserObjectuserObject', userObject);
-				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": userObject.salt || step1.salt });
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
 				const step4 = loginHistoryDao.createUserLoginHistory(params);
@@ -402,7 +402,6 @@ export class UserController {
 						step6 = redisClient.createJobs(jobPayload);
 					}
 					const step7 = await promise.join(step4, step5, step6);
-					console.log('step1step1step1step1step1step1step1', step1);
 
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
 					step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
