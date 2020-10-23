@@ -452,10 +452,16 @@ export class UserController {
 
 				// if both email and mobile are verified
 				if (step1 && step1.isEmailVerified === true && step1.email === params.email && step1.isMobileVerified === true && step2) {
+					console.log('22222222222222222222222222222222222222222');
+
 					step6 = await userDao.mergeAccountAndCheck(step1, params);
+					console.log('					step6					step6', step6);
+
 				}
 				if (step1 && step1.isEmailVerified === false && step1.email === params.email && step1.isMobileVerified === false && step2) {
+					console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 					step6 = await userDao.mergeAccountAndCheck(step1, params);
+					console.log('					step6					step6					step6', step6);
 				}
 
 				// if (step1) {
@@ -468,12 +474,11 @@ export class UserController {
 				const newObjectId = new ObjectID();
 				if (!step6) {
 					params['_id'] = newObjectId;
+					step6 = await userDao.socialSignup(params);
 					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
 					params['salt'] = salt;
-					step6 = await userDao.socialSignup(params);
 				}
-				// }
-				console.log('step1.saltstep1.saltstep1.salt', step1.salt);
+				console.log('step1.saltstep1.saltstep1.salt', step6.salt);
 				const tokenData = _.extend(params, {
 					"userId": step6._id,
 					"firstName": step6.firstName,

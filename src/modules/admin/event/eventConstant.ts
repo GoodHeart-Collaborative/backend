@@ -10,7 +10,7 @@ export const MESSAGES = {
     EVENT_BLOCKED: 2,
 
     // EVENT_DELETE_MESSAGE: "This event has been blocked/deleted",
-    EVENT_BLOCKED_DELETE: "This event has been blocked/deleted",
+    EVENT_BLOCKED_DELETE: "This event has been blocked by admin",
     EVENT_EXPIRED_MESSAGE: "This event has been expired",
 
     ERROR: {
