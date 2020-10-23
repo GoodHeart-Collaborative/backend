@@ -448,15 +448,14 @@ export class UserController {
 					const updateNonVerifiedUserEmail_To_N_A = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {});
 					console.log('updateNonVerifiedUserEmail_To_N_AupdateNonVerifiedUserEmail_To_N_A', updateNonVerifiedUserEmail_To_N_A);
 				}
-
-
+				let step6;
 
 				// if both email and mobile are verified
 				if (step1 && step1.isEmailVerified === true && step1.email === params.email && step1.isMobileVerified === true && step2) {
-					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
+					step6 = await userDao.mergeAccountAndCheck(step1, params);
 				}
 				if (step1 && step1.isEmailVerified === false && step1.email === params.email && step1.isMobileVerified === false && step2) {
-					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
+					step6 = await userDao.mergeAccountAndCheck(step1, params);
 				}
 
 				// if (step1) {
@@ -465,29 +464,31 @@ export class UserController {
 				// }
 
 				let salt;
-				if (!step1) {
-					const newObjectId = new ObjectID();
+				// if (!step1) {
+				const newObjectId = new ObjectID();
+				if (!step6) {
 					params['_id'] = newObjectId;
 					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
 					params['salt'] = salt;
-					step1 = await userDao.socialSignup(params);
+					step6 = await userDao.socialSignup(params);
 				}
+				// }
 				console.log('step1.saltstep1.saltstep1.salt', step1.salt);
 				const tokenData = _.extend(params, {
-					"userId": step1._id,
-					"firstName": step1.firstName,
-					"middleName": step1.middleName,
-					"lastName": step1.lastName,
-					"email": step1.email,
-					"countryCode": step1.countryCode,
-					"mobileNo": step1.mobileNo,
-					"salt": step1.salt || salt,
+					"userId": step6._id,
+					"firstName": step6.firstName,
+					"middleName": step6.middleName,
+					"lastName": step6.lastName,
+					"email": step6.email,
+					"countryCode": step6.countryCode,
+					"mobileNo": step6.mobileNo,
+					"salt": step6.salt || salt,
 					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 				});
 
 				const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
 
-				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt || salt });
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step2.salt || salt });
 				let arn;
 				if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 					// arn = await sns.registerAndroidUser(params.deviceToken);
@@ -497,7 +498,7 @@ export class UserController {
 					arn = "";
 				}
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-				params = _.extend(params, { "arn": arn, "salt": step1.salt || salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
+				params = _.extend(params, { "arn": arn, "salt": step6.salt || salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
 				const step3 = loginHistoryDao.createUserLoginHistory(params);
 				let step4, step5;
 				if (config.SERVER.IS_REDIS_ENABLE) {
@@ -508,40 +509,40 @@ export class UserController {
 					const jobPayload = {
 						jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
 						time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-						params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
+						params: { "userId": step6._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
 					};
 					step5 = redisClient.createJobs(jobPayload);
 				}
 				// const step6 = await promise.join(step3, step4, step5);
 				// await userDao.updateLikeAndCommentCount({ _id: appUtils.toObjectId(step1._id) }, { "$set": { isEmailVerified: true } })
-				step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
+				step6['isPasswordAvailable'] = (step6 && step6['hash']) ? true : false;
 
-				delete step1['salt'];
-				delete step1['mobileOtp'];
-				delete step1['forgotToken'];
-				delete step1['isAdminRejected'];
-				delete step1['isAdminVerified'];
-				delete step1['adminStatus'];
-				delete step1['forgotToken'];
-				delete step1['fullMobileNo']
-				delete step1['googleId'];
-				delete step1['facebookId'];
-				delete step1['badgeCount'];
-				delete step1['location'];
-				delete step1['likeCount'];
-				delete step1['commentCount'];
-				delete step1['refreshToken'];
-				delete step1['salt'];
-				delete step1['hash'];
-				delete step1['members'];
-				delete step1['myConnection']
-				delete step1['countMember'];
-				delete step1['memberCreatedAt'];
-				delete step1['isMemberOfDay'];
-				delete step1['reportCount'];
-				delete step1['status'];
+				delete step6['salt'];
+				delete step6['mobileOtp'];
+				delete step6['forgotToken'];
+				delete step6['isAdminRejected'];
+				delete step6['isAdminVerified'];
+				delete step6['adminStatus'];
+				delete step6['forgotToken'];
+				delete step6['fullMobileNo']
+				delete step6['googleId'];
+				delete step6['facebookId'];
+				delete step6['badgeCount'];
+				delete step6['location'];
+				delete step6['likeCount'];
+				delete step6['commentCount'];
+				delete step6['refreshToken'];
+				delete step6['salt'];
+				delete step6['hash'];
+				delete step6['members'];
+				delete step6['myConnection']
+				delete step6['countMember'];
+				delete step6['memberCreatedAt'];
+				delete step6['isMemberOfDay'];
+				delete step6['reportCount'];
+				delete step6['status'];
 
-				if (step1 && step1._id && !step1.dob || !step1.dob == null && step1.industryType) {
+				if (step6 && step6._id && !step6.dob || !step6.dob == null && step6.industryType) {
 					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY });
 				}
 
