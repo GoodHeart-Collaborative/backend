@@ -893,8 +893,8 @@ class EventController {
             // for the deeplink case
             if (payload.eventId && data[0] && data[0].endDate < new Date().getTime()) {
                 // return data[0][] ? data[0] : {};
-                data[0].eventStatusMessage = eventConstant.MESSAGES.EVENT_EXPIRED;
-                data[0].eventStatus = eventConstant.MESSAGES.EVENT_EXPIRED_MESSAGE;
+                data[0].eventStatusMessage = eventConstant.MESSAGES.EVENT_EXPIRED_MESSAGE;
+                data[0].eventStatus = eventConstant.MESSAGES.EVENT_EXPIRED;
             }
             if (payload.eventId && data[0] && data[0].status !== config.CONSTANT.STATUS.ACTIVE) {
                 // data[0].eventStatusMessage = eventConstant.MESSAGES.
