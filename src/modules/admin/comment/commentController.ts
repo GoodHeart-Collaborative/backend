@@ -61,8 +61,8 @@ class AdminCommentController {
                     },
                 },
             )
-
-            result = await commentDao.aggreagtionWithPaginateTotal("comments", aggPipe, limit, pageNo, true)
+            // aggPipe = [...aggPipe,]
+            result = await commentDao.paginate("comments", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
             throw error;
