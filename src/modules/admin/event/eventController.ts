@@ -189,9 +189,64 @@ class EventController {
     async getDetails(params: AdminEventRequest.IgetEventDetail) {
         try {
             const criteria = {
-                _id: params.eventId
+                _id: appUtils.toObjectId(params.eventId)
             }
-            return await eventDao.findOne('event', criteria, {}, {})
+            const aggPipe = [];
+            aggPipe.push({
+                $match: criteria
+            })
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { uId: '$userId' },
+                    as: 'hostUser',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$uId']
+                            }
+                        }
+                    }]
+                },
+            },
+            )
+
+            aggPipe.push({ '$unwind': { path: '$hostUser', preserveNullAndEmptyArrays: true } });
+
+
+            aggPipe.push({
+                $project: {
+                    hostUser: {
+                        _id: '$hostUser._id',
+                        status: '$hostUser.status',
+                        profilePicUrl: '$hostUser.profilePicUrl',
+                        firstName: '$hostUser.firstName',
+                        lastName: '$hostUser.lastName'
+                    },
+                    isFeatured: 1,
+                    price: 1,
+                    status: 1,
+                    goingCount: 1,
+                    interestCount: 1,
+                    address: 1,
+                    allowSharing: 1,
+                    description: 1,
+                    endDate: 1,
+                    // eventCategoryId : ObjectId("5f884ef2129d2a385dc84c00"),
+                    eventUrl: 1,
+                    imageUrl: 1,
+                    startDate: 1,
+                    title: 1,
+                    // userId : ObjectId(5f4e597ecf7d51347939b781),
+                    userType: 1,
+                    eventCategoryName: 1,
+                    created: 1,
+                    // shortId : 1,
+                    createdAt: 1,
+                    shareUrl: 1
+                }
+            })
+            return await eventDao.aggregate('event', aggPipe, {})
         } catch (error) {
             return Promise.reject(error)
         }
