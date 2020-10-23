@@ -245,6 +245,8 @@ export class UserDao extends BaseDao {
 				]
 			}
 
+			console.log('paramsparamsparamsparamsparams<>>>>>>>>>>>>>>>', params);
+
 			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
