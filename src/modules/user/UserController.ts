@@ -450,7 +450,7 @@ export class UserController {
 
 				let step3;
 				// if both email and mobile are verified
-				if (step1 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1.isEmailVerified === true) {
+				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1.isEmailVerified === true) {
 					console.log('22222222222222222222222222222222222222222');
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6', step3);
@@ -517,6 +517,8 @@ export class UserController {
 				const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
 
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step3.salt || salt });
+				console.log('accessTokenaccessTokenaccessTokenaccessToken', accessToken);
+
 				let arn;
 				if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
 					// arn = await sns.registerAndroidUser(params.deviceToken);
