@@ -494,8 +494,8 @@ export class UserController {
 				if (!step3) {
 					params['_id'] = newObjectId;
 					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
-					params['salt'];
-					console.log('paramsparams', params);
+					params['salt'] = salt;
+					console.log('paramsparams>>>>>>>>>>>>', params);
 
 					step3 = await userDao.socialSignup(params);
 					// params['salt'] = salt;
