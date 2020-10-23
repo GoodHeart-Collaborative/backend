@@ -573,7 +573,7 @@ export class UserController {
 				delete step3['status'];
 
 				if (step3 && step3._id && !step3.dob || !step3.dob == null && step3.industryType) {
-					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY });
+					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, "accessToken": accessToken });
 				}
 
 				return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
