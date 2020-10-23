@@ -891,10 +891,16 @@ class EventController {
             // for the deeplink case
             if (payload.eventId && data[0] && data[0].endDate < new Date().getTime()) {
                 // return data[0][] ? data[0] : {};
-                data[0].eventExpireMessage = eventConstant.MESSAGES.EVENT_EXPIRE
+                data[0].eventStatusMessage = eventConstant.MESSAGES.EVENT_EXPIRED;
+                data[0].eventStatus = eventConstant.MESSAGES.EVENT_EXPIRED_MESSAGE;
             }
             if (payload.eventId && data[0] && data[0].status !== config.CONSTANT.STATUS.ACTIVE) {
-                data[0].eventStatusMessage = eventConstant.MESSAGES.EVENT_BLOCKED_DELETE
+                // data[0].eventStatusMessage = eventConstant.MESSAGES.
+                data[0].eventStatusMessage = eventConstant.MESSAGES.EVENT_BLOCKED_DELETE;
+                data[0].eventStatus = eventConstant.MESSAGES.EVENT_BLOCKED;
+            }
+            else {
+                data[0].eventStatus = eventConstant.MESSAGES.EVENT_ACTIVE;
             }
             return data[0] ? data[0] : {};
         } catch (error) {
