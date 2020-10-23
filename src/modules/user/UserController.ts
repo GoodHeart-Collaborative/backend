@@ -427,20 +427,43 @@ export class UserController {
 				if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 				}
+				let step2;
 				if (params.mobileNo && params.countryCode) {
-					let step2 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
+					step2 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
 					console.log('mobileNo check case>>>>>>>>', step2);
+					// if mobile no is verified and attached to other account
 					if (step2 && !step1 && step2.isMobileVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
 					}
+
 					if (step2 && step1 && step1._id !== step2._id && step2.isMobileVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
 					}
 				}
-				if (step1) {
-					// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
+
+				// let step33;
+				// if email is not verified and to other user acocount
+				if (step1 && step1.isEmailVerified === false && step1.email === params.email) {
+					// step33 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
+					const updateNonVerifiedUserEmail_To_N_A = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {});
+					console.log('updateNonVerifiedUserEmail_To_N_AupdateNonVerifiedUserEmail_To_N_A', updateNonVerifiedUserEmail_To_N_A);
+				}
+
+
+
+				// if both email and mobile are verified
+				if (step1 && step1.isEmailVerified === true && step1.email === params.email && step1.isMobileVerified === true && step2) {
 					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
 				}
+				if (step1 && step1.isEmailVerified === false && step1.email === params.email && step1.isMobileVerified === false && step2) {
+					const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
+				}
+
+				// if (step1) {
+				// 	// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
+				// 	const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
+				// }
+
 				let salt;
 				if (!step1) {
 					const newObjectId = new ObjectID();
