@@ -669,7 +669,11 @@ class EventController {
             let aggPipe = [];
 
             match['_id'] = appUtils.toObjectId(payload.eventId)
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+            // if (!payload.eventId) {
+            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            // }
+
             aggPipe.push({ $match: match })
 
             aggPipe.push({
@@ -883,6 +887,15 @@ class EventController {
             })
 
             const data = await eventDao.aggregate('event', aggPipe, {})
+
+            // for the deeplink case
+            if (payload.eventId && data[0] && data[0].endDate < new Date().getTime()) {
+                // return data[0][] ? data[0] : {};
+                data[0].eventExpireMessage = eventConstant.MESSAGES.EVENT_EXPIRE
+            }
+            if (payload.eventId && data[0] && data[0].status !== config.CONSTANT.STATUS.ACTIVE) {
+                data[0].eventStatusMessage = eventConstant.MESSAGES.EVENT_BLOCKED_DELETE
+            }
             return data[0] ? data[0] : {};
         } catch (error) {
             return Promise.reject(error)

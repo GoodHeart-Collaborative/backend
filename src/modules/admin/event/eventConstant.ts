@@ -3,6 +3,8 @@
 import * as config from "@config/index";
 
 export const MESSAGES = {
+    EVENT_EXPIRE: "Event is no longer now",
+    EVENT_BLOCKED_DELETE: "Event is no longer now",
     ERROR: {
         EMAIL_ALREADY_EXIST: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
