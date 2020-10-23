@@ -305,12 +305,16 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
+			console.log('step1step1step1step1', step1.salt);
+
 			if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 			}
 			else if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 			} else {
+				console.log('2222222222222222222222222222');
+
 				//  if email unverifiec false hai to 411 de dena hai
 				const tokenData = _.extend(params, {
 					"userId": step1._id,
@@ -324,9 +328,12 @@ export class UserController {
 				});
 
 				const userObject = appUtils.buildToken(tokenData);
-				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+				console.log('userObjectuserObjectuserObject', userObject);
+				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": userObject.salt || step1.salt });
+				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
 				const step4 = loginHistoryDao.createUserLoginHistory(params);
+				console.log('step4step4step4step4step4', step4);
 
 				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
@@ -370,8 +377,12 @@ export class UserController {
 					const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 					let step3;
 					if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+						console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
 						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
+						console.log('step2step2step2', step2);
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
+						console.log('step3step3step3step3step3step3', step3);
+
 					} else {
 						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
@@ -391,6 +402,8 @@ export class UserController {
 						step6 = redisClient.createJobs(jobPayload);
 					}
 					const step7 = await promise.join(step4, step5, step6);
+					console.log('step1step1step1step1step1step1step1', step1);
+
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
 					step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
 					delete step1['salt']; delete step1['hash']; delete step1['mobileOtp']; delete step1['forgotToken']; delete step1['isAdminRejected']; delete step1['isAdminVerified']; delete step1['forgotToken']; delete step1['fullMobileNo']; delete step1['googleId']; delete step1['facebookId'];
@@ -399,7 +412,7 @@ export class UserController {
 				}
 			}
 		} catch (error) {
-			throw error;
+			return Promise.reject(error);
 		}
 	}
 
@@ -479,8 +492,8 @@ export class UserController {
 				const newObjectId = new ObjectID();
 				if (!step3) {
 					params['_id'] = newObjectId;
-					step3 = await userDao.socialSignup(params);
 					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					step3 = await userDao.socialSignup(params);
 					params['salt'] = salt;
 
 					tokenData = _.extend(params, {
