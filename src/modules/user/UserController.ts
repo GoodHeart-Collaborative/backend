@@ -493,10 +493,11 @@ export class UserController {
 				const newObjectId = new ObjectID();
 				if (!step3) {
 					params['_id'] = newObjectId;
-					// salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
-					step3 = await userDao.socialSignup(params);
-					console.log('step3step3step3step3step3step3step3', step3);
+					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					params['salt'];
+					console.log('paramsparams', params);
 
+					step3 = await userDao.socialSignup(params);
 					// params['salt'] = salt;
 
 					tokenData = _.extend(params, {
