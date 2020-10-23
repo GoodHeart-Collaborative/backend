@@ -486,16 +486,18 @@ export class UserController {
 				// 	// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				// 	const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
 				// }
-
+				// params[step3._id] 
 				let salt;
 				let tokenData;
 				// if (!step1) {
 				const newObjectId = new ObjectID();
 				if (!step3) {
 					params['_id'] = newObjectId;
-					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					// salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
 					step3 = await userDao.socialSignup(params);
-					params['salt'] = salt;
+					console.log('step3step3step3step3step3step3step3', step3);
+
+					// params['salt'] = salt;
 
 					tokenData = _.extend(params, {
 						"userId": step3._id,
@@ -505,7 +507,7 @@ export class UserController {
 						"email": step3.email,
 						"countryCode": step3.countryCode,
 						"mobileNo": step3.mobileNo,
-						"salt": salt,
+						"salt": step3.salt,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
 				} else {
