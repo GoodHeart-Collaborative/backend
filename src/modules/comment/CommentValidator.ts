@@ -14,6 +14,16 @@ let validateUserCommentList = Joi.object({
     limit: Joi.number().required(),
     postId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     commentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).optional(),
+    type: Joi.number().allow([
+        config.CONSTANT.HOME_TYPE.CONGRATS,
+        config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
+        config.CONSTANT.HOME_TYPE.EXPERTS_POST,
+        config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
+        config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
+        config.CONSTANT.HOME_TYPE.INSPIRATION,
+        config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY,
+        config.CONSTANT.HOME_TYPE.UNICORN,
+    ]).required()
 }).unknown()
 export {
     validateUserComment,

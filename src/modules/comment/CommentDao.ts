@@ -4,6 +4,7 @@ import * as appUtils from '../../utils/appUtils'
 import { config } from "aws-sdk";
 import { CONSTANT } from "@config/index";
 import * as mongoose from "mongoose";
+import { homeDao } from "@modules/home/HomeDao";
 
 
 export class CommentDao extends BaseDao {
@@ -198,8 +199,28 @@ export class CommentDao extends BaseDao {
                         },
                     }
                 });
+
+            let likeCount;
+            if (params.type === CONSTANT.HOME_TYPE.UNICORN || params.type === CONSTANT.HOME_TYPE.INSPIRATION || params.type === CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+                likeCount = await homeDao.findOne('home', { _id: postId }, {}, {})
+            } else if (params.type === CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                likeCount = await homeDao.findOne('home', { _id: postId }, {}, {})
+            } else if (params.type === CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
+                likeCount = await homeDao.findOne('users', { _id: postId }, {}, {})
+            } else if (params.type === CONSTANT.HOME_TYPE.EXPERTS_POST) {
+                likeCount = await homeDao.findOne('expert_post', { _id: postId }, {}, {})
+            } else if (params.type === CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                likeCount = await homeDao.findOne('forum', { _id: postId }, {}, {})
+            }
+            // else if (params.type === CONSTANT.HOME_TYPE.USER) {
+            //     likeCount = await homeDao.findOne('us', { _id: postId }, {}, {})
+            // }
+
+            console.log(' likeCount likeCount', likeCount);
+
             aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
             result = await this.aggregateWithPagination("comments", aggPipe, limit, pageNo, isPaginationEnable)
+            result['likeCount'] = likeCount ? likeCount['likeCount'] : 0;
             return result
         } catch (error) {
             throw error;

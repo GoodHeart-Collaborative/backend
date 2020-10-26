@@ -173,8 +173,8 @@ export const MESSAGES = {
 		},
 		DELETED: (data) => {
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-				"message": "Your account has been blocked by admin",
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.DELETD_USER,
+				"message": "Your account has been deleted by admin",
 				"type": "USER_DELETED",
 				data: data,
 			}

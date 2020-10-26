@@ -4,6 +4,8 @@ import * as _ from "lodash";
 import { commentDao } from "./commentDao";
 import { CONSTANT } from "@config/index";
 import * as appUtils from '../../../utils/appUtils'
+import { homeDao } from "@modules/home/HomeDao";
+// import * as  config from "@config/constant";
 
 
 class AdminCommentController {
@@ -16,7 +18,7 @@ class AdminCommentController {
      */
     async getComments(params: CommentRequest.getComments) {
         try {
-            let { pageNo, limit, commentId, postId } = params
+            let { pageNo, limit, commentId, postId, type } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
@@ -60,7 +62,8 @@ class AdminCommentController {
                         preserveNullAndEmptyArrays: true,
                     },
                 },
-            )
+            );
+
             // aggPipe = [...aggPipe,]
             result = await commentDao.paginate("comments", aggPipe, limit, pageNo, true)
             return result

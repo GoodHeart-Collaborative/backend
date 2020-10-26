@@ -117,12 +117,12 @@ class AdminHomeController {
             let sort = {};
             if (sortBy && sortOrder) {
                 if (sortBy === "title") {
-                    sort = { "title": sortOrder };
+                    sort = { title: sortOrder };
                 } else {
-                    sort = { "createdAt": sortOrder };
+                    sort = { _id: sortOrder };
                 }
             } else {
-                sort = { "postedAt": -1 };
+                sort = { _id: -1 };
             }
             aggPipe.push({ "$sort": sort });
 

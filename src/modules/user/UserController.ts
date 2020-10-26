@@ -182,6 +182,12 @@ export class UserController {
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 					// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 
+					if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
+						return Promise.reject(userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
+					}
+					if (step2.status === config.CONSTANT.STATUS.DELETED) {
+						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
+					}
 
 					if (params.email && !step2) {
 						const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
@@ -192,12 +198,7 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
 					}
 
-					if (step2.status === config.CONSTANT.STATUS.BLOCKED) {
-						return Promise.reject(userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
-					}
-					if (step2.status === config.CONSTANT.STATUS.DELETED) {
-						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
-					}
+
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 

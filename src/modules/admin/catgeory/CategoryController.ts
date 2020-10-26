@@ -75,41 +75,67 @@ class CategoryController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-
-            aggPipe.push({
-                '$lookup': {
-                    from: 'expert_posts',
-                    let: {
-                        cId: '$_id'
-                    },
-                    pipeline: [{
-                        '$match': {
-                            '$expr': {
-                                $and: [{
-                                    $eq: ['$categoryId', '$$cId']
-                                },
-                                {
-                                    $ne: ['$status', config.CONSTANT.STATUS.DELETED]
-                                }]
+            if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
+                aggPipe.push({
+                    '$lookup': {
+                        from: 'events',
+                        let: {
+                            cId: '$_id'
+                        },
+                        pipeline: [{
+                            '$match': {
+                                '$expr': {
+                                    $and: [{
+                                        $eq: ['$eventCategoryId', '$$cId']
+                                    },
+                                    {
+                                        $ne: ['$status', config.CONSTANT.STATUS.DELETED]
+                                    }]
+                                }
                             }
-                        }
-                    }],
-                    as: 'expertData'
-                }
-            })
+                        }],
+                        as: 'Posts'
+                    }
+                })
+            }
+
+            if (type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
+                aggPipe.push({
+                    '$lookup': {
+                        from: 'expert_posts',
+                        let: {
+                            cId: '$_id'
+                        },
+                        pipeline: [{
+                            '$match': {
+                                '$expr': {
+                                    $and: [{
+                                        $eq: ['$categoryId', '$$cId']
+                                    },
+                                    {
+                                        $ne: ['$status', config.CONSTANT.STATUS.DELETED]
+                                    }]
+                                }
+                            }
+                        }],
+                        as: 'Posts'
+                    }
+                })
+            }
+
 
 
             aggPipe.push({
                 '$addFields': {
                     totalPost: {
-                        '$size': '$expertData'
+                        '$size': '$Posts'
                     }
                 }
             })
 
             aggPipe.push({
                 '$project': {
-                    expertData: 0
+                    Posts: 0
                 }
             })
             const data = await categoryDao.paginate('categories', aggPipe, limit, page, {}, true);
