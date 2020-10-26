@@ -23,7 +23,7 @@ let validateUserCommentList = Joi.object({
         config.CONSTANT.HOME_TYPE.INSPIRATION,
         config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY,
         config.CONSTANT.HOME_TYPE.UNICORN,
-    ]).required()
+    ])
 }).unknown()
 export {
     validateUserComment,
