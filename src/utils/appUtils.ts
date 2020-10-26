@@ -738,12 +738,12 @@ const fiveMinuteBeforeTimeStampTime = async () => {
 };
 
 const nextMinuteTimeStamp = async () => {
-	// const d = new Date();
-	// const hours = d.getHours();
-	// const minutes = d.getMinutes();
-	// return new Date().setHours(hours, minutes - 4, 0, 0);
-	const OneHourLaterTime = new Date().setHours(new Date().getHours() + 1);
-	return OneHourLaterTime;
+	const d = new Date();
+	const hours = d.getHours();
+	const minutes = d.getMinutes();
+	return new Date().setHours(hours, minutes + 10, 0, 0); // 10 minute more from current time
+	// const OneHourLaterTime = new Date().setHours(new Date().getHours() + 1);
+	// return OneHourLaterTime;
 };
 
 export {

@@ -26,7 +26,7 @@ export class CronUtils extends BaseDao {
 		}, { scheduled: false });
 		task.start();
 
-		task2 = cron.schedule("0 */1 * * *", () => {  //every past 1 hour
+		task2 = cron.schedule("*/10 * * * *", () => {  //every past 10 minute
 			this.eventReminder();
 		}, { scheduled: false });
 
@@ -118,10 +118,12 @@ export class CronUtils extends BaseDao {
 	async eventReminder() {
 		console.log("************** Reminder cron has been started ***********")
 		const query: any = {};
-		query["$and"] = [{ startDate: { $gte: new Date().getTime(), $lte: await appUtils.nextMinuteTimeStamp() } }]; //{  
+		query["$and"] = [{ startDate: { $gt: new Date().getTime(), $lte: await appUtils.nextMinuteTimeStamp() } }]; //{  
 		query["status"] = CONSTANT.STATUS.ACTIVE;
 
 		const events = await this.find(CONSTANT.DB_MODEL_REF.EVENT, query, {}, { lean: true }, {}, {}, {});
+		console.log('eventseventseventsevents', events);
+
 		events.forEach(async (element) => {
 			const eventIntrests = await this.find(CONSTANT.DB_MODEL_REF.EVENT_INTEREST, { eventId: element._id }, {}, { lean: true }, {}, {}, {});
 			const members: any = [];
@@ -130,16 +132,21 @@ export class CronUtils extends BaseDao {
 				members.push(element.userId);
 				console.log("Send Push Notification", element.userId);
 			});
+			console.log(' element.eventId element.eventId element.eventId', element.eventId);
+
 			console.log('membersmembersmembersmembers', members);
 
 			if (members.length > 0) {
 				const params: any = {};
 				params.members = members;
 				params.title = "Event Reminder";
+				params['body'] = {
+					_id: element._id,
+				};
 				params.category = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.category;
 				params.message = "Your event is about to start";
 				params.type = config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_REMINDER.type;
-				params['eventId'] = element._id
+				params['eventId'] = element._id;
 				notification.notificationManager.sendBulkNotification(params, { userId: "" });
 			}
 		});

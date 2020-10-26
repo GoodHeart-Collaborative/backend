@@ -48,12 +48,7 @@ export class CategoryDao extends BaseDao {
                 match.privacy = privacy;
             }
 
-            if (searchTerm) {
-                match["$or"] = [
-                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
-                    { "description": { "$regex": searchTerm, "$options": "-i" } },
-                ];
-            }
+
             aggPipe.push({ "$match": match });
             let sort = {};
             if (sortBy && sortOrder) {
@@ -101,8 +96,16 @@ export class CategoryDao extends BaseDao {
                     }
                 });
                 aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } })
-
             }
+
+            if (searchTerm) {
+                match["$or"] = [
+                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
+                    { "description": { "$regex": searchTerm, "$options": "-i" } },
+                    { "expertData.name": { "$regex": searchTerm, "$options": "-i" } }
+                ];
+            }
+
             // if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
             //     aggPipe.push({
             //         '$lookup': {

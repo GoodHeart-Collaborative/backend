@@ -239,14 +239,13 @@ class AdminController {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 				} else {
 					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-					if (
-						(config.SERVER.ENVIRONMENT !== "production") ?
-							(
-								params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-								step1.hash !== params.hash
-							) :
-							step1.hash !== params.hash
-					) {
+					// if (
+					// 	(config.SERVER.ENVIRONMENT !== "production") ?
+					// 		(
+					// 			params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+					// 			step1.hash !== params.hash
+					// 		) :
+					if (step1.hash !== params.hash) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 					} else {
 						const tokenData = _.extend(params, {
@@ -304,6 +303,7 @@ class AdminController {
 			} else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = adminDao.changePassword(params, tokenData);
+				// const step3 = loginHistoryDao.removeDeviceById()
 			}
 
 			return adminConstant.MESSAGES.SUCCESS.CHANGE_PASSWORD;

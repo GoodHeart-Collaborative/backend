@@ -111,9 +111,11 @@ class EventController {
                 sort = { _id: -1 };
             }
             if (searchTerm) {
+                const reg = new RegExp(searchTerm, 'ig');
                 match["$or"] = [
-                    { "title": { "$regex": searchTerm, "$options": "-i" } },
-                    { "description": { "$regex": searchTerm, "$options": "-i" } },
+                    { "title": reg },
+                    { "description": reg },
+                    { "address": reg }
                 ];
             }
             // if (categoryId) {

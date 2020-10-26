@@ -10,7 +10,6 @@ export class NotificationManager {
 
 	async sendBulkNotification(params, tokenData: TokenData) {
 		let query: any = {};
-		console.log('paramsparamsparamsparams', params);
 
 		query.status = config.CONSTANT.STATUS.ACTIVE;
 		query.adminStatus = config.CONSTANT.USER_ADMIN_STATUS.VERIFIED;
@@ -38,29 +37,30 @@ export class NotificationManager {
 					updatedAt: new Date()
 				})
 			});
+		} else {
+			await step1.forEach(async (data) => {
+				bulkNotitification.push({
+					"senderId": tokenData.userId,
+					"receiverId": data._id,
+					"isRead": false,
+					"title": params.title,
+					"message": params.message,
+					"type": params.type,
+					created: Date.now(),
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				// const noticiationData = {
+				// 	"senderId": tokenData.userId,
+				// 	"receiverId": [data._id],
+				// 	"title": params.title,
+				// 	"message": params.message,
+				// 	"type": params.type,
+				// 	"isRead" : false,
+				// };
+				// const step2 = await notificationDao.addNotification(noticiationData);
+			});
 		}
-		await step1.forEach(async (data) => {
-			bulkNotitification.push({
-				"senderId": tokenData.userId,
-				"receiverId": data._id,
-				"isRead": false,
-				"title": params.title,
-				"message": params.message,
-				"type": params.type,
-				created: Date.now(),
-				createdAt: new Date(),
-				updatedAt: new Date()
-			})
-			// const noticiationData = {
-			// 	"senderId": tokenData.userId,
-			// 	"receiverId": [data._id],
-			// 	"title": params.title,
-			// 	"message": params.message,
-			// 	"type": params.type,
-			// 	"isRead" : false,
-			// };
-			// const step2 = await notificationDao.addNotification(noticiationData);
-		});
 
 		const step2 = await notificationDao.insertMany('notifications', bulkNotitification, {});
 
@@ -79,7 +79,6 @@ export class NotificationManager {
 
 			step3 = step3.filter((data) => data.userId !== null);
 			const updateUserBadgeCount = await baseDao.updateMany('users', { _id: { '$in': users } }, { $inc: { badgeCount: 1 } }, {});
-			console.log('updateUserBadgeCountupdateUserBadgeCountupdateUserBadgeCount', updateUserBadgeCount);
 		}
 
 		// save data to notification history
@@ -98,19 +97,15 @@ export class NotificationManager {
 			// separate android user data and ios user data to android user chunks and ios user chunks
 			const androidUserChunks = appUtils.splitArrayInToChunks(androidUsers);
 			const iosUserChunks = appUtils.splitArrayInToChunks(iosUsers);
-			console.log('iosUserChunksiosUserChunks', iosUserChunks);
-			console.log('androidUserChunksandroidUserChunksandroidUserChunks', androidUserChunks);
 
 			// create android and ios payload
 			let androidPayload, iosPayload, webPayload;
 			if (androidUserChunks.length) {
-				params['body'] = {};
+				params['body'] = (params && params.body) ? params.body : {}
 				androidPayload = appUtils.createAndroidPushPayload(params);
-				console.log('androidPayloadandroidPayloadandroidPayload', androidPayload);
 			}
 			if (iosUserChunks.length) {
 				iosPayload = appUtils.createIOSPushPayload(params);
-				console.log('iosPayloadiosPayloadiosPayloadiosPayload', iosPayload);
 			}
 
 			// save android chunk data
@@ -139,16 +134,12 @@ export class NotificationManager {
 	}
 
 	async sendOneToOneNotification(params, tokenData?: TokenData, otherUserId?: boolean) {
-		console.log('>>>>>>>><<<<<<<<<<<<<<<<<<<<paramsparamsparamsparams', params);
 
 		const populateQuery = [
 			{ path: "userId", model: config.CONSTANT.DB_MODEL_REF.USER, match: { status: config.CONSTANT.STATUS.ACTIVE }, select: "_id" }
 		];
 		let step1 = await baseDao.find("login_histories", { "userId": { "$in": [params.userId] }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 		step1 = step1.filter((data) => data.userId !== null);
-
-		console.log('paramsparamsparamsparams', params);
-		console.log('step1step1', step1);
 
 		if (step1.length) {
 			const noticiationData = {

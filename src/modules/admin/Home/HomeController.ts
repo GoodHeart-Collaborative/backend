@@ -102,7 +102,7 @@ class AdminHomeController {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
             if (searchTerm) {
-                searchTerm = searchTerm.replace(/[&\/\\#+()$~%'":*?<>{}]/g, '')
+                // searchTerm = searchTerm.replace(/[&\/\\#+()$~%'":*?<>{}]/g, '')
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
                     { "description": { "$regex": searchTerm, "$options": "-i" } },
