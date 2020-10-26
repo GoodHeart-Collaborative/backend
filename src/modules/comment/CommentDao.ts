@@ -204,7 +204,7 @@ export class CommentDao extends BaseDao {
             if (params.type === CONSTANT.HOME_TYPE.UNICORN || params.type === CONSTANT.HOME_TYPE.INSPIRATION || params.type === CONSTANT.HOME_TYPE.DAILY_ADVICE) {
                 likeCount = await homeDao.findOne('home', { _id: postId }, {}, {})
             } else if (params.type === CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
-                likeCount = await homeDao.findOne('home', { _id: postId }, {}, {})
+                likeCount = await homeDao.findOne('gratitude_journals', { _id: postId }, {}, {})
             } else if (params.type === CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
                 likeCount = await homeDao.findOne('users', { _id: postId }, {}, {})
             } else if (params.type === CONSTANT.HOME_TYPE.EXPERTS_POST) {
