@@ -171,8 +171,8 @@ export class CommonController {
 
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 					.compileFile({
-						url: params.android || "", // android scheme,
-						iosLink: params.ios || "", // ios scheme
+						url: params.android || config.CONSTANT.DEEPLINK.ANDROID_SCHEME, // android scheme,
+						iosLink: params.ios || config.CONSTANT.DEEPLINK.IOS_SCHEME,  // ios scheme
 						fallback: params.fallback || config.CONSTANT.DEEPLINK.WELCOME_FALLBACK,
 						title: config.SERVER.APP_NAME,
 						android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
