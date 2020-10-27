@@ -36,7 +36,8 @@
 					options.android_package_name +
 					';end;',
 				// android_case_broweser_link: options.android_case_fallback || 'https://google.com',
-				playStoreLink: "https://market.android.com/details?id=" + options.android_package_name,
+				// playStoreLink: "https://market.android.com/details?id=" + options.android_package_name,
+				playStoreLink: "https://play.google.com/store/apps/dev?id=5032485548806526009",
 				fallback: options.fallback
 			};
 			// alert("urls==========================>" + JSON.stringify(urls));
@@ -112,8 +113,8 @@
 				if (ua.match(/Chrome/)) {
 					// alert("chrome===========================>");
 					// document.location = urls.android_case_broweser_link // urls.android_intent;
-					document.location = urls.android_intent;
-					// document.location = urls.fallback;
+					// document.location = urls.android_intent;
+					document.location = urls.fallback;
 
 				} else if (ua.match(/Firefox/)) {
 					// alert("firefox===========================>");

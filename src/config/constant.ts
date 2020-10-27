@@ -590,7 +590,7 @@ const EMAIL_TEMPLATE = {
 		WELCOME: "Welcome to Good Heart Collaborative!",
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
-	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
+	BCC_MAIL: ["shubham.maheshwari@appinventiv.com", "kapilapptest@gmail.com"],
 	FROM_MAIL: "do-not-reply@mail.appinventive.com"
 };
 
