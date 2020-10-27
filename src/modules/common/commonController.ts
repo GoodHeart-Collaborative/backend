@@ -98,7 +98,7 @@ export class CommonController {
 									// fallback: params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,
 									fallback: params.fallback || config.SERVER.API_URL + "/v1/common/resetPasswordWeb/?accessToken=" + params.token,
 									title: config.SERVER.APP_NAME,
-									android_case_fallback: config.SERVER.API_URL + "/v1/common/resetPasswordWeb/?accessToken=" + params.token,
+									// android_case_fallback: config.SERVER.API_URL + "/v1/common/resetPasswordWeb/?accessToken=" + params.token,
 									android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
 									ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
 								});
