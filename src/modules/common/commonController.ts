@@ -88,6 +88,10 @@ export class CommonController {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 					} else {
 						if (params.type === "forgot") {
+							// const IsTokenExist = userDao.emptyForgotToken({ "token": params.token });
+							// if (!IsTokenExist) {
+							// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+							// }
 							console.log('params.typeparams.typeparams.typeparams.typeparams.type', params.type);
 							console.log(params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,);
 
