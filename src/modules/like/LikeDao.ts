@@ -67,7 +67,7 @@ export class LikeDao extends BaseDao {
                     }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } },
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } },
                 {
                     "$project": {
                         "createdAt": 1,
