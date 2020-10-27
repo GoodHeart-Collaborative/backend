@@ -154,8 +154,7 @@ export class MailManager {
 		const getLastName = (params && params.lastName) ? params.lastName : ''
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
-				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
-					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
+				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?token=${params.token}` +
 					`&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
 				"name": params.firstName + " " + getLastName,
 				"year": new Date().getFullYear(),
@@ -170,8 +169,9 @@ export class MailManager {
 
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "verifyEmail.html"))
 			.compileFile({
-				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
-					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
+				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink` +
+					// ?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
+					// `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
 					`&type=verifyEmail&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}` +
 					`&userId=${params.userId}`,
 				"name": params.firstName + " " + lastName,
