@@ -654,7 +654,7 @@ export class UserController {
 
 			const step1 = await userDao.findUserById(tokenData); // get user details
 			if (step1 && !step1.forgotToken) {
-				return userConstant.MESSAGES.ERROR.CANNOT_CHANGE_PASSWORD;
+				return userConstant.MESSAGES.ERROR.LINK_EXPIRED;
 			}
 			params.hash = appUtils.encryptHashPassword(params.password, step1.salt); // generate hash
 			const step2 = userDao.changeForgotPassword(params, tokenData);
