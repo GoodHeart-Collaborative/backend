@@ -124,6 +124,11 @@ export const MESSAGES = {
 			message: "You cannot reset your password since you have logged in using Social Account.",
 			type: "CANNOT_CHANGE_PASSWORD"
 		},
+		LINK_EXPIRED: {
+			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			message: "Please try again with new link",
+			type: "LINK_EXPIRED"
+		},
 		PASSWORD_ALREADY_BEEN_CHANGED: {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
 			message: "Please try again to reset the password",
