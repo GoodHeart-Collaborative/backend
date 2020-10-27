@@ -35,7 +35,7 @@
 					';package=' +
 					options.android_package_name +
 					';end;',
-				android_case_broweser_link: options.android_case_fallback,
+				android_case_broweser_link: options.android_case_fallback || 'https://google.com',
 				playStoreLink: "https://market.android.com/details?id=" + options.android_package_name,
 				fallback: options.fallback
 			};
