@@ -154,9 +154,9 @@ export class CommonController {
 				if (!userData) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 				}
-				if (userData.isEmailVerified) {
-					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
-				}
+				// if (userData.isEmailVerified) {
+				// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+				// }
 
 				if (userData) {
 					const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
