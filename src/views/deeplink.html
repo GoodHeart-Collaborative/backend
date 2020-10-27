@@ -35,7 +35,7 @@
 					';package=' +
 					options.android_package_name +
 					';end;',
-				android_case_broweser_link: options.android_case_fallback || 'https://google.com',
+				// android_case_broweser_link: options.android_case_fallback || 'https://google.com',
 				playStoreLink: "https://market.android.com/details?id=" + options.android_package_name,
 				fallback: options.fallback
 			};
@@ -116,8 +116,12 @@
 					// alert("firefox===========================>");
 					// launchWekitApproach(urls.deepLink, urls.playStoreLink || urls.fallback);
 					// launchWekitApproach(urls.android_intent, urls.playStoreLink || urls.fallback);
+
 					// launchWekitApproach(urls.android_case_broweser_link, urls.android_case_broweser_link || urls.android_case_broweser_link);
-					document.location = urls.android_case_broweser_link // urls.android_intent;
+
+					// document.location = urls.android_case_broweser_link // urls.android_intent;
+
+					document.location = urls.fallback
 					// console.log('vdocument.locationdocument.locationdocument.location', document.location);
 				} else {
 					// alert("other===========================>");
