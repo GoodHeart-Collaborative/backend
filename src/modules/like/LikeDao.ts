@@ -61,9 +61,7 @@ export class LikeDao extends BaseDao {
                                 $and: [{
                                     $eq: ['$_id', '$$uId']
                                 },
-                                {
-                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                }]
+                                ]
                             }
                         }
                     }]
