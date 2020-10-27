@@ -94,7 +94,6 @@ class forumController {
                 status: params.status
             };
             const data = await eventDao.findByIdAndUpdate('forum', criteria, datatoUpdate, { new: true })
-            console.log('datadata', data);
 
             return forumConstant.MESSAGES.SUCCESS.FORUM_STATUS_UPDATED(data.status);
         } catch (error) {

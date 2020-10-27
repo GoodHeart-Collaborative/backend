@@ -47,8 +47,6 @@ export const MESSAGES = {
             "type": "DEFAULT"
         },
         BLOCKED: (data) => {
-            console.log('datadatadatadatadata111111111111111', data);
-
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": `${data} blocked successfully`,

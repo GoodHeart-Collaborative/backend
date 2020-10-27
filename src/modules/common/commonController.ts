@@ -72,7 +72,6 @@ export class CommonController {
 				} else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
 					step1 = await baseDao.findOne("users", { "forgotToken": params.token }, {}, {}, {});
 				}
-				console.log('PPPPPPPPPP>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
 				if (!step1) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN);
 				} else {

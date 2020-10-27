@@ -14,7 +14,6 @@ class SubscriptionController {
      */
     async createSubscription(params) {
         try {
-            console.log('params>>>>>>>>>>>>>>>>>>', params);
             let tokenData;
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
                 tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscription_type, params.receiptToken);
@@ -24,10 +23,8 @@ class SubscriptionController {
                     params.endDate = parseInt(tokenData.expiryTimeMillis);
                     params.isSubscribed = true;
                 }
-                console.log('CONSTANT.DEVICE_TYPE.ANDROIDCONSTANT.DEVICE_TYPE.ANDROID', params);
             } else if (params.platform == CONSTANT.DEVICE_TYPE.IOS) {
                 tokenData = await inAppSubscription.verifyIosInAppToken(params.receiptToken);
-                console.log("Subscription Data", tokenData);
 
                 if (!tokenData.flag) {
                     return CONSTANT.MESSAGES.ERROR.INTERNAL_SERVER_ERROR;
@@ -37,10 +34,7 @@ class SubscriptionController {
                 const purchaseInfo: any = tokenData.data.latest_receipt_info[0];
                 params['endDate'] = parseInt(purchaseInfo.expires_date_ms);
                 params['isSubscribed'] = true;
-                console.log('paramsparamsparamsparamsparamsIODSSSSSSSSSSSSSSSSs', params);
-
             }
-            console.log('paramsparamsparamsparamsparamsparams222222222222', params);
 
             await subscriptionDao.saveUserSubscription(params);
             await subscriptionDao.updateUserSubscription(params);

@@ -19,10 +19,8 @@ export class ForumTopic extends BaseDao {
     async getFormPosts(params) {
         try {
             const { page, limit, postId, categoryId } = params;
-            console.log('postIdpostIdpostId', postId);
 
             let aggPipe = [];
-            console.log('pagepage', page);
 
             let match: any = {};
             let categoryMatch: any = {};
@@ -43,15 +41,11 @@ export class ForumTopic extends BaseDao {
             let Ids1 = reportedIds.map(function (item) {
                 return ids.push(appUtils.toObjectId(item.postId));
             });
-            console.log('IdsIds', ids);
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             if (categoryId) {
                 match['categoryId'] = appUtils.toObjectId(categoryId);
             }
-            // if (categoryId) {
-            //     match['categoryId'] = appUtils.toObjectId(categoryId)
-            // }
             if (!postId) {
                 match['_id'] = {
                     $nin: ids
@@ -112,16 +106,6 @@ export class ForumTopic extends BaseDao {
                 }
             }
 
-            // const getAdminName = await this.findOne('admins', { _id: appUtils.toObjectId('5eec5b831ab81855c16879e5') }, { name: 1 }, {});
-            // if (postId) {
-            //     match['_id'] = appUtils.toObjectId(postId);
-            // }
-            // if (reportedIds.length >= 1) {
-            //     match['_id'] = {
-            //         $nin: reportedIds
-            //     }
-            // }
-
             aggPipe.push({ $match: match });
             aggPipe.push({
                 $lookup: {
@@ -159,15 +143,6 @@ export class ForumTopic extends BaseDao {
                 }
             })
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
-            // aggPipe.push({
-            //     $lookup: {
-            //         "from": "comments",
-            //         "localField": "commentId",
-            //         "foreignField": "_id",
-            //         "as": "comments"
-            //     }
-            // })
-            // aggPipe.push({ '$unwind': { path: '$comments', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
@@ -349,7 +324,6 @@ export class ForumTopic extends BaseDao {
 
             if (params.postId) {
                 myForumData = await this.aggregate('forum', aggPipe, {})
-                console.log('myForumDatamyForumDatamyForumDatamyForumData>>>>>>>', myForumData);
 
             }
 
@@ -453,7 +427,6 @@ export class ForumTopic extends BaseDao {
             let Ids1 = reportedIds.map(function (item) {
                 return ids.push(appUtils.toObjectId(item.postId));
             });
-            console.log('IdsIds', ids);
 
             if (!postId) {
                 match['_id'] = {
@@ -498,15 +471,6 @@ export class ForumTopic extends BaseDao {
                 }
             })
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
-            // aggPipe.push({
-            //     $lookup: {
-            //         "from": "comments",
-            //         "localField": "commentId",
-            //         "foreignField": "_id",
-            //         "as": "comments"
-            //     }
-            // })
-            // aggPipe.push({ '$unwind': { path: '$comments', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
@@ -655,7 +619,6 @@ export class ForumTopic extends BaseDao {
 
             aggPipe = [...aggPipe, ...this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             myForumData = await this.aggregateWithPagination('forum', aggPipe)
-            console.log('myForumDatamyForumDatamyForumDatamyForumData>>>>>>>', myForumData);
             return myForumData;
 
             // }

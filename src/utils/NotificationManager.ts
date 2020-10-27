@@ -153,8 +153,6 @@ export class NotificationManager {
 			if (params.eventId) {
 				noticiationData['eventId'] = params.eventId
 			}
-			console.log('noticiationDatanoticiationData', noticiationData);
-
 			const step2 = notificationDao.addNotification(noticiationData);
 			const updateUserBadgeCount = await baseDao.updateOne('users', { _id: params.userId }, { $inc: { badgeCount: 1 } }, {});
 
@@ -178,15 +176,12 @@ export class NotificationManager {
 			let androidPayload, iosPayload;
 			if (androidUsers.length) {
 				androidPayload = appUtils.createAndroidPushPayload(params);
-				console.log('androidPayloadandroidPayload>>>>>>>>111111', androidPayload);
-
 			}
 			if (iosUsers.length) {
 				// const getCountForBadge = await notificationDao.count('notifications', { receiverId: params.userId, isRead: false });
 				// console.log('getCountForBadgegetCountForBadge', getCountForBadge);
 				// params['countForBadge'] = getCountForBadge;
 				iosPayload = appUtils.createIOSPushPayload(params);
-				console.log('iosPayloadiosPayload', iosPayload);
 			}
 
 			// save android chunk data
@@ -197,7 +192,6 @@ export class NotificationManager {
 					"deviceType": config.CONSTANT.DEVICE_TYPE.ANDROID
 				};
 				const step3 = await pushManager.pushNotification(chunkNoticiationPayload);
-				console.log('step3step3step3step3step3', step3);
 			});
 
 			// save ios chunk data

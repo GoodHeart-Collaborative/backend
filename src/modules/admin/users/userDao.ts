@@ -106,11 +106,8 @@ export class AdminUserDao extends BaseDao {
             const totalRejected = userDao.count('users', { adminStatus: config.CONSTANT.USER_ADMIN_STATUS.REJECTED, status: { "$ne": config.CONSTANT.STATUS.DELETED } });
 
             const [verifiedCount, pendingCount, rejectedCount] = await Promise.all([totalVerified, totalPending, totalRejected])
-            console.log('verifiedCountverifiedCount', verifiedCount);
 
             const data: any = await userDao.paginate('users', aggPipe, limit, page, { salt: 0, hash: 0 }, true);
-            console.log('datadata', data);
-
             // return verifiedCount,
             // pendingCount,
             // rejectedCount,

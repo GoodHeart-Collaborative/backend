@@ -27,21 +27,15 @@ class AdminNotificationController {
 				// 	params.image = step1;
 				// }
 				const step2 = await adminNotificationDao.addNotification(params);
-				console.log('step2step2step2step2step2', step2);
 				const notificationData = config.CONSTANT.NOTIFICATION_DATA.BULK_NOTIFICATION(params.title, params.message);
-				console.log('notificationDatanotificationDatanotificationData>>>>', notificationData);
 
 				params = _.extend(params, { ...notificationData, "body": notificationData.message });
 				const step3 = await notificationManager.sendBulkNotification(params, tokenData);
-				console.log('step3step3step3step3step3step3', step3);
 				const step4 = await promise.join(step2, step3);
-				console.log('step4step4step4step4step4', step4);
 
 				params = _.extend(params, { "notificationId": step4[0]._id, "sentCount": step4[1] });
-				console.log('paramsparamsparamsparamsparams', params);
 
 				const step5 = await adminNotificationDao.updateNotificationCount(params);
-				console.log('step5step5step5', step5);
 
 				return adminNotificationConstant.MESSAGES.SUCCESS.ADD_NOTIFICATION;
 			} else {

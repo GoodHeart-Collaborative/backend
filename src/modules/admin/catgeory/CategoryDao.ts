@@ -140,17 +140,12 @@ export class CategoryDao extends BaseDao {
 
 
             const findCategoryData = await categoryDao.findOne('categories', { _id: appUtils.toObjectId(params.categoryId) }, {}, {})
-            console.log('findCategoryDatafindCategoryDatafindCategoryData', findCategoryData);
-
-            console.log('aggPipeaggPipeaggPipeaggPipeaggPipeaggPipe', JSON.stringify(aggPipe));
 
             let data;
             if (type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
-                console.log('1111111111111111111111111111');
                 data = await categoryDao.paginate('expert_post', aggPipe, limit, page, {}, true);
             }
             if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
-                console.log('222222222222222222222222222222222222');
                 data = await categoryDao.paginate('event', aggPipe, limit, page, {}, true);
                 console.log('paramsparamsparamsparams', params);
 

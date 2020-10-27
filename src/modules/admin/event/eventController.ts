@@ -19,7 +19,6 @@ class EventController {
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
         return result[0];
     }
 

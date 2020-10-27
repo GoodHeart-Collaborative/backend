@@ -44,7 +44,6 @@ class HomeController {
 
 
                 if (getGeneralGratitude && getGeneralGratitude.list && getGeneralGratitude.list.length > 0) {
-                    console.log('responseDataresponseDataresponseData', responseData);
 
                     responseData.unshift(getGeneralGratitude);
                     if (shoutOutCard) {

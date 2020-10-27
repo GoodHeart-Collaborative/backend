@@ -208,7 +208,6 @@ class AdminController {
 	async changeForgotPassword(params: ChangeForgotPasswordRequest, tokenData: TokenData) {
 		try {
 
-			
 			const step1 = await adminDao.findAdminById(tokenData);
 			params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 			const step2 = adminDao.changePassword(params, tokenData);

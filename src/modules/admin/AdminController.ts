@@ -413,7 +413,6 @@ class AdminController {
 			console.log('jwtPayloadjwtPayloadjwtPayload', jwtPayload);
 
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
-			console.log('isExpireisExpireisExpire', isExpire);
 			if (isExpire) {
 				let step2;
 				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {

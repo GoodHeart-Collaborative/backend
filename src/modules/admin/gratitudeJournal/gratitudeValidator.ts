@@ -54,6 +54,11 @@ let GetGratitude = Joi.object({
     fromDate: Joi.date(),
     toDate: Joi.date(),
     searchTerm: Joi.string(),
+    privacy: Joi.string().allow([
+        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+    ])
 }).unknown()
 
 

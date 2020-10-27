@@ -176,8 +176,6 @@ const splitArrayInToChunks = function (data) {
 const createAndroidPushPayload = function (data) {
 	let set: any = {};
 	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "priority", "sound", "click_action", "title", "message", "notification_type"];
-	console.log('datadata', data);
-
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
 	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
@@ -214,8 +212,6 @@ const createAndroidPushPayload = function (data) {
 const createIOSPushPayload = function (data) {
 	let set: any = {};
 	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type", "body"];
-	console.log('datadata>>>>', data);
-
 
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
@@ -686,9 +682,6 @@ const consolelog = (identifier: string, value: any, status: boolean) => {
 
 const getLocationByIp = async (ipaddress: string) => {
 	try {
-		console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-		// const lt_lng = await ipLocation('103.79.170.73');
-		//req.connection.remoteAddress		
 		let ip = ipaddress || '';
 
 		const request = {
@@ -696,7 +689,6 @@ const getLocationByIp = async (ipaddress: string) => {
 			params: ipaddress,
 		};
 		let url = 'http://ip-api.com/json/' + ip
-		console.log('urlurlurl', url);
 
 		// const response = await fetch('http://ip-api.com/json/', request);
 		const response = await fetch(url, request);

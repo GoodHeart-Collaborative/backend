@@ -23,6 +23,7 @@ declare namespace GratitudeRequest {
         fromDate: string,
         toDate: string,
         searchTerm: string,
+        privacy: string;
     }
 
 

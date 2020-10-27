@@ -322,10 +322,6 @@ export class GratitudeJournalDao extends BaseDao {
             ]
             let userData = await this.aggregate('users', userDataCriteria, {})
             userData[0].discover_status = discover.discover_status
-            // console.log('userDatauserDatauserData', userData);
-
-            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            // match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC
             if (params.userId) {
                 match['userId'] = appUtils.toObjectId(params['userId']);
                 match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC;

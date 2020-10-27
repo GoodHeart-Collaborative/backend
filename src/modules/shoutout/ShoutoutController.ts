@@ -55,6 +55,9 @@ class ShoutoutController {
             let members: any = []
             // params['membersDetail'] = await appUtils.createMembersArray(params.members)
             // delete params.members
+            const memberAdded = members;
+            console.log('memberAddedmemberAdded', memberAdded);
+
             let memberss = await discoverDao.getShoutoutMyConnection(userId)
             members.push(await appUtils.toObjectId(userId.userId))
             if (memberss && memberss.length > 0) {
@@ -77,7 +80,9 @@ class ShoutoutController {
                     members: members,
                     createdAt: new Date(),
                     senderId: await appUtils.toObjectId(userId.userId),
-                    receiverId: await appUtils.toObjectId(params.members[i])
+                    receiverId: await appUtils.toObjectId(params.members[i]),
+                    memberAdded,
+
                 })
             }
             // params['members']          

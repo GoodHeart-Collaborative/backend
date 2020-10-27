@@ -82,7 +82,7 @@ class GratitudeController {
     */
     async getPosts(params: GratitudeRequest.IGetGratitude) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
+            const { status, sortBy, sortOrder, privacy, limit, page, searchTerm, fromDate, toDate, } = params;
             const aggPipe = [];
 
             const match: any = {};
@@ -92,6 +92,9 @@ class GratitudeController {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            }
+            if (privacy) {
+                match['privacy'] = privacy;
             }
             if (searchTerm) {
                 match["$or"] = [

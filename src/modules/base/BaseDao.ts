@@ -66,7 +66,6 @@ export class BaseDao {
 				next_hit = page + 1;
 				data = result[0].slice(0, limit);
 			}
-			console.log('next_hitnext_hitnext_hit', next_hit);
 
 			return {
 				list: data,
@@ -196,7 +195,6 @@ export class BaseDao {
 				next_hit = page + 1;
 				data = result[0].slice(0, limit);
 			}
-			console.log('next_hitnext_hitnext_hit', next_hit);
 
 			return {
 				list: data,
@@ -310,7 +308,6 @@ export class BaseDao {
 
 	async updateOne(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
 		try {
-			console.log('optionsoptions', options);
 
 			const ModelName: any = models[model];
 			return await ModelName.updateOne(query, update, options);

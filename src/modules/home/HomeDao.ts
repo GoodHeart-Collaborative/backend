@@ -17,7 +17,6 @@ export class HomeDao extends BaseDao {
             let result: any = {}
             let endDateee = new Date();
             // let endDateee = moment().utc().endOf('day').toDate();
-            console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
 
             let idKey: string = '$_id'
             endDateee.setHours(23, 59, 59, 999);

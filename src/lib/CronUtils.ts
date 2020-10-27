@@ -20,7 +20,6 @@ export class CronUtils extends BaseDao {
 		task = cron.schedule("5 0 * * *", async function () {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
-			// request.get(baseUrl + "/common/appointment/upcoming");
 			cronJob.createMember();
 
 		}, { scheduled: false });
@@ -35,8 +34,6 @@ export class CronUtils extends BaseDao {
 
 	async createMember() {
 		const minMemberCount = await userDao.findOne('global_var', {}, {}, {}, {});
-
-		console.log('minMemberCountminMemberCountminMemberCount', minMemberCount);
 
 		const criteria = [
 			{
@@ -56,7 +53,6 @@ export class CronUtils extends BaseDao {
 		};
 
 		const getUsers = await userDao.aggregate('users', criteria, {});
-		console.log('getUsersgetUsers', getUsers);
 
 		const params: any = {};
 
@@ -67,7 +63,6 @@ export class CronUtils extends BaseDao {
 		}
 		if (getUsers || getUsers[0]) {
 			const getIsLike = await userDao1.userDao.getMemberOfDays({ userId: getUsers[0]._id });
-			console.log('getIsLikegetIsLike', getIsLike);
 			// isComment: {
 			// 	$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
 			// },

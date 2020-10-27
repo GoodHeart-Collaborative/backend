@@ -8,8 +8,6 @@ import { CONSTANT } from "@config/index";
 export class SubscriptionDao extends BaseDao {
     async saveSubscription(params, userId) {
         try {
-            console.log('paramsparamsparams', params, userId);
-
             const insertData = {
                 ...params,
                 created: Date.now(),

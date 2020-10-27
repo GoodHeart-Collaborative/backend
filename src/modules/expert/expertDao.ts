@@ -256,18 +256,6 @@ export class ExpertDao extends BaseDao {
                 CategoryLIST,
                 type: 0,
             }
-            // }
-            console.log('CategoryLISTCategoryLISTCategoryLISTCategoryLIST', CategoryLIST);
-
-            console.log('getNewlyAddedExpertsgetNewlyAddedExpertsgetNewlyAddedExperts', getNewlyAddedExperts);
-
-            // const data: any = await categoryDao.aggregate('categories', pipeline, {})
-
-            // const NEWLY_ON_BOARD_EXPERT = {
-            //     getNewlyAddedExperts,
-            //     type: 1
-            // }
-
             for (var key of EXPERTS1) {
                 key['type'] = 2
             }
@@ -481,7 +469,6 @@ export class ExpertDao extends BaseDao {
 
             let data;
             if (paginateOptions.page < 2) {
-                console.log('pagepage', paginateOptions.page);
                 data = await expertDao.aggregate('expert', pipeline, {});
             }
 
@@ -491,8 +478,6 @@ export class ExpertDao extends BaseDao {
             match['_id'] = {
                 $nin: reportedpost
             };
-            console.log("moment()>>>>>>>>>>>>>>>>>>>>>", moment().subtract(7, 'days').toDate());
-            console.log("dateFrom = moment().subtract(7,'d').format('YYYY-MM-DD');", moment().subtract(7, 'd').format('YYYY-MM-DD HH:mm:ss'));
 
             if (payload.posted === 1) {
                 console.log('last week');
@@ -754,15 +739,6 @@ export class ExpertDao extends BaseDao {
                     },
                     likdeta: '$likeData',
                     commentData: '$commentData'
-                    // isLike: { likeData: { $size: { $gt: 0 } }, then: true, else: false }
-                    // isLike: {
-                    //     $cond: {
-                    //         if: {
-                    //             $eq: ["$likeData.userId", appUtils.toObjectId(payload.userId)],
-                    //             then: true, else: false
-                    //         }
-                    //     }
-                    // }
                 }
             }
             ]

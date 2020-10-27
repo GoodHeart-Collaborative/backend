@@ -58,11 +58,7 @@ export class UserController {
 				params['mobileOtp'] = generateOtp;
 
 				const step2 = await userDao.signup(params);
-				console.log('step2step2step2step2step2', step2);
-
 				const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
-				console.log('saltsaltsaltsalt', salt);
-
 				const tokenData = _.extend(params, {
 					"userId": step2._id,
 					"firstName": step2.firstName,
@@ -481,8 +477,6 @@ export class UserController {
 				// 	console.log('					step6					step6					step6', step6);
 				// }
 
-				console.log('step6step6step6step6step6', step3);
-
 				// if (step1) {
 				// 	// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				// 	const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
@@ -496,8 +490,6 @@ export class UserController {
 					params['_id'] = newObjectId;
 					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
 					params['salt'] = salt;
-					console.log('paramsparams>>>>>>>>>>>>', params);
-
 					step3 = await userDao.socialSignup(params);
 					// params['salt'] = salt;
 
@@ -530,12 +522,10 @@ export class UserController {
 				// params['_id'] = newObjectId;
 				// salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
 
-				console.log('step1.saltstep1.saltstep1.salt', step3);
 
 				const userObject = appUtils.buildToken(tokenData); // build token data for generating access token
 
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step3.salt || salt });
-				console.log('accessTokenaccessTokenaccessTokenaccessToken', accessToken);
 
 				let arn;
 				if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
@@ -595,8 +585,6 @@ export class UserController {
 				}
 
 				return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
-
-				// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken, "countryCode": step1.countryCode, "mobileNo": step1.mobileNo });
 			}
 		} catch (error) {
 			throw error;
@@ -772,8 +760,6 @@ export class UserController {
 	 * @function profile
 	 */
 	async profile(tokenData: TokenData, userId) {
-		console.log('userIduserIduserId', userId);
-
 		try {
 			if (tokenData.userId === userId || !userId) {
 				const data = await userDao.findOne('users', { _id: tokenData.userId }, { deviceId: 0, deviceToken: 0 }, {})
@@ -816,27 +802,21 @@ export class UserController {
 			console.log('checkUser', checkUser);
 
 			if (userData.isEmailVerified === false && userData.mobileNo !== params.mobileNo) {
-				console.log('1111111111111');
 				return Promise.reject(userConstant.MESSAGES.ERROR.CAN_NOT_CHANGE_MOBILE)
 			} else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
-				console.log('22222222222222222222222>>>>>>>>>>>>');
 				if (checkUser && checkUser._id !== userData.userId && checkUser.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
 				}
 			} else if (userData.isEmailVerified === true && userData.isMobileVerified === true) {
-				console.log('333333333333333333333333333333333');
 				if (checkUser && checkUser.isMobileVerified === false && checkUser._id !== userData.userId) {
-					console.log('444444444444444444444444');
 					const removePhoneNo = await userDao.findOneAndUpdate('users', { _id: checkUser._id }, { mobileNo: params.mobileNo }, {});
 					// const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
 				}
 			}
 			if (checkUser && checkUser.mobileNo !== params.mobileNo) {
-				console.log('55555555555555555555555555555555');
 				dataToUpdate['isMobileVerified'] = false;
 			}
 			if (!checkUser && userData.mobileNo !== params.mobileNo) {
-				console.log('666666666666666666666666666666666666666');
 				dataToUpdate['isMobileVerified'] = false;
 			}
 			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
@@ -851,9 +831,8 @@ export class UserController {
 			dataToUpdate['industryType'] = params.industryType;
 			dataToUpdate['experience'] = params.experience;
 			dataToUpdate['about'] = params.about;
-			dataToUpdate['profilePicUrl.0'] = params.profilePicUrl,
-				// }
-				console.log('dataToUpdatedataToUpdatedataToUpdate', dataToUpdate);
+			dataToUpdate['profilePicUrl.0'] = params.profilePicUrl
+
 
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
@@ -890,9 +869,6 @@ export class UserController {
 			};
 			delete data['subscriptionType'];
 			delete data['subscriptionEndDate'];
-
-			// delete data['']
-			// const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0 };
 
 			// const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0 };
 			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE(data);

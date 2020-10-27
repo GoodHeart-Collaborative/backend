@@ -31,8 +31,6 @@ export class NotificationDao extends BaseDao {
 	async notificationList(params: ListingRequest, tokenData) {
 		try {
 
-			console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
-
 			const aggPipe = [];
 			aggPipe.push({ "$match": { receiverId: await toObjectId(tokenData.userId) } })
 			aggPipe.push({ "$sort": { "_id": -1 } });
@@ -159,19 +157,7 @@ export class NotificationDao extends BaseDao {
 			// senderId: 0, receiverId: 0, createdAt: 0, updatedAt: 0 } })
 
 			let result = await this.paginate('notifications', aggPipe, params.limit, params.pageNo, {}, true)
-			// let arr = []
-			// result && result.data && result.data.length > 0 && result.data.forEach(data => {
-			// 	if (data.isRead === false) {
-			// 		arr.push(data._id)
-			// 	}
-			// });
-			// if (arr && arr.length > 0) {
-			// 	let query: any = {}
-			// 	query = {
-			// 		receiverId: await toObjectId(tokenData.userId),
-			// 		_id: { "$in": arr }
-			// 	}	
-			// this.update('notifications', query, { "$set": { isRead: true } }, { multi: true })
+
 			this.update('notifications', { receiverId: await toObjectId(tokenData.userId) }, { isRead: true }, { multi: true })
 			this.updateOne('users', { _id: await toObjectId(tokenData.userId) }, { badgeCount: 0 }, {});
 
