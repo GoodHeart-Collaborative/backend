@@ -210,6 +210,12 @@ class EventController {
                     }]
                 },
             },
+                // {
+                //     $unwind: {
+                //         path: '$hostUser',
+                //         preserveNullAndEmptyArrays: true,
+                //     },
+                // },
             )
 
             // aggPipe.push({ '$unwind': { path: '$hostUser', preserveNullAndEmptyArrays: true } });
@@ -217,13 +223,14 @@ class EventController {
 
             aggPipe.push({
                 $project: {
-                    hostUser: {
-                        _id: '$hostUser._id',
-                        status: '$hostUser.status',
-                        profilePicUrl: '$hostUser.profilePicUrl',
-                        firstName: '$hostUser.firstName',
-                        lastName: '$hostUser.lastName'
-                    },
+                    hostUser: 1,
+                    // {
+                    //     _id: '$hostUser._id',
+                    //     status: '$hostUser.status',
+                    //     profilePicUrl: '$hostUser.profilePicUrl',
+                    //     firstName: '$hostUser.firstName',
+                    //     lastName: '$hostUser.lastName'
+                    // },
                     isFeatured: 1,
                     price: 1,
                     status: 1,
