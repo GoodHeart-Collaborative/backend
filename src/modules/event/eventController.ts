@@ -324,8 +324,8 @@ class EventController {
                 }
             });
 
-            defaultAndInterestEveent.push({ $sort: { endDate: -1 } });
-            typeAggPipe.push({ $sort: { endDate: -1 } });
+            defaultAndInterestEveent.push({ $sort: { endDate: 1 } });
+            typeAggPipe.push({ $sort: { endDate: 1 } });
 
             typeAggPipe = [...typeAggPipe, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
@@ -799,7 +799,6 @@ class EventController {
                     //     "$size": {
                     //         "$filter": {
                     //             "input": "$interestData",
-                    //             "as": "el",
                     //             "cond": { "$eq": ["$$el.type", 1] }
                     //         }
                     //     }
