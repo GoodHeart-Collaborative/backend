@@ -44,7 +44,7 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
 					}
 					if (step1.mobileNo === params.mobileNo && step1.email === params.email && step1.isEmailVerified && step1.isMobileVerified) {
-						return Promise.reject(userConstant.MESSAGES.ERROR.USER_ALREADY_EXIST);
+						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
 					}
 					if (step1.email === params.email) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
@@ -142,7 +142,10 @@ export class UserController {
 					if (params.mobileNo)
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
-					if ((step1 && step1.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED)) {
+					if (step1 && step1.status === config.CONSTANT.STATUS.DELETED) {
+						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
+					}
+					else if (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 					}
 					if (step1 && step1.hash == null && !step1.hash) {

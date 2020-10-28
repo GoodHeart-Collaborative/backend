@@ -93,6 +93,11 @@ export const MESSAGES = {
 			"message": "Sorry, this account has been deleted by admin. Please try again with other credentials.",
 			"type": "EMAIL_OR_PHONE_REQUIRED"
 		},
+		BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Sorry, this account has been blocked by admin. please contact admin.",
+			"type": "EMAIL_OR_PHONE_REQUIRED"
+		},
 		// SOCIAL_ACCOUNT_ALREADY_EXIST: {
 		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.SOCIAL_ACCOUNT_ALREADY_EXIST,
 		// 	"message": "Account with this social id already exist.",
