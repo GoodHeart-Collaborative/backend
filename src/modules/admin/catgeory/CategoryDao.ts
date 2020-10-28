@@ -98,7 +98,7 @@ export class CategoryDao extends BaseDao {
                 aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } })
             }
 
-            if (searchTerm) {
+            if (searchTerm && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
                 match["$or"] = [
                     { "topic": { "$regex": searchTerm, "$options": "-i" } },
                     { "description": { "$regex": searchTerm, "$options": "-i" } },
@@ -106,38 +106,45 @@ export class CategoryDao extends BaseDao {
                 ];
             }
 
-            // if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
-            //     aggPipe.push({
-            //         '$lookup': {
-            //             from: 'users',
-            //             let: {
-            //                 uId: '$userId'
-            //             },
-            //             pipeline: [{
-            //                 '$match': {
-            //                     '$expr': {
-            //                         $and: [{
-            //                             '$eq': ['$_id', '$$uId']
-            //                         },
-            //                         {
-            //                             '$eq': ['$status', config.CONSTANT.STATUS.ACTIVE]
-            //                         }
-            //                         ]
-            //                     }
-            //                 },
 
-            //             },
-            //             {
-            //                 $project:
-            //                     { "title": 1, "description": 1, price: 1, startDate: 1, endDate: 1 }
-            //             }
-            //             ],
-            //             as: 'eventData'
-            //         }
-            //     });
-            //     aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } })
-            // }
+            if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
+                aggPipe.push({
+                    '$lookup': {
+                        from: 'users',
+                        let: {
+                            uId: '$userId'
+                        },
+                        pipeline: [{
+                            '$match': {
+                                '$expr': {
+                                    $and: [{
+                                        '$eq': ['$_id', '$$uId']
+                                    },
+                                    {
+                                        '$eq': ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    }
+                                    ]
+                                }
+                            },
 
+                        },
+                        {
+                            $project:
+                                { "title": 1, "description": 1, price: 1, startDate: 1, endDate: 1, address: 1 }
+                        }
+                        ],
+                        as: 'eventData'
+                    }
+                });
+                aggPipe.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } })
+            }
+
+            if (searchTerm && type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
+                match["$or"] = [
+                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "eventData.address": { "$regex": searchTerm, "$options": "-i" } }
+                ];
+            }
 
             const findCategoryData = await categoryDao.findOne('categories', { _id: appUtils.toObjectId(params.categoryId) }, {}, {})
 
