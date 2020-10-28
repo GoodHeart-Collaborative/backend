@@ -481,7 +481,7 @@ export class ExpertDao extends BaseDao {
 
             if (payload.posted === 1) {
                 console.log('last week');
-                match['createdAt'] = {
+                match['created'] = {
                     $gte: moment().subtract(7, 'days').toDate(),
                     $lte: moment().startOf('day').toDate()
                     // new Date(new Date() - 7 * 60 * 60 * 24 * 1000))
@@ -493,7 +493,7 @@ export class ExpertDao extends BaseDao {
                 console.log('firstDay', firstDay);
                 var lastDay = new Date(y, m + 1, 0);
 
-                match['createdAt'] = {
+                match['created'] = {
                     $gt: firstDay,
                     $lt: lastDay
                 }
