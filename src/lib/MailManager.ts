@@ -169,13 +169,13 @@ export class MailManager {
 
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "verifyEmail.html"))
 			.compileFile({
-				// "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink` +
-				// 	`?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}` +
-				// 	`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
-				// 	`?type=verifyEmail&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}` +
-				// 	`&userId=${params.userId}`,
 				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
-					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?`,
+					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
+					`&type=verifyEmail&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}` +
+					`&userId=${params.userId}`,
+
+				// "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
+				// 	`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?`,
 
 				"name": params.firstName + " " + lastName,
 				"year": new Date().getFullYear(),
