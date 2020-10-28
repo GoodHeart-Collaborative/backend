@@ -22,6 +22,7 @@ export interface Ihome extends Document {
     mediaType: number,
     mediaUrl: number,
     addedBy: string;
+    postAt: number;
     // addedBy: Object;
     // imageUrl: string;
 }
@@ -52,6 +53,7 @@ const homeSchema = new Schema({
     description: { type: String },
     isPostLater: { type: Boolean },
     postedAt: { type: Date, trim: true, },
+    postAt: { type: Number },
     mediaType: {
         type: Number,
         enum: [

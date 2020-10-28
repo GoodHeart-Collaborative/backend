@@ -19,8 +19,10 @@ export class HomeDao extends BaseDao {
             // let endDateee = moment().utc().endOf('day').toDate();
 
             let idKey: string = '$_id'
+            // endDateee.set
             endDateee.setHours(23, 59, 59, 999);
-            match["postedAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
+            // endDateee = endDateee.getTime();
+            match["postAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {
