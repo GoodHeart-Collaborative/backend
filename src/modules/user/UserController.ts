@@ -142,7 +142,7 @@ export class UserController {
 					if (params.mobileNo)
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 				} else {
-					if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
+					if ((step1 && step1.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED)) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 					}
 					if (step1 && step1.hash == null && !step1.hash) {
