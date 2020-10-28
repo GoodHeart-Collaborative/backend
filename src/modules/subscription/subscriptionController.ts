@@ -64,10 +64,10 @@ class SubscriptionController {
             const previousSubscription = await subscriptionDao.getUserPreviousSubscription(params);
 
             if (!previousSubscription) {
-                return {is_subscribed: false};
+                return { isSubscribed: false };
             }
             
-            return { is_subscribed: true };
+            return { isSubscribed: true };
         } catch (error) {
             throw error;
         }
