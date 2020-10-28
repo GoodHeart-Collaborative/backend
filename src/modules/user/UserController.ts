@@ -146,7 +146,7 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
 					}
 					else if (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
-						return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
+						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
 					}
 					if (step1 && step1.hash == null && !step1.hash) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.CANNOT_LOGIN);
