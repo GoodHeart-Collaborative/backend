@@ -1089,6 +1089,8 @@ export class UserController {
 			if (params.token) {
 				params['accessToken'] = params.token;
 			}
+			console.log('params>>>>>>>>>>>>>>>>>>>>>>>', params);
+
 			if (params.type === 'mobile') {
 				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
 
@@ -1104,21 +1106,28 @@ export class UserController {
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 			} else {
-				// if (params.token) {
-				// 	params['accessToken'] = params.token;
-				// }
-				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
+				const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
+				const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+				console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
+				if (isExpire) {
+					let step2;
+					step2 = userDao.emptyForgotToken({ "token": params.token });
+					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+				}
 
-				const step1 = await userDao.findOne('users', { _id: tokenData.userId }, {}, {})  //(tokenData);
+				// const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
+				// console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
+
+
+				const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
 
 				const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
-				// if (oldHash !== step1.hash) {
-				// 	return Promise.reject(adminConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
-				// } else {
-
-				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-				const step2 = userDao.changeForgotPassword(params, tokenData);
-				// }
+				if (oldHash !== step1.hash) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
+				} else {
+					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+					const step2 = userDao.changeForgotPassword(params, { userId: jwtPayload.payload.userId });
+				}
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
