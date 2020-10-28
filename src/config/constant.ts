@@ -564,6 +564,15 @@ const MESSAGES = {
 				"data": data
 			};
 		},
+		USER_EMAIL_VERIFY: (data) => {
+			// data['message'] = "Your email has been verified. You can now login with your verified email."
+			return {
+				"statusCode": HTTP_STATUS_CODE.OK,
+				"message": "Your email has been verified. You can now login with your verified email",
+				"type": "USER_EMAIL_VERIFY",
+				data: data,
+			}
+		},
 		MOBILE_NOT_VERIFIED: (data) => {
 			data["message"] = "Please verify your mobile number"
 			return {
