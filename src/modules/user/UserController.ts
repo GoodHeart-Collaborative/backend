@@ -283,7 +283,7 @@ export class UserController {
 
 						step1['subscriptionData'] = {
 							// isSubscribed: step1.isSubscribed,  //(step1.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
-							isSubscribed: (step1.subscriptionEndDate < new Date().getTime()) ? true : false,
+							isSubscribed: (step1.subscriptionEndDate < new Date().getTime()) ? false : true,
 							subscriptionType: step1.subscriptionType,
 							subscriptionEndDate: step1.subscriptionEndDate,
 							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : step1.subscriptionPlatform
