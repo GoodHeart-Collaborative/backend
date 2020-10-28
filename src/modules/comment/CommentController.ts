@@ -33,8 +33,8 @@ class CommentController {
             let data: any = {};
 
             if (params.userId) {
-                // if (params['subscriptionEndDate'] < new Date().getTime() || params['subscriptionEndDate'] == "") {
-                if (!params['isSubscribed']) {
+                if (params['subscriptionEndDate'] < new Date().getTime() || params['subscriptionEndDate'] == "") {
+                    // if (!params['isSubscribed']) {
                     return Promise.reject(commentConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
                 }
             }

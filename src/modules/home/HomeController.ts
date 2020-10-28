@@ -99,7 +99,7 @@ class HomeController {
                     homeData: responseData,
                     isGratitudeJournalFilled: isGratitudeFilled,
                     subscriptionData: {
-                        isSubscribed: userId.tokenData.isSubscribed, // (userId.tokenData.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
+                        isSubscribed: (userId.tokenData.subscriptionEndDate < new Date().getTime()) ? true : false, // (userId.tokenData.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
                         subscriptionType: userId.tokenData.subscriptionType,
                         subscriptionEndDate: userId.tokenData.subscriptionEndDate,
                         subscriptionPlatform: (userId.tokenData.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || userId.tokenData.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : userId.tokenData.subscriptionPlatform

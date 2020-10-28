@@ -163,11 +163,12 @@ class LikeController {
 
             if (params.userId) {
                 // if (params['subscriptionEndDate'] < new Date().getTime() || params['subscriptionEndDate'] == "") {
-                if (!params['isSubscribed']) {
+                // if (!params['isSubscribed']) {
+                if (params['subscriptionEndDate'] < new Date().getTime() || params['subscriptionEndDate'] == "") {
                     return Promise.reject(likeConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
                 }
             }
-            // }
+
             delete params['subscriptionEndDate'];
 
             let incOrDec: number = 1
