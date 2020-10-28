@@ -764,7 +764,8 @@ const NOTIFICATION_CATEGORY = {
 	},
 	EVENT_REMINDER: {
 		type: 8,
-		category: "Event Reminder"
+		category: "Event Reminder",
+		message: "Your event is about to start"
 	},
 	// EVENT_INTEREST :{
 	// 	type: 8,

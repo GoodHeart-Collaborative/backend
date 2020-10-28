@@ -210,12 +210,7 @@ class EventController {
                     }]
                 },
             },
-                // {
-                //     $unwind: {
-                //         path: '$hostUser',
-                //         preserveNullAndEmptyArrays: true,
-                //     },
-                // },
+
             )
 
             // aggPipe.push({ '$unwind': { path: '$hostUser', preserveNullAndEmptyArrays: true } });
