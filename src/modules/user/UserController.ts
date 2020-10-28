@@ -1121,13 +1121,13 @@ export class UserController {
 
 				const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
 
-				const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
-				if (oldHash !== step1.hash) {
-					return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
-				} else {
-					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-					const step2 = userDao.changeForgotPassword(params, { userId: jwtPayload.payload.userId });
-				}
+				// const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
+				// if (oldHash !== step1.hash) {
+				// 	return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
+				// } else {
+				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+				const step2 = userDao.changeForgotPassword(params, { userId: jwtPayload.payload.userId });
+				// }
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
