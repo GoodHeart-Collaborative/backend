@@ -22,7 +22,7 @@ export class HomeDao extends BaseDao {
             // endDateee.set
             endDateee.setHours(23, 59, 59, 999);
             // endDateee = endDateee.getTime();
-            match["postAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
+            match["postedAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {
