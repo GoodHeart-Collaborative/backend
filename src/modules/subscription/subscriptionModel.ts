@@ -19,6 +19,7 @@ export interface Isubscription extends Document {
     userId: string;
     receiptToken: string;
     subscriptionType: number;
+    transactionId: string;
     price: number;
     status: number;
     created: number;
@@ -57,6 +58,7 @@ const subscriptionSchema = new Schema({
         default: config.CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
 
     },
+    transactionId: { type: String },
     amount: { type: Number },
     created: { type: Number },
     receiptToken: { type: String },

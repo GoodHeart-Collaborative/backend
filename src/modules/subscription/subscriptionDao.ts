@@ -29,6 +29,7 @@ export class SubscriptionDao extends BaseDao {
             console.log("params", params);
             const query: any = {};
             query.userId = params.userId;
+            query.transaction_id = params.transaction_id;
             query.receiptToken = params.receiptToken;
             query.subscriptionType = params.subscriptionType;
             query.amount = params.amount || 0;
@@ -55,6 +56,34 @@ export class SubscriptionDao extends BaseDao {
 
 
             return await this.findOneAndUpdate("users", query, update, {});
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async getUserPreviousSubscription(params) {
+        try {
+
+            const query: any = {};
+            query.userId = { $ne: params.userId };
+            query.receiptToken = params.receiptToken;
+            query.subscriptionEndDate = { $gt: params.todayDate };
+
+            return await this.findOne("subscription", query, {}, {});
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async getSubscriptionByTransactionId(params) {
+        try {
+
+            const query: any = {};
+            query.userId = { $ne: params.userId };
+            query.transaction_id = params.transaction_id;
+            query.subscriptionEndDate = { $gt: params.todayDate };
+
+            return await this.findOne("subscription", query, {}, {});
         } catch (error) {
             return Promise.reject(error);
         }

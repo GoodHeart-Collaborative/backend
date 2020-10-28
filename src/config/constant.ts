@@ -433,6 +433,11 @@ const MESSAGES = {
 			"message": "Please try after some time.",
 			"type": "INTERNAL_SERVER_ERROR"
 		},
+		APPLE_ID_ALRADY_IN_USE: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "This apple id is already in use with other account",
+			"type": "APPLE_ID_ALRADY_IN_USE"
+		},
 		INVALID_TOKEN: {
 			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
 			// "statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
