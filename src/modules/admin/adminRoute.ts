@@ -511,8 +511,8 @@ export const adminRoute: ServerRoute[] = [
 				payload: {
 					oldPassword: Joi.string()
 						.trim()
-						.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
-						.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
+						// .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+						// .max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 						.default(config.CONSTANT.DEFAULT_PASSWORD)
 						.required(),
 					password: Joi.string()
