@@ -415,11 +415,11 @@ class AdminController {
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			if (isExpire) {
 				let step2;
-				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-				// step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
-				// } 
+				if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
+					step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
+				}
 				// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
-				// step2 = userDao.emptyForgotToken({ "token": params.token });
+				// 	step2 = userDao.emptyForgotToken({ "token": params.token });
 				// }
 				return Promise.reject('LinkExpired');
 			}
