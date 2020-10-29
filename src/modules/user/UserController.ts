@@ -1123,7 +1123,7 @@ export class UserController {
 				// console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
 
 				const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
-				if (step1.forgotToken === "" || !step1.forgotToken) {
+				if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
 				}
 				console.log('step1step1step1', step1);
