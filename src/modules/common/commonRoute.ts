@@ -76,12 +76,13 @@ export const commonRoute: ServerRoute = [
 	},
 	{
 		method: "GET",
-		path: `${config.SERVER.API_BASE_URL}/v1/common/resetPasswordWeb/`,
+		path: `${config.SERVER.API_BASE_URL}/v1/common/resetPasswordWeb`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			// const query: Device = request.params;
 			const payload = request.query;
 			console.log('payloadpayloadpayload', payload);
 			try {
+				// const isExpire=  await isExpire.
 				const tokenData = await tokenManager.verifyToken({ ...payload }, "common", false);
 				console.log('tokenDatatokenDatatokenDatatokenDatatokenData>>>>>>>>>>>>>>>>', tokenData);
 				let result;

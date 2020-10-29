@@ -168,7 +168,7 @@ class LikeController {
                     return Promise.reject(likeConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
                 }
             }
-
+            delete params['isSubscribed'];
             delete params['subscriptionEndDate'];
 
             let incOrDec: number = 1
@@ -202,12 +202,17 @@ class LikeController {
 
             }
             let getLike = await likeDao.checkLike(params);
+            console.log('getLikegetLikegetLike', getLike);
 
             if (getLike) {
                 incOrDec = -1
                 data = await likeDao.removeLike(params)
+                console.log('datadata>>>>>>>>>>>>removeLike', data);
+
             } else {
                 data = await likeDao.addLike(params);
+                console.log("datadatadataaddLike>>>>>>>>>", data);
+
             }
             if (params && params.commentId) {
                 query = { _id: await appUtils.toObjectId(params.commentId) }

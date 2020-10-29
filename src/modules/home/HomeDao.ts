@@ -15,12 +15,16 @@ export class HomeDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            let endDateee = new Date();
+            // let endDateee = new Date();
             // let endDateee = moment().utc().endOf('day').toDate();
 
             let idKey: string = '$_id'
-            endDateee.setHours(23, 59, 59, 999);
-            match["postedAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
+            // endDateee.set
+            const endDateee = new Date().setHours(23, 59, 59, 999) // .getTime();
+            console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
+
+            // endDateee = endDateee.getTime();
+            match["postAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {

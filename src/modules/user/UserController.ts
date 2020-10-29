@@ -1095,6 +1095,12 @@ export class UserController {
 			}
 			console.log('params>>>>>>>>>>>>>>>>>>>>>>>', params);
 
+			// let jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
+			// console.log('jwtPayloadjwtPayload', jwtPayload);
+
+			// const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			// console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
+
 			if (params.type === 'mobile') {
 				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
 
@@ -1110,28 +1116,37 @@ export class UserController {
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 			} else {
-				const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
-				const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
-				console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
-				if (isExpire) {
-					let step2;
-					step2 = userDao.emptyForgotToken({ "token": params.token });
-					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
-				}
+				// if (isExpire) {
+				// 	let step2;
+				// 	step2 = userDao.emptyForgotToken({ "token": params.token });
+				// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+				// }
 
 				// const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
 				// console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
 
+				// const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
+				// console.log('step1step1step1', step1);
+				// if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
+				// 	return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
+				// }
+				const step1 = await userDao.findOne('users', { forgotToken: params.accessToken }, {}, {})  //(tokenData);
+				console.log('step1step1step1', step1);
 
-				const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
+				if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
+				}
 
 				// const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
 				// if (oldHash !== step1.hash) {
 				// 	return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
 				// } else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-				const step2 = userDao.changeForgotPassword(params, { userId: jwtPayload.payload.userId });
-				// }
+				const step2 = userDao.changeForgotPassword(params, { userId: step1._id });
+				if (step2) {
+					userDao.emptyForgotToken({ "token": params.token });
+				}
+
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);

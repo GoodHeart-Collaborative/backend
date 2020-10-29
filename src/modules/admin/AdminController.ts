@@ -415,22 +415,16 @@ class AdminController {
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			if (isExpire) {
 				let step2;
-				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-				// step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
-				// } 
-				// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
-				// step2 = userDao.emptyForgotToken({ "token": params.token });
-				// }
-				return Promise.reject('LinkExpired');
+				step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
+				return Promise.reject('link-expired');
 			}
 			const criteriaToken = {
 				email: jwtPayload.payload.email,
 			};
 			const getAdmindata = await adminDao.findAdminById({ userId: jwtPayload.payload.userId })
 			if (getAdmindata.forgotToken !== params.payload.token || getAdmindata.forgotToken === "") {
-				return Promise.reject('LinkExpired');
+				return Promise.reject('link-expired');
 			}
-			// if (params.type === "forgot") {
 			const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 				.compileFile({
 					webUrl: config.SERVER.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL,
@@ -443,24 +437,6 @@ class AdminController {
 				});
 
 			return responseHtml;
-			// }
-			// const findByEmail = {
-			// 	email: result,
-			// };
-			// const adminData = await adminDao.findOne('admins', { email: result.email }, {}, {})
-			// if (!adminData) {
-			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.USER_NOT_FOUND);
-			// } else {
-			// 	const criteria = { email: result };
-			// 	const userExirationTime: any = await adminDao.findOne('admins', criteria, {}, {});
-			// 	const today: any = new Date();
-			// 	const diffMs = (today - userExirationTime.passwordResetTokenExpirationTime);
-			// 	const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
-			// 	if (diffMins > 0) { return Promise.reject('LinkExpired'); }
-			// 	else { return {}; } // success
-			// }
-
-
 		} catch (error) {
 			return Promise.reject(error);
 		}

@@ -21,10 +21,12 @@ class AdminHomeController {
         try {
             if (params.postedAt) {
                 // params["postedAt"] = params..postedAt;
-                params.postedAt = moment(new Date(params.postedAt)).format('YYYY-MM-DD HH:mm:ss')
+                params.postedAt = moment(new Date(params.postedAt)).format('YYYY-MM-DD HH:mm:ss');
+                params['postAt'] = params.postedAt().getTime();
             } else {
-                params["postedAt"] = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') //  new Date()
-                // params.postedAt = new Date()//moment(new Date()).format('YYYY-MM-DD')
+                params["postedAt"] = moment(new Date()).format('YYYY-MM-DD HH:mm:ss'); //  new Date()
+                // params.postedAt = new Date()//moment(newgetTime Date()).format('YYYY-MM-DD')
+                params['postAt'] = new Date().getTime();
             }
             // if (!params.postedAt) {
             //     params.postedAt = new Date();
@@ -175,8 +177,10 @@ class AdminHomeController {
             }
             if (params.postedAt) {
                 params.postedAt = new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
+                params['postAt'] = new Date(params.postedAt).getTime();
             } else {
                 params.postedAt = new Date()//moment(new Date()).format('YYYY-MM-DD')
+                params['postAt'] = new Date().getTime() //moment(new Date()).format('YYYY-MM-DD')
             }
             const dataToUpdate = {
                 ...params
