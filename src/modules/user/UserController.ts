@@ -1126,6 +1126,8 @@ export class UserController {
 				if (step1.forgotToken === "" || !step1.forgotToken) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
 				}
+				console.log('step1step1step1', step1);
+
 				// const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
 				// if (oldHash !== step1.hash) {
 				// 	return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
