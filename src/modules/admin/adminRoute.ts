@@ -317,15 +317,16 @@ export const adminRoute: ServerRoute[] = [
 				const result = await adminController.verifyLink({ payload });
 				return h.redirect(config.SERVER.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.token);
 			} catch (error) {
-				if (error.JsonWebTokenError) {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
-				} else if (error === 'LinkExpired') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
-				} else if (error === 'error') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
-				} else {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
-				}
+				// 	return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
+				// } else if (error === 'LinkExpired') {
+				// 	return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
+				// } else if (error === 'error') {
+				// 	return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
+				// } else {
+				// 	return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+				const message = "Your link has been expired. Please regenerate your link again.";
+				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
+				// }
 			}
 		},
 		config: {
