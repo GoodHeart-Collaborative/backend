@@ -58,7 +58,7 @@ export class DiscoverDao extends BaseDao {
                     match['discover_status'] = { $ne: config.CONSTANT.DISCOVER_STATUS.ACCEPT }
                 }
             }
-            aggPipe.push({ "$sort": { "createdAt": 1 } })
+            aggPipe.push({ "$sort": { "_id": -1 } })
             if (discover_status) {
                 match["discover_status"] = discover_status
             }
