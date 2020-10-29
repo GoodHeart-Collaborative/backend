@@ -416,14 +416,14 @@ class AdminController {
 			if (isExpire) {
 				let step2;
 				step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
-				return Promise.reject('LinkExpired');
+				return Promise.reject('link-expired');
 			}
 			const criteriaToken = {
 				email: jwtPayload.payload.email,
 			};
 			const getAdmindata = await adminDao.findAdminById({ userId: jwtPayload.payload.userId })
 			if (getAdmindata.forgotToken !== params.payload.token || getAdmindata.forgotToken === "") {
-				return Promise.reject('LinkExpired');
+				return Promise.reject('link-expired');
 			}
 			const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 				.compileFile({

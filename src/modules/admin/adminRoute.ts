@@ -320,7 +320,7 @@ export const adminRoute: ServerRoute[] = [
 				if (error) {
 					// return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
 					// } else if (error === 'LinkExpired') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired')
+					return h.redirect(config.SERVER.ADMIN_URL + '/link-expired')
 					// } else if (error === 'error') {
 					// return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
 					// } else {
@@ -367,13 +367,13 @@ export const adminRoute: ServerRoute[] = [
 
 			} catch (error) {
 				if (error.JsonWebTokenError) {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
+					return h.redirect(config.SERVER.ADMIN_URL + 'invalid url');
 				} else if (error === 'LinkExpired') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+					return h.redirect(config.SERVER.ADMIN_URL + 'LinkExpired');
 				} else if (error === 'error') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
+					return h.redirect(config.SERVER.ADMIN_URL + 'error');
 				} else {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+					return h.redirect(config.SERVER.ADMIN_URL + '/link-expired');
 				}
 			}
 		},
