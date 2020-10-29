@@ -314,9 +314,18 @@ export class ExpertDao extends BaseDao {
             }
 
             console.log('paginateOptions', paginateOptions);
+
             categoryPipeline.push({
-                $match: match
+                $match: match,
             });
+
+            if (screenType) {
+                categoryPipeline.push({
+                    '$sort': {
+                        _id: -1
+                    }
+                })
+            }
 
             if (!screenType && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
                 categoryPipeline.push(
@@ -361,10 +370,16 @@ export class ExpertDao extends BaseDao {
                         }
                     }
                 )
-            }
+            };
+
+            console.log('categoryPipelinecategoryPipeline', categoryPipeline);
+
             if (screenType != 'addPost') {
+                console.log('splicesplicesplicesplicesplicesplice.>>>>>>>>>>>',);
+
                 categoryPipeline.splice(2, 1);
             };
+            console.log('categoryPipelinecategoryPipelinecategoryPipelinecategoryPipeline', categoryPipeline);
 
 
             // if (payload.categoryId) {
