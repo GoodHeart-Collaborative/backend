@@ -319,38 +319,30 @@ export class ExpertDao extends BaseDao {
                 $match: match,
             });
 
-            if (screenType) {
+            if (screenType === 'expert' && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
                 categoryPipeline.push({
-                    '$sort': {
-                        _id: -1
-                    }
-                })
-            }
-
-            if (!screenType && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
-                categoryPipeline.push(
-                    {
-                        $lookup: {
-                            from: 'experts',
-                            let: { cId: '$_id' },
-                            as: 'expertData',
-                            pipeline: [
-                                {
-                                    $match: {
-                                        $expr: {
-                                            $and: [{
-                                                $in: ['$$cId', '$categoryId'],
-                                            },
-                                            {
-                                                $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                            }
-                                            ]
+                    $lookup: {
+                        from: 'experts',
+                        let: { cId: '$_id' },
+                        as: 'expertData',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [{
+                                            $in: ['$$cId', '$categoryId'],
+                                            // $in: ['$categoryId', '$$cId'],
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
                                         }
+                                        ]
                                     }
-                                },
-                            ],
-                        }
-                    },
+                                }
+                            },
+                        ],
+                    }
+                },
                     {
                         $match: {
                             expertData: { $ne: [] }
@@ -370,16 +362,68 @@ export class ExpertDao extends BaseDao {
                         }
                     }
                 )
-            };
+            }
+            else if (screenType === 'forum' && type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
+                categoryPipeline.push({
+                    $lookup: {
+                        from: 'forums',
+                        let: { cId: '$_id' },
+                        as: 'forumData',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [{
+                                            $eq: ['$categoryId', '$$cId'],
+                                            // $eq: ['$cId', '$categoryId'],
 
-            console.log('categoryPipelinecategoryPipeline', categoryPipeline);
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }
+                                        ]
+                                    }
+                                }
+                            },
+                        ],
+                    }
+                },
+                    {
+                        $match: {
+                            forumData: { $ne: [] }
+                        }
+                    },
+                    {
+                        $project: {
+                            createdAt: 0,
+                            updatedAt: 0,
+                            status: 0,
+                            forumData: 0
+                        }
+                    },
+                    {
+                        $sort: {
+                            _id: -1
+                        }
+                    }
+                )
+            } else {
+                categoryPipeline.push({
+                    '$sort': {
+                        _id: -1
+                    }
+                })
+            }
 
-            if (screenType != 'addPost') {
-                console.log('splicesplicesplicesplicesplicesplice.>>>>>>>>>>>',);
 
-                categoryPipeline.splice(2, 1);
-            };
-            console.log('categoryPipelinecategoryPipelinecategoryPipelinecategoryPipeline', categoryPipeline);
+            // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
+
+            // if (screenType != 'addPost') {
+            //     console.log('splicesplicesplicesplicesplicesplice.>>>>>>>>>>>',);
+
+            //     categoryPipeline.splice(2, 1);
+            // };
+            // console.log('categoryPipelinecategoryPipelinecategoryPipelinecategoryPipeline', categoryPipeline);
 
 
             // if (payload.categoryId) {
