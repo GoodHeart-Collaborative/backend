@@ -292,7 +292,7 @@ let validateUserIdParams = Joi.object({
 let changePassword = Joi.object({
     oldPassword: Joi.string()
         // .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
-        // .max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
+        .max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
         .required(),
     newPassword:
         Joi.string()
