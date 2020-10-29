@@ -168,7 +168,7 @@ class LikeController {
                     return Promise.reject(likeConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
                 }
             }
-
+            delete params['isSubscribed'];
             delete params['subscriptionEndDate'];
 
             let incOrDec: number = 1

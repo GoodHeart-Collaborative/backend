@@ -38,6 +38,7 @@ class CommentController {
                     return Promise.reject(commentConstants.MESSAGES.SUCCESS.SUBSCRIPTION_NONE({}));
                 }
             }
+            delete params['isSubscribed'];
             delete params['subscriptionEndDate'];
 
             query = { _id: await appUtils.toObjectId(params.postId) }
