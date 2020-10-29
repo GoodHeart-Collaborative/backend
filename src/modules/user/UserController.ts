@@ -1090,14 +1090,23 @@ export class UserController {
 
 	async resetPassword(params) {
 		try {
-			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
-			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
-			console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
-
 			if (params.token) {
 				params['accessToken'] = params.token;
 			}
 			console.log('params>>>>>>>>>>>>>>>>>>>>>>>', params);
+
+			let jwtPayload
+			try {
+				jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
+				console.log('jwtPayloadjwtPayload', jwtPayload);
+			} catch (error) {
+				console.log('erroooooooooooooo', error);
+
+			}
+
+			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
+
 
 			if (params.type === 'mobile') {
 				const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
@@ -1123,10 +1132,10 @@ export class UserController {
 				// console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
 
 				const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
+				console.log('step1step1step1', step1);
 				if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
 				}
-				console.log('step1step1step1', step1);
 
 				// const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
 				// if (oldHash !== step1.hash) {
