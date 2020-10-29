@@ -33,7 +33,6 @@ export interface IExpert extends Document {
 const expertPostSchema = new Schema({
     expertId: { type: Schema.Types.ObjectId, ref: 'expert' },
     topic: { type: String },
-    // profession: { type: String },
     categoryId: { type: Schema.Types.ObjectId },
     price: { type: Number, default: 0 },
     contentId: {

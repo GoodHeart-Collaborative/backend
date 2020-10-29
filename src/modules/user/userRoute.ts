@@ -353,6 +353,8 @@ export const
 					return responseHandler.sendSuccess(h, result);
 
 				} catch (error) {
+					// const message = "Your link has been expired. Please regenerate your link again.";
+					// return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
 					return responseHandler.sendError(error);
 				}
 			},

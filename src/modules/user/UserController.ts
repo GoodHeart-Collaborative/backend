@@ -1090,6 +1090,10 @@ export class UserController {
 
 	async resetPassword(params) {
 		try {
+			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
+			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+			console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
+
 			if (params.token) {
 				params['accessToken'] = params.token;
 			}
@@ -1110,28 +1114,28 @@ export class UserController {
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 			} else {
-				const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
-				const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
-				console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
 				if (isExpire) {
 					let step2;
 					step2 = userDao.emptyForgotToken({ "token": params.token });
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 				}
-
 				// const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
 				// console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
 
-
 				const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
-
+				if (step1.forgotToken === "" || !step1.forgotToken) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
+				}
 				// const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
 				// if (oldHash !== step1.hash) {
 				// 	return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
 				// } else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = userDao.changeForgotPassword(params, { userId: jwtPayload.payload.userId });
-				// }
+				if (step2) {
+					userDao.emptyForgotToken({ "token": params.token });
+				}
+
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
