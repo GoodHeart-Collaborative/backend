@@ -140,7 +140,6 @@ export class CommonController {
 
 	async veryEmail(params) {
 		try {
-
 			// const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
 			// const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			// if (isExpire) {
@@ -153,21 +152,19 @@ export class CommonController {
 			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 			// }
 			if (params.type === "verifyEmail") {
-
 				const userData = await baseDao.findOne("users", { _id: params.userId }, {}, {});
 				if (!userData) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 				}
-				if (userData.isEmailVerified) {
-					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+				if (userData && userData.isEmailVerified) {
+					return Promise.reject('alreadyVerified');
 				}
-
-				if (userData) {
-					const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
-					if (findSameEmail) {
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
-					}
-				}
+				// if (userData) {
+				// 	const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
+				// 	if (findSameEmail) {
+				// 		return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+				// 	}
+				// }
 
 				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
 				const step1 = await baseDao.updateOne("users", { _id: params.userId }, { isEmailVerified: true }, {});

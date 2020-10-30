@@ -252,8 +252,10 @@ export const commonRoute: ServerRoute = [
 				const query: DeeplinkRequest = request.query;
 				return await commonController.deepLink(query);
 			} catch (error) {
-				const message = "Your link has been expired. Please regenerate your link again.";
-				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });
+				// const message = "Your link has been expired. Please regenerate your link again.";
+				const message = "Hi there, your link has expired because you haven't used it. Link expires in every 10 minutes and can only be used once. Please try again."
+				const title = "Link expired";
+				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png", title: title });
 			}
 		},
 		options: {
@@ -326,8 +328,18 @@ export const commonRoute: ServerRoute = [
 				const query: DeeplinkRequest = request.query;
 				return await commonController.veryEmail(query);
 			} catch (error) {
-				const message = "Your link has been expired. Please regenerate your link again.";
-				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
+				let message;
+				let title;
+				if (error === "alreadyVerified") {
+					message = "Hi your email is verified . Please login to continue."
+					title = "Email Already verified";
+					return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
+				} else {
+					// const message = "Your link has been expired. Please regenerate your link again.";
+					message = "Hi there, your link has expired because you haven't used it. Link expires in every 10 minutes and can only be used once. Please try again."
+					title = "Link expired";
+				}
+				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
 			}
 		},
 		options: {
@@ -367,8 +379,20 @@ export const commonRoute: ServerRoute = [
 				return responseHandler.sendSuccess(h, result);
 
 			} catch (error) {
-				const message = "Your link has been expired. Please regenerate your link again.";
-				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
+				let message;
+				let title;
+				if (error === "alreadyVerified") {
+					message = "Hi your email is verified . Please login to continue."
+					title = "Email Already verified";
+					return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
+				} else {
+					// const message = "Your link has been expired. Please regenerate your link again.";
+					message = "Hi there, your link has expired because you haven't used it. Link expires in every 10 minutes and can only be used once. Please try again."
+					title = "Link expired";
+				}
+				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
+				// const message = "Your link has been expired. Please regenerate your link again.";
+				// return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
 			}
 		},
 		options: {
