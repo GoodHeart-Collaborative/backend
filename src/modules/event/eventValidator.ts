@@ -21,7 +21,8 @@ let getEventHomeScreen = Joi.object({
     //     config.CONSTANT.DATE_FILTER.TODAY,
     //     config.CONSTANT.DATE_FILTER.TOMORROW,
     //     config.CONSTANT.DATE_FILTER.WEEKEND
-    // ]).description('3-today ,4-tomorrow ,5-weekend')
+    // ]).description('3-today ,4-tomorrow ,5-weekend'),
+
     startDate: Joi.number(),
     endDate: Joi.number()
 }).unknown()
@@ -42,7 +43,7 @@ let eventViewAllScreen = Joi.object({
         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
         5
     ]).description('5-All'),
-    isFeaturedEvent: Joi.number().allow(0, 1),
+    isFeaturedEvent: Joi.number().required().allow(0, 1),
     date: Joi.string().allow([
         config.CONSTANT.DATE_FILTER.TODAY,
         config.CONSTANT.DATE_FILTER.TOMORROW,
@@ -51,7 +52,9 @@ let eventViewAllScreen = Joi.object({
     privacy: Joi.string().allow([
         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
-    ])
+    ]),
+    startDate: Joi.number(),
+    endDate: Joi.number(),
 })
 
 let addEvents = Joi.object({

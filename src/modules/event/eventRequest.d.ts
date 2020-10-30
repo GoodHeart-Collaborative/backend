@@ -48,6 +48,8 @@ declare namespace UserEventRequest {
         eventCategoryId: number;
         date: string;
         getIpfromNtwk: string;
+        startDate: number;
+        endDate: number;
     }
 
     export interface getEventDetail {

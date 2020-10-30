@@ -381,7 +381,7 @@ class EventController {
 
     async getEvent(params: UserEventRequest.getEvents, tokenData) {
         try {
-            const { distance, eventCategoryId, date, searchKey, getIpfromNtwk } = params;
+            const { distance, eventCategoryId, date, searchKey, getIpfromNtwk, startDate, endDate } = params;
             let { longitude, latitude, } = params;
             let pickupLocation = [];
             let aggPipe = [];
@@ -438,6 +438,10 @@ class EventController {
 
             console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
             // if(startDate)
+            if (startDate && endDate) { match['startDate'] = { $gte: startDate, $lte: endDate }; }
+            if (startDate && !endDate) { match['startDate'] = { $gte: startDate }; }
+            if (!startDate && endDate) { match['startDate'] = { $lte: endDate }; }
+
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['endDate'] = { $gt: new Date().getTime() }
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })

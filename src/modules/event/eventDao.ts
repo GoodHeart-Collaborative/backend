@@ -23,7 +23,7 @@ export class EventDao extends BaseDao {
 
     async getEventList(params, tokenData) {
         try {
-            const { pageNo, limit, date, searchKey, privacy, distance, eventCategoryId, isFeaturedEvent, getIpfromNtwk } = params;
+            const { pageNo, limit, date, searchKey, distance, eventCategoryId, isFeaturedEvent, getIpfromNtwk, startDate, endDate } = params;
             console.log('tokenDatatokenData', tokenData.userId);
             let { longitude, latitude, } = params;
 
@@ -77,6 +77,11 @@ export class EventDao extends BaseDao {
             //         $lte: end
             //     }
             // }
+
+            if (startDate && endDate) { match['startDate'] = { $gte: startDate, $lte: endDate }; }
+            if (startDate && !endDate) { match['startDate'] = { $gte: startDate }; }
+            if (!startDate && endDate) { match['startDate'] = { $lte: endDate }; }
+
 
             if (searchKey) {
                 const reg = new RegExp(searchKey, 'ig');

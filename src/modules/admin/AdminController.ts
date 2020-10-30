@@ -471,6 +471,8 @@ class AdminController {
 				// } else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = adminDao.changePassword(params, { userId: step1._id });
+				const step3 = loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
+
 				if (step2) {
 					userDao.emptyForgotToken({ "token": params.token });
 				}
