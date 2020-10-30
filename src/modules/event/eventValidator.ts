@@ -17,11 +17,13 @@ let getEventHomeScreen = Joi.object({
         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
         5
     ]).description('5-All'),
-    date: Joi.string().allow([
-        config.CONSTANT.DATE_FILTER.TODAY,
-        config.CONSTANT.DATE_FILTER.TOMORROW,
-        config.CONSTANT.DATE_FILTER.WEEKEND
-    ]).description('3-today ,4-tomorrow ,5-weekend')
+    // date: Joi.string().allow([
+    //     config.CONSTANT.DATE_FILTER.TODAY,
+    //     config.CONSTANT.DATE_FILTER.TOMORROW,
+    //     config.CONSTANT.DATE_FILTER.WEEKEND
+    // ]).description('3-today ,4-tomorrow ,5-weekend')
+    startDate: Joi.number(),
+    endDate: Joi.number()
 }).unknown()
 
 

@@ -411,16 +411,14 @@ class EventController {
 
             if (longitude != undefined && latitude != undefined) {
                 pickupLocation.push(longitude, latitude);
-                aggPipe.push(
-                    {
-                        '$geoNear': {
-                            near: { type: "Point", coordinates: pickupLocation },
-                            spherical: true,
-                            maxDistance: searchDistance,
-                            // includeLocs: "dist.location",
-                            distanceField: "dist",
-                        }
-                    },
+                aggPipe.push({
+                    '$geoNear': {
+                        near: { type: "Point", coordinates: pickupLocation },
+                        spherical: true,
+                        maxDistance: searchDistance,
+                        distanceField: "dist",
+                    }
+                },
                     { "$sort": { endDate: 1 } }
                 )
                 //     { "$sort": { dist: -1 } }
@@ -439,6 +437,7 @@ class EventController {
             }
 
             console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
+            // if(startDate)
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['endDate'] = { $gt: new Date().getTime() }
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
