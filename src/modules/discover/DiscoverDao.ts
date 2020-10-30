@@ -162,14 +162,14 @@ export class DiscoverDao extends BaseDao {
                     $project:
                     {
                         _id: "$user._id",
-                        industryType: "$users.industryType",
-                        myConnection: "$users.myConnection",
-                        experience: "$users.experience",
-                        discover_status: "$users.discover_status",
+                        industryType: "$user.industryType",
+                        myConnection: "$user.myConnection",
+                        experience: "$user.experience",
+                        discover_status: "$user.discover_status",
                         name: "$user.name",
                         profilePicUrl: "$user.profilePicUrl",
                         profession: "$user.profession",
-                        about: "$users.about",
+                        about: "$user.about",
                     }
                 })
             } else {
