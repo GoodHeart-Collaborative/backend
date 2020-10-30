@@ -47,9 +47,9 @@ export class EventDao extends BaseDao {
             if (isFeaturedEvent) {
                 match['isFeatured'] = true;
             }
-            // else {
-            //     match['isFeatured'] = false;
-            // }
+            else {
+                match['isFeatured'] = false;
+            }
 
             const start = new Date();
             start.setHours(0, 0, 0, 0);

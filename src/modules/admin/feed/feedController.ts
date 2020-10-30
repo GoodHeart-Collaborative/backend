@@ -113,20 +113,25 @@ class AdminFeedController {
             // }
 
 
-            if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
-                aggPipe.push({
-                    $addFields: {
-                        isExpired: {
-                            $cond: {
-                                if: {
-                                    createdAt: { $gte: new Date() }
-                                }, then: false,
-                                else: true
-                            }
-                        }
-                    }
-                })
-            }
+            // if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
+            //     //  $gte:new Date('$createdAt'.getTime() - 1000 * 3600 * 24 * 3)
+            //     aggPipe.push({
+            //         $addFields: {
+            //             isExpired: {
+            //                 $cond: {
+            //                     if: {
+            //                         createdAt: {
+            //                             // new Date(new Date().getTime() + 1000 * 3600 * 24)
+            //                             // $gte: new Date('$createdAt'.getTime() - 1000 * 3600 * 24 * 3)
+            //                             // $gte: new Date(new Date().getTime() + 60 * 60 * 24 * 1000)
+            //                         }
+            //                     }, then: true,
+            //                     else: true
+            //                 }
+            //             }
+            //         }
+            //     })
+            // }
 
             let data;
             aggPipe.push({ '$unwind': { path: '$userData' } });
