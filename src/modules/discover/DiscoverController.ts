@@ -155,11 +155,30 @@ class DiscoverController {
             if (checkDiscover) {
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     status = CONSTANT.DISCOVER_STATUS.ACCEPT
-                } else {
-                    // update
-                    status = CONSTANT.DISCOVER_STATUS.PENDING
-                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status, userId: userId.userId, followerId: params.followerId })
                 }
+                else {
+                    status = CONSTANT.DISCOVER_STATUS.PENDING
+                    let updateObj: any = {}
+                    updateObj = {
+                        discover_status: status,
+                        userId: userId.userId,
+                        followerId: params.followerId
+                    }
+                    if (checkDiscover.userId.toString() !== userId.userId) {
+                        updateObj = {
+                            discover_status: status,
+                            userId: params.followerId,
+                            followerId: userId.userI
+                        }
+                    }
+                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
+
+                }
+                //  } else {
+                //         // update
+                //         status = CONSTANT.DISCOVER_STATUS.PENDING
+                //         await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status, userId: userId.userId, followerId: params.followerId, })
+                //     }
                 let param: any = {}
                 param["_id"] = params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
