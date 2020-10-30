@@ -168,7 +168,7 @@ class DiscoverController {
                         updateObj = {
                             discover_status: status,
                             userId: params.followerId,
-                            followerId: userId.userI
+                            followerId: userId.userId
                         }
                     }
                     await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
