@@ -197,30 +197,14 @@ export class CommonController {
 			if (!userData) {
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 			}
-			// if (userData.isEmailVerified) {
-			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
-			// }
 
-			if (userData) {
-				const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
-				if (findSameEmail) {
-					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
-				}
+			if (userData && userData.isEmailVerified) {
+				// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
 			}
 
 			// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
 			const step1 = await baseDao.findOneAndUpdate("users", { _id: params.userId }, { isEmailVerified: true }, {});
-			console.log('step1step1step1step1step1step1', step1);
-
-			// const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
-			// 	.compileFile({
-			// 		url: params.android || config.CONSTANT.DEEPLINK.ANDROID_SCHEME, // android scheme,
-			// 		iosLink: params.ios || config.CONSTANT.DEEPLINK.IOS_SCHEME,  // ios scheme
-			// 		fallback: params.fallback || config.CONSTANT.DEEPLINK.WELCOME_FALLBACK,
-			// 		title: config.SERVER.APP_NAME,
-			// 		android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
-			// 		ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
-			// 	});
 
 			// return { email: step1.email }
 			return config.CONSTANT.MESSAGES.SUCCESS.USER_EMAIL_VERIFY({ email: step1.email })
