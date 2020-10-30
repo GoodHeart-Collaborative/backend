@@ -131,7 +131,7 @@ export const MESSAGES = {
 		},
 		LINK_EXPIRED: {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			message: "Please try again with new link",
+			message: "Link has been expired. Please try again with new lin",
 			type: "LINK_EXPIRED"
 		},
 		PASSWORD_ALREADY_BEEN_CHANGED: {
