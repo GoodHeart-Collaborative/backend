@@ -538,7 +538,7 @@ class AdminController {
 				// 	step6 = redisClient.createJobs(jobPayload);
 				// }
 
-				return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
+				// return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
 			}
 
 		}
