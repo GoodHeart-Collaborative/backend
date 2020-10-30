@@ -38,6 +38,7 @@ declare namespace AdminEventRequest {
         // categoryId: string().trim;
         status: string;
         userId: string;
+        isExpired: boolean;
     }
 
     export interface IupdateStatus {

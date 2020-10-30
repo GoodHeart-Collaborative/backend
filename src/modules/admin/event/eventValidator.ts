@@ -24,7 +24,8 @@ let getEvents = Joi.object({
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
     ]),
-    userId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).trim()
+    userId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).trim(),
+    isExpired: Joi.boolean(),
 }).unknown()
 
 

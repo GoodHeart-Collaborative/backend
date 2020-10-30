@@ -11,6 +11,7 @@ export interface Ishoutout extends Document {
     title: string,
     description: string,
     memberAdded: string,
+    created: number;
 }
 
 const shoutoutSchema = new Schema({
@@ -30,7 +31,7 @@ const shoutoutSchema = new Schema({
         ],
         default: config.CONSTANT.STATUS.ACTIVE
     },
-
+    created: { type: Number },
     privacy: {
         type: String, enum: [
             config.CONSTANT.PRIVACY_STATUS.PRIVATE,

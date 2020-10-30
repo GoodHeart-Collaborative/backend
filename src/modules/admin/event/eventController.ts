@@ -75,7 +75,7 @@ class EventController {
 
     async getEvent(params: AdminEventRequest.IGetEvent) {
         try {
-            const { limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status } = params;
+            const { limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status, isExpired } = params;
             let aggPipe = [];
             const match: any = {};
             let sort = {};
@@ -126,8 +126,27 @@ class EventController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
+            if (isExpired == true) {
+                match['endDate'] = { $lte: new Date().getTime() }
+            }
+            else if (isExpired == false) {
+                match['endDate'] = { $gt: new Date().getTime() }
+            }
 
             aggPipe.push({ $match: match })
+
+            aggPipe.push({
+                $addFields: {
+                    isExpired: {
+                        $cond: {
+                            if: {
+                                $gte: ['$endDate', new Date().getTime()]
+                            }, then: false,
+                            else: true
+                        },
+                    }
+                }
+            })
             // aggPipe.push({ $sort: { _id: -1 } });
             // aggPipe.push({
             //     $lookup: {

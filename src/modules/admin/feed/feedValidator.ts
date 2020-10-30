@@ -93,7 +93,8 @@ let getFeed = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
-    ])
+    ]),
+    isExpired: Joi.boolean()
 }).unknown()
 
 let feedPostId = Joi.object({

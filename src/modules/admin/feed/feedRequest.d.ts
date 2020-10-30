@@ -11,6 +11,7 @@ declare namespace AdminFeedRequest {
         fromDate: Date,
         toDate: Date,
         privacy: string;
+        isExpired: boolean
     }
 
     export interface adminUpdateFeedStatus {

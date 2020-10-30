@@ -18,7 +18,7 @@ class AdminFeedController {
 
     async GetFeed(params: AdminFeedRequest.IGetFeed) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, type, privacy } = params;
+            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, type, privacy, isExpired } = params;
             const aggPipe = [];
             const match: any = {};
 
@@ -104,6 +104,28 @@ class AdminFeedController {
                         ]
                     }
                 });
+            }
+            // if (isExpired === true) {
+            //     match['createdAt'] = { $gte: new Date().getTime() }
+            // }
+            // else if (isExpired === false) {
+            //     match['endDate'] = { $gt: new Date().getTime() }
+            // }
+
+
+            if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
+                aggPipe.push({
+                    $addFields: {
+                        isExpired: {
+                            $cond: {
+                                if: {
+                                    createdAt: { $gte: new Date() }
+                                }, then: false,
+                                else: true
+                            }
+                        }
+                    }
+                })
             }
 
             let data;
