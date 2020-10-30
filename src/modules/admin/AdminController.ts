@@ -470,12 +470,12 @@ class AdminController {
 				// 	return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
 				// } else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-				const step2 = userDao.changeForgotPassword(params, { userId: step1._id });
+				const step2 = adminDao.changePassword(params, { userId: step1._id });
 				if (step2) {
 					userDao.emptyForgotToken({ "token": params.token });
 				}
 
-				return adminConstant.MESSAGES.SUCCESS.CHANGE_FORGOT_PASSWORD
+				return adminConstant.MESSAGES.SUCCESS.CHANGE_FORGOT_PASSWORD;
 
 
 				// return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
