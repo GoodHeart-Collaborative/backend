@@ -578,6 +578,14 @@ const MESSAGES = {
 				data: data,
 			}
 		},
+		EMAIL_ALREADY_VERIFIED: (data) => {
+			return {
+				"statusCode": HTTP_STATUS_CODE.OK,
+				"message": "Email already verified.",
+				"type": "EMAIL_NOT_REGISTERED",
+				"data": data
+			}
+		},
 		MOBILE_NOT_VERIFIED: (data) => {
 			data["message"] = "Please verify your mobile number"
 			return {

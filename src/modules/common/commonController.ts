@@ -200,7 +200,8 @@ export class CommonController {
 
 			if (userData && userData.isEmailVerified) {
 				// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+				// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+				return config.CONSTANT.MESSAGES.SUCCESS.EMAIL_ALREADY_VERIFIED({})
 			}
 
 			// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
