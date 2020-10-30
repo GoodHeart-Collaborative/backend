@@ -99,6 +99,12 @@ class InterestController {
 
             aggPipe.push({ $match: match });
             aggPipe.push({
+                $sort: {
+                    _id: -1
+                }
+            });
+
+            aggPipe.push({
                 $lookup: {
                     from: 'users',
                     let: { uId: '$userId' },
