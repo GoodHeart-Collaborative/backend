@@ -242,8 +242,18 @@ let updateProfileUser = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Managing_Director,
     ]).required(),
     email: Joi.string().email().required(),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().allow(''),
+    // firstName: Joi.string().regex(config.CONSTANT.REGEX)required(),
+    // lastName: Joi.string().allow(''),
+    firstName: Joi.string()
+        .trim()
+        .min(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MIN_LENGTH)
+        .max(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MAX_LENGTH)
+        .required(),
+    lastName: Joi.string()
+        .trim()
+        .min(config.CONSTANT.VALIDATION_CRITERIA.LAST_NAME_MIN_LENGTH)
+        .max(config.CONSTANT.VALIDATION_CRITERIA.LAST_NAME_MAX_LENGTH)
+        .optional().allow(''),
     profilePicUrl: Joi.string().required(),
 
     mobileNo: Joi.string().required(),
