@@ -478,6 +478,9 @@ class AdminController {
 				return adminConstant.MESSAGES.SUCCESS.CHANGE_FORGOT_PASSWORD
 
 
+				// return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
+
+
 				// params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				// let salt;
 				// salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
@@ -533,7 +536,7 @@ class AdminController {
 				// 	step6 = redisClient.createJobs(jobPayload);
 				// }
 
-				return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
+				// return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, });
 			}
 		}
 		catch (error) {
