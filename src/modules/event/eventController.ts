@@ -399,8 +399,6 @@ class EventController {
                 ];
             }
 
-            console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
-
             if (longitude == undefined && latitude == undefined) {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
                 console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
@@ -656,25 +654,27 @@ class EventController {
                     // "created": 1603173893833,
                 })
             });
+            let result = [];
+            function removeDuplicates(array, key) {
+                let lookup = {};
+                for (let i = 0; i < array.length; i++) {
+                    if (!lookup[array[i][key]]) {
+                        lookup[array[i][key]] = true;
+                        result.push(array[i]);
+                    }
+                }
+                return result;
+            }
+            removeDuplicates(categoryList, '_id')
 
-            categoryList = (categoryList.sort(() => Math.random() - 0.5)).slice(0, 5)
+            // console.log(getUnique(categoryList, '_id'));
+            // const unquesData = await uniqueKeepLast(categoryList, it => it._id)
+
+            categoryList = (result.sort(() => Math.random() - 0.5)).slice(0, 5)
             console.log('categoriyListcategoriyListcategoriyList', categoryList);
 
-            const FEATURED = {
-                featuredEvent,
-                type: 0
-            }
-            const EVENTS = {
-                event,
-                type: 1
-            }
-            // return [
-            //     FEATURED,
-            //     EVENTS,
-            // ]
-
             return {
-                categoryList,
+                categoryList: result,
                 featuredEvent,
                 event,
             }
