@@ -33,6 +33,7 @@ class EventController {
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             // params.eventCategoryType = categoryData['name'];
             params.eventCategoryName = categoryData['title'];
+            params['eventCategoryImage'] = categoryData['imageUrl'];
             params.created = new Date().getTime();
             params['goingCount'] = 1;
             // params['interestCount'] = 1;
@@ -969,6 +970,7 @@ class EventController {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
             params['eventCategoryName'] = categoryData['title'];
+            params['eventCategoryImage'] = categoryData['imageUrl'];
 
             // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 

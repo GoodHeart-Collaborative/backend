@@ -37,6 +37,8 @@ class EventController {
             // params.eventCategoryType = categoryData['name'];
             params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
+            params['eventCategoryImage'] = categoryData['imageUrl'];
+
             // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const data = await eventDao.insert("event", params, {});
@@ -291,6 +293,8 @@ class EventController {
             console.log('data1data1data1data1data1', result);
             // params['eventCategoryType'] = result['name'];
             params['eventCategoryName'] = result['title'];
+            params['eventCategoryImage'] = result['imageUrl'];
+
             // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const dataToUpdate = {
