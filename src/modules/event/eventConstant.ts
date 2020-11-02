@@ -4,6 +4,11 @@ export const MESSAGES = {
     EVENT_EXPIRE: "Event is no longer now",
     EVENT_BLOCKED_DELETE: "Event is no longer now",
     ERROR: {
+        EVENT_CATEGORYID_REQUIRED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Please provide event categoryId.",
+            "type": "DISCOVER_NOT_FOUND"
+        },
         DISCOVER_NOT_FOUND: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
             "message": "Discover not found.",

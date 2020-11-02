@@ -44,7 +44,7 @@ let eventViewAllScreen = Joi.object({
     //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
     //     5
     // ]).description('5-All'),
-    isFeaturedEvent: Joi.number().required().allow(0, 1),
+    isFeaturedEvent: Joi.number().required().allow(0, 1, 2), // 2for categoryfeatured
     date: Joi.string().allow([
         config.CONSTANT.DATE_FILTER.TODAY,
         config.CONSTANT.DATE_FILTER.TOMORROW,

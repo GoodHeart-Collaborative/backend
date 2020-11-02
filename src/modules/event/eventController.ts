@@ -622,7 +622,7 @@ class EventController {
             // ];
             // const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
             // eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
-            let categoriesArr = [];
+            let categoryList = [];
             const featuredEvent = await eventDao.aggregate('event', featureAggPipe, {})
             console.log('featuredEventfeaturedEventfeaturedEventfeaturedEventfeaturedEvent', featuredEvent);
 
@@ -641,14 +641,14 @@ class EventController {
             console.log('featuredEventfeaturedEvent', featuredEvent);
 
             featuredEvent.map((data: any) => {
-                categoriesArr.push({
+                categoryList.push({
                     categoryId: data.eventCategoryId,
                     categoryName: data.eventCategoryName,
                     categoryimageUrl: data.eventCategoryImage || ''
                 })
             })
             event.map((data: any) => {
-                categoriesArr.push({
+                categoryList.push({
                     _id: data.eventCategoryId,
                     name: data.eventCategoryName,
                     imageUrl: data.eventCategoryImage || '',
@@ -657,8 +657,8 @@ class EventController {
                 })
             });
 
-            categoriesArr = (categoriesArr.sort(() => Math.random() - 0.5)).slice(0, 5)
-            console.log('categoriesArrcategoriesArrcategoriesArr', categoriesArr);
+            categoryList = (categoryList.sort(() => Math.random() - 0.5)).slice(0, 5)
+            console.log('categoriyListcategoriyListcategoriyList', categoryList);
 
             const FEATURED = {
                 featuredEvent,
@@ -674,7 +674,7 @@ class EventController {
             // ]
 
             return {
-                categoriesArr,
+                categoryList,
                 featuredEvent,
                 event,
             }

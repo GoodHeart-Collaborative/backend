@@ -23,6 +23,9 @@ export class EventDao extends BaseDao {
 
     async getEventList(params, tokenData) {
         try {
+            // if ((params.isFeaturedEvent === 2 && !params.eventCategoryId) || (!params.isFeaturedEvent == 2 && params.eventCategoryId)) {
+            //     return Promise.reject(c)
+            // }
             const { pageNo, limit, date, searchKey, distance, eventCategoryId, isFeaturedEvent, getIpfromNtwk, startDate, endDate } = params;
             console.log('tokenDatatokenData', tokenData.userId);
             let { longitude, latitude, } = params;
@@ -40,15 +43,13 @@ export class EventDao extends BaseDao {
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['endDate'] = { $gt: new Date().getTime() }
 
-            if (eventCategoryId) {
-                match['eventCategoryId'] = eventCategoryId;
-            }
-
-            if (isFeaturedEvent) {
+            if (isFeaturedEvent === 1) {
                 match['isFeatured'] = true;
             }
-            else {
+            else if (isFeaturedEvent === 0) {
                 match['isFeatured'] = false;
+            } else if (eventCategoryId && isFeaturedEvent === 2) {
+                match['eventCategoryId'] = eventCategoryId;
             }
 
             const start = new Date();
