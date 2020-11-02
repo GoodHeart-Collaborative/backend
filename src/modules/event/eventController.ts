@@ -644,14 +644,14 @@ class EventController {
                 categoryList.push({
                     _id: data.eventCategoryId,
                     title: data.eventCategoryName,
-                    imageUrl: data.eventCategoryImage || "https://www.speakactchange.org/wp-content/uploads/2017/11/training-concept-image-1320x868.jpg"
+                    imageUrl: data.eventCategoryImage || "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"
                 })
             })
             event.map((data: any) => {
                 categoryList.push({
                     _id: data.eventCategoryId,
                     title: data.eventCategoryName,
-                    imageUrl: data.eventCategoryImage || "https://www.speakactchange.org/wp-content/uploads/2017/11/training-concept-image-1320x868.jpg",
+                    imageUrl: data.eventCategoryImage || "https://appinventiv-development.s3.amazonaws.com/1603176436318.png",
                     // "created": 1603173893833,
                 })
             });

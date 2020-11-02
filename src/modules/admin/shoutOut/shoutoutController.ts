@@ -128,7 +128,7 @@ class AdminShoutOut {
             aggPipe.push({
                 $lookup: {
                     from: 'users',
-                    let: { uId: '$userId', mId: '$members' },
+                    let: { uId: '$userId', mId: '$memberAdded' },
                     pipeline: [{
                         $match: {
                             $expr: {
