@@ -642,7 +642,7 @@ class EventController {
 
             featuredEvent.map((data: any) => {
                 categoryList.push({
-                    categoryId: data.eventCategoryId,
+                    _id: data.eventCategoryId,
                     title: data.eventCategoryName,
                     imageUrl: data.eventCategoryImage || "https://www.speakactchange.org/wp-content/uploads/2017/11/training-concept-image-1320x868.jpg"
                 })
