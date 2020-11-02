@@ -289,7 +289,7 @@ export class ExpertDao extends BaseDao {
     async getCategory(payload: userExpertRequest.IgetCategory) {
         try {
             const { searchTerm, screenType, type } = payload;
-            let { limit, page, longitude, latitude,  distance } = payload
+            let { limit, page, longitude, latitude, distance } = payload
 
             let criteria: any = {};
 
@@ -463,32 +463,12 @@ export class ExpertDao extends BaseDao {
                         imageUrl: { $ifNull: ["$eventCategoryImage", "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"] },
                     }
                 });
+                // const categoryData = await eventDao.paginate('event', aggPipe, paginateOptions.limit, paginateOptions.pageNo, {});
+                categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)];
+                let result = await this.aggregateWithPagination("event", aggPipe, limit, page, true);
 
-
-                const categoryData = await eventDao.paginate('event', aggPipe, paginateOptions.limit, paginateOptions.pageNo, {});
-                console.log('categoryDataucategoryDataucategoryDatau', categoryData);
-
-                // featuredEvent.map((data: any) => {
-                //     categoryList.push({
-                //         _id: data.eventCategoryId,
-                //         title: data.eventCategoryName,
-                //         imageUrl: data.eventCategoryImage || "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"
-                //     })
-                // }) 
-                // event.map((data: any) => {
-                //     categoryList.push({
-                //         _id: data.eventCategoryId,
-                //         title: data.eventCategoryName,
-                //         imageUrl: data.eventCategoryImage || "https://appinventiv-development.s3.amazonaws.com/1603176436318.png",
-                //         // "created": 1603173893833,
-                //     })
-                // });
-
-                // categoryList = (categoryList.sort(() => Math.random() - 0.5)).slice(0, 5)
-                // console.log('categoriyListcategoriyListcategoriyList', categoryList);
-
-                return categoryData;
-
+                console.log('categoryDataucategoryDataucategoryDatau', result);
+                return result;
             }
             else {
                 categoryPipeline.push({
