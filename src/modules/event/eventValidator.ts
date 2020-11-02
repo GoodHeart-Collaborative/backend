@@ -36,7 +36,7 @@ let eventViewAllScreen = Joi.object({
     longitude: Joi.number().optional(),
     latitude: Joi.number().optional(),
     distance: Joi.number().optional().default(40),
-    eventCategoryId: Joi.string().regec(config.CONSTANT.REGEX.MONGO_ID),
+    eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID),
     // eventCategoryId: Joi.number().allow([
     //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
     //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
