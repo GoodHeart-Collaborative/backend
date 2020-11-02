@@ -9,6 +9,7 @@ import { homeDao } from "@modules/admin/Home/adminHomeDao";
 import { CONSTANT } from "@config/index";
 import * as moment from 'moment';
 import * as appUtils from "@utils/appUtils";
+import { logDao } from "@modules/log";
 
 
 class AdminHomeController {
@@ -21,8 +22,8 @@ class AdminHomeController {
         try {
             if (params.postedAt) {
                 // params["postedAt"] = params..postedAt;
-                params.postedAt = moment(new Date(params.postedAt)).format('YYYY-MM-DD HH:mm:ss');
-                params['postAt'] = params.postedAt().getTime();
+                params["postedAt"] = moment(new Date(params.postedAt)).format('YYYY-MM-DD HH:mm:ss');
+                params['postAt'] = new Date(params.postedAt).getTime();
             } else {
                 params["postedAt"] = moment(new Date()).format('YYYY-MM-DD HH:mm:ss'); //  new Date()
                 // params.postedAt = new Date()//moment(newgetTime Date()).format('YYYY-MM-DD')

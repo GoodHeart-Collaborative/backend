@@ -113,25 +113,32 @@ class AdminFeedController {
             // }
 
 
-            // if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
-            //     //  $gte:new Date('$createdAt'.getTime() - 1000 * 3600 * 24 * 3)
-            //     aggPipe.push({
-            //         $addFields: {
-            //             isExpired: {
-            //                 $cond: {
-            //                     if: {
-            //                         createdAt: {
-            //                             // new Date(new Date().getTime() + 1000 * 3600 * 24)
-            //                             // $gte: new Date('$createdAt'.getTime() - 1000 * 3600 * 24 * 3)
-            //                             // $gte: new Date(new Date().getTime() + 60 * 60 * 24 * 1000)
-            //                         }
-            //                     }, then: true,
-            //                     else: true
-            //                 }
-            //             }
+            //     fullName: {
+            //         $cond: {
+            //             if: {
+            //                 $eq: ['$lastName', null]
+            //             },
+            //             then: '$firstName',
+            //             else: { $concat: ['$firstName', ' ', '$lastName'] }
             //         }
-            //     })
+            //     }
             // }
+
+            if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
+                //  $gte:new Date('$createdAt'.getTime() - 1000 * 3600 * 24 * 3)
+                aggPipe.push({
+                    $addFields: {
+                        isExpired: {
+                            $cond: {
+                                if: {
+                                    $gte: ['$created', new Date(new Date().getTime() + 60 * 60 * 24 * 1000)]
+                                }, then: false,
+                                else: true
+                            },                                    // }
+                        }
+                    }
+                })
+            }
 
             let data;
             aggPipe.push({ '$unwind': { path: '$userData' } });
