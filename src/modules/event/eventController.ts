@@ -226,7 +226,7 @@ class EventController {
             if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
                 defaultAndInterestEveent.push({
                     $match: {
-                        status: config.CONSTANT.STATUS.ACTIVE,
+                        // status: config.CONSTANT.STATUS.ACTIVE,
                         userId: appUtils.toObjectId(tokenData.userId),
                         type: config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
@@ -440,7 +440,7 @@ class EventController {
             // if(startDate)
             if (startDate && endDate) { match['startDate'] = { $gte: startDate, $lte: endDate }; }
             if (startDate && !endDate) { match['startDate'] = { $gte: startDate }; }
-            if (!startDate && endDate) { match['startDate'] = { $lte: endDate }; }
+            if (!startDate && endDate) { match['endDate'] = { $lte: endDate }; }
 
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['endDate'] = { $gt: new Date().getTime() }
@@ -621,7 +621,7 @@ class EventController {
             // ];
             // const eventCategoryListName = await eventDao.aggregate('event', getEventCategory, {})
             // eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
-
+            let categoriesArr = [];
             const featuredEvent = await eventDao.aggregate('event', featureAggPipe, {})
             console.log('featuredEventfeaturedEventfeaturedEventfeaturedEventfeaturedEvent', featuredEvent);
 
@@ -637,6 +637,22 @@ class EventController {
             //     eventCategoryListName,
             //     type: 0
             // }
+            // featuredEvent.filter((data: any) => {
+            //     categoriesArr = data.map(value => value.eventCategoryName);
+            //     categoriesArr = data.map(value => value.eventCategoryId);
+
+            //     // categoriesArr.push()
+            // })
+            console.log('categoriesArrcategoriesArrcategoriesArr', categoriesArr);
+
+            //     const data = Object.values(obj);
+            //     const result = data.filter((x: any) => {
+            //         return x.VALUE === num;
+            //     });
+            //     return result[0];
+            // }
+
+
             const FEATURED = {
                 featuredEvent,
                 type: 0
@@ -652,7 +668,6 @@ class EventController {
             return {
                 featuredEvent,
                 event
-
             }
 
         } catch (error) {
