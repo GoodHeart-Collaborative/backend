@@ -18,6 +18,9 @@ let getCategorList = Joi.object({
         config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
         config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY,
     ]).required(),
+    longitude: Joi.number().optional(),
+    latitude: Joi.number().optional(),
+    distance: Joi.number().default(40)
     // forWhichFlow : Joi.string([])
 }).unknown();
 

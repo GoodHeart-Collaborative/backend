@@ -8,6 +8,7 @@ import { categoryDao } from "@modules/admin/catgeory";
 import { expert } from "@modules/admin/expert/expertModel";
 import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
 import * as moment from 'moment';
+import { eventDao } from "@modules/event/eventDao";
 export class ExpertDao extends BaseDao {
 
     async getGratitudeJournalData(params) {
@@ -288,7 +289,8 @@ export class ExpertDao extends BaseDao {
     async getCategory(payload: userExpertRequest.IgetCategory) {
         try {
             const { searchTerm, screenType, type } = payload;
-            let { limit, page } = payload
+            let { limit, page, longitude, latitude,  distance } = payload
+
             let criteria: any = {};
 
             let categoryPipeline: any = []
@@ -407,7 +409,88 @@ export class ExpertDao extends BaseDao {
                         }
                     }
                 )
-            } else {
+            }
+            else if (screenType === 'event' && type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Lllllllllllllllllll');
+                let pickupLocation = [];
+                let aggPipe = [];
+                let eventMatch: any = {};
+                let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
+
+                console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
+
+                // if (longitude == undefined && latitude == undefined) {
+                //     const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                //     console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
+                //     latitude = lat_lng.lat;
+                //     longitude = lat_lng.long;
+                // }
+                if (longitude != undefined && latitude != undefined) {
+                    pickupLocation.push(longitude, latitude);
+                    aggPipe.push({
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            maxDistance: searchDistance,
+                            distanceField: "dist",
+                        }
+                    },
+                        { "$sort": { endDate: 1 } }
+                    )
+                    //     { "$sort": { dist: -1 } }
+                    // )
+                }
+
+                console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
+                // if(startDate)
+                eventMatch['endDate'] = { $gt: new Date().getTime() }
+                eventMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
+                if (searchTerm) {
+                    eventMatch["$or"] = [
+                        { "eventCategoryName": { "$regex": searchTerm, "$options": "-i" } },
+                        // { "name": { "$regex": searchTerm, "$options": "-i" } },
+                    ];
+                }
+
+                console.log('match>?????????????????????', eventMatch);
+
+                aggPipe.push({ $match: eventMatch });
+                aggPipe.push({
+                    $project:
+                    {
+                        _id: '$eventCategoryId',
+                        title: '$eventCategoryName',
+                        imageUrl: { $ifNull: ["$eventCategoryImage", "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"] },
+                    }
+                });
+
+
+                const categoryData = await eventDao.paginate('event', aggPipe, paginateOptions.limit, paginateOptions.pageNo, {});
+                console.log('categoryDataucategoryDataucategoryDatau', categoryData);
+
+                // featuredEvent.map((data: any) => {
+                //     categoryList.push({
+                //         _id: data.eventCategoryId,
+                //         title: data.eventCategoryName,
+                //         imageUrl: data.eventCategoryImage || "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"
+                //     })
+                // }) 
+                // event.map((data: any) => {
+                //     categoryList.push({
+                //         _id: data.eventCategoryId,
+                //         title: data.eventCategoryName,
+                //         imageUrl: data.eventCategoryImage || "https://appinventiv-development.s3.amazonaws.com/1603176436318.png",
+                //         // "created": 1603173893833,
+                //     })
+                // });
+
+                // categoryList = (categoryList.sort(() => Math.random() - 0.5)).slice(0, 5)
+                // console.log('categoriyListcategoriyListcategoriyList', categoryList);
+
+                return categoryData;
+
+            }
+            else {
                 categoryPipeline.push({
                     '$sort': {
                         _id: -1

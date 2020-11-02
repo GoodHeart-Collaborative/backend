@@ -4,6 +4,6 @@ declare namespace ShoutoutRequest {
         title: string
         privacy: string
         gif?: string
-        members: string[]
+        members: any
     }
 }

@@ -7,6 +7,9 @@ declare namespace userExpertRequest {
         searchTerm: string;
         screenType: string;
         type: number;
+        latitude: number;
+        longitude: number;
+        distance: number;
     }
 
     export interface ICategoryRelatedExpert {
