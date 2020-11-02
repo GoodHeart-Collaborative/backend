@@ -643,17 +643,16 @@ class EventController {
             featuredEvent.map((data: any) => {
                 categoryList.push({
                     categoryId: data.eventCategoryId,
-                    categoryName: data.eventCategoryName,
-                    categoryimageUrl: data.eventCategoryImage || ''
+                    title: data.eventCategoryName,
+                    imageUrl: data.eventCategoryImage || "https://www.speakactchange.org/wp-content/uploads/2017/11/training-concept-image-1320x868.jpg"
                 })
             })
             event.map((data: any) => {
                 categoryList.push({
                     _id: data.eventCategoryId,
-                    name: data.eventCategoryName,
-                    imageUrl: data.eventCategoryImage || '',
+                    title: data.eventCategoryName,
+                    imageUrl: data.eventCategoryImage || "https://www.speakactchange.org/wp-content/uploads/2017/11/training-concept-image-1320x868.jpg",
                     // "created": 1603173893833,
-                    "title": "category check ex",
                 })
             });
 
