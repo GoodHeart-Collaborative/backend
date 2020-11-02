@@ -49,7 +49,7 @@ export class EventDao extends BaseDao {
             else if (isFeaturedEvent === 0) {
                 match['isFeatured'] = false;
             } else if (eventCategoryId && isFeaturedEvent === 2) {
-                match['eventCategoryId'] = eventCategoryId;
+                match['eventCategoryId'] = appUtils.toObjectId(eventCategoryId);
             }
 
             const start = new Date();
