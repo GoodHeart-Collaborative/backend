@@ -25,9 +25,9 @@ export interface Ievent extends Document {
     eventCategory: string,
     created: number;
     isFeatured: boolean;
-    // eventCategoryType: string;
     eventCategoryName: string;
     eventCategoryId: string;
+    eventCategoryImage: string;
 }
 var geoSchema = new Schema({
     // location: { type: String, trim: true, required: true, default: '' },
@@ -72,15 +72,13 @@ const eventSchema = new Schema({
         ],
         default: config.CONSTANT.STATUS.ACTIVE
     },
+    eventCategoryImage: { type: String, trim: true },
     imageUrl: { type: String },
     eventUrl: { type: String },
     shareUrl: { type: String },
     allowSharing: { type: Number },
     shortId: { type: String, default: shortid.generate, unique: true },
     goingCount: { type: Number, default: 0 },
-    eventCategoryType: {
-        type: String,
-    },
     eventCategoryName: { type: String },
     // eventCategoryDisplayName: { type: String },
     eventCategoryId: { type: Schema.Types.ObjectId, required: true },

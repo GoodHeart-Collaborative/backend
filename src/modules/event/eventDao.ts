@@ -41,7 +41,7 @@ export class EventDao extends BaseDao {
             match['endDate'] = { $gt: new Date().getTime() }
 
             if (eventCategoryId) {
-                match['eventCategory'] = eventCategoryId;
+                match['eventCategoryId'] = eventCategoryId;
             }
 
             if (isFeaturedEvent) {
@@ -80,7 +80,7 @@ export class EventDao extends BaseDao {
 
             if (startDate && endDate) { match['startDate'] = { $gte: startDate, $lte: endDate }; }
             if (startDate && !endDate) { match['startDate'] = { $gte: startDate }; }
-            if (!startDate && endDate) { match['startDate'] = { $lte: endDate }; }
+            if (!startDate && endDate) { match['endDate'] = { $lte: endDate }; }
 
 
             if (searchKey) {

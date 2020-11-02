@@ -13,7 +13,7 @@ let getCategorList = Joi.object({
     limit: Joi.number(),
     page: Joi.number(),
     searchTerm: Joi.string(),
-    screenType: Joi.string().allow(['addPost','forum','expert']),
+    screenType: Joi.string().allow(['addPost', 'forum', 'expert', 'event']),
     type: Joi.number().allow([
         config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
         config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY,

@@ -36,13 +36,14 @@ let eventViewAllScreen = Joi.object({
     longitude: Joi.number().optional(),
     latitude: Joi.number().optional(),
     distance: Joi.number().optional().default(40),
-    eventCategoryId: Joi.number().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
-        5
-    ]).description('5-All'),
+    eventCategoryId: Joi.string().regec(config.CONSTANT.REGEX.MONGO_ID),
+    // eventCategoryId: Joi.number().allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
+    //     5
+    // ]).description('5-All'),
     isFeaturedEvent: Joi.number().required().allow(0, 1),
     date: Joi.string().allow([
         config.CONSTANT.DATE_FILTER.TODAY,

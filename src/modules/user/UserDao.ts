@@ -245,8 +245,6 @@ export class UserDao extends BaseDao {
 				]
 			}
 
-			console.log('paramsparamsparamsparamsparams<>>>>>>>>>>>>>>>', params);
-
 			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
@@ -478,6 +476,7 @@ export class UserDao extends BaseDao {
 			const userGraphCriteria = [
 				{
 					$match: {
+						status: { $ne: config.CONSTANT.STATUS.DELETED },
 						createdAt: {
 							$gte: new Date(new Date().getFullYear(), 0, 1)
 						}

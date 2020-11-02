@@ -438,12 +438,13 @@ class EventController {
 
             console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
             // if(startDate)
+            match['endDate'] = { $gt: new Date().getTime() }
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+
             if (startDate && endDate) { match['startDate'] = { $gte: startDate, $lte: endDate }; }
             if (startDate && !endDate) { match['startDate'] = { $gte: startDate }; }
             if (!startDate && endDate) { match['endDate'] = { $lte: endDate }; }
 
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
-            match['endDate'] = { $gt: new Date().getTime() }
             aggPipe.push({ $match: match }, { $match: { isFeatured: false } }, { $limit: 5 })
             featureAggPipe.push({ $match: match }, { $match: { isFeatured: true } }, { $limit: 5 })
 
@@ -637,21 +638,27 @@ class EventController {
             //     eventCategoryListName,
             //     type: 0
             // }
-            // featuredEvent.filter((data: any) => {
-            //     categoriesArr = data.map(value => value.eventCategoryName);
-            //     categoriesArr = data.map(value => value.eventCategoryId);
+            console.log('featuredEventfeaturedEvent', featuredEvent);
 
-            //     // categoriesArr.push()
-            // })
+            featuredEvent.map((data: any) => {
+                categoriesArr.push({
+                    categoryId: data.eventCategoryId,
+                    categoryName: data.eventCategoryName,
+                    categoryimageUrl: data.eventCategoryImage || ''
+                })
+            })
+            event.map((data: any) => {
+                categoriesArr.push({
+                    _id: data.eventCategoryId,
+                    name: data.eventCategoryName,
+                    imageUrl: data.eventCategoryImage || '',
+                    // "created": 1603173893833,
+                    "title": "category check ex",
+                })
+            });
+
+            categoriesArr = (categoriesArr.sort(() => Math.random() - 0.5)).slice(0, 5)
             console.log('categoriesArrcategoriesArrcategoriesArr', categoriesArr);
-
-            //     const data = Object.values(obj);
-            //     const result = data.filter((x: any) => {
-            //         return x.VALUE === num;
-            //     });
-            //     return result[0];
-            // }
-
 
             const FEATURED = {
                 featuredEvent,
@@ -665,9 +672,11 @@ class EventController {
             //     FEATURED,
             //     EVENTS,
             // ]
+
             return {
+                categoriesArr,
                 featuredEvent,
-                event
+                event,
             }
 
         } catch (error) {
