@@ -67,7 +67,9 @@ export class AdminUserDao extends BaseDao {
                             then: '$firstName',
                             else: { $concat: ['$firstName', ' ', '$lastName'] }
                         }
-                    }
+                    },
+                    subscriptionType: 1,
+                    subscriptionEndDate: 1,
                 }
             });
 
