@@ -51,8 +51,6 @@ class DiscoverController {
      */
     async updateDiscoverData(params: DiscoverRequest.DiscoverRequestEdit, userId) {
         try {
-            console.log('paramsparamsparamsparams>>>>>>>>>>>>>>>>>>>>>>>>LLLLLLLLLLLLLLLL', params);
-
             let query: any = {}
             query["_id"] = params.followerId
             userId.userId = await appUtils.toObjectId(userId.userId)
@@ -78,18 +76,12 @@ class DiscoverController {
                     }
                 }
                 let updateObj: any = {}
-                console.log('checkDiscovercheckDiscover>>>>>>>>>>>>>', checkDiscover);
-
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT && params.discover_status === CONSTANT.DISCOVER_STATUS.PENDING) {
                     // status = params.discover_status
                     console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId);
-                    console.log('!== userId.userId!== userId.userId!== userId.userId', userId.userId);
-
 
                     if (checkDiscover.userId.toString() !== userId.userId.toString()) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
-                        console.log('paramsparamsparamsparamsparams', params);
-
                         updateObj = {
                             discover_status: params.discover_status,
                             userId: userId.userId,
@@ -114,13 +106,6 @@ class DiscoverController {
                 } else {
                     await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
                 }
-
-                userId = userId.userId.toString()
-                let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
-                getData.data[0].discover_status = params.discover_status
-                getData.data[0].user.discover_status = params.discover_status
-
-
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     params['title'] = 'Friend Request';
                     params['body'] = {
@@ -142,8 +127,18 @@ class DiscoverController {
                     // params['click_action'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.category;
                     params['message'] = `${userId.firstName} accepted your friend request`;
                     params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type;
+                    console.log('paramsparamsparams', params);
+
                     const data1111 = notificationManager.sendOneToOneNotification(params, userId, true);
                 }
+
+                userId = userId.userId.toString()
+                let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
+                getData.data[0].discover_status = params.discover_status
+                getData.data[0].user.discover_status = params.discover_status
+
+                console.log('userIduserIduserIduserIduserId', userId);
+
 
                 return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_UPDATED(getData.data[0])
             } else {
