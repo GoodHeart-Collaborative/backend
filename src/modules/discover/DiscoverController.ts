@@ -75,11 +75,42 @@ class DiscoverController {
                         await userDao.pullMember({ userId: params.followerId, followerId: userId.userId.toString() })
                     }
                 }
-                await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
+                let updateObj: any = {}
+                if (params.discover_status === CONSTANT.DISCOVER_STATUS.PENDING) {
+                    status = checkDiscover.discover_status
+
+                    if (checkDiscover.userId !== userId.userId) {
+                        console.log('checkDiscovercheckDiscover', checkDiscover);
+                        updateObj = {
+                            discover_status: status,
+                            userId: params.followerId,
+                            followerId: userId.userId
+                        }
+                        console.log('2232222222222222222222222', updateObj);
+                    }
+                    else {
+                        updateObj = {
+                            discover_status: status,
+                            userId: userId.userId,
+                            followerId: params.followerId
+                        }
+                        console.log('333333333333333333333333333333333', updateObj);
+
+                        console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                        console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                    }
+                    console.log('44444444444444444444444444', updateObj);
+
+                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
+                } else {
+                    await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
+                }
+
                 userId = userId.userId.toString()
                 let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
                 getData.data[0].discover_status = params.discover_status
                 getData.data[0].user.discover_status = params.discover_status
+
 
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     params['title'] = 'Friend Request';
@@ -143,35 +174,35 @@ class DiscoverController {
                     // status = checkDiscover.discover_status
                     let updateObj: any = {}
 
-                    //     if (checkDiscover.userId !== userId.userId) {
-                    //         console.log('checkDiscovercheckDiscover', checkDiscover);
-                    //         updateObj = {
-                    //             discover_status: status,
-                    //             userId: params.followerId,
-                    //             followerId: userId.userId
-                    //         }
-                    //         console.log('2232222222222222222222222', updateObj);
-                    //     }
-                    //     else {
-                    //         updateObj = {
-                    //             discover_status: status,
-                    //             userId: userId.userId,
-                    //             followerId: params.followerId
-                    //         }
-                    //         console.log('333333333333333333333333333333333', updateObj);
+                    if (checkDiscover.userId !== userId.userId) {
+                        console.log('checkDiscovercheckDiscover', checkDiscover);
+                        updateObj = {
+                            discover_status: status,
+                            userId: params.followerId,
+                            followerId: userId.userId
+                        }
+                        console.log('2232222222222222222222222', updateObj);
+                    }
+                    else {
+                        updateObj = {
+                            discover_status: status,
+                            userId: userId.userId,
+                            followerId: params.followerId
+                        }
+                        console.log('333333333333333333333333333333333', updateObj);
 
-                    //         console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
-                    //         console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
-                    //     }
-                    //     console.log('44444444444444444444444444', updateObj);
+                        console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                        console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                    }
+                    console.log('44444444444444444444444444', updateObj);
 
-                    //     await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
+                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
 
                     // }
                     //  } else {
                     // update
-                    status = CONSTANT.DISCOVER_STATUS.PENDING
-                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status, userId: userId.userId, followerId: params.followerId, })
+                    // status = CONSTANT.DISCOVER_STATUS.PENDING
+                    // await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status, userId: userId.userId, followerId: params.followerId, })
                 }
                 let param: any = {}
                 param["_id"] = params.followerId
