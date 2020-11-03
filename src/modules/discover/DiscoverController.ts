@@ -77,12 +77,12 @@ class DiscoverController {
                 }
                 let updateObj: any = {}
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.PENDING) {
-                    status = checkDiscover.discover_status
+                    // status = params.discover_status
 
                     if (checkDiscover.userId !== userId.userId) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
                         updateObj = {
-                            discover_status: status,
+                            discover_status: params.discover_status,
                             userId: params.followerId,
                             followerId: userId.userId
                         }
@@ -90,7 +90,7 @@ class DiscoverController {
                     }
                     else {
                         updateObj = {
-                            discover_status: status,
+                            discover_status: params.discover_status,
                             userId: userId.userId,
                             followerId: params.followerId
                         }
