@@ -126,30 +126,6 @@ class DiscoverController {
             checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
 
-            params['title'] = 'Friend Request';
-            params['body'] = {
-                user: {
-                    name: (userId.firstName) + " " + (userId.lastName ? userId.lastName : ""),
-                    userId: userId.userId,
-                    // name: userId.firstName,
-                    profilePicUrl: userId.profilePicUrl,
-                    profession: userId.profession,
-                    industryType: userId.industryType,
-                    experience: userId.experience,
-                    about: userId.about,
-                    myConnection: userId.myConnection
-                }
-            };
-            params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
-            params['click_action'] = "FRIEND_REQUEST";
-            params['message'] = `${userId.firstName} wants to connect with you`;
-            params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
-            params['userId'] = params.followerId;
-
-            console.log(' params params params params params', params);
-
-
-            const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
             // { followerId: params.followerId, userId: userId.userId })
             console.log('checkDiscovercheckDiscovercheckDiscover', checkDiscover);
@@ -202,6 +178,37 @@ class DiscoverController {
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].discover_status = status
                 getData.data[0].user.discover_status = status
+
+
+
+
+
+                params['title'] = 'Friend Request';
+                params['body'] = {
+                    user: {
+                        name: (userId.firstName) + " " + (userId.lastName ? userId.lastName : ""),
+                        userId: userId.userId,
+                        // name: userId.firstName,
+                        profilePicUrl: userId.profilePicUrl,
+                        profession: userId.profession,
+                        industryType: userId.industryType,
+                        experience: userId.experience,
+                        about: userId.about,
+                        myConnection: userId.myConnection
+                    }
+                };
+                params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
+                params['click_action'] = "FRIEND_REQUEST";
+                params['message'] = `${userId.firstName} wants to connect with you`;
+                params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
+                params['userId'] = params.followerId;
+
+                console.log(' params params params params params', params);
+
+
+                const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
+
+
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
                 params['userId'] = userId.userId
