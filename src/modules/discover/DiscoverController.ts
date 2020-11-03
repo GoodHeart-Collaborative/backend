@@ -206,7 +206,6 @@ class DiscoverController {
                     console.log('44444444444444444444444444', updateObj);
 
                     await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
-
                     // }
                     //  } else {
                     // update
@@ -218,6 +217,18 @@ class DiscoverController {
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].discover_status = status
                 getData.data[0].user.discover_status = status
+
+                const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
+
+                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
+            } else {
+                params['userId'] = userId.userId
+                await discoverDao.saveDiscover(params)
+                let param: any = {}
+                param["_id"] = params.followerId
+                let getData = await discoverDao.getUserData(param, userId)
+                getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING;
+
 
                 params['title'] = 'Friend Request';
                 params['body'] = {
@@ -240,18 +251,6 @@ class DiscoverController {
                 params['userId'] = params.followerId;
 
                 console.log(' params params params params params', params);
-
-                const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
-
-                return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
-            } else {
-                params['userId'] = userId.userId
-                await discoverDao.saveDiscover(params)
-                let param: any = {}
-                param["_id"] = params.followerId
-                let getData = await discoverDao.getUserData(param, userId)
-                getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING;
-
 
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }
