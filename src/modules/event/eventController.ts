@@ -655,7 +655,7 @@ class EventController {
                 })
             });
             let result = [];
-            function removeDuplicates(array, key) {
+            async function removeDuplicates(array, key) {
                 let lookup = {};
                 for (let i = 0; i < array.length; i++) {
                     if (!lookup[array[i][key]]) {
@@ -665,7 +665,7 @@ class EventController {
                 }
                 return result;
             }
-            removeDuplicates(categoryList, '_id')
+            await removeDuplicates(categoryList, '_id')
 
             // console.log(getUnique(categoryList, '_id'));
             // const unquesData = await uniqueKeepLast(categoryList, it => it._id)
@@ -674,7 +674,7 @@ class EventController {
             console.log('categoriyListcategoriyListcategoriyList', categoryList);
 
             return {
-                categoryList: result,
+                categoryList,
                 featuredEvent,
                 event,
             }
