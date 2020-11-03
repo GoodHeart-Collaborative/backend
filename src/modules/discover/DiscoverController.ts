@@ -82,8 +82,11 @@ class DiscoverController {
 
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT && params.discover_status === CONSTANT.DISCOVER_STATUS.REJECT) {
                     // status = params.discover_status
+                    console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId);
+                    console.log('!== userId.userId!== userId.userId!== userId.userId', userId.userId);
 
-                    if (checkDiscover.userId !== userId.userId) {
+
+                    if (checkDiscover.userId.toString() !== userId.userId.toString()) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
                         console.log('paramsparamsparamsparamsparams', params);
 
