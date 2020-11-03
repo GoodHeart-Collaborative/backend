@@ -452,22 +452,38 @@ export class ExpertDao extends BaseDao {
                     ];
                 }
 
-                console.log('match>?????????????????????', eventMatch);
-
                 aggPipe.push({ $match: eventMatch });
                 aggPipe.push({
-                    $project:
-                    {
-                        _id: '$eventCategoryId',
-                        title: '$eventCategoryName',
-                        imageUrl: { $ifNull: ["$eventCategoryImage", "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"] },
+                    $group: {
+                        '_id': '$eventCategoryId',
+                        "title": {
+                            $first: '$eventCategoryName',
+                        },
+                        imageUrl: {
+                            $first: {
+                                $ifNull: ["$eventCategoryImage", "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"]
+
+                            }
+                        },
                     }
-                });
+                })
+                // aggPipe.push({
+                //     $project:
+                //     {
+                //         _id: '$eventCategoryId',
+                //         title: '$eventCategoryName',
+                //         imageUrl: { $ifNull: ["$eventCategoryImage", "https://appinventiv-development.s3.amazonaws.com/1603176436318.png"] },
+                //     }
+                // });
+
                 // const categoryData = await eventDao.paginate('event', aggPipe, paginateOptions.limit, paginateOptions.pageNo, {});
                 categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)];
                 let result = await this.aggregateWithPagination("event", aggPipe, limit, page, true);
 
                 console.log('categoryDataucategoryDataucategoryDatau', result);
+                let arr = [];
+
+                // console.log('arrarrarraarrrrarr', arr);
                 return result;
             }
             else {
