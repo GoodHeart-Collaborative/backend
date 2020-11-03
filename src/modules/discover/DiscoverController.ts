@@ -218,7 +218,6 @@ class DiscoverController {
                 getData.data[0].discover_status = status
                 getData.data[0].user.discover_status = status
 
-                const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
@@ -251,6 +250,7 @@ class DiscoverController {
                 params['userId'] = params.followerId;
 
                 console.log(' params params params params params', params);
+                const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }
