@@ -227,7 +227,7 @@ class EventController {
             if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
                 defaultAndInterestEveent.push({
                     $match: {
-                        // status: config.CONSTANT.STATUS.ACTIVE,
+                        status: config.CONSTANT.STATUS.ACTIVE,
                         userId: appUtils.toObjectId(tokenData.userId),
                         type: config.CONSTANT.EVENT_INTEREST.INTEREST
                     }

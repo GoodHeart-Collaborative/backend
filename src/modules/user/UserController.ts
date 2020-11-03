@@ -311,8 +311,11 @@ export class UserController {
 			const step1 = await userDao.checkSocialId(params);
 			// console.log('step1step1step1step1', step1.salt);
 
-			if (step1 && step1.status !== config.CONSTANT.STATUS.ACTIVE) {
-				return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
+			if (step1 && step1.status !== config.CONSTANT.STATUS.DELETED) {
+				return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
+			}
+			if (step1 && step1.status !== config.CONSTANT.STATUS.BLOCKED) {
+				return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
 			}
 			else if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
