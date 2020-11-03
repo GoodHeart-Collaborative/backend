@@ -80,7 +80,7 @@ class DiscoverController {
                 let updateObj: any = {}
                 console.log('checkDiscovercheckDiscover>>>>>>>>>>>>>', checkDiscover);
 
-                if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT && params.discover_status === CONSTANT.DISCOVER_STATUS.REJECT) {
+                if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT && params.discover_status === CONSTANT.DISCOVER_STATUS.PENDING) {
                     // status = params.discover_status
                     console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId);
                     console.log('!== userId.userId!== userId.userId!== userId.userId', userId.userId);
