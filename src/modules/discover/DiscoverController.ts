@@ -75,6 +75,12 @@ class DiscoverController {
                         await userDao.pullMember({ userId: params.followerId, followerId: userId.userId.toString() })
                     }
                 }
+                await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
+                userId = userId.userId.toString()
+                let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
+                getData.data[0].discover_status = params.discover_status
+                getData.data[0].user.discover_status = params.discover_status
+
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     params['title'] = 'Friend Request';
                     params['body'] = {
@@ -99,11 +105,6 @@ class DiscoverController {
                     const data1111 = notificationManager.sendOneToOneNotification(params, userId, true);
                 }
 
-                await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
-                userId = userId.userId.toString()
-                let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
-                getData.data[0].discover_status = params.discover_status
-                getData.data[0].user.discover_status = params.discover_status
                 return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_UPDATED(getData.data[0])
             } else {
                 return homeConstants.MESSAGES.ERROR.DISCOVER_NOT_FOUND
@@ -150,7 +151,6 @@ class DiscoverController {
                             followerId: userId.userId
                         }
                         console.log('2232222222222222222222222', updateObj);
-
                     }
                     else {
                         updateObj = {
@@ -179,10 +179,6 @@ class DiscoverController {
                 getData.data[0].discover_status = status
                 getData.data[0].user.discover_status = status
 
-
-
-
-
                 params['title'] = 'Friend Request';
                 params['body'] = {
                     user: {
@@ -205,9 +201,7 @@ class DiscoverController {
 
                 console.log(' params params params params params', params);
 
-
                 const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
-
 
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
