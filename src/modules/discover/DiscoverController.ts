@@ -51,6 +51,8 @@ class DiscoverController {
      */
     async updateDiscoverData(params: DiscoverRequest.DiscoverRequestEdit, userId) {
         try {
+            console.log('paramsparamsparamsparams>>>>>>>>>>>>>>>>>>>>>>>>LLLLLLLLLLLLLLLL', params);
+
             let query: any = {}
             query["_id"] = params.followerId
             userId.userId = await appUtils.toObjectId(userId.userId)
@@ -76,29 +78,31 @@ class DiscoverController {
                     }
                 }
                 let updateObj: any = {}
-                if (params.discover_status === CONSTANT.DISCOVER_STATUS.PENDING) {
+                if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT && params.discover_status === CONSTANT.DISCOVER_STATUS.REJECT) {
                     // status = params.discover_status
 
                     if (checkDiscover.userId !== userId.userId) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
-                        updateObj = {
-                            discover_status: params.discover_status,
-                            userId: params.followerId,
-                            followerId: userId.userId
-                        }
-                        console.log('2232222222222222222222222', updateObj);
-                    }
-                    else {
+                        console.log('paramsparamsparamsparamsparams', params);
+
                         updateObj = {
                             discover_status: params.discover_status,
                             userId: userId.userId,
                             followerId: params.followerId
                         }
-                        console.log('333333333333333333333333333333333', updateObj);
-
-                        console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
-                        console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                        console.log('2232222222222222222222222', updateObj);
                     }
+                    // else {
+                    //     updateObj = {
+                    //         discover_status: params.discover_status,
+                    //         userId: userId.userId,
+                    //         followerId: params.followerId
+                    //     }
+                    //     console.log('333333333333333333333333333333333', updateObj);
+
+                    //     console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                    //     console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                    // }
                     console.log('44444444444444444444444444', updateObj);
 
                     await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
