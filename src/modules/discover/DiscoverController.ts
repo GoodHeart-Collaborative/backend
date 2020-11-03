@@ -78,6 +78,8 @@ class DiscoverController {
                     }
                 }
                 let updateObj: any = {}
+                console.log('checkDiscovercheckDiscover>>>>>>>>>>>>>', checkDiscover);
+
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT && params.discover_status === CONSTANT.DISCOVER_STATUS.REJECT) {
                     // status = params.discover_status
 
