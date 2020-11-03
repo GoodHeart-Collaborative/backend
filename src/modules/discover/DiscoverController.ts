@@ -152,19 +152,30 @@ class DiscoverController {
             const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
             // { followerId: params.followerId, userId: userId.userId })
+            console.log('checkDiscovercheckDiscovercheckDiscover', checkDiscover);
+
             if (checkDiscover) {
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     status = CONSTANT.DISCOVER_STATUS.ACCEPT
                 }
+                // if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT) {
+                //     status = CONSTANT.DISCOVER_STATUS.REJECT;
+                // }
                 else {
                     status = CONSTANT.DISCOVER_STATUS.PENDING
+                    // status = checkDiscover.discover_status
                     let updateObj: any = {}
                     updateObj = {
                         discover_status: status,
                         userId: userId.userId,
                         followerId: params.followerId
                     }
-                    if (checkDiscover.userId.toString() !== userId.userId) {
+                    console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                    console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+
+
+                    if (checkDiscover.userId !== userId.userId) {
+                        console.log('checkDiscovercheckDiscover', checkDiscover);
                         updateObj = {
                             discover_status: status,
                             userId: params.followerId,
