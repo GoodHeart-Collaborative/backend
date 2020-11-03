@@ -165,14 +165,6 @@ class DiscoverController {
                     status = CONSTANT.DISCOVER_STATUS.PENDING
                     // status = checkDiscover.discover_status
                     let updateObj: any = {}
-                    updateObj = {
-                        discover_status: status,
-                        userId: userId.userId,
-                        followerId: params.followerId
-                    }
-                    console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
-                    console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
-
 
                     if (checkDiscover.userId !== userId.userId) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
@@ -181,7 +173,22 @@ class DiscoverController {
                             userId: params.followerId,
                             followerId: userId.userId
                         }
+                        console.log('2232222222222222222222222', updateObj);
+
                     }
+                    else {
+                        updateObj = {
+                            discover_status: status,
+                            userId: userId.userId,
+                            followerId: params.followerId
+                        }
+                        console.log('333333333333333333333333333333333', updateObj);
+
+                        console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                        console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                    }
+                    console.log('44444444444444444444444444', updateObj);
+
                     await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
 
                 }
