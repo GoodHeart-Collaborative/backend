@@ -182,6 +182,7 @@ class DiscoverController {
 
                     if (checkDiscover.userId.toString() !== userId.userId.toString()) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
+                        console.log('paramsparamsparamsparams', params);
                         updateObj = {
                             discover_status: status,
                             userId: params.followerId,
