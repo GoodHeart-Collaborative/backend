@@ -180,7 +180,7 @@ class DiscoverController {
                     console.log('userId.userId.toString()11111111', userId.userId.toString());
                     console.log('checkDiscover.userId.toString()checkDiscover.userId.toString()checkDiscover.userId.toString()2222222222', checkDiscover.userId.toString());
 
-                    if (checkDiscover.userId.toString() !== userId.userId.toString()) {
+                    if (checkDiscover.userId.toString() !== userId.userId.toString() || checkDiscover.userId.toString() === params.followerId.toString()) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
                         console.log('paramsparamsparamsparams', params);
                         updateObj = {
