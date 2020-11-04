@@ -29,7 +29,7 @@ export class AdminUserDao extends BaseDao {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
             if (subscriptionType) {
-                match['subscriptionType'] = subscriptionType
+                match.subscriptionType = parseInt(subscriptionType)
             }
 
 
