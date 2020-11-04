@@ -215,7 +215,8 @@ class EventController {
             // });
 
             match['userId'] = appUtils.toObjectId(tokenData.userId);
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
+
             //&& params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT
             // if ((params.type == config.CONSTANT.EVENT_INTEREST.INTEREST || !params.type) && params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
 
