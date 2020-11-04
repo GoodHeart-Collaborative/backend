@@ -177,8 +177,8 @@ class DiscoverController {
                     status = CONSTANT.DISCOVER_STATUS.PENDING
                     // status = checkDiscover.discover_status
                     let updateObj: any = {}
-                    console.log('userId.userId.toString()', userId.userId.toString());
-                    console.log('checkDiscover.userId.toString()checkDiscover.userId.toString()checkDiscover.userId.toString()', checkDiscover.userId.toString());
+                    console.log('userId.userId.toString()11111111', userId.userId.toString());
+                    console.log('checkDiscover.userId.toString()checkDiscover.userId.toString()checkDiscover.userId.toString()2222222222', checkDiscover.userId.toString());
 
                     if (checkDiscover.userId.toString() !== userId.userId.toString()) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
@@ -214,7 +214,6 @@ class DiscoverController {
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].discover_status = status
                 getData.data[0].user.discover_status = status
-
 
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
