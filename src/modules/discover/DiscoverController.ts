@@ -177,8 +177,10 @@ class DiscoverController {
                     status = CONSTANT.DISCOVER_STATUS.PENDING
                     // status = checkDiscover.discover_status
                     let updateObj: any = {}
+                    console.log('userId.userId.toString()', userId.userId.toString());
+                    console.log('checkDiscover.userId.toString()checkDiscover.userId.toString()checkDiscover.userId.toString()', checkDiscover.userId.toString());
 
-                    if (checkDiscover.userId !== userId.userId) {
+                    if (checkDiscover.userId.toString() !== userId.userId.toString()) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
                         updateObj = {
                             discover_status: status,
