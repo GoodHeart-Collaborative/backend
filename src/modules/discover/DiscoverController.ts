@@ -180,7 +180,18 @@ class DiscoverController {
                     console.log('userId.userId.toString()11111111', userId.userId.toString());
                     console.log('checkDiscover.userId.toString()checkDiscover.userId.toString()checkDiscover.userId.toString()2222222222', checkDiscover.userId.toString());
 
-                    if (checkDiscover.userId.toString() !== userId.userId.toString() || checkDiscover.userId.toString() !== params.followerId.toString()) {
+                    //  || checkDiscover.userId.toString() === params.followerId.toString()
+                    // if (checkDiscover.userId.toString() === params.followerId.toString() && checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.NO_ACTION) {
+                    //     console.log('checkDiscovercheckDiscover', checkDiscover);
+                    //     console.log('paramsparamsparamsparams', params);
+                    //     updateObj = {
+                    //         discover_status: status,
+                    //         userId: params.followerId,
+                    //         followerId: userId.userId
+                    //     }
+                    //     console.log('2232222222222222222222222', updateObj);
+                    // }
+                    if (checkDiscover.userId.toString() !== userId.userId.toString() && checkDiscover.userId.toString() !== params.followerId.toString()) {
                         console.log('checkDiscovercheckDiscover', checkDiscover);
                         console.log('paramsparamsparamsparams', params);
                         updateObj = {
