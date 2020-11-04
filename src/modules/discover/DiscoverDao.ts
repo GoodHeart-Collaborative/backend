@@ -262,8 +262,8 @@ export class DiscoverDao extends BaseDao {
                 params['location'] = {
                     "type": "Point",
                     "coordinates": [
+                        longitude,
                         latitude,
-                        longitude
                     ]
                 }
                 userDao.findByIdAndUpdate('users', { _id: userId.userId }, params, {});
