@@ -230,13 +230,21 @@ class EventController {
                         }
                     }]
                 },
-            },
+            })
 
-            )
-
+            aggPipe.push({
+                $addFields: {
+                    isExpired: {
+                        $cond: {
+                            if: {
+                                $gte: ['$endDate', new Date().getTime()]
+                            }, then: false,
+                            else: true
+                        },
+                    }
+                }
+            })
             // aggPipe.push({ '$unwind': { path: '$hostUser', preserveNullAndEmptyArrays: true } });
-
-
             aggPipe.push({
                 $project: {
                     hostUser: 1,
@@ -267,7 +275,8 @@ class EventController {
                     created: 1,
                     // shortId : 1,
                     createdAt: 1,
-                    shareUrl: 1
+                    shareUrl: 1,
+                    isExpired: 1
                 }
             })
             const data = await eventDao.aggregate('event', aggPipe, {});
