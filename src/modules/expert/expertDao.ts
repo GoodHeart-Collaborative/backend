@@ -289,7 +289,7 @@ export class ExpertDao extends BaseDao {
     async getCategory(payload: userExpertRequest.IgetCategory) {
         try {
             const { searchTerm, screenType, type } = payload;
-            let { limit, page, longitude, latitude, distance } = payload
+            let { limit, page, longitude, latitude, distance, getIpfromNtwk } = payload
 
             let criteria: any = {};
 
@@ -419,12 +419,13 @@ export class ExpertDao extends BaseDao {
 
                 console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
 
-                // if (longitude == undefined && latitude == undefined) {
-                //     const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                //     console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
-                //     latitude = lat_lng.lat;
-                //     longitude = lat_lng.long;
-                // }
+                if (longitude == undefined && latitude == undefined) {
+                    const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                    console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
+                    latitude = lat_lng.lat;
+                    longitude = lat_lng.long;
+                }
+
                 if (longitude != undefined && latitude != undefined) {
                     pickupLocation.push(longitude, latitude);
                     aggPipe.push({

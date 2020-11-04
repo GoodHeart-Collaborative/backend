@@ -665,12 +665,14 @@ class EventController {
                 }
                 return result;
             }
-            await removeDuplicates(categoryList, '_id')
+            categoryList = await removeDuplicates(categoryList, '_id')
 
             // console.log(getUnique(categoryList, '_id'));
             // const unquesData = await uniqueKeepLast(categoryList, it => it._id)
 
-            categoryList = (result.sort(() => Math.random() - 0.5)).slice(0, 5)
+            // categoryList = (result.sort(() => Math.random() - 0.5)).slice(0, 5);
+
+            categoryList = categoryList.slice(0, 5);
             console.log('categoriyListcategoriyListcategoriyList', categoryList);
 
             return {
