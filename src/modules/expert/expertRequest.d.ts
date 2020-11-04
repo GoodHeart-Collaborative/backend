@@ -10,6 +10,7 @@ declare namespace userExpertRequest {
         latitude: number;
         longitude: number;
         distance: number;
+        getIpfromNtwk: string;
     }
 
     export interface ICategoryRelatedExpert {
