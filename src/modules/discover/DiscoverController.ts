@@ -89,17 +89,17 @@ class DiscoverController {
                         }
                         console.log('2232222222222222222222222', updateObj);
                     }
-                    // else {
-                    //     updateObj = {
-                    //         discover_status: params.discover_status,
-                    //         userId: userId.userId,
-                    //         followerId: params.followerId
-                    //     }
-                    //     console.log('333333333333333333333333333333333', updateObj);
+                    else {
+                        updateObj = {
+                            discover_status: params.discover_status,
+                            // userId: userId.userId,
+                            // followerId: params.followerId
+                        }
+                        //     console.log('333333333333333333333333333333333', updateObj);
 
-                    //     console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
-                    //     console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
-                    // }
+                        //     console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                        //     console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                    }
                     console.log('44444444444444444444444444', updateObj);
 
                     await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
