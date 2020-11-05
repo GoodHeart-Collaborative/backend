@@ -163,6 +163,8 @@ export class ForumTopic extends BaseDao {
                 }
             });
 
+
+
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
 
             aggPipe.push({ "$match": match });
