@@ -388,7 +388,7 @@ class EventController {
             let pickupLocation = [];
             let aggPipe = [];
             let featureAggPipe = [];
-            let match: any = {}
+            let match: any = {};
 
             let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
 
@@ -566,7 +566,6 @@ class EventController {
                             }
                         }
                     },
-
                     // shareUrl: {
                     //     $cond: {
                     //         if: {
@@ -716,10 +715,11 @@ class EventController {
                             $expr: {
                                 $and: [{
                                     $eq: ['$_id', '$$uId']
-                                },
-                                {
-                                    $eq: ['$status', 'active']
-                                }]
+                                }
+                                    // {
+                                    //     $eq: ['$status', 'active']
+                                    // }
+                                ]
                             }
                         }
                     }]
