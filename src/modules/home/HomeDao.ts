@@ -22,14 +22,18 @@ export class HomeDao extends BaseDao {
             // endDateee.set
             console.log('headerheaderheaderheader', header);
 
-            const endDateee = new Date().setHours(23, 59, 59, 999) // .getTime();
-            console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
+            // const endDateee = new Date()
+            // .setHours(23, 59, 58, 999) // .getTime();
+            // console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
             //   convert      moment.utc("2015-10-01 01:24:21").utcOffset("-04:00").format('YYYYMMDD HHmmss ZZ')
 
-            const aa = new Date(endDateee - (header.timeZone / 60))
-            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,', aa);
+            // const aa = new Date(endDateee - (header.timeZone / 60))
+            // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,', aa);
 
+            console.log('new Date()new Date()new Date()new Date()', new Date());
 
+            let endDateee = new Date().getTime() - header.timeZone;
+            // let endDateee = new Date().setUTCHours(23, 59, 59, 999) - header.timeZone;
 
             // endDateee = endDateee.getTime();
             match["postAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
