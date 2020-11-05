@@ -134,15 +134,36 @@ export class ForumTopic extends BaseDao {
                 }
             })
             aggPipe.push({ '$unwind': { path: '$forumCategoryData', preserveNullAndEmptyArrays: true } })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "userId",
+            //         "foreignField": "_id",
+            //         "as": "users"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
-                    "from": "users",
-                    "localField": "userId",
-                    "foreignField": "_id",
-                    "as": "users"
+                    from: 'users',
+                    let: { 'uId': '$userId' },
+                    as: 'users',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+
+                            }
+                        }
+                    }]
                 }
-            })
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
+            });
+
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
