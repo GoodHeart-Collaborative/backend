@@ -546,6 +546,16 @@ const MESSAGES = {
 			"message": "Success",
 			"type": "DEFAULT"
 		},
+		USER_SUBSCRIBED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "User subscribed",
+			"type": "USER_SUBSCRIBED"
+		},
+		USER_NOT_SUBSCRIBED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "User not subscribed",
+			"type": "USER_NOT_SUBSCRIBED"
+		},
 		SUCCESSFULLY_ADDED: {
 			"statusCode": HTTP_STATUS_CODE.OK,
 			"message": "Successfully added",

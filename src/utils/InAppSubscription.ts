@@ -105,6 +105,10 @@ export class InAppSubscription {
                 });
             }
 
+            if ( ! data.latest_receipt_info ){
+                return Promise.reject(CONSTANT.MESSAGES.ERROR.SOMETHING_WENT_WRONG);
+            }
+
             // process.exit(1);
             data.latest_receipt_info.sort((a, b) => b.purchase_date_ms - a.purchase_date_ms);
             
@@ -114,7 +118,51 @@ export class InAppSubscription {
             return { flag: false, error };
         }
 
-    };
+    }
+
+    async verifyIosInAppTokenToGetOriginalTransactionId(receipt) {
+        try {
+            let data: any = await request({
+                method: "POST",
+                uri: IN_APP.IOS.LIVE_URL,
+                body: {
+                    "receipt-data": receipt,
+                    "password": IN_APP.IOS.LIVE_SHARED_SECRET // APP_SECRETS.INAPPAPPLESECRET
+                },
+                json: true // Automatically stringifies the body to JSON
+            });
+    
+            if (!data.latest_receipt_info) {
+                data = await request({
+                    method: "POST",
+                    uri: IN_APP.IOS.SANDBOXURL,
+                    body: {
+                        "receipt-data": receipt,
+                        "password": IN_APP.IOS.LIVE_SHARED_SECRET // APP_SECRETS.INAPPAPPLESECRET
+                    },
+                    json: true // Automatically stringifies the body to JSON
+                });
+            }
+    
+            console.log(data);
+    
+            if ( ! data.latest_receipt_info ){
+                return Promise.resolve({
+                    message: CONSTANT.MESSAGES.SUCCESS.USER_NOT_SUBSCRIBED,
+                    data: {
+                        isSubscribed: false
+                    }, code: 200
+                });
+            }
+            // process.exit(1);
+            data.latest_receipt_info.sort((a, b) => b.purchase_date_ms - a.purchase_date_ms);
+            return { flag: true, data };
+        } catch (error) {
+            console.log("in app eror", error);
+            return { flag: false, error };
+        }
+    
+    }
 
 }
 export const inAppSubscription = new InAppSubscription();

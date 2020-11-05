@@ -60,9 +60,24 @@ class SubscriptionController {
 
     async checkUserSubscription(params) {
         try {
-            params.todayDate = new Date().getTime();
-            const previousSubscription = await subscriptionDao.getUserPreviousSubscription(params);
+            const tokenDetail: any = await inAppSubscription.verifyIosInAppTokenToGetOriginalTransactionId(params.receipt_token);
 
+            if (!tokenDetail.flag) {
+                return Promise.resolve({
+                message: CONSTANT.MESSAGES.SUCCESS.USER_SUBSCRIBED,
+                data: {
+                    isSubscribed: false
+                }, code: 200
+                });
+            }
+
+            console.log("////////////////// Token ///////////", tokenDetail.data.latest_receipt_info[0]);
+            const purchaseInfo: any = tokenDetail.data.latest_receipt_info[0];
+            params["transaction_id"] = purchaseInfo.original_transaction_id;
+            console.log("Token Details", purchaseInfo);
+            const previousSubscription = await subscriptionDao.getSubscriptionByTransactionId(params);
+
+            console.log("*******************Previous User Subscription####################", previousSubscription);
             if (!previousSubscription) {
                 return { isSubscribed: false };
             }
