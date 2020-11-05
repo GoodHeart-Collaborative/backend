@@ -32,7 +32,9 @@ export class HomeDao extends BaseDao {
 
             console.log('new Date()new Date()new Date()new Date()', new Date());
 
-            let endDateee = new Date().getTime() - header.timeZone;
+            let endDateee = new Date().getTime() - header.timezone;
+
+            console.log('endDateeeendDateee', endDateee);
             // let endDateee = new Date().setUTCHours(23, 59, 59, 999) - header.timeZone;
 
             // endDateee = endDateee.getTime();
