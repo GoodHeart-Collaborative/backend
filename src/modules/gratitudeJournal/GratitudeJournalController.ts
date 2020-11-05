@@ -54,6 +54,10 @@ class GratitudeJournalController {
                         params["created"] = new Date(params.postAt).getTime()
                     }
                 }
+                if (params.mediaType === config.CONSTANT.MEDIA_TYPE.NONE) {
+                    params.mediaUrl = "";
+                    params.thumbnailUrl = "";
+                }
                 let getGratitudeJournal = await gratitudeJournalDao.updateGratitudeJournal({ _id: checkGJ._id }, params)
                 let getResponse = await gratitudeJournalDao.checkGratitudeJournal({ _id: checkGJ._id })
                 return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA_UPDATED(getResponse)

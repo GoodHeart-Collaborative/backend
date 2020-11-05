@@ -54,6 +54,13 @@ export const userExpertRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload: userExpertRequest.IgetCategory = request.query;
+            console.log(' request.info. request.info.', request.info);
+
+            const xFF = request.headers['x-forwarded-for']
+
+            console.log('xFFxFFxFFxFFxFFxFFxFF', xFF);
+            const ip = xFF ? xFF.split(',')[0] : request.info.remoteAddress;
+            payload['getIpfromNtwk'] = ip;
             try {
                 payload["userId"] = tokenData.userId
                 const result = await expertController.getcategory(payload);
@@ -184,7 +191,7 @@ export const userExpertRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/experts-search`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
-            const payload :userExpertRequest.expertSearch = request.query;
+            const payload: userExpertRequest.expertSearch = request.query;
             try {
                 payload["userId"] = tokenData.userId
                 const result = await expertController.expertsListSearch(payload);

@@ -75,6 +75,37 @@ class DiscoverController {
                         await userDao.pullMember({ userId: params.followerId, followerId: userId.userId.toString() })
                     }
                 }
+                let updateObj: any = {}
+                if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT && params.discover_status === CONSTANT.DISCOVER_STATUS.PENDING) {
+                    // status = params.discover_status
+                    console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId);
+
+                    if (checkDiscover.userId.toString() !== userId.userId.toString()) {
+                        console.log('checkDiscovercheckDiscover', checkDiscover);
+                        updateObj = {
+                            discover_status: params.discover_status,
+                            userId: userId.userId,
+                            followerId: params.followerId
+                        }
+                        console.log('2232222222222222222222222', updateObj);
+                    }
+                    else {
+                        updateObj = {
+                            discover_status: params.discover_status,
+                            // userId: userId.userId,
+                            // followerId: params.followerId
+                        }
+                        //     console.log('333333333333333333333333333333333', updateObj);
+
+                        //     console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                        //     console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                    }
+                    console.log('44444444444444444444444444', updateObj);
+
+                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
+                } else {
+                    await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
+                }
                 if (params.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     params['title'] = 'Friend Request';
                     params['body'] = {
@@ -96,14 +127,19 @@ class DiscoverController {
                     // params['click_action'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.category;
                     params['message'] = `${userId.firstName} accepted your friend request`;
                     params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type;
+                    console.log('paramsparamsparams', params);
+
                     const data1111 = notificationManager.sendOneToOneNotification(params, userId, true);
                 }
 
-                await discoverDao.updateDiscover(query, { discover_status: params.discover_status })
                 userId = userId.userId.toString()
                 let getData = await discoverDao.getUserData({ _id: params.followerId }, userId)
                 getData.data[0].discover_status = params.discover_status
                 getData.data[0].user.discover_status = params.discover_status
+
+                console.log('userIduserIduserIduserIduserId', userId);
+
+
                 return homeConstants.MESSAGES.SUCCESS.DISCOVER_DATA_UPDATED(getData.data[0])
             } else {
                 return homeConstants.MESSAGES.ERROR.DISCOVER_NOT_FOUND
@@ -126,64 +162,71 @@ class DiscoverController {
             checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
 
-            params['title'] = 'Friend Request';
-            params['body'] = {
-                user: {
-                    name: (userId.firstName) + " " + (userId.lastName ? userId.lastName : ""),
-                    userId: userId.userId,
-                    // name: userId.firstName,
-                    profilePicUrl: userId.profilePicUrl,
-                    profession: userId.profession,
-                    industryType: userId.industryType,
-                    experience: userId.experience,
-                    about: userId.about,
-                    myConnection: userId.myConnection
-                }
-            };
-            params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
-            params['click_action'] = "FRIEND_REQUEST";
-            params['message'] = `${userId.firstName} wants to connect with you`;
-            params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
-            params['userId'] = params.followerId;
-
-            console.log(' params params params params params', params);
-
-
-            const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
             // { followerId: params.followerId, userId: userId.userId })
+            console.log('checkDiscovercheckDiscovercheckDiscover', checkDiscover);
+
             if (checkDiscover) {
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     status = CONSTANT.DISCOVER_STATUS.ACCEPT
                 }
+                // if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.REJECT) {
+                //     status = CONSTANT.DISCOVER_STATUS.REJECT;
+                // }
                 else {
                     status = CONSTANT.DISCOVER_STATUS.PENDING
+                    // status = checkDiscover.discover_status
                     let updateObj: any = {}
-                    updateObj = {
-                        discover_status: status,
-                        userId: userId.userId,
-                        followerId: params.followerId
-                    }
-                    if (checkDiscover.userId.toString() !== userId.userId) {
+                    console.log('userId.userId.toString()11111111', userId.userId.toString());
+                    console.log('checkDiscover.userId.toString()checkDiscover.userId.toString()checkDiscover.userId.toString()2222222222', checkDiscover.userId.toString());
+
+                    //  || checkDiscover.userId.toString() === params.followerId.toString()
+                    // if (checkDiscover.userId.toString() === params.followerId.toString() && checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.NO_ACTION) {
+                    //     console.log('checkDiscovercheckDiscover', checkDiscover);
+                    //     console.log('paramsparamsparamsparams', params);
+                    //     updateObj = {
+                    //         discover_status: status,
+                    //         userId: params.followerId,
+                    //         followerId: userId.userId
+                    //     }
+                    //     console.log('2232222222222222222222222', updateObj);
+                    // }
+                    if (checkDiscover.userId.toString() !== userId.userId.toString() && checkDiscover.userId.toString() !== params.followerId.toString()) {
+                        console.log('checkDiscovercheckDiscover', checkDiscover);
+                        console.log('paramsparamsparamsparams', params);
                         updateObj = {
                             discover_status: status,
                             userId: params.followerId,
                             followerId: userId.userId
                         }
+                        console.log('2232222222222222222222222', updateObj);
                     }
-                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
+                    else {
+                        updateObj = {
+                            discover_status: status,
+                            userId: userId.userId,
+                            followerId: params.followerId
+                        }
+                        console.log('333333333333333333333333333333333', updateObj);
 
+                        console.log('checkDiscover.userId !== userId.userId', checkDiscover.userId, checkDiscover.userId.toString());
+                        console.log('userId.userIduserId.userIduserId.userId', userId.userId, userId.userId.toString());
+                    }
+                    console.log('44444444444444444444444444', updateObj);
+
+                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
+                    // }
+                    //  } else {
+                    // update
+                    // status = CONSTANT.DISCOVER_STATUS.PENDING
+                    // await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status, userId: userId.userId, followerId: params.followerId, })
                 }
-                //  } else {
-                //         // update
-                //         status = CONSTANT.DISCOVER_STATUS.PENDING
-                //         await discoverDao.updateDiscover({ _id: checkDiscover._id }, { discover_status: status, userId: userId.userId, followerId: params.followerId, })
-                //     }
                 let param: any = {}
                 param["_id"] = params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].discover_status = status
                 getData.data[0].user.discover_status = status
+
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
                 params['userId'] = userId.userId
@@ -193,6 +236,29 @@ class DiscoverController {
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING;
 
+
+                params['title'] = 'Friend Request';
+                params['body'] = {
+                    user: {
+                        name: (userId.firstName) + " " + (userId.lastName ? userId.lastName : ""),
+                        userId: userId.userId,
+                        // name: userId.firstName,
+                        profilePicUrl: userId.profilePicUrl,
+                        profession: userId.profession,
+                        industryType: userId.industryType,
+                        experience: userId.experience,
+                        about: userId.about,
+                        myConnection: userId.myConnection
+                    }
+                };
+                params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
+                params['click_action'] = "FRIEND_REQUEST";
+                params['message'] = `${userId.firstName} wants to connect with you`;
+                params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type;
+                params['userId'] = params.followerId;
+
+                console.log(' params params params params params', params);
+                const data1111 = notificationManager.sendOneToOneNotification(params, userId, true)
 
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             }

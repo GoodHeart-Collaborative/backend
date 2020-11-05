@@ -235,6 +235,7 @@ export class DiscoverDao extends BaseDao {
             let pickupLocation = [];
             let match: any = {};
 
+
             if (longitude == undefined && latitude == undefined) {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
                 console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
@@ -255,6 +256,17 @@ export class DiscoverDao extends BaseDao {
                     },
                     { "$sort": { dist: -1 } }
                 )
+            }
+
+            if (pageNo === 1) {
+                params['location'] = {
+                    "type": "Point",
+                    "coordinates": [
+                        longitude,
+                        latitude,
+                    ]
+                }
+                userDao.findByIdAndUpdate('users', { _id: userId.userId }, params, {});
             }
 
             aggPipe.push({

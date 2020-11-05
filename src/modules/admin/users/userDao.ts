@@ -15,7 +15,7 @@ export class AdminUserDao extends BaseDao {
 
     async getUsers(params) {
         try {
-            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate, adminStatus } = params;
+            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate, adminStatus, subscriptionType } = params;
             const aggPipe = [];
 
 
@@ -28,6 +28,11 @@ export class AdminUserDao extends BaseDao {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
+            if (subscriptionType) {
+                match.subscriptionType = parseInt(subscriptionType)
+            }
+
+
             aggPipe.push({
                 "$project": {
                     isAppleLogin: 1,
@@ -67,7 +72,9 @@ export class AdminUserDao extends BaseDao {
                             then: '$firstName',
                             else: { $concat: ['$firstName', ' ', '$lastName'] }
                         }
-                    }
+                    },
+                    subscriptionType: 1,
+                    subscriptionEndDate: 1,
                 }
             });
 
