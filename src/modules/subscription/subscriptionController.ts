@@ -63,12 +63,7 @@ class SubscriptionController {
             const tokenDetail: any = await inAppSubscription.verifyIosInAppTokenToGetOriginalTransactionId(params.receipt_token);
 
             if (!tokenDetail.flag) {
-                return Promise.resolve({
-                message: CONSTANT.MESSAGES.SUCCESS.USER_SUBSCRIBED,
-                data: {
-                    isSubscribed: false
-                }, code: 200
-                });
+                return { isSubscribed: false };
             }
 
             console.log("////////////////// Token ///////////", tokenDetail.data.latest_receipt_info[0]);
