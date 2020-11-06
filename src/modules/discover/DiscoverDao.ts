@@ -133,6 +133,7 @@ export class DiscoverDao extends BaseDao {
                         user: {
                             $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                                 _id: "$followers._id",
+                                // status: '$followers.status',
                                 industryType: "$followers.industryType",
                                 myConnection: "$followers.myConnection",
                                 experience: "$followers.experience",
@@ -144,6 +145,7 @@ export class DiscoverDao extends BaseDao {
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
+                                // status: '$users.status',
                                 myConnection: "$users.myConnection",
                                 experience: "$users.experience",
                                 discover_status: "$discover_status",
@@ -254,10 +256,21 @@ export class DiscoverDao extends BaseDao {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { dist: -1 } }
+                    { "$sort": { distanceField: -1 } }
+                )
+            } else {
+                pickupLocation.push(longitude, latitude);
+                aggPipe.push(
+                    {
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            distanceField: "dist",
+                        }
+                    },
+                    { "$sort": { distanceField: -1 } }
                 )
             }
-
             if (pageNo === 1) {
                 params['location'] = {
                     "type": "Point",
@@ -310,7 +323,7 @@ export class DiscoverDao extends BaseDao {
                 // aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
             }
             aggPipe.push({ "$match": match });
-            aggPipe.push({ "$sort": { "createdAt": 1 } });
+            // aggPipe.push({ "$sort": { "createdAt": 1 } });
 
 
 
