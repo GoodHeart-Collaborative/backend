@@ -165,7 +165,7 @@ class DiscoverController {
 
             // { followerId: params.followerId, userId: userId.userId })
             console.log('checkDiscovercheckDiscovercheckDiscover', checkDiscover);
-
+            let discoverData;
             if (checkDiscover) {
                 if (checkDiscover.discover_status === CONSTANT.DISCOVER_STATUS.ACCEPT) {
                     status = CONSTANT.DISCOVER_STATUS.ACCEPT
@@ -214,7 +214,7 @@ class DiscoverController {
                     }
                     console.log('44444444444444444444444444', updateObj);
 
-                    await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
+                    discoverData = await discoverDao.updateDiscover({ _id: checkDiscover._id }, updateObj)
                     // }
                     //  } else {
                     // update
@@ -227,6 +227,9 @@ class DiscoverController {
                 getData.data[0].discover_status = status
                 getData.data[0].user.discover_status = status
 
+                // getData.data[0].user.discover_status = discoverData.userId === userId.userId ? true : false
+                getData.data[0].user.isReqestSendByMe = discoverData.userId === userId.userId ? true : false;
+
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
                 params['userId'] = userId.userId
@@ -235,6 +238,7 @@ class DiscoverController {
                 param["_id"] = params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
                 getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING;
+                getData.data[0].user.isReqestSendByMe = true
 
 
                 params['title'] = 'Friend Request';
