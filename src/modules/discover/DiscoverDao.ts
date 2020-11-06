@@ -308,7 +308,7 @@ export class DiscoverDao extends BaseDao {
                 limit = 1
             } else {
                 match = {
-                    "_id": { "$ne": userId },
+                    // "_id": { "$ne": userId },
                     adminStatus: CONSTANT.USER_ADMIN_STATUS.VERIFIED,
                     status: CONSTANT.STATUS.ACTIVE
                 }
@@ -379,7 +379,17 @@ export class DiscoverDao extends BaseDao {
                 {
                     _id: 1,
                     discover_status: { $ifNull: ["$discovers.discover_status", 4] },
+                    userId1111: '$userId',
                     user: {
+                        'discovers1111': '$discovers.userId',
+                        isRequestSendByMe: {
+                            $cond: {
+                                if: {
+                                    $eq: ['$discovers.userId', '$userId']
+                                }, then: true,
+                                else: false
+                            }
+                        },
                         status: '$status',
                         _id: "$_id",
                         industryType: "$industryType",
@@ -392,6 +402,11 @@ export class DiscoverDao extends BaseDao {
                         about: "$about"
                     },
                     created: '$created'
+                }
+            })
+            aggPipe.push({
+                $match: {
+                    _id: { $ne: _id }
                 }
             })
             result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
@@ -544,6 +559,14 @@ export class DiscoverDao extends BaseDao {
             aggPipe.push({
                 $project: {
                     discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                    isRequestSendByMe: {
+                        $cond: {
+                            if: {
+                                $eq: ['$DiscoverData.userId', appUtils.toObjectId(tokenData.userId)]
+                            }, then: true,
+                            else: false
+                        }
+                    },
                     // name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                     _id: "$otherUserData._id",
                     connectionCount: '$otherUserData.myConnection',
