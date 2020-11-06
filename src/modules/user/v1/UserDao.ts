@@ -164,7 +164,7 @@ export class UserDao extends BaseDao {
 						isRequestSendByMe: {
 							$cond: {
 								if: {
-									$eq: ['$DiscoverData.userId', userId.userId]
+									$eq: ['$DiscoverData.userId', userIdToken]
 								}, then: true,
 								else: false
 							}
