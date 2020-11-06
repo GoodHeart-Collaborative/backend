@@ -406,7 +406,7 @@ export class DiscoverDao extends BaseDao {
             })
             aggPipe.push({
                 $match: {
-                    _id: { $ne: _id }
+                    _id: { $ne: appUtils.toObjectId(userId) }
                 }
             })
             result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
