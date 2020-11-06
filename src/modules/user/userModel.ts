@@ -60,6 +60,7 @@ export interface IUser extends Document {
 	subscriptionEndDate: number;
 	badgeCount: number;
 	subscriptionPlatform: string;
+	subscriptionStartDate: number
 	// isAdminRejected: boolean;
 	// isAdminVerified: boolean;
 }
@@ -134,6 +135,9 @@ const userSchema = new Schema({
 		// default: config.CONSTANT.MEMBER_TYPE.FREE
 	}, // Free(Default rakho)
 	subscriptionEndDate: {
+		type: Number
+	},
+	subscriptionStartDate: {
 		type: Number
 	},
 	subscriptionPlatform: {
