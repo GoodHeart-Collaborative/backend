@@ -142,29 +142,6 @@ export class ForumTopic extends BaseDao {
                     "as": "users"
                 }
             })
-            // aggPipe.push({
-            //     $lookup: {
-            //         from: 'users',
-            //         let: { 'uId': '$userId' },
-            //         as: 'users',
-            //         pipeline: [{
-            //             $match: {
-            //                 $expr: {
-            //                     $and: [{
-            //                         $eq: ['$_id', '$$uId']
-            //                     },
-            //                     {
-            //                         $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-            //                     }]
-
-            //                 }
-            //             }
-            //         }]
-            //     }
-            // });
-
-
-
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({ "$match": match });
