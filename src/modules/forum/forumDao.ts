@@ -145,26 +145,27 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: 'users',
-                    let: { 'uId': '$createrId' },
+                    let: { 'uId': '$createrId', uType: '$userType' },
                     as: 'users',
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $or: [{
-                                    $and: [{
-                                        $eq: ['$_id', '$$uId']
-                                    },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    },
-                                    {
-                                        $eq: ['$userType', config.CONSTANT.ACCOUNT_LEVEL.USER]
-                                    }]
+                                // $or: [{
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
                                 },
                                 {
-                                    $eq: ['$userType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
-                                }]
-
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                },
+                                {
+                                    $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
+                                }
+                                ],
+                                // },
+                                // {
+                                //     $eq: ['$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
+                                // }
+                                // ]
                             }
                         }
                     }]
