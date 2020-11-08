@@ -186,31 +186,49 @@ export class ShoutoutDao extends BaseDao {
         }
     }
 
-    async getShoutOutForHome(params, userId) {
+    async getShoutOutForHome(params, userIds) {
         try {
             let { pageNo, limit } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            // userId = await appUtils.toObjectId(userId.userId)
-            match["$and"] = [{
-                status: config.CONSTANT.STATUS.ACTIVE,
-                ["$or"]: [
-                    {
-                        "members": { $all: [userId] },
-                        privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
-                    },
-                    { "senderId": userId },
-                    { "receiverId": userId }
-                ],
-            }];
+            const userId = await appUtils.toObjectId(userIds.userId)
+
+            // match["$and"] = [{
+            //     status: config.CONSTANT.STATUS.ACTIVE,
+            //     ["$or"]: [
+            //         {
+            //             "members": { $all: [userId] },
+            //             privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
+            //         },
+            //         { "senderId": userId },
+            //         { "receiverId": userId }
+            //     ],
+            // }];
+
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['createdAt'] = {
                 $gt: new Date(new Date().getTime() - 60 * 60 * 24 * 1000)
             };
 
+            const step1 = await shoutoutDao.find('shoutout', { receiverId: userId, ...match }, {}, {}, {}, {}, {});
+            console.log('step1step1', step1);
 
-            aggPipe.push({ "$sort": { "_id": -1 } })
+            let step2, step3;
+            if (step1.length == 0) {
+                // myconnections shouotut
+                match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
+                console.log('userIds.membersuserIds.membersuserIds.members', userIds.members);
+                step2 = await shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match }, {}, {}, {}, {}, {})
+                console.log('step2step2step2step2', step2);
+            }
+            else if (step2.length == 0) {
+                step3 = await shoutoutDao.find('shoutout', { ...match, senderId: userId, }, {}, {}, {}, {}, {})
+                console.log('step3step3step3step3step3', step3);
+            }
+
             aggPipe.push({ "$match": match })
+            aggPipe.push({ "$sort": { "_id": -1 } })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
