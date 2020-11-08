@@ -131,10 +131,10 @@ class AdminFeedController {
                         isExpired: {
                             $cond: {
                                 if: {
-                                    $gte: ['$created', new Date(new Date().getTime() + 60 * 60 * 24 * 1000)]
+                                    $gte: ['$endTime', new Date().getTime()]
                                 }, then: false,
                                 else: true
-                            },                                    // }
+                            },
                         }
                     }
                 })

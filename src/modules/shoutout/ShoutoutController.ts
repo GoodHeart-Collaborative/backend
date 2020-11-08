@@ -84,6 +84,7 @@ class ShoutoutController {
                     createdAt: new Date(),
                     status: config.CONSTANT.STATUS.ACTIVE,
                     created: new Date().getTime(),
+                    endTime: new Date().getTime() + (24 * 60 * 60 * 1000),
                     senderId: await appUtils.toObjectId(userId.userId),
                     receiverId: await appUtils.toObjectId(params.members[i]),
                     memberAdded: ids

@@ -150,11 +150,19 @@ export class ForumTopic extends BaseDao {
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $and: [{
-                                    $eq: ['$_id', '$$uId']
+                                $or: [{
+                                    $and: [{
+                                        $eq: ['$_id', '$$uId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                    {
+                                        $eq: ['$userType', config.CONSTANT.ACCOUNT_LEVEL.USER]
+                                    }]
                                 },
                                 {
-                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    $eq: ['$userType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
                                 }]
 
                             }

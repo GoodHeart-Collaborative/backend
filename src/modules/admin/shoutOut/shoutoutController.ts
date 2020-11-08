@@ -156,6 +156,18 @@ class AdminShoutOut {
                     as: 'memberData'
                 }
             })
+            aggPipe.push({
+                $addFields: {
+                    isExpired: {
+                        $cond: {
+                            if: {
+                                $gte: ['$endTime', new Date().getTime()]
+                            }, then: false,
+                            else: true
+                        },
+                    }
+                }
+            })
 
 
             const data = await shoutoutDao.aggregate('shoutout', aggPipe, {});
