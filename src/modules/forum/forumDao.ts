@@ -150,24 +150,24 @@ export class ForumTopic extends BaseDao {
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $or: [{
-                                    $and: [{
-                                        $eq: ['$_id', '$$uId']
-                                    },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    },
-                                        // {
-                                        //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
-                                        // }
-                                    ],
+                                // $or: [{
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
                                 },
                                 {
-                                    $ne: ['$_id', '$$uId']
-                                    // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
-                                }
-                                ]
-                            }
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                },
+                                    // {
+                                    //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
+                                    // }
+                                ],
+                            },
+                            // {
+                            //     $ne: ['$_id', '$$uId']
+                            //     // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
+                            // }
+                            // ]
+                            // }
                         }
                     }
                     ]
