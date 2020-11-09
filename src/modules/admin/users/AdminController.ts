@@ -17,6 +17,7 @@ import { TemplateUtil } from "@utils/TemplateUtil";
 import * as createPayload from '@utils/NotificationManager';
 import * as moment from 'moment';
 import { subscriptionDao } from "@modules/subscription/subscriptionDao";
+import { notificationDao } from "@modules/notification";
 class AdminController {
 
 	/**
@@ -598,6 +599,9 @@ class AdminController {
 			if (!data) {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}
+			if (params.status === config.CONSTANT.STATUS.DELETED || params.status === config.CONSTANT.STATUS.BLOCKED) {
+				const updatUserInNotificationList = await notificationDao.updatNotificationStatus(params)
+			}
 			// send push from here
 			params['title'] = 'Request Approval';
 			params['body'] = {};
@@ -607,6 +611,7 @@ class AdminController {
 			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
 				const data1111 = await createPayload.notificationManager.sendOneToOneNotification(params, tokenData)
 			}
+
 
 			if (data && params.status === config.CONSTANT.STATUS.DELETED) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED

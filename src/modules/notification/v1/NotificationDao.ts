@@ -3,7 +3,7 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import { toObjectId } from '../../../utils/appUtils'
 import { Query } from "mongoose";
-import { config } from "aws-sdk";
+import * as config from "@config/constant";
 import * as notificationConstant from "@modules/notification/notificationConstant";
 import { userController } from "@modules/user";
 
@@ -45,7 +45,13 @@ export class NotificationDao extends BaseDao {
 					}
 				})
 			}
-
+			aggPipe.push({
+				$match: {
+					status: {
+						$ne: config.CONSTANT.STATUS.DELETED
+					},
+				}
+			})
 
 			aggPipe.push({
 				$lookup: {
@@ -193,6 +199,23 @@ export class NotificationDao extends BaseDao {
 		} catch (error) {
 			return Promise.reject(error);
 
+		}
+	}
+
+	async updatNotificationStatus(params) {
+		try {
+			const criteria = {
+				receiverId: params.userId,
+				$or: [{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type,
+				},
+				{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
+				}]
+			}
+			const updateStatus = await this.updateMany('notifications', criteria, { status: config.CONSTANT.STATUS.DELETED }, {})
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 }
