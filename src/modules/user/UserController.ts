@@ -77,9 +77,14 @@ export class UserController {
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
 					console.log('>>>>>>>>>>>>>>>>12222222222222222222222222222');
 				}
-				if (step && step1 && step1.isMobileVerified === false && step.isEmailVerified === false) {
+				if (step && step1 && step1.isMobileVerified === false) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				}
+				if (step && step1 && step.isEmailVerified === false) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+					return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
 
