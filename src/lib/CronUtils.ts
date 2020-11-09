@@ -8,9 +8,11 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as notification from '@utils/NotificationManager';
 import { CONSTANT } from "@config/index";
 import * as appUtils from "@utils/appUtils";
+import { subscriptionController } from "@modules/subscription/subscriptionController";
 const baseUrl = config.SERVER.APP_URL + config.SERVER.API_BASE_URL;
 let task;
 let task2;
+let task3;
 
 export class CronUtils extends BaseDao {
 
@@ -30,6 +32,11 @@ export class CronUtils extends BaseDao {
 		}, { scheduled: false });
 
 		task2.start();
+
+		task3 = cron.schedule("0 0 0 * * *", async () => {
+			await subscriptionController.verifySubscriptionRenewal();
+		}, { schedule: false });
+		task3.start();
 	}
 
 	async createMember() {

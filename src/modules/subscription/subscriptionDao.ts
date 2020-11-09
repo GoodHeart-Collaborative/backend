@@ -75,10 +75,10 @@ export class SubscriptionDao extends BaseDao {
     }
 
     async lastSubscription(params) {
-        const todayDate = await appUtils.formatDate(new Date());
+        const todayDate = await appUtils.todayDateTimeStamp(new Date());
         const query: any = {};
 
-        query.status = CONSTANT.STATUS.ACTIVE;
+        query.status = CONSTANT.SUBSCRIPTION_STATUS.ACTIVE;
         query.subscriptionEndDate = { $lte: todayDate };
         query.tries = { $lt: 7 };
         query.deviceType = params.deviceType;
