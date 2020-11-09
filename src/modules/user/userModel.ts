@@ -60,7 +60,8 @@ export interface IUser extends Document {
 	subscriptionEndDate: number;
 	badgeCount: number;
 	subscriptionPlatform: string;
-	subscriptionStartDate: number
+	subscriptionStartDate: number;
+	isDowngradeDone: boolean;
 	// isAdminRejected: boolean;
 	// isAdminVerified: boolean;
 }
@@ -185,6 +186,7 @@ const userSchema = new Schema({
 	countMember: { type: Number, default: 0 },
 	memberCreatedAt: { type: Date },
 	isMemberOfDay: { type: Boolean, default: false },
+	isDowngradeDone: { type: Boolean, default: false },
 	members: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
 	about: { type: String },
 	userPrivacy: {

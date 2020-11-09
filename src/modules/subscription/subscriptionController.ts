@@ -100,7 +100,7 @@ class SubscriptionController {
     async verifySubscriptionRenewal() {
         try {
             const params: any = {};
-            const todayDate = await appUtils.formatDate(new Date());
+            const todayDate = await appUtils.todayDateTimeStamp(new Date());
             const previousDate = await appUtils.previousDate(new Date());
 
             let subscriptionData = await subscriptionDao.lastSubscription({deviceType: CONSTANT.DEVICE_TYPE.ANDROID });
@@ -146,7 +146,7 @@ class SubscriptionController {
                             await subscriptionDao.updateSubscription({
                                 tries: subs.tries + 1,
                                 isRenewTried: true,
-                                status: CONSTANT.STATUS.BLOCKED,
+                                status: CONSTANT.SUBSCRIPTION_STATUS.ACTIVE,
                                 subscriptionId: subs._id
                             });
                         }
@@ -164,7 +164,7 @@ class SubscriptionController {
                                     userId: subs.userId
                                 });
 
-                                await subscriptionDao.updateSubscription({status: CONSTANT.STATUS.BLOCKED ,  subscriptionId: subs._id });
+                                await subscriptionDao.updateSubscription({status: CONSTANT.SUBSCRIPTION_STATUS.ACTIVE ,  subscriptionId: subs._id });
 
             });
 
