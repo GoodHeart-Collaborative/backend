@@ -314,7 +314,8 @@ export class UserController {
 							isSubscribed: (step1.subscriptionEndDate < new Date().getTime()) ? false : true,
 							subscriptionType: step1.subscriptionType,
 							subscriptionEndDate: step1.subscriptionEndDate,
-							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : step1.subscriptionPlatform
+							// subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : step1.subscriptionPlatform
+							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? params.platform : step1.subscriptionPlatform
 						}
 
 						delete step1['subscriptionType'];
