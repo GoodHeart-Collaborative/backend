@@ -73,7 +73,18 @@ class AdminShoutOut {
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": sort });
-
+            aggPipe.push({
+                $addFields: {
+                    isExpired: {
+                        $cond: {
+                            if: {
+                                $gte: ['$endTime', new Date().getTime()]
+                            }, then: false,
+                            else: true
+                        },
+                    }
+                }
+            })
             const data = await shoutoutDao.paginate('shoutout', aggPipe, limit, page, true);
             return data;
 
@@ -154,6 +165,18 @@ class AdminShoutOut {
 
                     ],
                     as: 'memberData'
+                }
+            })
+            aggPipe.push({
+                $addFields: {
+                    isExpired: {
+                        $cond: {
+                            if: {
+                                $gte: ['$endTime', new Date().getTime()]
+                            }, then: false,
+                            else: true
+                        },
+                    }
                 }
             })
 

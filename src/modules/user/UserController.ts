@@ -38,21 +38,57 @@ export class UserController {
 				return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_OR_PHONE_REQUIRED);
 			} else {
 				// const step1 = await userDao.findVerifiedEmailOrMobile(params)
-				const step1 = await userDao.findUserByEmailOrMobileNo(params);
-				if (step1) {
-					if (step1.status === config.CONSTANT.STATUS.DELETED) {
+				const step = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, { type: "email" });
+
+				const step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
+
+				if (step || step1) {
+					if ((step && step.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.DELETED)) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
 					}
-					if (step1.mobileNo === params.mobileNo && step1.email === params.email && step1.isEmailVerified && step1.isMobileVerified) {
+					if ((step && step.status === config.CONSTANT.STATUS.BLOCKED) || (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED)) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
 					}
-					if (step1.email === params.email) {
+					// if (step.mobileNo === params.mobileNo && step.email === params.email && step.isEmailVerified && step.isMobileVerified) {
+					// 	return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
+					// }
+					if (step && step.email === params.email && step.isEmailVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					}
-					if (step1.mobileNo === params.mobileNo) {
+					if (step1 && step1.mobileNo === params.mobileNo && step1.isMobileVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
 				}
+				console.log('stepstepstep', step);
+				console.log('step1step1step1step1step1', step1);
+
+				if (step && !step1 && step.isEmailVerified === false) {
+					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
+				}
+				if (!step && step1 && step1.isMobileVerified === false) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
+
+				}
+				if (step && !step1 && step.isEmailVerified === false) {
+					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
+					console.log('>>>>>>>>>>>>>>>>12222222222222222222222222222');
+				}
+				if (step && step1 && step1.isMobileVerified === false) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				}
+				if (step && step1 && step.isEmailVerified === false) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+					return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				}
+
+
 				const generateOtp = await appUtils.generateOtp();
 
 				params['mobileOtp'] = generateOtp;
@@ -457,28 +493,58 @@ export class UserController {
 				// if (step1 && step2 && step1._id !== step2._id && step2.isMobileVerified === true) {
 				// 	return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
 				// }
-				if (step1 || step2) {
-					if (step1 && !step2 && step1.isEmailVerified === false) {
-						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
-					}
-
-					if (!step1 && step2 && step2.isMobileVerified === false) {
-						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-					}
-				}
 
 				let step3;
 				// if both email and mobile are verified
-				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1.isEmailVerified === true) {
+				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1._id === step2._id) {
 					console.log('22222222222222222222222222222222222222222');
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6', step3);
 				}
-				if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false) {
+				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false && step1._id === step2._id) {
 					console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6					step6', step3);
 				}
+
+				if (step1 || step2) {
+					if (step1 && !step2 && step1.isEmailVerified === false) {
+						console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+
+						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
+					}
+					if (!step1 && step2 && step2.isMobileVerified === false) {
+						console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+
+						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+					}
+				}
+
+				// if (step1 || step2) {
+				// 	if (step1 && !step2 && step1.isEmailVerified === false) {
+				// 		const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
+				// 	}
+
+				// 	if (!step1 && step2 && step2.isMobileVerified === false) {
+				// 		const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				// 	}
+				// }
+
+
+				// let step3;
+				// // if both email and mobile are verified
+				// if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1.isEmailVerified === true) {
+				// 	console.log('22222222222222222222222222222222222222222');
+				// 	step3 = await userDao.mergeAccountAndCheck(step1, params);
+				// 	console.log('					step6					step6', step3);
+				// }
+				// if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false) {
+				// 	console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
+				// 	step3 = await userDao.mergeAccountAndCheck(step1, params);
+				// 	console.log('					step6					step6					step6', step3);
+				// }
+
+
 				// if (step1 && step1.isEmailVerified === false && step1.email === params.email && step1.isMobileVerified === false && step2) {
 				// 	console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 				// 	step6 = await userDao.mergeAccountAndCheck(step1, params);
@@ -490,14 +556,23 @@ export class UserController {
 				// 	const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
 				// }
 				// params[step3._id] 
+				console.log('step3step3step3step3step3step3step3step3step3step3', step3);
+
 				let salt;
 				let tokenData;
 				// if (!step1) {
 				const newObjectId = new ObjectID();
 				if (!step3) {
-					params['_id'] = newObjectId;
-					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					// params['_id'] = newObjectId;
+					// salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					// params['salt'] = salt;
+					// const salt = this.salt = bcrypt.genSaltSync(config.SERVER.SALT_ROUNDS);
+					salt = appUtils.genRandomString(config.SERVER.SALT_ROUNDS);
 					params['salt'] = salt;
+					// this.hash = appUtils.encryptHashPassword(password, salt);
+					console.log('saltsaltsalt111111111111111111111', params['salt']);
+
+
 					step3 = await userDao.socialSignup(params);
 					// params['salt'] = salt;
 
@@ -513,8 +588,10 @@ export class UserController {
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
 				} else {
-					salt = await appUtils.CryptDataMD5(params[step3._id] + "." + new Date().getTime() + "." + params.deviceId);
+					// salt = await appUtils.CryptDataMD5(params[step3._id] + "." + new Date().getTime() + "." + params.deviceId);
 					params['salt'] = step3.salt;
+					console.log('>>>>>>>@@@@@@@@@@@@@@@@@@@@@@@@@@@222222222222222', params.salt);
+
 					tokenData = _.extend(params, {
 						"userId": step3._id,
 						"firstName": step3.firstName,
@@ -587,6 +664,8 @@ export class UserController {
 				delete step3['isMemberOfDay'];
 				delete step3['reportCount'];
 				delete step3['status'];
+
+				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
 				if (step3 && step3._id && !step3.dob || !step3.dob == null && step3.industryType) {
 					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, "accessToken": accessToken });

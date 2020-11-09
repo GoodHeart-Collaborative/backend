@@ -114,24 +114,69 @@ export class ShoutoutDao extends BaseDao {
             ];
             aggPipe.push({ "$sort": { "createdAt": -1 } })
             aggPipe.push({ "$match": match })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "senderId",
+            //         "foreignField": "_id",
+            //         "as": "sender"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "senderId",
-                    "foreignField": "_id",
-                    "as": "sender"
+                    "as": "sender",
+                    let: { sId: '$senderId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$sId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: true } })
+
+
+            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: false } })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "receiverId",
+            //         "foreignField": "_id",
+            //         "as": "receiver"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "receiverId",
-                    "foreignField": "_id",
-                    "as": "receiver"
+                    "as": "receiver",
+                    let: { rId: '$receiverId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$rId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: true } })
+
+            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: false } })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({
                 "$project": {
@@ -186,49 +231,111 @@ export class ShoutoutDao extends BaseDao {
         }
     }
 
-    async getShoutOutForHome(params, userId) {
+    async getShoutOutForHome(params, userIds) {
         try {
             let { pageNo, limit } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            // userId = await appUtils.toObjectId(userId.userId)
-            match["$and"] = [{
-                status: config.CONSTANT.STATUS.ACTIVE,
-                ["$or"]: [
-                    {
-                        "members": { $all: [userId] },
-                        privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
-                    },
-                    { "senderId": userId },
-                    { "receiverId": userId }
-                ],
-            }];
+            const userId = await appUtils.toObjectId(userIds.userId)
+
+            // match["$and"] = [{
+            //     status: config.CONSTANT.STATUS.ACTIVE,
+            //     ["$or"]: [
+            //         {
+            //             "members": { $all: [userId] },
+            //             privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
+            //         },
+            //         { "senderId": userId },
+            //         { "receiverId": userId }
+            //     ],
+            // }];
+
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
             match['createdAt'] = {
                 $gt: new Date(new Date().getTime() - 60 * 60 * 24 * 1000)
             };
 
+            const step1 = await shoutoutDao.find('shoutout', { receiverId: userId, ...match }, {}, {}, {}, {}, {});
+            console.log('step1step1', step1, step1.length, step1.typeOf);
+
+            let step2, step3;
+            if (step1 && step1.length == 0) {
+                console.log('step1.lengthstep1.length', step1.length);
+
+                // myconnections shouotut
+                // match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
+                console.log('userIds.membersuserIds.membersuserIds.members', userIds.members);
+                step2 = await shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match }, {}, {}, {}, {}, {})
+                console.log('step2step2step2step2', step2);
+            }
+            if (step1 && step2 && step2.length == 0 && step1.length == 0) {
+                step3 = await shoutoutDao.find('shoutout', { ...match, senderId: userId, }, {}, {}, {}, {}, {})
+                console.log('step3step3step3step3step3', step3);
+            }
 
             aggPipe.push({ "$sort": { "_id": -1 } })
             aggPipe.push({ "$match": match })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "senderId",
+            //         "foreignField": "_id",
+            //         "as": "sender"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "senderId",
-                    "foreignField": "_id",
-                    "as": "sender"
+                    "as": "sender",
+                    let: { sId: '$senderId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$sId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: false } })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "receiverId",
+            //         "foreignField": "_id",
+            //         "as": "receiver"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "receiverId",
-                    "foreignField": "_id",
-                    "as": "receiver"
+                    "as": "receiver",
+                    let: { rId: '$receiverId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$rId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: false } })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({
                 $sort: {

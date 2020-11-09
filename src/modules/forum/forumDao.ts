@@ -137,7 +137,7 @@ export class ForumTopic extends BaseDao {
             // aggPipe.push({
             //     $lookup: {
             //         "from": "users",
-            //         "localField": "userId",
+            //         "localField": "createrId",
             //         "foreignField": "_id",
             //         "as": "users"
             //     }
@@ -145,25 +145,34 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: 'users',
-                    let: { 'uId': '$userId' },
+                    let: { 'uId': '$createrId', uType: '$userType' },
                     as: 'users',
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $and: [{
-                                    $eq: ['$_id', '$$uId']
+                                $or: [{
+                                    $and: [{
+                                        $eq: ['$_id', '$$uId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                        // {
+                                        //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
+                                        // }
+                                    ],
                                 },
                                 {
-                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                }]
-
+                                    $ne: ['$_id', '$$uId']
+                                    // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
+                                }
+                                ]
                             }
                         }
-                    }]
+                    }
+                    ]
                 }
             });
-
-
 
             aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
 
