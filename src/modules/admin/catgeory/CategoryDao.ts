@@ -66,6 +66,21 @@ export class CategoryDao extends BaseDao {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
+            if (type === 1) {
+                aggPipe.push({
+                    $addFields: {
+                        isExpired: {
+                            $cond: {
+                                if: {
+                                    $gte: ['$endDate', new Date().getTime()]
+                                }, then: false,
+                                else: true
+                            },
+                        }
+                    }
+                })
+            }
+
             if (type === config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY) {
                 aggPipe.push({
                     '$lookup': {
