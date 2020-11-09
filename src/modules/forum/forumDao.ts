@@ -150,22 +150,23 @@ export class ForumTopic extends BaseDao {
                     pipeline: [{
                         $match: {
                             $expr: {
-                                // $or: [{
-                                $and: [{
-                                    $eq: ['$_id', '$$uId']
+                                $or: [{
+                                    $and: [{
+                                        $eq: ['$_id', '$$uId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                        // {
+                                        //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
+                                        // }
+                                    ],
                                 },
                                 {
-                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                },
-                                    // {
-                                    //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
-                                    // }
-                                ],
-                                // },
-                                // {
-                                //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
-                                // }
-                                // ]
+                                    $ne: ['$_id', '$$uId']
+                                    // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
+                                }
+                                ]
                             }
                         }
                     }
@@ -173,9 +174,7 @@ export class ForumTopic extends BaseDao {
                 }
             });
 
-
-
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
