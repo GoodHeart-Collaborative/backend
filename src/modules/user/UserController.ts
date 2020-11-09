@@ -43,33 +43,46 @@ export class UserController {
 				const step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
 
 				if (step || step1) {
-					if (step.status === config.CONSTANT.STATUS.DELETED || step1.status === config.CONSTANT.STATUS.DELETED) {
+					if (step && step.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.DELETED) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
 					}
-					if (step.status === config.CONSTANT.STATUS.BLOCKED || step1.status === config.CONSTANT.STATUS.BLOCKED) {
+					if (step && step.status === config.CONSTANT.STATUS.BLOCKED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
 					}
 					// if (step.mobileNo === params.mobileNo && step.email === params.email && step.isEmailVerified && step.isMobileVerified) {
 					// 	return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
 					// }
-					if (step.email === params.email && step.isEmailVerified === true) {
+					if (step && step.email === params.email && step.isEmailVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					}
-					if (step1.mobileNo === params.mobileNo && step1.isMobileVerified === true) {
+					if (step1 && step1.mobileNo === params.mobileNo && step1.isMobileVerified === true) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
 				}
+				console.log('stepstepstep', step);
+				console.log('step1step1step1step1step1', step1);
 
-				if (step || step1) {
-					if (step && !step1 && step.isEmailVerified === false) {
-						console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
-						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
-					}
-					if (!step && step1 && step1.isMobileVerified === false) {
-						console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
-						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-					}
+				if (step && !step1 && step.isEmailVerified === false) {
+					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
 				}
+				if (!step && step1 && step1.isMobileVerified === false) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
+
+				}
+				if (step && !step1 && step.isEmailVerified === false) {
+					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
+					console.log('>>>>>>>>>>>>>>>>12222222222222222222222222222');
+				}
+				if (step && step1 && step1.isMobileVerified === false && step.isEmailVerified === false) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				}
+
 
 				const generateOtp = await appUtils.generateOtp();
 
