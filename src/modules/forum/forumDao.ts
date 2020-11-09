@@ -161,20 +161,20 @@ export class ForumTopic extends BaseDao {
                                     //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
                                     // }
                                 ],
-                            },
-                            // {
-                            //     $ne: ['$_id', '$$uId']
-                            //     // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
-                            // }
-                            // ]
-                            // }
+                                // },
+                                // {
+                                //     $ne: ['$_id', '$$uId']
+                                //     //     // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
+                                // }
+                                // ]
+                            }
                         }
                     }
                     ]
                 }
             });
 
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
