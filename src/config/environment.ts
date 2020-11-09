@@ -221,4 +221,8 @@ export const IN_APP = {
 		LIVE_URL: process.env["LIVE_URL"],
 		LIVE_SHARED_SECRET: process.env["LIVE_SHARED_SECRET"]
 	},
+	SUBSCRIPTION_TYPE: {
+		RENEWAL: 1,
+		NON_RENEWAL: 2
+	}
 };
