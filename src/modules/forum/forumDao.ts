@@ -150,7 +150,6 @@ export class ForumTopic extends BaseDao {
                     pipeline: [{
                         $match: {
                             $expr: {
-<<<<<<< HEAD
                                 $or: [{
                                     $and: [{
                                         $eq: ['$_id', '$$uId']
@@ -170,25 +169,6 @@ export class ForumTopic extends BaseDao {
                                     //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
                                     // }
                                 ]
-=======
-                                // $or: [{
-                                $and: [{
-                                    $eq: ['$_id', '$$uId']
-                                },
-                                {
-                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                },
-                                    // {
-                                    //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
-                                    // }
-                                ],
-                                // },
-                                // {
-                                //     $ne: ['$_id', '$$uId']
-                                //     //     // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
-                                // }
-                                // ]
->>>>>>> staging
                             }
                         }
                     }
