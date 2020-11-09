@@ -460,12 +460,12 @@ export class UserController {
 
 				let step3;
 				// if both email and mobile are verified
-				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1.isEmailVerified === true) {
+				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1._id === step2._id) {
 					console.log('22222222222222222222222222222222222222222');
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6', step3);
 				}
-				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false) {
+				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false && step1._id === step2._id) {
 					console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6					step6', step3);
@@ -520,14 +520,23 @@ export class UserController {
 				// 	const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
 				// }
 				// params[step3._id] 
+				console.log('step3step3step3step3step3step3step3step3step3step3', step3);
+
 				let salt;
 				let tokenData;
 				// if (!step1) {
 				const newObjectId = new ObjectID();
 				if (!step3) {
-					params['_id'] = newObjectId;
-					salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					// params['_id'] = newObjectId;
+					// salt = await appUtils.CryptDataMD5(params['_id'] + "." + new Date().getTime() + "." + params.deviceId);
+					// params['salt'] = salt;
+					// const salt = this.salt = bcrypt.genSaltSync(config.SERVER.SALT_ROUNDS);
+					salt = appUtils.genRandomString(config.SERVER.SALT_ROUNDS);
 					params['salt'] = salt;
+					// this.hash = appUtils.encryptHashPassword(password, salt);
+					console.log('saltsaltsalt111111111111111111111', params['salt']);
+
+
 					step3 = await userDao.socialSignup(params);
 					// params['salt'] = salt;
 
@@ -543,8 +552,10 @@ export class UserController {
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
 				} else {
-					salt = await appUtils.CryptDataMD5(params[step3._id] + "." + new Date().getTime() + "." + params.deviceId);
+					// salt = await appUtils.CryptDataMD5(params[step3._id] + "." + new Date().getTime() + "." + params.deviceId);
 					params['salt'] = step3.salt;
+					console.log('>>>>>>>@@@@@@@@@@@@@@@@@@@@@@@@@@@222222222222222', params.salt);
+
 					tokenData = _.extend(params, {
 						"userId": step3._id,
 						"firstName": step3.firstName,
