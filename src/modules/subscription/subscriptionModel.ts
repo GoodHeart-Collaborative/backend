@@ -8,6 +8,8 @@ import { Schema, Model, Document } from "mongoose";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 import { ElasticSearch } from "@lib/ElasticSearch";
+import { IN_APP } from "@config/environment";
+import { CONSTANT } from "@config/index";
 
 const elasticSearch = new ElasticSearch();
 
@@ -60,14 +62,27 @@ const subscriptionSchema = new Schema({
     },
     transactionId: { type: String },
     amount: { type: Number },
+    tries: { type: Number, default: 0 },
     created: { type: Number },
+    deviceType: { type: Number , enum: [
+        CONSTANT.DEVICE_TYPE.ANDROID,
+        CONSTANT.DEVICE_TYPE.IOS
+    ] },
     receiptToken: { type: String },
+    subscriptionRenewalType: {
+        type: Number, enum: [
+            IN_APP.SUBSCRIPTION_TYPE.RENEWAL,
+            IN_APP.SUBSCRIPTION_TYPE.NON_RENEWAL
+        ],
+        default: IN_APP.SUBSCRIPTION_TYPE.RENEWAL
+    },
+    isRenewTried: { type: Boolean, default: false },
     startDate: { type: Date, required: true, default: new Date() },
     subscriptionEndDate: { type: Number, required: true }
 }, {
-    versionKey: false,
-    timestamps: true
-});
+        versionKey: false,
+        timestamps: true
+    });
 
 subscriptionSchema.set("toObject", {
     virtuals: true,

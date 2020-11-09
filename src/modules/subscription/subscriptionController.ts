@@ -1,9 +1,10 @@
 "use strict";
 import { subscriptionDao } from "./subscriptionDao";
-import * as environment from "@config/environment"
+import { IN_APP } from "@config/environment";
 import * as appUtils from "@utils/appUtils";
 import { CONSTANT } from "@config/constant";
 import { inAppSubscription } from "@utils/InAppSubscription";
+import * as config from "@config/index";
 
 class SubscriptionController {
 
@@ -93,6 +94,84 @@ class SubscriptionController {
             return params;
         } catch (error) {
             throw error;
+        }
+    }
+
+    async verifySubscriptionRenewal() {
+        try {
+            const params: any = {};
+            const todayDate = await appUtils.formatDate(new Date());
+            const previousDate = await appUtils.previousDate(new Date());
+
+            let subscriptionData = await subscriptionDao.lastSubscription({deviceType: CONSTANT.DEVICE_TYPE.ANDROID });
+
+            subscriptionData.forEach(async (subs) => {
+                    // ******** Manage Verification of android inapp subscrition renewal ******** //
+                    const tokenDetails = await inAppSubscription.verifyAndroidSubscription(subs.subscription_id, subs.receipt_token, false);
+                    console.log("******************Received token data", tokenDetails);
+                    let saveData = {};
+                    if (tokenDetails && tokenDetails.paymentState == 1 && tokenDetails.expiryTimeMillis > todayDate) {
+                        params.startDate = tokenDetails.startTimeMillis;
+                        params.endDate = parseInt(tokenDetails.expiryTimeMillis);
+                        params.isSubscribed = true;
+                        params.transaction_id = tokenDetails.orderId;
+                        let subSave = await subscriptionDao.saveUserSubscription(params);
+           
+                        if (subSave) {
+                            await subscriptionDao.updateUserSubscription({
+                                isSubscribed: true,
+                                subscription_type: subs.subscription_id,
+                                endDate: tokenDetails.expiryTimeMillis,
+                                userId: subs.userId
+                            });
+                        }
+                    } else {
+                        if (subs.tries < 1) {
+                            await subscriptionDao.updateUserSubscription({
+                                isSubscribed: false,
+                                subscriptionType: subs.subscription_id,
+                                endDate: tokenDetails.expiryTimeMillis,
+                                userId: subs.userId
+                            });
+                        }
+
+                        console.log(typeof subs.tries, subs.tries);
+                        if (subs.tries < 6) {
+                            await subscriptionDao.updateSubscription({
+                                tries: subs.tries + 1,
+                                subscriptionId: subs._id
+                            });
+
+                        } else {
+                            await subscriptionDao.updateSubscription({
+                                tries: subs.tries + 1,
+                                isRenewTried: true,
+                                status: CONSTANT.STATUS.BLOCKED,
+                                subscriptionId: subs._id
+                            });
+                        }
+                    }
+            });
+
+            // Ios verification
+            let iosSubscriptionData = await subscriptionDao.lastSubscription({deviceType: CONSTANT.DEVICE_TYPE.IOS });
+
+            iosSubscriptionData.forEach(async (subs) => {
+
+                                await subscriptionDao.updateUserSubscription({
+                                    isSubscribed: false,
+                                    subscriptionType: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
+                                    userId: subs.userId
+                                });
+
+                                await subscriptionDao.updateSubscription({status: CONSTANT.STATUS.BLOCKED ,  subscriptionId: subs._id });
+
+            });
+
+            return true;
+        } catch (err) {
+            console.log("Getting error in verify subscription **********************", err);
+            throw err;
         }
     }
 

@@ -719,6 +719,10 @@ const formatDate = async (date) => {
 	return moment(date).format("YYYY-MM-DD");
 };
 
+const previousDate = async (date) => {
+	return moment(date).subtract(1, "days").format("YYYY-MM-DD");
+};
+
 const fiveMinuteBeforeTimeStampTime = async () => {
 	// const d = new Date();
 	// const hours = d.getHours();
@@ -792,7 +796,8 @@ export {
 	getShoutoutCard,
 	getLocationByIp,
 	fiveMinuteBeforeTimeStampTime,
-	nextMinuteTimeStamp
+	nextMinuteTimeStamp,
+	previousDate
 };
 
 

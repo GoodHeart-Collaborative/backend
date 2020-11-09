@@ -2,7 +2,7 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from "@utils/appUtils";
-import { CONSTANT } from "@config/index";
+import { CONSTANT, IN_APP } from "@config/index";
 
 
 export class SubscriptionDao extends BaseDao {
@@ -45,7 +45,6 @@ export class SubscriptionDao extends BaseDao {
 
     async updateUserSubscription(params) {
         try {
-            console.log("paramsupdateUserSubscriptionupdateUserSubscription", params);
             const query: any = {};
             const update: any = {};
             query._id = params.userId;
@@ -73,6 +72,41 @@ export class SubscriptionDao extends BaseDao {
         } catch (error) {
             return Promise.reject(error);
         }
+    }
+
+    async lastSubscription(params) {
+        const todayDate = await appUtils.formatDate(new Date());
+        const query: any = {};
+
+        query.status = CONSTANT.STATUS.ACTIVE;
+        query.subscriptionEndDate = { $lte: todayDate };
+        query.tries = { $lt: 7 };
+        query.deviceType = params.deviceType;
+        query.isRenewTried = false;
+        query.subscriptionRenewalType = IN_APP.SUBSCRIPTION_TYPE.RENEWAL;
+        
+        return await this.findAll("subscription", query, {}, {});
+    }
+
+    async updateSubscription(params) {
+        const query: any = {};
+        const update: any = {};
+
+        query._id = params.subscriptionId;
+
+        if (params.tries) {
+            update.tries = params.tries;
+        }
+
+        if (params.isRenewTried) {
+            update.isRenewTried = params.isRenewTried;
+        }
+
+        if (params.status) {
+            update.status = params.status;
+        }
+        
+        return await this.findAll("subscription", query, {}, {});
     }
 
     async getSubscriptionByTransactionId(params) {

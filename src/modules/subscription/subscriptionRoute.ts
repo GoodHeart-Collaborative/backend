@@ -103,5 +103,29 @@ export const subscriptionRoute: ServerRoute[] = [
                 }
             }
         }
+    },
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/subscription/cron`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            try {
+                const result = await subscriptionController.verifySubscriptionRenewal();
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "Subscription"],
+            description: "Subscription Cron Url",
+            validate: {
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
     }
 ];
