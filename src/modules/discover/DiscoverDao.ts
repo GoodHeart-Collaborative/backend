@@ -211,14 +211,11 @@ export class DiscoverDao extends BaseDao {
                 aggPipe.push({ "$match": { "user.name": { "$regex": searchKey, "$options": "-i" } } });
             }
             if (ShoutoutConnection) {
-                console.log('>>>>>>>>>>>>>>>');
                 aggPipe = [...aggPipe, ...this.addSkipLimit(limit, pageNo)];
                 result = await this.aggregateWithPagination('discover', aggPipe)
-                console.log('resultresultresultresultresult', result);
                 // result.data;
                 // result = await this.aggregate('discover', aggPipe, {})
             } else {
-                console.log('2@@@@@@<<<<<<<<<<<<<<<<<');
                 aggPipe = [...aggPipe, ...this.addSkipLimit(limit, pageNo)];
                 result = await this.aggregateWithPagination('discover', aggPipe)
                 // result = await this.paginate('discover', aggPipe, limit, pageNo, {}, true)
@@ -240,7 +237,6 @@ export class DiscoverDao extends BaseDao {
 
             if (longitude == undefined && latitude == undefined) {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
                 latitude = lat_lng.lat;
                 longitude = lat_lng.long;
             }
@@ -585,9 +581,6 @@ export class DiscoverDao extends BaseDao {
                 },
             });
             const data = await this.aggregate('users', aggPipe, {});
-            console.log('datadatadatadata', data);
-
-
             const makeData = { ...data[0], }
 
             // data[0] = tokenData;

@@ -72,7 +72,6 @@ export class AdminNotificationDao extends BaseDao {
 			if (searchKey) {
 				match.title = { "$regex": params.searchKey, "$options": "-i" };
 			}
-			console.log('matchmatch', match);
 
 			aggPipe.push({ "$match": match });
 

@@ -20,7 +20,6 @@ export class HomeDao extends BaseDao {
 
             let idKey: string = '$_id'
             // endDateee.set
-            // console.log('headerheaderheaderheader', header);
 
             const endDateee = new Date().setHours(23, 59, 58, 999) // .getTime();
             // console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
@@ -39,9 +38,6 @@ export class HomeDao extends BaseDao {
             // console.log('todayDatetodayDatetodayDatetodayDate', endDateee);
 
             //  = '+05:30'
-
-
-            console.log('endDateeeendDateee', endDateee);
             // let endDateee = new Date().setUTCHours(23, 59, 59, 999) - header.timeZone;
 
             // endDateee = endDateee.getTime();

@@ -80,11 +80,9 @@ export const commonRoute: ServerRoute = [
 		handler: async (request: Request, h: ResponseToolkit) => {
 			// const query: Device = request.params;
 			const payload = request.query;
-			console.log('payloadpayloadpayload', payload);
 			try {
 				// const isExpire=  await isExpire.
 				const tokenData = await tokenManager.verifyToken({ ...payload }, "common", false);
-				console.log('tokenDatatokenDatatokenDatatokenDatatokenData>>>>>>>>>>>>>>>>', tokenData);
 				let result;
 				result = await userController.redirectResetPassword(payload);
 				// const message = "Your link has been expired. Please regenerate your link again.";

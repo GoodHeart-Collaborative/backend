@@ -410,7 +410,6 @@ class AdminController {
 	async verifyLink(params) {
 		try {
 			const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.payload.token });
-			console.log('jwtPayloadjwtPayloadjwtPayload', jwtPayload);
 
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			if (isExpire) {
@@ -459,7 +458,6 @@ class AdminController {
 			} else {
 				const step1 = await adminDao.findOne('admins', { _id: jwtPayload.payload.userId }, {}, {});
 				// const step1 = await userDao.findOne('users', { forgotToken: params.accessToken }, {}, {})  //(tokenData);
-				console.log('step1step1step1', step1);
 
 				// if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
 				// 	return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)

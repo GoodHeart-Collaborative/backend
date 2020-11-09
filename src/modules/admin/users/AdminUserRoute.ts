@@ -43,7 +43,12 @@ export const adminUser: ServerRoute[] = [
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.ACTIVE,
                     ]),
-                    subscriptionType: Joi.string(),
+                    subscriptionType: Joi.number().allow([
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value,
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.value,
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.YEARLY.value,
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
+                    ]),
                     adminStatus: Joi.string().valid([
                         config.CONSTANT.USER_ADMIN_STATUS.PENDING,
                         config.CONSTANT.USER_ADMIN_STATUS.REJECTED,

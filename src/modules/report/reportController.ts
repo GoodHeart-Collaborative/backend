@@ -26,7 +26,6 @@ class ReportController {
             };
             if (params.type === config.CONSTANT.HOME_TYPE.USER) {
                 const findAlreadyReported = await reportDao.findOne('report', { postId: params.postId, userId: params.userId }, {}, {});
-                console.log('findAlreadyReportedfindAlreadyReported', findAlreadyReported);
 
                 if (findAlreadyReported) {
                     return Promise.reject(reportConstant.MESSAGES.ERROR.ALREADY_REPORTED);

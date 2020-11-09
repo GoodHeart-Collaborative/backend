@@ -34,13 +34,10 @@ class InterestController {
             };
 
             const findCreatedUserId = await eventDao.findOne('event', { _id: appUtils.toObjectId(eventId) }, {}, {})
-            console.log('findCreatedUserIdfindCreatedUserIdfindCreatedUserId', findCreatedUserId);
 
             // const findEventCreaterId = await eventInterestDao.findOne('event_interest', { eventId: appUtils.toObjectId(eventId), userId: appUtils.toObjectId(userId) }, {}, {})
-            // console.log('findEventCreaterIdfindEventCreaterIdfindEventCreaterId', findEventCreaterId);
 
             const checkExist = await eventInterestDao.findOne('event_interest', criteria, {}, {})
-            console.log('checkExistcheckExist', checkExist);
 
             if (checkExist) {
                 incOrDec = -1
@@ -49,7 +46,6 @@ class InterestController {
             else if (!checkExist) {
                 criteria["created"] = new Date().getTime();
                 const createrId = await eventInterestDao.insert('event_interest', criteria, {});
-                console.log('createrIdcreaterIdcreaterId', createrId);
 
                 // const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {}, {}, {}, {});
                 params['title'] = 'event Interests';
@@ -59,7 +55,6 @@ class InterestController {
                 params['click_action'] = "Event Interest Received";
                 type == config.CONSTANT.EVENT_INTEREST.GOING ? params['message'] = `${tokenData.firstName} is going in your event` : params['message'] = `${tokenData.firstName} has shown interest in your event`;
                 params['type'] = config.CONSTANT.EVENT_INTEREST.GOING ? config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_GOING.type : config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_INTEREST.type;
-                console.log('paramsparamsparamsparamsparamsparams', params);
                 params['eventId'] = eventId;
                 params['userId'] = findCreatedUserId.userId;
                 // params['userId'] = params.followerId;

@@ -54,7 +54,6 @@ export const userExpertRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
             const payload: userExpertRequest.IgetCategory = request.query;
-            console.log(' request.info. request.info.', request.info);
 
             const xFF = request.headers['x-forwarded-for']
 

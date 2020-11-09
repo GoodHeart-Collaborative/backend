@@ -257,21 +257,15 @@ export class ShoutoutDao extends BaseDao {
             };
 
             const step1 = await shoutoutDao.find('shoutout', { receiverId: userId, ...match }, {}, {}, {}, {}, {});
-            console.log('step1step1', step1, step1.length, step1.typeOf);
 
             let step2, step3;
             if (step1 && step1.length == 0) {
-                console.log('step1.lengthstep1.length', step1.length);
-
                 // myconnections shouotut
                 // match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
-                console.log('userIds.membersuserIds.membersuserIds.members', userIds.members);
                 step2 = await shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match }, {}, {}, {}, {}, {})
-                console.log('step2step2step2step2', step2);
             }
             if (step1 && step2 && step2.length == 0 && step1.length == 0) {
                 step3 = await shoutoutDao.find('shoutout', { ...match, senderId: userId, }, {}, {}, {}, {}, {})
-                console.log('step3step3step3step3step3', step3);
             }
 
             aggPipe.push({ "$sort": { "_id": -1 } })

@@ -59,8 +59,6 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
 				}
-				console.log('stepstepstep', step);
-				console.log('step1step1step1step1step1', step1);
 
 				if (step && !step1 && step.isEmailVerified === false) {
 					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
@@ -70,24 +68,18 @@ export class UserController {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
+				}
 
-				}
-				if (step && !step1 && step.isEmailVerified === false) {
-					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
-					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
-					console.log('>>>>>>>>>>>>>>>>12222222222222222222222222222');
-				}
-				if (step && step1 && step1.isMobileVerified === false) {
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+				if (step && step1 && step1.isMobileVerified === false && step._id === step1._id) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
-				if (step && step1 && step.isEmailVerified === false) {
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+				if (step && step1 && step.isEmailVerified === false && step._id === step1._id) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
 					return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
-
 
 				const generateOtp = await appUtils.generateOtp();
 
@@ -483,8 +475,6 @@ export class UserController {
 				if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 				}
-
-
 				// if mobile no is verified and attached to other account
 				if (!step1 && step2 && step2.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)

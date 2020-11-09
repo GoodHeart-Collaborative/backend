@@ -37,8 +37,7 @@ export class NotificationDao extends BaseDao {
 			let memberDetail;
 
 			if (tokenData.isMemberOfDay) {
-				memberDetail = await userController.getMemberOfDayDetail({ userId: tokenData.userId })
-				console.log('memberDetailmemberDetailmemberDetail', memberDetail);
+				memberDetail = await userController.getMemberOfDayDetail({ userId: tokenData.userId });
 				aggPipe.push({
 					$addFields: {
 						isLike: memberDetail.isLike,
@@ -190,7 +189,6 @@ export class NotificationDao extends BaseDao {
 				receiverId: userId.tokenData.userId
 			}
 			const data = await this.count('notifications', criteria);
-			console.log('datadatadata', data);
 			return data;
 		} catch (error) {
 			return Promise.reject(error);

@@ -19,7 +19,6 @@ export class NotificationManager {
 			query['_id'] = { $in: params.members }
 		}
 		step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
-		console.log('step1step1step1step1', step1.length);
 
 		let bulkNotitification = [];
 		if (params.eventId) {
@@ -75,7 +74,6 @@ export class NotificationManager {
 				{ path: "userId", model: config.CONSTANT.DB_MODEL_REF.USER, select: "_id" }
 			];
 			step3 = await baseDao.find("login_histories", { "userId": { "$in": users }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
-			console.log('step3step3step3>>>>>>>>>>>>>>>>>>>>>', step3);
 
 			step3 = step3.filter((data) => data.userId !== null);
 			const updateUserBadgeCount = await baseDao.updateMany('users', { _id: { '$in': users } }, { $inc: { badgeCount: 1 } }, {});
@@ -125,8 +123,6 @@ export class NotificationManager {
 					"payload": iosPayload,
 					"deviceType": config.CONSTANT.DEVICE_TYPE.IOS
 				};
-				console.log('chunkNoticiationPayloadchunkNoticiationPayloadchunkNoticiationPayload', chunkNoticiationPayload);
-
 				const step5 = await pushManager.pushNotification(chunkNoticiationPayload);
 			});
 		}
@@ -214,8 +210,6 @@ export class NotificationManager {
 		let step1 = await baseDao.find("login_histories", { "userId": { "$in": [params.userId] }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 		step1 = step1.filter((data) => data.userId !== null);
 
-		console.log('paramsparamsparamsparams', params);
-		console.log('step1step1', step1);
 
 		if (step1.length) {
 			const noticiationData = {
@@ -245,13 +239,11 @@ export class NotificationManager {
 			let androidPayload, iosPayload, webPayload;
 			if (androidUsers.length) {
 				androidPayload = appUtils.createAndroidPushPayload(params);
-				console.log('androidPayloadandroidPayload>>>>>>>>111111', androidPayload);
 
 			}
 			if (iosUsers.length) {
 				// params['userId'] = tokenData.userId; // need to do work
 				iosPayload = appUtils.createIOSPushPayload(params);
-				console.log('iosPayloadiosPayload', iosPayload);
 			}
 			if (webUsers.length) {
 				webPayload = appUtils.createWebPushPayload(params);
@@ -265,7 +257,6 @@ export class NotificationManager {
 					"deviceType": config.CONSTANT.DEVICE_TYPE.ANDROID
 				};
 				const step3 = await pushManager.pushNotification(chunkNoticiationPayload);
-				console.log('step3step3step3step3step3', step3);
 			});
 
 			// save ios chunk data
@@ -275,7 +266,6 @@ export class NotificationManager {
 					"payload": iosPayload,
 					"deviceType": config.CONSTANT.DEVICE_TYPE.IOS
 				};
-				console.log('chunkNoticiationPayloadchunkNoticiationPayloadIOS>>>>>>', chunkNoticiationPayload);
 
 				const step4 = await pushManager.pushNotification(chunkNoticiationPayload);
 			});
@@ -301,7 +291,6 @@ export class NotificationManager {
 		}
 		query.status = config.CONSTANT.STATUS.ACTIVE;
 		const step1 = await baseDao.find("users", query, { _id: 1 }, {}, {}, {}, {});
-		console.log('step1step1step1step1', step1.length);
 
 		let bulkNotitification = [];
 		await step1.forEach(async (data) => {
@@ -341,7 +330,6 @@ export class NotificationManager {
 			];
 			step3 = await baseDao.find("login_histories", { "userId": { "$in": users }, "isLogin": true }, { userId: 1, platform: 1, deviceToken: 1 }, {}, {}, {}, populateQuery);
 			// step3 = step3.filter((data) => data.userId !== null);
-			console.log('step3step3step3step3', step3);
 		}
 
 		// save data to notification history
@@ -370,11 +358,9 @@ export class NotificationManager {
 			if (androidUserChunks.length) {
 				params['body'] = {};
 				androidPayload = appUtils.createAndroidPushPayload(params);
-				console.log('androidPayloadandroidPayloadandroidPayload', androidPayload);
 			}
 			if (iosUserChunks.length) {
 				iosPayload = appUtils.createIOSPushPayload(params);
-				console.log('iosPayloadiosPayloadiosPayloadiosPayload', iosPayload);
 			}
 			if (webUserChunks.length) {
 				webPayload = appUtils.createWebPushPayload(params);

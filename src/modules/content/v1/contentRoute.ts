@@ -218,7 +218,6 @@ export const contentRoute: ServerRoute = [
 			const query: ContentRequest.View = request.query;
 			try {
 				const result = await contentController.viewContent({ ...query });
-				console.log('resultresultresult', result);
 				if (query.type === config.CONSTANT.CONTENT_TYPE.FAQ) {
 					return h.view("faq", { "content": result.data });
 				}

@@ -45,11 +45,7 @@ export const discoverRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const query: ListingRequest = request.query;
-            console.log(' request.info. request.info.', request.info);
-
             const xFF = request.headers['x-forwarded-for']
-
-            console.log('xFFxFFxFFxFFxFFxFFxFF', xFF);
             const ip = xFF ? xFF.split(',')[0] : request.info.remoteAddress;
             query['getIpfromNtwk'] = ip;
             try {

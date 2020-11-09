@@ -158,7 +158,6 @@ class CategoryController {
             var result = name.replace(/ /g, "_");
 
             const findData = await categoryDao.findOne('categories', { _id: params.categoryId }, {}, {});
-            console.log('findDatafindData', findData);
             const criteria = {
                 _id: params.categoryId
             };

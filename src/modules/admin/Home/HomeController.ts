@@ -32,7 +32,6 @@ class AdminHomeController {
             // if (!params.postedAt) {
             //     params.postedAt = new Date();
             // }
-            // console.log('paramsparams', params);
 
             const data = await homeDao.insert("home", params, {});
             if (data && params.type == config.CONSTANT.HOME_TYPE.UNICORN) {
@@ -147,7 +146,6 @@ class AdminHomeController {
             }
 
             const data = await homeDao.findOneAndUpdate('home', criteria, dataToUpdate, { new: true, lean: true });
-            console.log('datadatadatadatadata>>>>>>>>', data);
             if (data.type == config.CONSTANT.HOME_TYPE.UNICORN) {
                 data.type = config.CONSTANT.HOME_TYPES.UNICORN
             }
@@ -157,7 +155,6 @@ class AdminHomeController {
             if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
                 data.type = config.CONSTANT.HOME_TYPES.DAILY_ADVICE
             }
-            console.log('data.type =data.type =', data.type);
 
             if (data && params.status == config.CONSTANT.STATUS.BLOCKED) {
                 return HOME_CONSTANT.MESSAGES.SUCCESS.BLOCKED(data.type);
@@ -187,7 +184,6 @@ class AdminHomeController {
                 ...params
             }
             const data = await homeDao.findOneAndUpdate('home', criteria, dataToUpdate, { new: true, lean: true });
-            console.log('updateOneupdateOne', data);
             if (data.type == config.CONSTANT.HOME_TYPE.UNICORN) {
                 data.type = config.CONSTANT.HOME_TYPES.UNICORN
             }
@@ -197,7 +193,6 @@ class AdminHomeController {
             if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
                 data.type = config.CONSTANT.HOME_TYPES.DAILY_ADVICE
             }
-            console.log('data.type =data.type =', data.type);
             return HOME_CONSTANT.MESSAGES.SUCCESS.UPDATED_SUCCESSFULLY(data.type)
 
         } catch (error) {
