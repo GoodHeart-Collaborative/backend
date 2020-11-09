@@ -43,10 +43,10 @@ export class UserController {
 				const step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
 
 				if (step || step1) {
-					if (step && step.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.DELETED) {
+					if ((step && step.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.DELETED)) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
 					}
-					if (step && step.status === config.CONSTANT.STATUS.BLOCKED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
+					if ((step && step.status === config.CONSTANT.STATUS.BLOCKED) || (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED)) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
 					}
 					// if (step.mobileNo === params.mobileNo && step.email === params.email && step.isEmailVerified && step.isMobileVerified) {
