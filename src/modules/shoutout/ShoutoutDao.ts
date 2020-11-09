@@ -192,7 +192,7 @@ export class ShoutoutDao extends BaseDao {
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            userId = await appUtils.toObjectId(userId.userId)
+            // userId = await appUtils.toObjectId(userId.userId)
             match["$and"] = [{
                 status: config.CONSTANT.STATUS.ACTIVE,
                 ["$or"]: [
@@ -200,7 +200,7 @@ export class ShoutoutDao extends BaseDao {
                         "members": { $all: [userId] },
                         privacy: CONSTANT.PRIVACY_STATUS.PUBLIC
                     },
-                    // { "senderId": userId },
+                    { "senderId": userId },
                     { "receiverId": userId }
                 ],
             }];

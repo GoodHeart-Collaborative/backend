@@ -145,7 +145,7 @@ export class UserDao extends BaseDao {
 				}
 			})
 			aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
-
+			const userIdToken = appUtils.toObjectId(userId.userId)
 			aggPipe.push({
 				$project:
 				{
@@ -161,6 +161,14 @@ export class UserDao extends BaseDao {
 						myConnection: "$myConnection",
 						experience: "$experience",
 						discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+						isRequestSendByMe: {
+							$cond: {
+								if: {
+									$eq: ['$DiscoverData.userId', userIdToken]
+								}, then: true,
+								else: false
+							}
+						},
 						name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
 						profilePicUrl: "$profilePicUrl",
 						profession: { $ifNull: ["$profession", ""] },

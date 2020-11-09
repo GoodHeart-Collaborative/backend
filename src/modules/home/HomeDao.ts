@@ -9,7 +9,7 @@ import * as appUtils from '@utils/appUtils'
 
 export class HomeDao extends BaseDao {
 
-    async getHomeData(params, userId) {
+    async getHomeData(params, userId, header) {
         try {
             let { pageNo, limit, endDate, type } = params
             let match: any = {};
@@ -20,8 +20,29 @@ export class HomeDao extends BaseDao {
 
             let idKey: string = '$_id'
             // endDateee.set
-            const endDateee = new Date().setHours(23, 59, 59, 999) // .getTime();
-            console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
+            // console.log('headerheaderheaderheader', header);
+
+            const endDateee = new Date().setHours(23, 59, 58, 999) // .getTime();
+            // console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
+            //   convert      moment.utc("2015-10-01 01:24:21").utcOffset("-04:00").format('YYYYMMDD HHmmss ZZ')
+
+            // const aa = new Date(endDateee - (header.timeZone / 60))
+            // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,', aa);
+
+            console.log('new Date()new Date()new Date()new Date()', new Date());
+
+            // let endDateee = new Date().getTime() - header.timezone;
+
+            // let todayDate = moment().utcOffset(header.timeZone).format('YYYYMMDD HHmmss ZZ')
+
+            // let endDateee = moment().endOf('day').unix()
+            // console.log('todayDatetodayDatetodayDatetodayDate', endDateee);
+
+            //  = '+05:30'
+
+
+            console.log('endDateeeendDateee', endDateee);
+            // let endDateee = new Date().setUTCHours(23, 59, 59, 999) - header.timeZone;
 
             // endDateee = endDateee.getTime();
             match["postAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')

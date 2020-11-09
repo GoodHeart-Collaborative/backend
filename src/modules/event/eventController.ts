@@ -215,7 +215,8 @@ class EventController {
             // });
 
             match['userId'] = appUtils.toObjectId(tokenData.userId);
-            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            // match['status'] = config.CONSTANT.STATUS.ACTIVE;
+
             //&& params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT
             // if ((params.type == config.CONSTANT.EVENT_INTEREST.INTEREST || !params.type) && params.type !== config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
 
@@ -387,7 +388,7 @@ class EventController {
             let pickupLocation = [];
             let aggPipe = [];
             let featureAggPipe = [];
-            let match: any = {}
+            let match: any = {};
 
             let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
 
@@ -565,7 +566,6 @@ class EventController {
                             }
                         }
                     },
-
                     // shareUrl: {
                     //     $cond: {
                     //         if: {
@@ -665,12 +665,14 @@ class EventController {
                 }
                 return result;
             }
-            await removeDuplicates(categoryList, '_id')
+            categoryList = await removeDuplicates(categoryList, '_id')
 
             // console.log(getUnique(categoryList, '_id'));
             // const unquesData = await uniqueKeepLast(categoryList, it => it._id)
 
-            categoryList = (result.sort(() => Math.random() - 0.5)).slice(0, 5)
+            // categoryList = (result.sort(() => Math.random() - 0.5)).slice(0, 5);
+
+            categoryList = categoryList.slice(0, 5);
             console.log('categoriyListcategoriyListcategoriyList', categoryList);
 
             return {
@@ -713,10 +715,11 @@ class EventController {
                             $expr: {
                                 $and: [{
                                     $eq: ['$_id', '$$uId']
-                                },
-                                {
-                                    $eq: ['$status', 'active']
-                                }]
+                                }
+                                    // {
+                                    //     $eq: ['$status', 'active']
+                                    // }
+                                ]
                             }
                         }
                     }]

@@ -133,6 +133,7 @@ export class DiscoverDao extends BaseDao {
                         user: {
                             $cond: [{ $and: [{ $eq: ["$userId", userId] }] }, {
                                 _id: "$followers._id",
+                                // status: '$followers.status',
                                 industryType: "$followers.industryType",
                                 myConnection: "$followers.myConnection",
                                 experience: "$followers.experience",
@@ -144,6 +145,7 @@ export class DiscoverDao extends BaseDao {
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
+                                // status: '$users.status',
                                 myConnection: "$users.myConnection",
                                 experience: "$users.experience",
                                 discover_status: "$discover_status",
@@ -235,6 +237,7 @@ export class DiscoverDao extends BaseDao {
             let pickupLocation = [];
             let match: any = {};
 
+
             if (longitude == undefined && latitude == undefined) {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
                 console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
@@ -253,8 +256,30 @@ export class DiscoverDao extends BaseDao {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { dist: -1 } }
+                    { "$sort": { distanceField: -1 } }
                 )
+            } else {
+                pickupLocation.push(longitude, latitude);
+                aggPipe.push(
+                    {
+                        '$geoNear': {
+                            near: { type: "Point", coordinates: pickupLocation },
+                            spherical: true,
+                            distanceField: "dist",
+                        }
+                    },
+                    { "$sort": { distanceField: -1 } }
+                )
+            }
+            if (pageNo === 1) {
+                params['location'] = {
+                    "type": "Point",
+                    "coordinates": [
+                        longitude,
+                        latitude,
+                    ]
+                }
+                userDao.findByIdAndUpdate('users', { _id: userId.userId }, params, {});
             }
 
             aggPipe.push({
@@ -271,6 +296,7 @@ export class DiscoverDao extends BaseDao {
                     created: 1,
                     adminStatus: 1,
                     createdAt: 1,
+
                 }
             })
 
@@ -283,7 +309,7 @@ export class DiscoverDao extends BaseDao {
                 limit = 1
             } else {
                 match = {
-                    "_id": { "$ne": userId },
+                    // "_id": { "$ne": userId },
                     adminStatus: CONSTANT.USER_ADMIN_STATUS.VERIFIED,
                     status: CONSTANT.STATUS.ACTIVE
                 }
@@ -298,7 +324,7 @@ export class DiscoverDao extends BaseDao {
                 // aggPipe.push({ "$match": { "firstName": { "$regex": searchKey, "$options": "-i" } } });
             }
             aggPipe.push({ "$match": match });
-            aggPipe.push({ "$sort": { "createdAt": 1 } });
+            // aggPipe.push({ "$sort": { "createdAt": 1 } });
 
 
 
@@ -355,6 +381,15 @@ export class DiscoverDao extends BaseDao {
                     _id: 1,
                     discover_status: { $ifNull: ["$discovers.discover_status", 4] },
                     user: {
+                        'discovers1111': '$discovers.userId',
+                        isRequestSendByMe: {
+                            $cond: {
+                                if: {
+                                    $eq: ['$discovers.userId', userId]
+                                }, then: true,
+                                else: false
+                            }
+                        },
                         status: '$status',
                         _id: "$_id",
                         industryType: "$industryType",
@@ -367,6 +402,11 @@ export class DiscoverDao extends BaseDao {
                         about: "$about"
                     },
                     created: '$created'
+                }
+            })
+            aggPipe.push({
+                $match: {
+                    _id: { $ne: appUtils.toObjectId(userId) }
                 }
             })
             result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
@@ -519,6 +559,14 @@ export class DiscoverDao extends BaseDao {
             aggPipe.push({
                 $project: {
                     discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                    isRequestSendByMe: {
+                        $cond: {
+                            if: {
+                                $eq: ['$DiscoverData.userId', appUtils.toObjectId(tokenData.userId)]
+                            }, then: true,
+                            else: false
+                        }
+                    },
                     // name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                     _id: "$otherUserData._id",
                     connectionCount: '$otherUserData.myConnection',

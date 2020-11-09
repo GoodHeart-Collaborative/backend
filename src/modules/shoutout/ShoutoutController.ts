@@ -82,6 +82,7 @@ class ShoutoutController {
                     gif: params.gif,
                     members: members,
                     createdAt: new Date(),
+                    status: config.CONSTANT.STATUS.ACTIVE,
                     created: new Date().getTime(),
                     senderId: await appUtils.toObjectId(userId.userId),
                     receiverId: await appUtils.toObjectId(params.members[i]),

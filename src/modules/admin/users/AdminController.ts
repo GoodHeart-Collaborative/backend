@@ -561,7 +561,7 @@ class AdminController {
 			const criteria = {
 				_id: params.userId
 			}
-			const data = await userDao.findOne('users', criteria, {}, {}, {});
+			const data = await userDao.findOne('users', criteria, { members: 0 }, {}, {});
 			return data;
 		} catch (error) {
 			throw error;
@@ -590,6 +590,7 @@ class AdminController {
 				dataToUpdate['subscriptionType'] = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
 				dataToUpdate['subscriptionEndDate'] = date.setHours(0, 0, 5, 0);  // moment(date).format('YYYY-MM-DD');
 				dataToUpdate['isSubscribed'] = true;
+				dataToUpdate['subscriptionStartDate'] = new Date().getTime()
 				const updateSubscription = await subscriptionDao.saveSubscription(dataToUpdate, tokenData)
 			}
 

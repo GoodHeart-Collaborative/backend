@@ -19,7 +19,7 @@ class HomeController {
      * @function getHomeData
      * @description app home screen 1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude"
      */
-    async getHomeData(params: userHomeRequest.Igethome, userId) {
+    async getHomeData(params: userHomeRequest.Igethome, userId, headers) {
         try {
             let responseData: any = {}
             let getGeneralGratitude: any = {}
@@ -30,7 +30,7 @@ class HomeController {
             params.limit = 10
             if (!params.type) {
                 getmemberOfTheDay = await userDao.getMemberOfDays(userId.tokenData)
-                responseData = await homeDao.getHomeData(params, userId.tokenData);
+                responseData = await homeDao.getHomeData(params, userId.tokenData, headers);
                 shoutOutCard = await shoutoutDao.getShoutOutForHome(params, userId.tokenData);
 
                 // params.limit = 5
@@ -72,7 +72,7 @@ class HomeController {
                 if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
                     responseData = await gratitudeJournalDao.getGratitudeJournalHomeData(params, userId.tokenData)
                 } else {
-                    responseData = await homeDao.getHomeData(params, userId.tokenData)
+                    responseData = await homeDao.getHomeData(params, userId.tokenData, headers)
                 }
             }
 

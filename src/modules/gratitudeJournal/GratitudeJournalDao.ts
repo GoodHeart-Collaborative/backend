@@ -29,6 +29,7 @@ export class GratitudeJournalDao extends BaseDao {
                     mediaUrl: 1,
                     privacy: 1,
                     title: 1,
+                    mediaType: 1,
                     description: 1,
                     postAt: 1
                 }
