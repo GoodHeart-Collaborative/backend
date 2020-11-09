@@ -618,6 +618,8 @@ export class UserController {
 				delete step3['reportCount'];
 				delete step3['status'];
 
+				console.log('accessTokenaccessTokenaccessToken', accessToken);
+
 				if (step3 && step3._id && !step3.dob || !step3.dob == null && step3.industryType) {
 					return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, "accessToken": accessToken });
 				}
