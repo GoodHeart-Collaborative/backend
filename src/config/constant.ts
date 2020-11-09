@@ -457,6 +457,11 @@ const MESSAGES = {
 				"type": "TOKEN_GENERATE_ERROR"
 			};
 		},
+		EMAIL_ALREADY_VERIFIED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Hi your email is already verfied, please login to continue",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "Oops! It looks like you are not registered on the network",
@@ -465,11 +470,6 @@ const MESSAGES = {
 		EMAIL_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
 			"message": "Your email is not verified. Please check your email for email verification instruction.",
-			"type": "EMAIL_NOT_REGISTERED"
-		},
-		EMAIL_ALREADY_VERIFIED: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Email already verified.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		MOBILE_NOT_VERIFIED: {
