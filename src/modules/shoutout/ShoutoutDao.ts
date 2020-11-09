@@ -114,24 +114,69 @@ export class ShoutoutDao extends BaseDao {
             ];
             aggPipe.push({ "$sort": { "createdAt": -1 } })
             aggPipe.push({ "$match": match })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "senderId",
+            //         "foreignField": "_id",
+            //         "as": "sender"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "senderId",
-                    "foreignField": "_id",
-                    "as": "sender"
+                    "as": "sender",
+                    let: { sId: '$senderId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$sId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: true } })
+
+
+            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: false } })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "receiverId",
+            //         "foreignField": "_id",
+            //         "as": "receiver"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "receiverId",
-                    "foreignField": "_id",
-                    "as": "receiver"
+                    "as": "receiver",
+                    let: { rId: '$receiverId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$rId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: true } })
+
+            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: false } })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({
                 "$project": {
@@ -231,24 +276,66 @@ export class ShoutoutDao extends BaseDao {
 
             aggPipe.push({ "$sort": { "_id": -1 } })
             aggPipe.push({ "$match": match })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "senderId",
+            //         "foreignField": "_id",
+            //         "as": "sender"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "senderId",
-                    "foreignField": "_id",
-                    "as": "sender"
+                    "as": "sender",
+                    let: { sId: '$senderId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$sId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: false } })
+            // aggPipe.push({
+            //     $lookup: {
+            //         "from": "users",
+            //         "localField": "receiverId",
+            //         "foreignField": "_id",
+            //         "as": "receiver"
+            //     }
+            // })
             aggPipe.push({
                 $lookup: {
                     "from": "users",
-                    "localField": "receiverId",
-                    "foreignField": "_id",
-                    "as": "receiver"
+                    "as": "receiver",
+                    let: { rId: '$receiverId' },
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: ['$_id', '$$rId']
+                                    },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                ]
+                            }
+                        }
+                    }]
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: false } })
             aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
             aggPipe.push({
                 $sort: {
