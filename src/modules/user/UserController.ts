@@ -457,15 +457,6 @@ export class UserController {
 				// if (step1 && step2 && step1._id !== step2._id && step2.isMobileVerified === true) {
 				// 	return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
 				// }
-				if (step1 || step2) {
-					if (step1 && !step2 && step1.isEmailVerified === false) {
-						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
-					}
-
-					if (!step1 && step2 && step2.isMobileVerified === false) {
-						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-					}
-				}
 
 				let step3;
 				// if both email and mobile are verified
@@ -474,11 +465,50 @@ export class UserController {
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6', step3);
 				}
-				if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false) {
+				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false) {
 					console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6					step6', step3);
 				}
+
+				if (step1 || step2) {
+					if (step1 && !step2 && step1.isEmailVerified === false) {
+						console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+
+						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
+					}
+					if (!step1 && step2 && step2.isMobileVerified === false) {
+						console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+
+						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+					}
+				}
+
+				// if (step1 || step2) {
+				// 	if (step1 && !step2 && step1.isEmailVerified === false) {
+				// 		const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
+				// 	}
+
+				// 	if (!step1 && step2 && step2.isMobileVerified === false) {
+				// 		const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				// 	}
+				// }
+
+
+				// let step3;
+				// // if both email and mobile are verified
+				// if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1.isEmailVerified === true) {
+				// 	console.log('22222222222222222222222222222222222222222');
+				// 	step3 = await userDao.mergeAccountAndCheck(step1, params);
+				// 	console.log('					step6					step6', step3);
+				// }
+				// if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false) {
+				// 	console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
+				// 	step3 = await userDao.mergeAccountAndCheck(step1, params);
+				// 	console.log('					step6					step6					step6', step3);
+				// }
+
+
 				// if (step1 && step1.isEmailVerified === false && step1.email === params.email && step1.isMobileVerified === false && step2) {
 				// 	console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 				// 	step6 = await userDao.mergeAccountAndCheck(step1, params);
