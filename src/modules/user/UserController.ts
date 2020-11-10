@@ -72,12 +72,46 @@ export class UserController {
 
 				if (step && step1 && step1.isMobileVerified === false && step._id === step1._id) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
+					const tokenData = _.extend(params, {
+						"userId": step1._id,
+						"firstName": step1.firstName,
+						"lastName": step1.lastName,
+						"countryCode": step1.countryCode,
+						"mobileNo": step1.mobileNo,
+						"email": step1.email,
+						"salt": step1.salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+
+					const userObject = appUtils.buildToken(tokenData);
+
+					const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step1.salt });
+
+					mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
+
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
 				if (step && step1 && step.isEmailVerified === false && step._id === step1._id) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
-					return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
+					const tokenData = _.extend(params, {
+						"userId": step._id,
+						"firstName": step.firstName,
+						"lastName": step.lastName,
+						"countryCode": step.countryCode,
+						"mobileNo": step.mobileNo,
+						"email": step.email,
+						"salt": step.salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+					const userObject = appUtils.buildToken(tokenData);
+					const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step1.salt });
+					mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
+					// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+					// "refreshToken": refreshToken
+					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
+
 					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
 
