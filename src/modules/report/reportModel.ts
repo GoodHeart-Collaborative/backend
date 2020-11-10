@@ -24,7 +24,13 @@ const reportSchema = new Schema({
             // config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY,
             config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
             config.CONSTANT.HOME_TYPE.USER,
-            config.CONSTANT.HOME_TYPE.EXPERTS_POST
+            config.CONSTANT.HOME_TYPE.EXPERTS_POST,
+
+            config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
+            config.CONSTANT.HOME_TYPE.UNICORN,
+            config.CONSTANT.HOME_TYPE.INSPIRATION,
+            config.CONSTANT.HOME_TYPE.DAILY_ADVICE,
+
         ],
         default: config.CONSTANT.HOME_TYPE.FORUM_TOPIC,
     },
