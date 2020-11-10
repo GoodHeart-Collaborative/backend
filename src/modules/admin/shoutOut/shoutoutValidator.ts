@@ -19,6 +19,7 @@ let getShoutOut = Joi.object({
     fromDate: Joi.date(),
     toDate: Joi.date(),
     searchTerm: Joi.string(),
+    isExpired: Joi.boolean()
 }).unknown()
 
 let getShoutOutById = Joi.object({
