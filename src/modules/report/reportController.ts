@@ -24,11 +24,7 @@ class ReportController {
             const dataToSave = {
                 ...params
             };
-            const data = await reportDao.save('report', dataToSave);
-            const inc = 1;
-            const updateOne = {
-                $inc: { reportCount: inc }
-            };
+
 
             if (params.type === config.CONSTANT.HOME_TYPE.USER) {
                 const findAlreadyReported = await reportDao.findOne('report', { postId: params.postId, userId: params.userId }, {}, {});
@@ -38,8 +34,13 @@ class ReportController {
                     return Promise.reject(reportConstant.MESSAGES.ERROR.ALREADY_REPORTED);
                 }
             }
+            const data = await reportDao.save('report', dataToSave);
+            const inc = 1;
+            const updateOne = {
+                $inc: { reportCount: inc }
+            };
 
-            else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+            if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
                 const updateCount = await forumtopicDao.updateOne('forum', criteria, updateOne, {})
             }
             else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
