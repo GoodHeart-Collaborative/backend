@@ -51,6 +51,33 @@ class AdminFeedController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
+
+            if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
+                //  $gte:new Date('$createdAt'.getTime() - 1000 * 3600 * 24 * 3)
+                if (isExpired) {
+                    match['endTime'] = {
+                        $lte: new Date().getTime()
+                    }
+                }
+                if (isExpired === false) {
+                    match['endTime'] = {
+                        $gte: new Date().getTime()
+                    }
+                }
+                aggPipe.push({
+                    $addFields: {
+                        isExpired: {
+                            $cond: {
+                                if: {
+                                    $gte: ['$endTime', new Date().getTime()]
+                                }, then: false,
+                                else: true
+                            },
+                        }
+                    }
+                })
+            }
+
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": sort });
             aggPipe.push({
@@ -124,21 +151,7 @@ class AdminFeedController {
             //     }
             // }
 
-            if (type == config.CONSTANT.HOME_TYPE.SHOUTOUT) {
-                //  $gte:new Date('$createdAt'.getTime() - 1000 * 3600 * 24 * 3)
-                aggPipe.push({
-                    $addFields: {
-                        isExpired: {
-                            $cond: {
-                                if: {
-                                    $gte: ['$endTime', new Date().getTime()]
-                                }, then: false,
-                                else: true
-                            },
-                        }
-                    }
-                })
-            }
+
 
             let data;
             aggPipe.push({ '$unwind': { path: '$userData' } });

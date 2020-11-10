@@ -35,7 +35,7 @@ class AdminShoutOut {
 
     async getShoutOut(params) {
         try {
-            const { status, sortBy, sortOrder, limit, userId, page, searchTerm, fromDate, toDate, type, privacy } = params;
+            const { status, sortBy, sortOrder, limit, userId, page, searchTerm, fromDate, toDate, type, privacy, isExpired } = params;
             const aggPipe = [];
             const match: any = {};
 
@@ -47,6 +47,16 @@ class AdminShoutOut {
             }
             if (privacy) {
                 match.privacy = params.privacy;
+            }
+            if (isExpired) {
+                match['endTime'] = {
+                    $lte: new Date().getTime()
+                }
+            }
+            if (isExpired === false) {
+                match['endTime'] = {
+                    $gte: new Date().getTime()
+                }
             }
 
             if (searchTerm) {
