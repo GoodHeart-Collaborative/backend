@@ -24,23 +24,14 @@ class ReportController {
             const dataToSave = {
                 ...params
             };
-<<<<<<< Updated upstream
 
 
-=======
-            const data = await reportDao.save('report', dataToSave);
-            const inc = 1;
-            const updateOne = {
-                $inc: { reportCount: inc }
-            };
->>>>>>> Stashed changes
             if (params.type === config.CONSTANT.HOME_TYPE.USER) {
                 const findAlreadyReported = await reportDao.findOne('report', { postId: params.postId, userId: params.userId }, {}, {});
                 if (findAlreadyReported) {
                     return Promise.reject(reportConstant.MESSAGES.ERROR.ALREADY_REPORTED);
                 }
             }
-<<<<<<< Updated upstream
             const data = await reportDao.save('report', dataToSave);
             const inc = 1;
             const updateOne = {
@@ -48,9 +39,6 @@ class ReportController {
             };
 
             if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
-=======
-            else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
->>>>>>> Stashed changes
                 const updateCount = await forumtopicDao.updateOne('forum', criteria, updateOne, {})
             }
             else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
@@ -58,13 +46,6 @@ class ReportController {
 
             }
             else if (params.type === config.CONSTANT.HOME_TYPE.USER) {
-<<<<<<< Updated upstream
-=======
-                const updateCount = await userDao.updateOne('users', criteria, updateOne, {})
-                return reportConstant.MESSAGES.SUCCESS.USER_REPORTED;
-            }
-            else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
->>>>>>> Stashed changes
                 const updateCount = await userDao.updateOne('users', criteria, updateOne, {})
                 return reportConstant.MESSAGES.SUCCESS.USER_REPORTED;
             }
