@@ -70,7 +70,7 @@ export class UserController {
 					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
 				}
 
-				if (step && step1 && step1.isMobileVerified === false && step._id === step1._id) {
+				if (step && step1 && step1.isMobileVerified === false && step._id.toString() === step1._id.toString()) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
@@ -262,6 +262,7 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 
 					}
