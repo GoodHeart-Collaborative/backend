@@ -30,6 +30,7 @@ declare namespace UserRequest {
 
 	export interface SocialLogin extends Device {
 		socialId: string;
+		email: string
 	}
 
 	export interface SocialSignup extends Device {

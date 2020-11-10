@@ -41,8 +41,6 @@ export class UserController {
 				const step = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, { type: "email" });
 
 				const step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
-				console.log('stepstepstep', step);
-				console.log('step1step1step1', step1);
 
 				if (step || step1) {
 					if ((step && step.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.DELETED)) {
@@ -72,7 +70,7 @@ export class UserController {
 					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
 				}
 
-				if (step && step1 && step1.isMobileVerified === false && step._id.toString() === step1._id.toString()) {
+				if (step && step1 && step1.isMobileVerified === false && step._id === step1._id) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
@@ -87,19 +85,16 @@ export class UserController {
 
 					const userObject = appUtils.buildToken(tokenData);
 
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": step1.salt });
-					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
-					// console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
-
-					const step6 = await loginHistoryDao.createUserLoginHistory(params);
+					const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step1.salt });
 
 					mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111>>>>>>>', accessToken);
 
-					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
+					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
-				if (step && step1 && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
+				if (step && step1 && step.isEmailVerified === false && step._id === step1._id) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
 					const tokenData = _.extend(params, {
 						"userId": step._id,
 						"firstName": step.firstName,
@@ -111,17 +106,10 @@ export class UserController {
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
 					const userObject = appUtils.buildToken(tokenData);
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": step1.salt });
+					const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step1.salt });
 					mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
 					// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					// "refreshToken": refreshToken
-					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
-					// console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
-
-					const step6 = await loginHistoryDao.createUserLoginHistory(params);
-
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111>>>>>>>>>>>', accessToken);
-
 					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
 
 					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
@@ -262,7 +250,6 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
-						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
 						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
 					}
@@ -275,9 +262,6 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
-						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
-
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 
 					}
@@ -388,13 +372,73 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
-			// console.log('step1step1step1step1', step1.salt);
+			console.log('step1step1step1step1', step1.salt);
 
 			if (step1 && step1.status === config.CONSTANT.STATUS.DELETED) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
 			}
 			if (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
+			}
+			if (!step1) {
+				const findEmail = await userDao.findOne('users', { email: params.email, isEmailVerified: true }, {}, {})
+
+				if (findEmail) {
+					const tokenData = _.extend(params, {
+						"userId": findEmail._id,
+						"firstName": findEmail.firstName,
+						"lastName": findEmail.lastName,
+						"email": findEmail.email,
+						"countryCode": findEmail.countryCode,
+						"mobileNo": findEmail.mobileNo,
+						"salt": findEmail.salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+					const userObject = appUtils.buildToken(tokenData);
+					console.log('userObjectuserObjectuserObject', userObject);
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+					console.log('accessTokenaccessTokenaccessToken', accessToken);
+
+					const step4 = loginHistoryDao.createUserLoginHistory(params);
+
+					if (!findEmail.isEmailVerified) {
+						const step3 = mailManager.sendRegisterMailToUser({ "email": findEmail.email, "firstName": findEmail.firstName, "lastName": findEmail.lastName, "token": accessToken, userId: findEmail._id });
+						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
+					}
+
+					else if (findEmail && !findEmail.dob || !findEmail.dob == null && findEmail.industryType) {
+						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+					}
+					// else if (step1.isAdminRejected) {
+					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+					// }
+					else if (findEmail.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+					}
+					// else if (!step1.isAdminVerified) {
+					// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+					// }
+					else if (findEmail.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
+						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+					}
+					else {
+						let step3;
+						if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+							console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+							const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
+							console.log('step2step2step2', step2);
+							step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
+							console.log('step3step3step3step3step3step3', step3);
+						}
+						params = _.extend(params, { "salt": step1.salt, "lastLogin": step3 });
+
+						// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+						step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
+						delete step1['salt']; delete step1['hash']; delete step1['mobileOtp']; delete step1['forgotToken']; delete step1['isAdminRejected']; delete step1['isAdminVerified']; delete step1['forgotToken']; delete step1['fullMobileNo']; delete step1['googleId']; delete step1['facebookId'];
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
+
+					}
+				}
 			}
 			else if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
@@ -421,16 +465,6 @@ export class UserController {
 				const step4 = loginHistoryDao.createUserLoginHistory(params);
 				console.log('step4step4step4step4step4', step4);
 
-				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
-					return userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
-				}
-				else if (step1.status === config.CONSTANT.STATUS.DELETED) {
-					return userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
-				}
-				// else if (step1.isAdminRejected) {
-				// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
-				// 	// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
-				// }
 				if (!step1.isEmailVerified) {
 					const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
 					return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
@@ -445,22 +479,10 @@ export class UserController {
 				else if (step1.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 				}
-				// else if (!step1.isAdminVerified) {
-				// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
-				// }
 				else if (step1.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
 					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
-					let arn;
-					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
-						// arn = await sns.registerAndroidUser(params.deviceToken);
-						arn = "";
-					} else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
-						// arn = await sns.registerIOSUser(params.deviceToken);
-						arn = "";
-					}
-					const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 					let step3;
 					if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
 						console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
@@ -469,30 +491,13 @@ export class UserController {
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
 						console.log('step3step3step3step3step3step3', step3);
 
-					} else {
-						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
-						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
 					}
-					params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken, "lastLogin": step3 });
-					let step5, step6;
-					if (config.SERVER.IS_REDIS_ENABLE) {
-						if (!config.SERVER.IN_ACTIVITY_SESSION)
-							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
-						else
-							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
-						const jobPayload = {
-							jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-							time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-							params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-						};
-						step6 = redisClient.createJobs(jobPayload);
-					}
-					const step7 = await promise.join(step4, step5, step6);
+					params = _.extend(params, { "salt": step1.salt, "lastLogin": step3 });
 
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
 					step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
 					delete step1['salt']; delete step1['hash']; delete step1['mobileOtp']; delete step1['forgotToken']; delete step1['isAdminRejected']; delete step1['isAdminVerified']; delete step1['forgotToken']; delete step1['fullMobileNo']; delete step1['googleId']; delete step1['facebookId'];
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
 
 				}
 			}
