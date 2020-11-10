@@ -32,7 +32,9 @@ export class HomeDao extends BaseDao {
 
             // let endDateee = new Date().getTime() - header.timezone;
 
-            // let todayDate = moment().utcOffset(header.timeZone).format('YYYYMMDD HHmmss ZZ')
+            let todayDate = moment().utcOffset(header.timeZone).format('YYYYMMDD HHmmss ZZ')
+
+            console.log('todayDate', todayDate);
 
             // let endDateee = moment().endOf('day').unix()
             // console.log('todayDatetodayDatetodayDatetodayDate', endDateee);
