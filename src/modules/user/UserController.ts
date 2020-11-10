@@ -92,7 +92,7 @@ export class UserController {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
-				if (step && step1 && step.isEmailVerified === false && step._id === step1._id) {
+				if (step && step1 && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
 					const tokenData = _.extend(params, {
