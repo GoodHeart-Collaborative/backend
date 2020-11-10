@@ -20,13 +20,15 @@ export interface IGratitudeJournal extends Document {
     postAt: String,
     type: number;
     mediaType: number,
-    mediaUrl: number
+    mediaUrl: number,
+    reportCount: number;
 }
 
 
 const gratitudeJournalSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
     likeCount: { type: Schema.Types.Number, default: 0 },
+    reportCount: { type: Number },
     commentCount: { type: Schema.Types.Number, default: 0 },
     status: {
         type: String,

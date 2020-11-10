@@ -24,6 +24,12 @@ class ReportController {
             const dataToSave = {
                 ...params
             };
+            const data = await reportDao.save('report', dataToSave);
+            const inc = 1;
+            const updateOne = {
+                $inc: { reportCount: inc }
+            };
+
             if (params.type === config.CONSTANT.HOME_TYPE.USER) {
                 const findAlreadyReported = await reportDao.findOne('report', { postId: params.postId, userId: params.userId }, {}, {});
                 console.log('findAlreadyReportedfindAlreadyReported', findAlreadyReported);
@@ -32,22 +38,27 @@ class ReportController {
                     return Promise.reject(reportConstant.MESSAGES.ERROR.ALREADY_REPORTED);
                 }
             }
-            const data = await reportDao.save('report', dataToSave);
-            const inc = 1;
-            const updateOne = {
-                $inc: { reportCount: inc }
-            };
-            if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+
+            else if (params.type === config.CONSTANT.HOME_TYPE.FORUM_TOPIC) {
                 const updateCount = await forumtopicDao.updateOne('forum', criteria, updateOne, {})
             }
-            if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
+            else if (params.type === config.CONSTANT.HOME_TYPE.EXPERTS_POST) {
                 const updateCount = await expertPostDao.updateOne('expert_post', criteria, updateOne, {})
 
             }
-            if (params.type === config.CONSTANT.HOME_TYPE.USER) {
+            else if (params.type === config.CONSTANT.HOME_TYPE.USER) {
                 const updateCount = await userDao.updateOne('users', criteria, updateOne, {})
                 return reportConstant.MESSAGES.SUCCESS.USER_REPORTED;
             }
+            else if (params.type === config.CONSTANT.HOME_TYPE.UNICORN || params.type === config.CONSTANT.HOME_TYPE.INSPIRATION || params.type === config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+                const updateCount = await userDao.updateOne('home', criteria, updateOne, {})
+                // return reportConstant.MESSAGES.SUCCESS.USER_REPORTED;
+            }
+            else if (params.type === config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                const updateCount = await userDao.updateOne('gratitude_journals', criteria, updateOne, {})
+                // return reportConstant.MESSAGES.SUCCESS.USER_REPORTED;
+            }
+
             return reportConstant.MESSAGES.SUCCESS.POST_REPORTED(data);
 
         } catch (error) {

@@ -133,7 +133,6 @@ class AdminFeedController {
                     }
                 });
             }
-
             // if (isExpired === true) {
             //     match['createdAt'] = { $gte: new Date().getTime() }
             // }
@@ -152,8 +151,6 @@ class AdminFeedController {
             //         }
             //     }
             // }
-
-
 
             let data;
             aggPipe.push({ '$unwind': { path: '$userData' } });

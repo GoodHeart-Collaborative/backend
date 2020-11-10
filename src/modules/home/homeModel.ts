@@ -23,6 +23,7 @@ export interface Ihome extends Document {
     mediaUrl: number,
     addedBy: string;
     postAt: number;
+    reportCount: number;
     // addedBy: Object;
     // imageUrl: string;
 }
@@ -31,6 +32,7 @@ export interface Ihome extends Document {
 const homeSchema = new Schema({
     likeCount: { type: Schema.Types.Number, default: 0 },
     commentCount: { type: Schema.Types.Number, default: 0 },
+    reportCount: { type: Number, default: 0 },
     title: { type: Schema.Types.String },
     status: {
         type: String,
