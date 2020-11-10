@@ -88,7 +88,7 @@ export class UserController {
 					const userObject = appUtils.buildToken(tokenData);
 
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": step1.salt });
-					// const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
+					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
 					// console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
 
 					const step6 = await loginHistoryDao.createUserLoginHistory(params);
@@ -115,7 +115,7 @@ export class UserController {
 					mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
 					// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					// "refreshToken": refreshToken
-					// const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
+					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
 					// console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
 
 					const step6 = await loginHistoryDao.createUserLoginHistory(params);
@@ -262,6 +262,7 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
+						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
 						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
 					}
@@ -274,6 +275,9 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
+						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 
 					}
