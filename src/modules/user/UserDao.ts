@@ -312,7 +312,7 @@ export class UserDao extends BaseDao {
 		}
 	}
 
-	async mergeAccountAndCheck(step1, params: UserRequest.SocialSignup) {
+	async mergeAccountAndCheck(step1, params) { //UserRequest.SocialSignup
 		try {
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				params.facebookId = params.socialId;

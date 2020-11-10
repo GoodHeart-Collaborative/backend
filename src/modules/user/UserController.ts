@@ -373,7 +373,7 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
-			console.log('step1step1step1step1', step1.salt);
+			console.log('step1step1step1step1', step1);
 
 			if (step1 && step1.status === config.CONSTANT.STATUS.DELETED) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
@@ -383,6 +383,7 @@ export class UserController {
 			}
 			if (!step1) {
 				const findEmail = await userDao.findOne('users', { email: params.email, isEmailVerified: true }, {}, {})
+				console.log('findEmailfindEmailfindEmail', findEmail);
 
 				if (findEmail) {
 					const tokenData = _.extend(params, {
@@ -395,31 +396,39 @@ export class UserController {
 						"salt": findEmail.salt,
 						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
 					});
+
+					const mergeUser = await userDao.mergeAccountAndCheck(findEmail, params);
+
 					const userObject = appUtils.buildToken(tokenData);
 					console.log('userObjectuserObjectuserObject', userObject);
-					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": findEmail.salt });
 					console.log('accessTokenaccessTokenaccessToken', accessToken);
 
 					const step4 = loginHistoryDao.createUserLoginHistory(params);
 
 					if (!findEmail.isEmailVerified) {
+						console.log('111111111111111');
 						const step3 = mailManager.sendRegisterMailToUser({ "email": findEmail.email, "firstName": findEmail.firstName, "lastName": findEmail.lastName, "token": accessToken, userId: findEmail._id });
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 
 					else if (findEmail && !findEmail.dob || !findEmail.dob == null && findEmail.industryType) {
+						console.log('22222222222222222');
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 					}
 					// else if (step1.isAdminRejected) {
 					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					// }
 					else if (findEmail.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+						console.log('333333333333333333333333');
 						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					}
 					// else if (!step1.isAdminVerified) {
 					// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					// }
 					else if (findEmail.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
+						console.log(4444444444444444444);
+
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					}
 					else {
@@ -439,6 +448,8 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
 
 					}
+				} else {
+					return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
 				}
 			}
 			else if (!step1) {
