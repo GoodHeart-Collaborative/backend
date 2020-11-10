@@ -88,8 +88,8 @@ export class UserController {
 					const userObject = appUtils.buildToken(tokenData);
 
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": step1.salt });
-					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
-					console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
+					// const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
+					// console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
 
 					const step6 = await loginHistoryDao.createUserLoginHistory(params);
 
@@ -115,8 +115,8 @@ export class UserController {
 					mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
 					// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					// "refreshToken": refreshToken
-					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
-					console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
+					// const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
+					// console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
 
 					const step6 = await loginHistoryDao.createUserLoginHistory(params);
 
