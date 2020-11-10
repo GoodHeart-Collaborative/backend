@@ -78,7 +78,7 @@ let getFeed = Joi.object({
         config.CONSTANT.HOME_TYPE.GENERAL_GRATITUDE,
         config.CONSTANT.HOME_TYPE.SHOUTOUT,
         // config.CONSTANT.HOME_TYPES.        
-    ]),
+    ]).required(),
     status: Joi.string().allow([
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,

@@ -64,6 +64,7 @@ class AdminFeedController {
                         $gte: new Date().getTime()
                     }
                 }
+
                 aggPipe.push({
                     $addFields: {
                         isExpired: {
@@ -132,6 +133,7 @@ class AdminFeedController {
                     }
                 });
             }
+
             // if (isExpired === true) {
             //     match['createdAt'] = { $gte: new Date().getTime() }
             // }
