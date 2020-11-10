@@ -28,13 +28,13 @@ export class HomeDao extends BaseDao {
             // const aa = new Date(endDateee - (header.timeZone / 60))
             // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,', aa);
 
-            console.log('new Date()new Date()new Date()new Date()', new Date());
+            // console.log('new Date()new Date()new Date()new Date()', new Date());
 
             // let endDateee = new Date().getTime() - header.timezone;
 
-            let todayDate = moment().utcOffset(header.timeZone).format('YYYYMMDD HHmmss ZZ')
+            // let todayDate = moment().utcOffset(header.timeZone).format('YYYYMMDD HHmmss ZZ')
 
-            console.log('todayDate', todayDate);
+            // console.log('todayDate', todayDate);
 
             // let endDateee = moment().endOf('day').unix()
             // console.log('todayDatetodayDatetodayDatetodayDate', endDateee);
