@@ -383,7 +383,6 @@ export class UserController {
 			}
 			if (!step1) {
 				const findEmail = await userDao.findOne('users', { email: params.email, isEmailVerified: true }, {}, {})
-				console.log('findEmailfindEmailfindEmail', findEmail);
 
 				if (findEmail) {
 					const tokenData = _.extend(params, {
@@ -554,12 +553,12 @@ export class UserController {
 
 				let step3;
 				// if both email and mobile are verified
-				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1._id === step2._id) {
+				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1._id.toString() === step2._id.toString()) {
 					console.log('22222222222222222222222222222222222222222');
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6', step3);
 				}
-				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false && step1._id === step2._id) {
+				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false && step1._id.toString() === step2._id.toString()) {
 					console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6					step6', step3);
