@@ -22,12 +22,13 @@ class AdminHomeController {
         try {
             if (params.postedAt) {
                 // params["postedAt"] = params..postedAt;
-                params["postedAt"] = moment(new Date(params.postedAt)).format('YYYY-MM-DD');
-                params['postAt'] = moment(new Date(params.postedAt)).format('YYYY-MM-DD');
+                params["postedAt"] = new Date(params.postedAt) //.format('YYYY-MM-DD');
+                params['postAt'] = new Date(params.postedAt).setHours(0, 0, 0, 999) //.getTime() //.format('YYYY-MM-DD');
             } else {
-                params["postedAt"] = moment(new Date()).format('YYYY-MM-DD'); //  new Date()
+                params["postedAt"] = new Date() //).format('YYYY-MM-DD'); //  new Date()
                 // params.postedAt = new Date()//moment(newgetTime Date()).format('YYYY-MM-DD')
-                params['postAt'] = moment(new Date()).format('YYYY-MM-DD');
+
+                params['postAt'] = new Date().setHours(0, 0, 0, 999)  //).format('YYYY-MM-DD');
             }
             console.log('>>>>>>>>>>>>>>>>>>>>>>>', params);
 
