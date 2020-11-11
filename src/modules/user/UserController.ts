@@ -513,7 +513,7 @@ export class UserController {
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
-				const step4 = loginHistoryDao.createUserLoginHistory(params);
+				const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 				console.log('step4step4step4step4step4', step4);
 
 				if (!step1.isEmailVerified) {
