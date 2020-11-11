@@ -62,7 +62,7 @@ export class UserController {
 					}
 				}
 
-				if (step && step1 && step1.isMobileVerified === false && step.isEmailVerified === false && step._id.toString() !== step1._id.toString()) {
+				if (step && step1 && step1.isMobileVerified === false && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
