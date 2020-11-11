@@ -20,6 +20,8 @@ class AdminHomeController {
 
     async addPost(params: HomeRequest.HomeRequestAdd) {
         try {
+            console.log('paramsparamsparams>!1111111111111111111', params);
+
             if (params.postedAt) {
                 // params["postedAt"] = params..postedAt;
                 params["postedAt"] = new Date(params.postedAt) //.format('YYYY-MM-DD');
