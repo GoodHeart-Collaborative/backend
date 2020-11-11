@@ -24,7 +24,7 @@ class AdminHomeController {
 
             if (params.postedAt) {
                 // params["postedAt"] = params..postedAt;
-                params["postedAt"] = new Date(params.postedAt) //.format('YYYY-MM-DD');
+                params["postedAt"] = params.postedAt //.format('YYYY-MM-DD');
                 params['postAt'] = new Date(params.postedAt).setHours(0, 0, 0, 999) //.getTime() //.format('YYYY-MM-DD');
             } else {
                 params["postedAt"] = new Date() //).format('YYYY-MM-DD'); //  new Date()
