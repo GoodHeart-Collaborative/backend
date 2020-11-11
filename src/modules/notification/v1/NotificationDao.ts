@@ -213,7 +213,18 @@ export class NotificationDao extends BaseDao {
 					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
 				}]
 			}
-			const updateStatus = await this.updateMany('notifications', criteria, { status: config.CONSTANT.STATUS.DELETED }, {})
+
+			const criteria1 = {
+				receiverId: params.userId,
+				$or: [{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type,
+				},
+				{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
+				}]
+			}
+			await this.updateMany('notifications', criteria1, { status: config.CONSTANT.STATUS.DELETED }, {})
+			await this.updateMany('notifications', criteria, { status: config.CONSTANT.STATUS.DELETED }, {})
 		} catch (error) {
 			return Promise.reject(error);
 		}

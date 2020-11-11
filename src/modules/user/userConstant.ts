@@ -126,7 +126,7 @@ export const MESSAGES = {
 		},
 		CANNOT_CHANGE_PASSWORD: {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			message: "You cannot reset your password since you have logged in using Social Account.",
+			message: "You can not reset your password as this email or phone is associated with social account.",
 			type: "CANNOT_CHANGE_PASSWORD"
 		},
 		LINK_EXPIRED: {
@@ -141,7 +141,7 @@ export const MESSAGES = {
 		},
 		CANNOT_LOGIN: {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			message: "You cannot login with given credentials as this account has been registered with Social Account",
+			message: "You can not login as these credentials are associated with social account",
 			type: "CANNOT_LOGIN"
 		},
 		INVALID_OLD_PASSWORD: {
