@@ -434,17 +434,17 @@ export class UserController {
 						let step3;
 						if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
 							console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-							const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
+							const step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
 							console.log('step2step2step2', step2);
-							step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
+							step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
 							console.log('step3step3step3step3step3step3', step3);
 						}
-						params = _.extend(params, { "salt": step1.salt, "lastLogin": step3 });
+						params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
 
 						// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
-						step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
-						delete step1['salt']; delete step1['hash']; delete step1['mobileOtp']; delete step1['forgotToken']; delete step1['isAdminRejected']; delete step1['isAdminVerified']; delete step1['forgotToken']; delete step1['fullMobileNo']; delete step1['googleId']; delete step1['facebookId'];
-						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
+						findEmail['isPasswordAvailable'] = (findEmail && findEmail['hash']) ? true : false;
+						delete findEmail['salt']; delete findEmail['hash']; delete findEmail['mobileOtp']; delete findEmail['forgotToken']; delete findEmail['isAdminRejected']; delete findEmail['isAdminVerified']; delete findEmail['forgotToken']; delete findEmail['fullMobileNo']; delete findEmail['googleId']; delete findEmail['facebookId'];
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...findEmail });
 
 					}
 				} else {
