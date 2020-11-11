@@ -513,8 +513,8 @@ export class UserController {
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
-				const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
-				console.log('step4step4step4step4step4', step4);
+				// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+				// console.log('step4step4step4step4step4', step4);
 
 				if (!step1.isEmailVerified) {
 					const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
@@ -541,8 +541,9 @@ export class UserController {
 						console.log('step2step2step2', step2);
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
 						console.log('step3step3step3step3step3step3', step3);
-
 					}
+					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+					console.log('step4step4step4step4step4', step4);
 					params = _.extend(params, { "salt": step1.salt, "lastLogin": step3 });
 
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
