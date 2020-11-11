@@ -433,6 +433,11 @@ const MESSAGES = {
 			"message": "Please try after some time.",
 			"type": "INTERNAL_SERVER_ERROR"
 		},
+		SUBSCRIPTION_EXPIRED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Subscription has been already expired",
+			"type": "SUBSCRIPTION_EXPIRED"
+		},
 		APPLE_ID_ALRADY_IN_USE: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
 			"message": "This apple id is already in use with other account",

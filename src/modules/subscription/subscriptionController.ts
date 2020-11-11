@@ -36,6 +36,11 @@ class SubscriptionController {
                 const purchaseInfo: any = tokenData.data.latest_receipt_info[0];
 
                 params['endDate'] = parseInt(purchaseInfo.expires_date_ms);
+
+                if (params['endDate'] < new Date().getTime()) {
+                  return Promise.reject(CONSTANT.MESSAGES.ERROR.SUBSCRIPTION_EXPIRED);
+                }
+
                 params['isSubscribed'] = true;
                 params["transaction_id"] = purchaseInfo.original_transaction_id;
 
@@ -86,14 +91,103 @@ class SubscriptionController {
 
     async subscriptionCallback(params) {
         try {
-            console.log("************************************Subscription Callback response from ios inapp purchase *******************");
-            console.log(params);
-
-            // let getData = await subscriptionDao.insert()
-            // return shoutoutConstants.MESSAGES.SUCCESS.SHOUTOUT_DATA(getData)
-            return params;
+          console.log("************** Getting Callback from ios ", params.notification_type, params.latest_receipt_info.original_transaction_id);
+          params.endDate = parseInt(params.latest_receipt_info.expires_date_ms);
+          params.startDate = parseInt(params.latest_receipt_info.original_purchase_date_ms) || new Date().getTime();
+          let user: any = {};
+          let saveData: any = {};
+          let subSave: any = {};
+    
+          if (params.latest_receipt_info.original_transaction_id) {
+            user = await subscriptionDao.findSubscriptionByTransactionId({
+                transaction_id: params.latest_receipt_info.original_transaction_id 
+            });
+          }
+          switch (params.notification_type) {
+            case IN_APP.IOS_CALLBACK.CANCEL:
+              console.log("Cancelled");
+              break;
+            case IN_APP.IOS_CALLBACK.DID_CHANGE_RENEWAL_PREF:
+              console.log("DID_CHANGE_RENEWAL_PREF");
+              break;
+            case IN_APP.IOS_CALLBACK.DID_CHANGE_RENEWAL_STATUS:
+              console.log("DID_CHANGE_RENEWAL_STATUS");
+              break;
+    
+            case IN_APP.IOS_CALLBACK.DID_FAIL_TO_RENEW:
+              console.log("DID_FAIL_TO_RENEW");
+              await subscriptionDao.makeUserSubscriptionInactove(params);
+    
+              break;
+    
+            case IN_APP.IOS_CALLBACK.DID_RECOVER:
+              console.log("DID_RECOVER");
+              this.updateSubscription(user, params);
+              break;
+    
+            case IN_APP.IOS_CALLBACK.INITIAL_BUY:
+              console.log("INITIAL_BUY");
+              break;
+    
+            case IN_APP.IOS_CALLBACK.INTERACTIVE_RENEWAL:
+              console.log("INTERACTIVE_RENEWAL");
+    
+              this.updateSubscription(user, params);
+    
+              break;
+    
+            case IN_APP.IOS_CALLBACK.RENEWAL:
+              console.log("Renewal");
+              this.updateSubscription(user, params);
+              break;
+            case IN_APP.IOS_CALLBACK.REFUND:
+              console.log("Refund");
+              break;
+            default:
+              console.log("Sorry No case matched");
+          }
+          return {};
         } catch (error) {
-            throw error;
+          return Promise.reject(error);
+        }
+      }
+
+      async updateSubscription(user, params) {
+        let saveData: any = {};
+        await subscriptionDao.makeSusbcriptionInactive(params)
+        saveData["userId"] = user.userId;
+        saveData["receiptToken"] = user.receipt_token;
+        saveData["subscriptionType"] = user.subscriptionType;
+        saveData["transactionId"] = params.latest_receipt_info.original_transaction_id;
+        saveData["subscriptionRenewalType"] = IN_APP.SUBSCRIPTION_TYPE.RENEWAL;
+        saveData["deviceType"] = CONSTANT.DEVICE_TYPE.IOS;
+        saveData["startDate"] = params.startDate;
+        saveData["endDate"] = params.endDate;
+        saveData["price"] = 0;
+        saveData["status"] = CONSTANT.SUBSCRIPTION_STATUS.ACTIVE;
+        saveData["price"] = params.price;
+        let subSave = await subscriptionDao.saveUserSubscription(saveData);
+        if (subSave) {
+    
+          let subscriptionType = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
+          if (params.latest_receipt_info.is_trial_period === "false") {
+            // Subscriber in good standing (paid)
+            if (params.subscriptionType == 1) {
+              subscriptionType = config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.value;
+            } else {
+              subscriptionType = config.CONSTANT.USER_SUBSCRIPTION_PLAN.YEARLY.value;
+            }
+          } else if (params.latest_receipt_info.is_trial_period === "true") {
+            // Subscriber in free trial
+            subscriptionType = config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value;
+          }
+
+          params.subscriptionType = subscriptionType;
+          params.subscriptionEndDate = params.endDate;
+          params.isSubscribed = true;
+    
+          await subscriptionDao.updateUserSubscription({})
+
         }
     }
 

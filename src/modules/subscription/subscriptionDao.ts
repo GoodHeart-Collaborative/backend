@@ -43,6 +43,18 @@ export class SubscriptionDao extends BaseDao {
 
     }
 
+    async findSubscriptionByTransactionId(params) {
+        try {
+            const query: any = {};
+
+            query.transactionId = params.transactionId;
+
+            return await this.findOne("subscription", query, {}, {});
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
     async updateUserSubscription(params) {
         try {
             const query: any = {};
@@ -69,6 +81,39 @@ export class SubscriptionDao extends BaseDao {
             query.subscriptionEndDate = { $gt: params.todayDate };
 
             return await this.findOne("subscription", query, {}, {});
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async makeSusbcriptionInactive(params) {
+        try {
+
+            const query: any = {};
+            const update: any = {};
+
+            query.userId = params.userId;
+
+            update.status = CONSTANT.SUBSCRIPTION_STATUS.INACTIVE;
+
+            return await this.updateMany("subscription", query, update, {});
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async makeUserSubscriptionInactove(params) {
+        try {
+
+            const query: any = {};
+            const update: any = {};
+
+            query.userId = params.userId;
+
+            update.subscriptionType = config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value;
+            update.isSubscribed = false;
+
+            return await this.updateOne("subscription", query, update, {});
         } catch (error) {
             return Promise.reject(error);
         }
