@@ -13,7 +13,7 @@ let AddHome = Joi.object({
     description: Joi.string(),
     isPostLater: Joi.boolean(),
     // imageUrl: Joi.string(),
-    postedAt: Joi.date(),
+    postedAt: Joi.string(),
     type: Joi.number().valid([
         config.CONSTANT.HOME_TYPE.UNICORN,
         config.CONSTANT.HOME_TYPE.INSPIRATION,
