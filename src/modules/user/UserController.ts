@@ -41,6 +41,8 @@ export class UserController {
 				const step = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, { type: "email" });
 
 				const step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
+				console.log('stepstepstepstepstepstepstepstepstepstepstepstepv', step);
+				console.log('step1step1step1step1step1step1step1step1step1step1v>>>>>>>>>>', step1);
 
 				if (step || step1) {
 					if ((step && step.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.DELETED)) {
@@ -75,7 +77,7 @@ export class UserController {
 
 					const userObject = appUtils.buildToken(tokenData);
 
-					const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step1.salt });
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": step1.salt });
 
 					console.log('accessTokenaccessToken12343456789>>>>>>>>>>>>>>', accessToken);
 
