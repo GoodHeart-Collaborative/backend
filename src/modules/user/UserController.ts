@@ -60,17 +60,7 @@ export class UserController {
 					}
 				}
 
-				if (step && !step1 && step.isEmailVerified === false) {
-					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
-					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
-				}
-				if (!step && step1 && step1.isMobileVerified === false) {
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
-					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
-				}
-
-				if (step && step1 && step1.isMobileVerified === false && step._id.toString() !== step1._id.toString()) {
+				if (step && step1 && step1.isMobileVerified === false && step.isEmailVerified === false && step._id.toString() !== step1._id.toString()) {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
 					const tokenData = _.extend(params, {
 						"userId": step1._id,
@@ -87,6 +77,8 @@ export class UserController {
 
 					const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step1.salt });
 
+					console.log('accessTokenaccessToken12343456789>>>>>>>>>>>>>>', accessToken);
+
 					// mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
 
 					// return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
@@ -97,41 +89,45 @@ export class UserController {
 
 					const step6 = await loginHistoryDao.createUserLoginHistory(params);
 
-
-
 					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
-
 				}
-				if (step && step1 && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
-					const tokenData = _.extend(params, {
-						"userId": step._id,
-						"firstName": step.firstName,
-						"lastName": step.lastName,
-						"countryCode": step.countryCode,
-						"mobileNo": step.mobileNo,
-						"email": step.email,
-						"salt": step.salt,
-						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-					});
-					const userObject = appUtils.buildToken(tokenData);
-					const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step.salt });
-					mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step._id });
-					// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
-					// "refreshToken": refreshToken
 
-					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
-					console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
-
-					const step6 = await loginHistoryDao.createUserLoginHistory(params);
-
-
-
-					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
-
-					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				if (step && !step1 && step.isEmailVerified === false) {
+					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
 				}
+				if (!step && step1 && step1.isMobileVerified === false) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
+					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
+				}
+				// if (step && step1 && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
+				// 	console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
+				// 	console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
+				// 	const tokenData = _.extend(params, {
+				// 		"userId": step._id,
+				// 		"firstName": step.firstName,
+				// 		"lastName": step.lastName,
+				// 		"countryCode": step.countryCode,
+				// 		"mobileNo": step.mobileNo,
+				// 		"email": step.email,
+				// 		"salt": step.salt,
+				// 		"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+				// 	});
+				// 	const userObject = appUtils.buildToken(tokenData);
+				// 	const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step.salt });
+				// 	mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step._id });
+				// 	// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+				// 	// "refreshToken": refreshToken
+
+				// 	const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
+				// 	console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
+
+				// 	const step6 = await loginHistoryDao.createUserLoginHistory(params);
+				// 	return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
+
+				// 	// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				// }
 
 				const generateOtp = await appUtils.generateOtp();
 
