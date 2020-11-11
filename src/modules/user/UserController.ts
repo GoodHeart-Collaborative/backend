@@ -961,36 +961,38 @@ export class UserController {
 			let checkUser = await userDao.findUserByEmailOrMobileNo({ mobileNo: params.mobileNo, countryCode: params.countryCode })
 			console.log('checkUser', checkUser);
 			let checkEmail = await userDao.findUserByEmailOrMobileNo({ email: params.email })
-			console.log('checkUser', checkUser);
+			console.log('checkEmail', checkEmail);
 
 			if (userData.isEmailVerified === false && userData.mobileNo !== params.mobileNo) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.CAN_NOT_CHANGE_MOBILE)
 			}
 			// else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
 			if (checkUser) {
-				if (checkUser._id.toString() !== userData.userId.toString() && checkUser.isMobileVerified === true) {
+				console.log('checkUSer>>>>>>>>>>>>>>', checkUser._id.toString(), userData.userId.toString());
+
+				if (checkUser._id.toString() != userData.userId.toString() && checkUser.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
 				}
 				// }
 				// else if (userData.isEmailVerified === true && userData.isMobileVerified === true) {
-				if (checkUser.isMobileVerified === false && checkUser._id.toString() !== userData.userId.toString()) {
+				if (checkUser.isMobileVerified === false && checkUser._id.toString() != userData.userId.toString()) {
+					console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
 					const removePhoneNo = await userDao.findOneAndUpdate('users', { _id: checkUser._id }, { mobileNo: 'N/A' }, {});
 					const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
 				}
-				// }
-			}
-			if (checkUser && checkUser.mobileNo !== params.mobileNo) {
-				dataToUpdate['isMobileVerified'] = false;
+				if (checkUser.mobileNo !== params.mobileNo) {
+					dataToUpdate['isMobileVerified'] = false;
+				}
 			}
 			if (!checkUser && userData.mobileNo !== params.mobileNo) {
 				dataToUpdate['isMobileVerified'] = false;
 			}
 
 			if (checkEmail) {
-				if (checkEmail.isEmailVerified === true && checkEmail._id.toString() !== userData._id.toString()) {
+				if (checkEmail.isEmailVerified === true && checkEmail._id.toString() !== userData.userId.toString()) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 				}
-				if (checkEmail.isEmailVerified === false && checkEmail._id.toString() !== userData._id.toString()) {
+				if (checkEmail.isEmailVerified === false && checkEmail._id.toString() !== userData.userId.toString()) {
 					// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 					const removeEmail = await userDao.findOneAndUpdate('users', { _id: checkEmail._id }, { email: 'N/A' }, {});
 					// const updateEmail = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
