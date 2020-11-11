@@ -399,6 +399,7 @@ export class UserController {
 			}
 			if (!step1) {
 				const findEmail = await userDao.findOne('users', { email: params.email, isEmailVerified: true }, {}, {})
+				console.log('findEmailfindEmailfindEmail', findEmail);
 
 				if (findEmail) {
 					let tokenData = _.extend(params, {
@@ -414,16 +415,15 @@ export class UserController {
 
 					const mergeUser = await userDao.mergeAccountAndCheck(findEmail, params);
 
-
-					// let step3, step2;
-					// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-					// 	console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-					// 	step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
-					// 	console.log('step2step2step2', step2);
-					// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
-					// 	console.log('step3step3step3step3step3step3', step3);
-					// }
-					// params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
+					let step3, step2;
+					if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+						console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+						step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
+						console.log('step2step2step2', step2);
+						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
+						console.log('step3step3step3step3step3step3', step3);
+					}
+					params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
 
 
 
@@ -436,6 +436,11 @@ export class UserController {
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": findEmail.salt });
 					console.log('accessTokenaccessTokenaccessToken', accessToken);
 
+					params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
+
+					const step4 = await loginHistoryDao.createUserLoginHistory(tokenData);
+
+					console.log('step4step4step4step4>>>>>>>>>>>>>>>>>>>>>>>>', step4);
 
 
 					if (!findEmail.isEmailVerified) {
@@ -464,19 +469,21 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					}
 					else {
-						let step3;
-						if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-							console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-							const step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
-							console.log('step2step2step2', step2);
-							step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
-							console.log('step3step3step3step3step3step3', step3);
-						}
-						params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
+						// let step3;
+						// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+						// 	console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+						// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
+						// 	console.log('step2step2step2', step2);
+						// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
+						// 	console.log('step3step3step3step3step3step3', step3);
+						// }
+						// params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
 
 						// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
 						findEmail['isPasswordAvailable'] = (findEmail && findEmail['hash']) ? true : false;
 						delete findEmail['salt']; delete findEmail['hash']; delete findEmail['mobileOtp']; delete findEmail['forgotToken']; delete findEmail['isAdminRejected']; delete findEmail['isAdminVerified']; delete findEmail['forgotToken']; delete findEmail['fullMobileNo']; delete findEmail['googleId']; delete findEmail['facebookId'];
+						console.log('findEmailfindEmailfindEmailfindEmail', findEmail);
+
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...findEmail });
 
 					}
