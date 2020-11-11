@@ -102,7 +102,8 @@ class HomeController {
                         isSubscribed: (userId.tokenData.subscriptionEndDate < new Date().getTime()) ? false : true, // (userId.tokenData.subscriptionType !== config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? true : false,
                         subscriptionType: userId.tokenData.subscriptionType,
                         subscriptionEndDate: userId.tokenData.subscriptionEndDate,
-                        subscriptionPlatform: (userId.tokenData.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || userId.tokenData.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : userId.tokenData.subscriptionPlatform
+                        subscriptionPlatform: (userId.tokenData.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || userId.tokenData.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? headers.platform : userId.tokenData.subscriptionPlatform
+
                     },
                     unreadNotificationCount: notificationCount,
                     isEmailVerified: userId.tokenData.isEmailVerified,

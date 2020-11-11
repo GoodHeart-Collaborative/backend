@@ -169,8 +169,6 @@ export class CategoryDao extends BaseDao {
             }
             if (type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
                 data = await categoryDao.paginate('event', aggPipe, limit, page, {}, true);
-                console.log('paramsparamsparamsparams', params);
-
             }
             data['categoryData'] = findCategoryData;
             return data;

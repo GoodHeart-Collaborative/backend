@@ -16,6 +16,7 @@ export interface INotification extends Document {
 	created: number;
 	postId: string;
 	eventId: string;
+	status: string;
 }
 
 /**
@@ -35,6 +36,14 @@ const notificationSchema = new Schema({
 	eventId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: config.CONSTANT.DB_MODEL_REF.EVENT
+	},
+	status: {
+		type: String,
+		enum: [
+			config.CONSTANT.STATUS.ACTIVE,
+			config.CONSTANT.STATUS.DELETED,
+		], default:
+			config.CONSTANT.STATUS.ACTIVE,
 	},
 	type: {
 		type: Number,

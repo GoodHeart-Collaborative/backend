@@ -27,7 +27,6 @@ export class EventDao extends BaseDao {
             //     return Promise.reject(c)
             // }
             const { pageNo, limit, date, searchKey, distance, eventCategoryId, isFeaturedEvent, getIpfromNtwk, startDate, endDate } = params;
-            console.log('tokenDatatokenData', tokenData.userId);
             let { longitude, latitude, } = params;
 
             const paginateOptions = {
@@ -96,8 +95,6 @@ export class EventDao extends BaseDao {
 
             if (longitude == undefined && latitude == undefined) {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
-
                 latitude = lat_lng.lat;
                 longitude = lat_lng.long;
             }
@@ -259,8 +256,6 @@ export class EventDao extends BaseDao {
 
             aggPipe = [...aggPipe, ... await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)]
             const event = await eventDao.aggregateWithPagination('event', aggPipe, limit, pageNo,);
-            console.log('eventeventeventeventeventevent', event);
-
             const filterdata: any = {}
             const privacy1 = [];
             privacy1.push(config.CONSTANT.PRIVACY_STATUS.PRIVATE);

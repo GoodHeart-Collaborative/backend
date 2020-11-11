@@ -38,8 +38,6 @@ export class UserDao extends BaseDao {
 
 	async findUserByEmailOrMobileNoForSocialSignUp(params, type?) {
 		try {
-			console.log('typetypetype', type);
-
 			let { mobileNo, countryCode, email } = params
 			let emailQuery: any = {};
 			let checkPhone: any = {};
@@ -314,7 +312,7 @@ export class UserDao extends BaseDao {
 		}
 	}
 
-	async mergeAccountAndCheck(step1, params: UserRequest.SocialSignup) {
+	async mergeAccountAndCheck(step1, params) { //UserRequest.SocialSignup
 		try {
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				params.facebookId = params.socialId;
@@ -332,7 +330,6 @@ export class UserDao extends BaseDao {
 			}
 			// params.created = new Date();
 			if (step1.email === params.email) {
-				console.log('22222222222');
 				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
 				// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 			}
@@ -641,11 +638,6 @@ export class UserDao extends BaseDao {
 
 			const userGraph = await this.aggregate("users", userGraphCriteria, {});
 			const userGraphPreviousYear = await this.aggregate('users', userGraphLastYearCriteria, {})
-
-
-			console.log('freePaidConverionfreePaidConverion', freePaidConverion);
-
-			console.log('userGraph1userGraph1userGraph1userGraph1', userGraph);
 
 
 			const userGraphThisYear = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };

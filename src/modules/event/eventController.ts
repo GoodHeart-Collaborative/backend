@@ -45,7 +45,6 @@ class EventController {
             //     type: Joi.string().valid(["Point"]),
             //     coordinates: Joi.array().items(Joi.number())
 
-            console.log('paramsparamsparams', params);
 
             const updateEventAndGoing = [
                 {
@@ -70,7 +69,6 @@ class EventController {
 
             const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
                 `&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}&eventId=${data._id}`;
-            console.log('eventUrl1eventUrl1', eventUrl1);
 
             // const eventUrl1 = `${config.SERVER.APP_URL}?type=event&eventId=5f5903250711f37999791887`
 
@@ -402,7 +400,6 @@ class EventController {
 
             if (longitude == undefined && latitude == undefined) {
                 const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
 
                 latitude = lat_lng.lat;
                 longitude = lat_lng.long;
@@ -436,7 +433,6 @@ class EventController {
                 )
             }
 
-            console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
             // if(startDate)
             match['endDate'] = { $gt: new Date().getTime() }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
@@ -623,10 +619,8 @@ class EventController {
             // eventCategoryListName.push({ "_id": 5, 'description': 'ALL' })
             let categoryList = [];
             const featuredEvent = await eventDao.aggregate('event', featureAggPipe, {})
-            console.log('featuredEventfeaturedEventfeaturedEventfeaturedEventfeaturedEvent', featuredEvent);
 
             const event = await eventDao.aggregate('event', aggPipe, {});
-            console.log('event event event event event event event event ', event);
 
             // const time = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
             // const TIMES = {
@@ -637,7 +631,6 @@ class EventController {
             //     eventCategoryListName,
             //     type: 0
             // }
-            console.log('featuredEventfeaturedEvent', featuredEvent);
 
             featuredEvent.map((data: any) => {
                 categoryList.push({
@@ -673,7 +666,6 @@ class EventController {
             // categoryList = (result.sort(() => Math.random() - 0.5)).slice(0, 5);
 
             categoryList = categoryList.slice(0, 5);
-            console.log('categoriyListcategoriyListcategoriyList', categoryList);
 
             return {
                 categoryList,
@@ -917,7 +909,6 @@ class EventController {
             })
 
             const data = await eventDao.aggregate('event', aggPipe, {})
-            console.log('datadatadata', data);
 
             // for the deeplink case
             if (payload.eventId && data[0] && data[0].endDate < new Date().getTime()) {
@@ -990,7 +981,6 @@ class EventController {
 
     async generateLink(params, tokenData) {
         try {
-            console.log('tokenDatatokenData', tokenData);
 
             const tokenData1 = _.extend(params, {
                 "userId": tokenData.userId,
@@ -1008,8 +998,6 @@ class EventController {
             const url = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${params.eventId}` +
                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
                 `&type=share`
-
-            console.log('url>>>>>>>>', url);
 
             // async forgotPasswordEmailToUser(params) {
             //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))

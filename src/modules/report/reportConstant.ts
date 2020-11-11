@@ -32,7 +32,8 @@ export const MESSAGES = {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": "User reported successfully",
-                "type": "DEFAULT"
+                "type": "DEFAULT",
+                data: data
             }
         },
     }

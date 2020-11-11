@@ -3,7 +3,7 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import { toObjectId } from '../../../utils/appUtils'
 import { Query } from "mongoose";
-import { config } from "aws-sdk";
+import * as config from "@config/constant";
 import * as notificationConstant from "@modules/notification/notificationConstant";
 import { userController } from "@modules/user";
 
@@ -37,8 +37,7 @@ export class NotificationDao extends BaseDao {
 			let memberDetail;
 
 			if (tokenData.isMemberOfDay) {
-				memberDetail = await userController.getMemberOfDayDetail({ userId: tokenData.userId })
-				console.log('memberDetailmemberDetailmemberDetail', memberDetail);
+				memberDetail = await userController.getMemberOfDayDetail({ userId: tokenData.userId });
 				aggPipe.push({
 					$addFields: {
 						isLike: memberDetail.isLike,
@@ -46,7 +45,13 @@ export class NotificationDao extends BaseDao {
 					}
 				})
 			}
-
+			aggPipe.push({
+				$match: {
+					status: {
+						$ne: config.CONSTANT.STATUS.DELETED
+					},
+				}
+			})
 
 			aggPipe.push({
 				$lookup: {
@@ -190,11 +195,38 @@ export class NotificationDao extends BaseDao {
 				receiverId: userId.tokenData.userId
 			}
 			const data = await this.count('notifications', criteria);
-			console.log('datadatadata', data);
 			return data;
 		} catch (error) {
 			return Promise.reject(error);
 
+		}
+	}
+
+	async updatNotificationStatus(params) {
+		try {
+			const criteria = {
+				receiverId: params.userId,
+				$or: [{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type,
+				},
+				{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
+				}]
+			}
+
+			const criteria1 = {
+				receiverId: params.userId,
+				$or: [{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type,
+				},
+				{
+					type: config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
+				}]
+			}
+			await this.updateMany('notifications', criteria1, { status: config.CONSTANT.STATUS.DELETED }, {})
+			await this.updateMany('notifications', criteria, { status: config.CONSTANT.STATUS.DELETED }, {})
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 }

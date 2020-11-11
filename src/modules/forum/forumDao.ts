@@ -154,18 +154,20 @@ export class ForumTopic extends BaseDao {
                                     $and: [{
                                         $eq: ['$_id', '$$uId']
                                     },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    },
+                                        // {
+                                        //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        // },
                                         // {
                                         //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
                                         // }
                                     ],
                                 },
-                                {
-                                    $ne: ['$_id', '$$uId']
-                                    // $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
-                                }
+                                    // {
+                                    //     $ne: ['$_id', '$$uId'],
+                                    // },
+                                    // {
+                                    //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
+                                    // }
                                 ]
                             }
                         }
@@ -174,7 +176,7 @@ export class ForumTopic extends BaseDao {
                 }
             });
 
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } })
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
@@ -351,7 +353,7 @@ export class ForumTopic extends BaseDao {
             let myForumData;
             if (!params.postId) {
                 aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
-                myForumData = await this.aggregateWithPagination('forum', aggPipe)
+                myForumData = await this.aggregateWithPagination('forum', aggPipe, paginateOptions.limit, paginateOptions.page, true)
             }
 
             if (params.postId) {

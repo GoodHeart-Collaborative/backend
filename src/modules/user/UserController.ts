@@ -41,6 +41,8 @@ export class UserController {
 				const step = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, { type: "email" });
 
 				const step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
+				console.log('stepstepstepstepstepstepstepstepstepstepstepstepv', step);
+				console.log('step1step1step1step1step1step1step1step1step1step1v>>>>>>>>>>', step1);
 
 				if (step || step1) {
 					if ((step && step.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.DELETED)) {
@@ -59,8 +61,38 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
 					}
 				}
-				console.log('stepstepstep', step);
-				console.log('step1step1step1step1step1', step1);
+
+				if (step && step1 && step1.isMobileVerified === false && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
+					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
+					const tokenData = _.extend(params, {
+						"userId": step1._id,
+						"firstName": step1.firstName,
+						"lastName": step1.lastName,
+						"countryCode": step1.countryCode,
+						"mobileNo": step1.mobileNo,
+						"email": step1.email,
+						"salt": step1.salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+
+					const userObject = appUtils.buildToken(tokenData);
+
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": step1.salt });
+
+					console.log('accessTokenaccessToken12343456789>>>>>>>>>>>>>>', accessToken);
+
+					// mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
+
+					// return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
+					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+
+					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
+					console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
+
+					const step6 = await loginHistoryDao.createUserLoginHistory(params);
+
+					return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
+				}
 
 				if (step && !step1 && step.isEmailVerified === false) {
 					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
@@ -70,24 +102,34 @@ export class UserController {
 					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
+				}
+				// if (step && step1 && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
+				// 	console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
+				// 	console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
+				// 	const tokenData = _.extend(params, {
+				// 		"userId": step._id,
+				// 		"firstName": step.firstName,
+				// 		"lastName": step.lastName,
+				// 		"countryCode": step.countryCode,
+				// 		"mobileNo": step.mobileNo,
+				// 		"email": step.email,
+				// 		"salt": step.salt,
+				// 		"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+				// 	});
+				// 	const userObject = appUtils.buildToken(tokenData);
+				// 	const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step.salt });
+				// 	mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step._id });
+				// 	// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+				// 	// "refreshToken": refreshToken
 
-				}
-				if (step && !step1 && step.isEmailVerified === false) {
-					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
-					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
-					console.log('>>>>>>>>>>>>>>>>12222222222222222222222222222');
-				}
-				if (step && step1 && step1.isMobileVerified === false) {
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
-					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST);
-					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-				}
-				if (step && step1 && step.isEmailVerified === false) {
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
-					return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
-					// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-				}
+				// 	const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
+				// 	console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
 
+				// 	const step6 = await loginHistoryDao.createUserLoginHistory(params);
+				// 	return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
+
+				// 	// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
+				// }
 
 				const generateOtp = await appUtils.generateOtp();
 
@@ -216,7 +258,7 @@ export class UserController {
 
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
-					// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 
 
 					if (params.email && !step2) {
@@ -236,6 +278,7 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 
 					}
@@ -322,7 +365,8 @@ export class UserController {
 							isSubscribed: (step1.subscriptionEndDate < new Date().getTime()) ? false : true,
 							subscriptionType: step1.subscriptionType,
 							subscriptionEndDate: step1.subscriptionEndDate,
-							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : step1.subscriptionPlatform
+							// subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : step1.subscriptionPlatform
+							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? params.platform : step1.subscriptionPlatform
 						}
 
 						delete step1['subscriptionType'];
@@ -345,13 +389,107 @@ export class UserController {
 	async socialLogin(params: UserRequest.SocialLogin) {
 		try {
 			const step1 = await userDao.checkSocialId(params);
-			// console.log('step1step1step1step1', step1.salt);
+			console.log('step1step1step1step1', step1);
 
 			if (step1 && step1.status === config.CONSTANT.STATUS.DELETED) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
 			}
 			if (step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN);
+			}
+			if (!step1) {
+				const findEmail = await userDao.findOne('users', { email: params.email, isEmailVerified: true }, {}, {})
+				console.log('findEmailfindEmailfindEmail', findEmail);
+
+				if (findEmail) {
+					let tokenData = _.extend(params, {
+						"userId": findEmail._id,
+						"firstName": findEmail.firstName,
+						"lastName": findEmail.lastName,
+						"email": findEmail.email,
+						"countryCode": findEmail.countryCode,
+						"mobileNo": findEmail.mobileNo,
+						"salt": findEmail.salt,
+						"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
+					});
+
+					const mergeUser = await userDao.mergeAccountAndCheck(findEmail, params);
+
+					let step3, step2;
+					if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+						console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+						step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
+						console.log('step2step2step2', step2);
+						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
+						console.log('step3step3step3step3step3step3', step3);
+					}
+					params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
+
+
+
+					// const step4 = loginHistoryDao.createUserLoginHistory(findEmail);
+
+					tokenData = { ...params, ...tokenData };
+
+					const userObject = appUtils.buildToken(tokenData);
+					console.log('userObjectuserObjectuserObject', userObject);
+					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": findEmail.salt });
+					console.log('accessTokenaccessTokenaccessToken', accessToken);
+
+					params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
+
+					const step4 = await loginHistoryDao.createUserLoginHistory(tokenData);
+
+					console.log('step4step4step4step4>>>>>>>>>>>>>>>>>>>>>>>>', step4);
+
+
+					if (!findEmail.isEmailVerified) {
+						console.log('111111111111111');
+						const step3 = mailManager.sendRegisterMailToUser({ "email": findEmail.email, "firstName": findEmail.firstName, "lastName": findEmail.lastName, "token": accessToken, userId: findEmail._id });
+						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
+					}
+
+					else if (findEmail && !findEmail.dob || !findEmail.dob == null && findEmail.industryType) {
+						console.log('22222222222222222');
+						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
+					}
+					// else if (step1.isAdminRejected) {
+					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+					// }
+					else if (findEmail.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+						console.log('333333333333333333333333');
+						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
+					}
+					// else if (!step1.isAdminVerified) {
+					// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+					// }
+					else if (findEmail.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
+						console.log(4444444444444444444);
+
+						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
+					}
+					else {
+						// let step3;
+						// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+						// 	console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+						// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
+						// 	console.log('step2step2step2', step2);
+						// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
+						// 	console.log('step3step3step3step3step3step3', step3);
+						// }
+						// params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
+
+						// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
+						findEmail['isPasswordAvailable'] = (findEmail && findEmail['hash']) ? true : false;
+						delete findEmail['salt']; delete findEmail['hash']; delete findEmail['mobileOtp']; delete findEmail['forgotToken']; delete findEmail['isAdminRejected']; delete findEmail['isAdminVerified']; delete findEmail['forgotToken']; delete findEmail['fullMobileNo']; delete findEmail['googleId']; delete findEmail['facebookId'];
+						console.log('findEmailfindEmailfindEmailfindEmail', findEmail);
+
+						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...findEmail });
+
+					}
+				} else {
+					return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
+				}
 			}
 			else if (!step1) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.SOCIAL_ACCOUNT_NOT_REGISTERED);
@@ -375,19 +513,9 @@ export class UserController {
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 				console.log('accessTokenaccessTokenaccessToken', accessToken);
 
-				const step4 = loginHistoryDao.createUserLoginHistory(params);
-				console.log('step4step4step4step4step4', step4);
+				// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+				// console.log('step4step4step4step4step4', step4);
 
-				if (step1.status === config.CONSTANT.STATUS.BLOCKED) {
-					return userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
-				}
-				else if (step1.status === config.CONSTANT.STATUS.DELETED) {
-					return userConstant.MESSAGES.SUCCESS.BLOCKED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' });
-				}
-				// else if (step1.isAdminRejected) {
-				// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: accessToken });
-				// 	// return Promise.reject(userConstant.MESSAGES.ERROR.ADMIN_REJECTED_USER_ACCOUNT);
-				// }
 				if (!step1.isEmailVerified) {
 					const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
 					return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
@@ -402,22 +530,10 @@ export class UserController {
 				else if (step1.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 					return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 				}
-				// else if (!step1.isAdminVerified) {
-				// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
-				// }
 				else if (step1.adminStatus == config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
 					return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 				}
 				else {
-					let arn;
-					if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
-						// arn = await sns.registerAndroidUser(params.deviceToken);
-						arn = "";
-					} else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
-						// arn = await sns.registerIOSUser(params.deviceToken);
-						arn = "";
-					}
-					const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 					let step3;
 					if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
 						console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
@@ -425,31 +541,15 @@ export class UserController {
 						console.log('step2step2step2', step2);
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
 						console.log('step3step3step3step3step3step3', step3);
-
-					} else {
-						const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
-						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
 					}
-					params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken, "lastLogin": step3 });
-					let step5, step6;
-					if (config.SERVER.IS_REDIS_ENABLE) {
-						if (!config.SERVER.IN_ACTIVITY_SESSION)
-							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
-						else
-							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
-						const jobPayload = {
-							jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-							time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-							params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-						};
-						step6 = redisClient.createJobs(jobPayload);
-					}
-					const step7 = await promise.join(step4, step5, step6);
+					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+					console.log('step4step4step4step4step4', step4);
+					params = _.extend(params, { "salt": step1.salt, "lastLogin": step3 });
 
 					// return userConstant.MESSAGES.SUCCESS.LOGIN({ "accessToken": accessToken, "refreshToken": refreshToken });
 					step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
 					delete step1['salt']; delete step1['hash']; delete step1['mobileOtp']; delete step1['forgotToken']; delete step1['isAdminRejected']; delete step1['isAdminVerified']; delete step1['forgotToken']; delete step1['fullMobileNo']; delete step1['googleId']; delete step1['facebookId'];
-					return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
+					return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...step1 });
 
 				}
 			}
@@ -483,8 +583,6 @@ export class UserController {
 				if (step1 && step1.status === config.CONSTANT.STATUS.DELETED || step1 && step1.status === config.CONSTANT.STATUS.BLOCKED) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.PLEASE_CONTACT_ADMIN);
 				}
-
-
 				// if mobile no is verified and attached to other account
 				if (!step1 && step2 && step2.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
@@ -496,12 +594,12 @@ export class UserController {
 
 				let step3;
 				// if both email and mobile are verified
-				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1._id === step2._id) {
+				if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1._id.toString() === step2._id.toString()) {
 					console.log('22222222222222222222222222222222222222222');
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6', step3);
 				}
-				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false && step1._id === step2._id) {
+				else if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false && step1._id.toString() === step2._id.toString()) {
 					console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
 					step3 = await userDao.mergeAccountAndCheck(step1, params);
 					console.log('					step6					step6					step6', step3);
@@ -622,7 +720,7 @@ export class UserController {
 				}
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 				params = _.extend(params, { "arn": arn, "salt": step3.salt || salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
-				const step34 = loginHistoryDao.createUserLoginHistory(params);
+				const step34 = loginHistoryDao.createUserLoginHistory(tokenData);
 				let step4, step5;
 				if (config.SERVER.IS_REDIS_ENABLE) {
 					if (!config.SERVER.IN_ACTIVITY_SESSION)
@@ -887,24 +985,43 @@ export class UserController {
 
 			let checkUser = await userDao.findUserByEmailOrMobileNo({ mobileNo: params.mobileNo, countryCode: params.countryCode })
 			console.log('checkUser', checkUser);
+			let checkEmail = await userDao.findUserByEmailOrMobileNo({ email: params.email })
+			console.log('checkEmail', checkEmail);
 
 			if (userData.isEmailVerified === false && userData.mobileNo !== params.mobileNo) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.CAN_NOT_CHANGE_MOBILE)
-			} else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
-				if (checkUser && checkUser._id !== userData.userId && checkUser.isMobileVerified === true) {
+			}
+			// else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
+			if (checkUser) {
+				console.log('checkUSer>>>>>>>>>>>>>>', checkUser._id.toString(), userData.userId.toString());
+
+				if (checkUser._id.toString() != userData.userId.toString() && checkUser.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
 				}
-			} else if (userData.isEmailVerified === true && userData.isMobileVerified === true) {
-				if (checkUser && checkUser.isMobileVerified === false && checkUser._id !== userData.userId) {
-					const removePhoneNo = await userDao.findOneAndUpdate('users', { _id: checkUser._id }, { mobileNo: params.mobileNo }, {});
-					// const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
+				// }
+				// else if (userData.isEmailVerified === true && userData.isMobileVerified === true) {
+				if (checkUser.isMobileVerified === false && checkUser._id.toString() != userData.userId.toString()) {
+					console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+					const removePhoneNo = await userDao.findOneAndUpdate('users', { _id: checkUser._id }, { mobileNo: 'N/A' }, {});
+					const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
 				}
-			}
-			if (checkUser && checkUser.mobileNo !== params.mobileNo) {
-				dataToUpdate['isMobileVerified'] = false;
+				if (checkUser.mobileNo !== params.mobileNo) {
+					dataToUpdate['isMobileVerified'] = false;
+				}
 			}
 			if (!checkUser && userData.mobileNo !== params.mobileNo) {
 				dataToUpdate['isMobileVerified'] = false;
+			}
+
+			if (checkEmail) {
+				if (checkEmail.isEmailVerified === true && checkEmail._id.toString() !== userData.userId.toString()) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+				}
+				if (checkEmail.isEmailVerified === false && checkEmail._id.toString() !== userData.userId.toString()) {
+					// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
+					const removeEmail = await userDao.findOneAndUpdate('users', { _id: checkEmail._id }, { email: 'N/A' }, {});
+					// const updateEmail = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
+				}
 			}
 			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
 			// dataToUpdate = {

@@ -125,7 +125,6 @@ export class ContentController {
 			}
 
 			const step1 = await contentDao.isContentExists(params);
-			console.log('step1step1', step1);
 
 			if (!step1) {
 				return Promise.reject(contentConstant.MESSAGES.ERROR.CONTENT_NOT_FOUND);

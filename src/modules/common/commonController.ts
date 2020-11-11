@@ -92,7 +92,6 @@ export class CommonController {
 							// if (!IsTokenExist) {
 							// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 							// }
-							console.log('params.typeparams.typeparams.typeparams.typeparams.type', params.type);
 							console.log(params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,);
 
 							const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
@@ -168,7 +167,6 @@ export class CommonController {
 
 				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
 				const step1 = await baseDao.updateOne("users", { _id: params.userId }, { isEmailVerified: true }, {});
-				console.log('step1step1step1step1step1step1', step1);
 
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 					.compileFile({
@@ -201,7 +199,7 @@ export class CommonController {
 			if (userData && userData.isEmailVerified) {
 				// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
 				// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
-				return config.CONSTANT.MESSAGES.SUCCESS.EMAIL_ALREADY_VERIFIED({})
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
 			}
 
 			// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});

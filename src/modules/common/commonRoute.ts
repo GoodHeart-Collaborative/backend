@@ -80,11 +80,9 @@ export const commonRoute: ServerRoute = [
 		handler: async (request: Request, h: ResponseToolkit) => {
 			// const query: Device = request.params;
 			const payload = request.query;
-			console.log('payloadpayloadpayload', payload);
 			try {
 				// const isExpire=  await isExpire.
 				const tokenData = await tokenManager.verifyToken({ ...payload }, "common", false);
-				console.log('tokenDatatokenDatatokenDatatokenDatatokenData>>>>>>>>>>>>>>>>', tokenData);
 				let result;
 				result = await userController.redirectResetPassword(payload);
 				// const message = "Your link has been expired. Please regenerate your link again.";
@@ -379,20 +377,21 @@ export const commonRoute: ServerRoute = [
 				return responseHandler.sendSuccess(h, result);
 
 			} catch (error) {
-				let message;
-				let title;
-				if (error === "alreadyVerified") {
-					message = "Hi your email is already been verified . Please login to continue."
-					title = "Email Already verified";
-					return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
-				} else {
-					// const message = "Your link has been expired. Please regenerate your link again.";
-					message = "Hi there, your link has expired because you haven't used it. Link expires in every 10 minutes and can only be used once. Please try again."
-					title = "Link expired";
-				}
-				return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
-				// const message = "Your link has been expired. Please regenerate your link again.";
-				// return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
+				return responseHandler.sendError(error);
+				// let message;
+				// let title;
+				// if (error === "alreadyVerified") {
+				// 	message = "Hi your email is already been verified . Please login to continue."
+				// 	title = "Email Already verified";
+				// 	return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
+				// } else {
+				// 	// const message = "Your link has been expired. Please regenerate your link again.";
+				// 	message = "Hi there, your link has expired because you haven't used it. Link expires in every 10 minutes and can only be used once. Please try again."
+				// 	title = "Link expired";
+				// }
+				// return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
+				// // const message = "Your link has been expired. Please regenerate your link again.";
+				// // return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
 			}
 		},
 		options: {

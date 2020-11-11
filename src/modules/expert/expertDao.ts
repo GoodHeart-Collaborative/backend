@@ -315,8 +315,6 @@ export class ExpertDao extends BaseDao {
                 ];
             }
 
-            console.log('paginateOptions', paginateOptions);
-
             categoryPipeline.push({
                 $match: match,
             });
@@ -411,13 +409,11 @@ export class ExpertDao extends BaseDao {
                 )
             }
             else if (screenType === 'event' && type === config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY) {
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Lllllllllllllllllll');
                 let pickupLocation = [];
                 let aggPipe = [];
                 let eventMatch: any = {};
                 let searchDistance = distance ? distance * 1000 : 1000 * 1000// Default value is 100 km.
 
-                console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
 
                 if (longitude == undefined && latitude == undefined) {
                     const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
@@ -442,7 +438,6 @@ export class ExpertDao extends BaseDao {
                     // )
                 }
 
-                console.log('longitudelongitude', longitude, 'latitudelatitude', latitude);
                 // if(startDate)
                 eventMatch['endDate'] = { $gt: new Date().getTime() }
                 eventMatch['status'] = config.CONSTANT.STATUS.ACTIVE;
@@ -481,10 +476,6 @@ export class ExpertDao extends BaseDao {
                 categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)];
                 let result = await this.aggregateWithPagination("event", aggPipe, limit, page, true);
 
-                console.log('categoryDataucategoryDataucategoryDatau', result);
-                let arr = [];
-
-                // console.log('arrarrarraarrrrarr', arr);
                 return result;
             }
             else {
@@ -494,27 +485,6 @@ export class ExpertDao extends BaseDao {
                     }
                 })
             }
-
-
-            // console.log('categoryPipelinecategoryPipeline', categoryPipeline);
-
-            // if (screenType != 'addPost') {
-            //     console.log('splicesplicesplicesplicesplicesplice.>>>>>>>>>>>',);
-
-            //     categoryPipeline.splice(2, 1);
-            // };
-            // console.log('categoryPipelinecategoryPipelinecategoryPipelinecategoryPipeline', categoryPipeline);
-
-
-            // if (payload.categoryId) {
-            //     // const a = {
-            //     //     $project: {
-            //     //         expertData: 1
-            //     //     }
-            //     // }
-            //     categoryPipeline.splice(3, 3)
-            // }
-            console.log('categoryPipelinecategoryPipeline', JSON.stringify(categoryPipeline));
 
             categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)];
             let result = await this.aggregateWithPagination("categories", categoryPipeline, limit, page, true);
@@ -539,12 +509,10 @@ export class ExpertDao extends BaseDao {
             let match: any = {};
 
             // if (payload.postedBy === 1) {
-            //     console.log('LLLLLLLLLLLLLL');
             //     postConditions.push({
             //         $gt: ['$createdAt', '2020-07-24']
             //     })
             // } else if (payload.postedBy == 2) {
-            //     console.log('LLLLLLLLLLLLLL');
             //     postConditions.push({
             //         $gt: ['$createdAt',]
             //     })
@@ -918,9 +886,6 @@ export class ExpertDao extends BaseDao {
             match['categoryId'] = {
                 $in: ['categoryId', appUtils.toObjectId(payload.categoryId)]
             }
-
-
-            console.log('paginateOptions', paginateOptions);
 
             let categoryPipeline: any = [
                 {

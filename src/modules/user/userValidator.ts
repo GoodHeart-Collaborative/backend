@@ -105,6 +105,8 @@ let socialLogin = Joi.object({
             config.CONSTANT.SOCIAL_LOGIN_TYPE.GOOGLE,
             config.CONSTANT.SOCIAL_LOGIN_TYPE.APPLE,
         ]),
+    email: Joi.string().email(),
+    // isEmailVerified: Joi.boolean(),
     socialId: Joi.string().trim().required(),
     deviceId: Joi.string().trim().required(),
     deviceToken: Joi.string().trim().required()

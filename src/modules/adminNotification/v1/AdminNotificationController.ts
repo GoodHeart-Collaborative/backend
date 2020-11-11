@@ -23,7 +23,6 @@ class AdminNotificationController {
 			) {
 				// if (params.image) {
 				// 	const step1: any = await imageUtil.uploadSingleMediaToS3(params.image);
-				// 	console.log('step1step1step1step1', step1);
 				// 	params.image = step1;
 				// }
 				const step2 = await adminNotificationDao.addNotification(params);

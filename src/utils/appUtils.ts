@@ -235,7 +235,6 @@ const createIOSPushPayload = function (data) {
 
 	// data.type = data.type;
 	set = this.setInsertObject(data, set, fieldsToFill);
-	console.log('setsetsetsetsetset', set);
 
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {

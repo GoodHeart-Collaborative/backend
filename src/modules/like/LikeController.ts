@@ -73,7 +73,6 @@ class LikeController {
     //             if (!data) {
     //                 return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
     //             }
-    //             console.log('datadatadatadata', data);
     //             return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
 
     //             // return data;
@@ -84,9 +83,7 @@ class LikeController {
 
     //     async getPosts(params) {
     //         try {
-    //             console.log('paramsparamsparamsparams', params);
     //             const { status, sortBy, sortOrder, limit, page, searchTerm } = params;
-    //             console.log('statusstatusstatusstatus', status);
 
     //             const aggPipe = [];
 
@@ -102,11 +99,9 @@ class LikeController {
     //                     { "title": { "$regex": searchTerm, "$options": "-i" } },
     //                 ];
     //             }
-    //             console.log('aggPipeaggPipeaggPipeaggPipe111111111', aggPipe);
 
     //             aggPipe.push({ "$match": match });
 
-    //             console.log('aggPipeaggPipeaggPipeaggPipe3333333333333333', aggPipe);
 
     //             // const project = { _id: 1, name: 1, email: 1, created: 1, status: 1 };
     //             // aggPipe.push({ "$project": project });
@@ -123,10 +118,8 @@ class LikeController {
     //             }
     //             aggPipe.push({ "$sort": sort });
 
-    //             console.log('aggPipeaggPipeaggPipeaggPipe', aggPipe);
 
     //             const data = await adviceDao.paginate('advice', aggPipe, limit, page, {}, true);
-    //             console.log('datadatadata', data);
     //             return data;
     //         } catch (error) {
     //             return Promise.reject(error);
@@ -142,7 +135,6 @@ class LikeController {
     //                 ...params
     //             };
     //             const data = await adviceDao.updateOne('advice', criteria, datatoUpdate, {})
-    //             console.log('datadatadatadatadata', data);
     //             return data;
 
     //         } catch (error) {
@@ -202,17 +194,12 @@ class LikeController {
 
             }
             let getLike = await likeDao.checkLike(params);
-            console.log('getLikegetLikegetLike', getLike);
 
             if (getLike) {
                 incOrDec = -1
                 data = await likeDao.removeLike(params)
-                console.log('datadata>>>>>>>>>>>>removeLike', data);
-
             } else {
                 data = await likeDao.addLike(params);
-                console.log("datadatadataaddLike>>>>>>>>>", data);
-
             }
             if (params && params.commentId) {
                 query = { _id: await appUtils.toObjectId(params.commentId) }

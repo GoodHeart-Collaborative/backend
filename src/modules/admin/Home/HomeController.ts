@@ -22,17 +22,19 @@ class AdminHomeController {
         try {
             if (params.postedAt) {
                 // params["postedAt"] = params..postedAt;
-                params["postedAt"] = moment(new Date(params.postedAt)).format('YYYY-MM-DD HH:mm:ss');
-                params['postAt'] = new Date(params.postedAt).getTime();
+                params["postedAt"] = new Date(params.postedAt) //.format('YYYY-MM-DD');
+                params['postAt'] = new Date(params.postedAt).setHours(0, 0, 0, 999) //.getTime() //.format('YYYY-MM-DD');
             } else {
-                params["postedAt"] = moment(new Date()).format('YYYY-MM-DD HH:mm:ss'); //  new Date()
+                params["postedAt"] = new Date() //).format('YYYY-MM-DD'); //  new Date()
                 // params.postedAt = new Date()//moment(newgetTime Date()).format('YYYY-MM-DD')
-                params['postAt'] = new Date().getTime();
+
+                params['postAt'] = new Date().setHours(0, 0, 0, 999)  //).format('YYYY-MM-DD');
             }
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>', params);
+
             // if (!params.postedAt) {
             //     params.postedAt = new Date();
             // }
-            // console.log('paramsparams', params);
 
             const data = await homeDao.insert("home", params, {});
             if (data && params.type == config.CONSTANT.HOME_TYPE.UNICORN) {
@@ -147,7 +149,6 @@ class AdminHomeController {
             }
 
             const data = await homeDao.findOneAndUpdate('home', criteria, dataToUpdate, { new: true, lean: true });
-            console.log('datadatadatadatadata>>>>>>>>', data);
             if (data.type == config.CONSTANT.HOME_TYPE.UNICORN) {
                 data.type = config.CONSTANT.HOME_TYPES.UNICORN
             }
@@ -157,7 +158,6 @@ class AdminHomeController {
             if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
                 data.type = config.CONSTANT.HOME_TYPES.DAILY_ADVICE
             }
-            console.log('data.type =data.type =', data.type);
 
             if (data && params.status == config.CONSTANT.STATUS.BLOCKED) {
                 return HOME_CONSTANT.MESSAGES.SUCCESS.BLOCKED(data.type);
@@ -187,7 +187,6 @@ class AdminHomeController {
                 ...params
             }
             const data = await homeDao.findOneAndUpdate('home', criteria, dataToUpdate, { new: true, lean: true });
-            console.log('updateOneupdateOne', data);
             if (data.type == config.CONSTANT.HOME_TYPE.UNICORN) {
                 data.type = config.CONSTANT.HOME_TYPES.UNICORN
             }
@@ -197,7 +196,6 @@ class AdminHomeController {
             if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
                 data.type = config.CONSTANT.HOME_TYPES.DAILY_ADVICE
             }
-            console.log('data.type =data.type =', data.type);
             return HOME_CONSTANT.MESSAGES.SUCCESS.UPDATED_SUCCESSFULLY(data.type)
 
         } catch (error) {

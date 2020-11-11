@@ -146,7 +146,6 @@ export class ContentDao extends BaseDao {
 	 */
 	async faqList(params?) {
 		try {
-			console.log('paramsparams', params);
 			let sort: any = {};
 			const query: any = {};
 			query.type = config.CONSTANT.CONTENT_TYPE.FAQ;
@@ -176,8 +175,6 @@ export class ContentDao extends BaseDao {
 				if (!params.fromDate && params.toDate) { query['createdAt'] = { $lte: params.toDate }; }
 			}
 
-
-			console.log('optionsoptionsoptions', options);
 
 
 			const step1 = this.find("contents", query, projection, options, {}, {}, {});
