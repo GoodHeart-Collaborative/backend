@@ -401,7 +401,7 @@ export class UserController {
 				const findEmail = await userDao.findOne('users', { email: params.email, isEmailVerified: true }, {}, {})
 
 				if (findEmail) {
-					const tokenData = _.extend(params, {
+					let tokenData = _.extend(params, {
 						"userId": findEmail._id,
 						"firstName": findEmail.firstName,
 						"lastName": findEmail.lastName,
@@ -414,12 +414,29 @@ export class UserController {
 
 					const mergeUser = await userDao.mergeAccountAndCheck(findEmail, params);
 
+
+					// let step3, step2;
+					// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
+					// 	console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+					// 	step2 = await loginHistoryDao.removeDeviceById({ "userId": findEmail._id });
+					// 	console.log('step2step2step2', step2);
+					// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": findEmail._id });
+					// 	console.log('step3step3step3step3step3step3', step3);
+					// }
+					// params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
+
+
+
+					// const step4 = loginHistoryDao.createUserLoginHistory(findEmail);
+
+					tokenData = { ...params, ...tokenData };
+
 					const userObject = appUtils.buildToken(tokenData);
 					console.log('userObjectuserObjectuserObject', userObject);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": findEmail.salt });
 					console.log('accessTokenaccessTokenaccessToken', accessToken);
 
-					const step4 = loginHistoryDao.createUserLoginHistory(findEmail);
+
 
 					if (!findEmail.isEmailVerified) {
 						console.log('111111111111111');
