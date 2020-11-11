@@ -254,9 +254,9 @@ export class BaseDao {
 		try {
 			const ModelName: any = models[model];
 			if (!_.isEmpty(populateQuery)) { // populate
-				return await ModelName.findOne(query, projection, options).populate(populateQuery).exec();
+				return await ModelName.findOne(query, projection, options).populate(populateQuery).exec().lean();
 			} else {
-				return await ModelName.findOne(query, projection, options);
+				return await ModelName.findOne(query, projection, options).lean();
 			}
 		} catch (error) {
 			return Promise.reject(error);
