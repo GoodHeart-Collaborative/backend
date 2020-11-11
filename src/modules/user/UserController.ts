@@ -588,9 +588,9 @@ export class UserController {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
 				}
 
-				// if (step1 && step2 && step1._id !== step2._id && step2.isMobileVerified === true) {
-				// 	return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
-				// }
+				if (step1 && step2 && step1._id !== step2._id && step2.isMobileVerified === true) {
+					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_ALREADY_IN_USER_SOCIAL_CASE)
+				}
 
 				let step3;
 				// if both email and mobile are verified
@@ -613,7 +613,6 @@ export class UserController {
 					}
 					if (!step1 && step2 && step2.isMobileVerified === false) {
 						console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
-
 						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 					}
 				}
