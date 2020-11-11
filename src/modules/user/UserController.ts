@@ -258,7 +258,7 @@ export class UserController {
 
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
-					// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 
 
 					if (params.email && !step2) {
