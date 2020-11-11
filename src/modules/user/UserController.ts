@@ -968,12 +968,12 @@ export class UserController {
 			}
 			// else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
 			if (checkUser) {
-				if (checkUser && checkUser._id !== userData.userId && checkUser.isMobileVerified === true) {
+				if (checkUser._id.toString() !== userData.userId.toString() && checkUser.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
 				}
 				// }
 				// else if (userData.isEmailVerified === true && userData.isMobileVerified === true) {
-				if (checkUser && checkUser.isMobileVerified === false && checkUser._id !== userData.userId) {
+				if (checkUser.isMobileVerified === false && checkUser._id.toString() !== userData.userId.toString()) {
 					const removePhoneNo = await userDao.findOneAndUpdate('users', { _id: checkUser._id }, { mobileNo: 'N/A' }, {});
 					const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
 				}
