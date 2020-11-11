@@ -719,7 +719,7 @@ export class UserController {
 				}
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 				params = _.extend(params, { "arn": arn, "salt": step3.salt || salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
-				const step34 = loginHistoryDao.createUserLoginHistory(params);
+				const step34 = loginHistoryDao.createUserLoginHistory(tokenData);
 				let step4, step5;
 				if (config.SERVER.IS_REDIS_ENABLE) {
 					if (!config.SERVER.IN_ACTIVITY_SESSION)
