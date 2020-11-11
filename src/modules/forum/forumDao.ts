@@ -353,7 +353,7 @@ export class ForumTopic extends BaseDao {
             let myForumData;
             if (!params.postId) {
                 aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
-                myForumData = await this.aggregateWithPagination('forum', aggPipe)
+                myForumData = await this.aggregateWithPagination('forum', aggPipe, paginateOptions.limit, paginateOptions.page, true)
             }
 
             if (params.postId) {
