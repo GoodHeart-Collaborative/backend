@@ -29,7 +29,7 @@ export class HomeDao extends BaseDao {
             // .getTime();
             console.log('header.timezoneheader.timezone', header.timezone);
 
-            let endDateee = (moment().utc(header.timezone)).endOf('day').format("x")
+            let endDateee = (moment().utc(header.timezone)).format("x")
             // off_set = '+05:30'
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>', endDateee);
 
