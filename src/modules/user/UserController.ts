@@ -425,8 +425,6 @@ export class UserController {
 					}
 					params = _.extend(params, { "salt": findEmail.salt, "lastLogin": step3 });
 
-
-
 					// const step4 = loginHistoryDao.createUserLoginHistory(findEmail);
 
 					tokenData = { ...params, ...tokenData };

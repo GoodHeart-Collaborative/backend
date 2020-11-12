@@ -256,16 +256,19 @@ export class ShoutoutDao extends BaseDao {
                 $gt: new Date(new Date().getTime() - 60 * 60 * 24 * 1000)
             };
 
-            const step1 = await shoutoutDao.find('shoutout', { receiverId: userId, ...match }, {}, {}, {}, {}, {});
+            const step1 = await shoutoutDao.find('shoutout', { receiverId: userId, ...match, }, {}, {}, {}, {}, {});
 
             let step2, step3;
             if (step1 && step1.length == 0) {
                 // myconnections shouotut
-                // match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
+                match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
                 step2 = await shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match }, {}, {}, {}, {}, {})
             }
             if (step1 && step2 && step2.length == 0 && step1.length == 0) {
-                step3 = await shoutoutDao.find('shoutout', { ...match, senderId: userId, }, {}, {}, {}, {}, {})
+                match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
+                step3 = await shoutoutDao.find('shoutout', {
+                    ...match, senderId: userId,
+                }, {}, {}, {}, {}, {})
             }
 
             aggPipe.push({ "$sort": { "_id": -1 } })

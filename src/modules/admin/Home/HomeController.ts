@@ -25,12 +25,12 @@ class AdminHomeController {
             if (params.postedAt) {
                 // params["postedAt"] = params..postedAt;
                 params["postedAt"] = params.postedAt //.format('YYYY-MM-DD');
-                params['postAt'] = new Date(params.postedAt).setHours(0, 0, 0, 999) //.getTime() //.format('YYYY-MM-DD');
+                params['postAt'] = params.postedAt //.setHours(0, 0, 0, 999) //.getTime() //.format('YYYY-MM-DD');
             } else {
                 params["postedAt"] = new Date() //).format('YYYY-MM-DD'); //  new Date()
                 // params.postedAt = new Date()//moment(newgetTime Date()).format('YYYY-MM-DD')
 
-                params['postAt'] = new Date().setHours(0, 0, 0, 999)  //).format('YYYY-MM-DD');
+                params['postAt'] = new Date().getTime() //new Date().setHours(0, 0, 0, 999)  //).format('YYYY-MM-DD');
             }
             console.log('>>>>>>>>>>>>>>>>>>>>>>>', params);
 
@@ -179,8 +179,8 @@ class AdminHomeController {
                 _id: params.Id
             }
             if (params.postedAt) {
-                params.postedAt = new Date(params.postedAt)//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
-                params['postAt'] = new Date(params.postedAt).getTime();
+                params.postedAt = params.postedAt//moment(new Date(params.postedAt)).format('YYYY-MM-DD')
+                params['postAt'] = params.postedAt //).getTime();
             } else {
                 params.postedAt = new Date()//moment(new Date()).format('YYYY-MM-DD')
                 params['postAt'] = new Date().getTime() //moment(new Date()).format('YYYY-MM-DD')
@@ -192,10 +192,10 @@ class AdminHomeController {
             if (data.type == config.CONSTANT.HOME_TYPE.UNICORN) {
                 data.type = config.CONSTANT.HOME_TYPES.UNICORN
             }
-            if (data.type == config.CONSTANT.HOME_TYPE.INSPIRATION) {
+            else if (data.type == config.CONSTANT.HOME_TYPE.INSPIRATION) {
                 data.type = config.CONSTANT.HOME_TYPES.INSPIRATION
             }
-            if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+            else if (data.type == config.CONSTANT.HOME_TYPE.DAILY_ADVICE) {
                 data.type = config.CONSTANT.HOME_TYPES.DAILY_ADVICE
             }
             return HOME_CONSTANT.MESSAGES.SUCCESS.UPDATED_SUCCESSFULLY(data.type)

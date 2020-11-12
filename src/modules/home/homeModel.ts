@@ -17,7 +17,7 @@ export interface Ihome extends Document {
     thumbnailUrl: string,
     createdAt: Date,
     updatedAt: Date
-    postedAt: Date,
+    postedAt: number,
     type: number;
     mediaType: number,
     mediaUrl: number,
@@ -54,7 +54,7 @@ const homeSchema = new Schema({
     },
     description: { type: String },
     isPostLater: { type: Boolean },
-    postedAt: { type: Date, trim: true, },
+    postedAt: { type: Number },
     postAt: { type: Number },
     mediaType: {
         type: Number,
