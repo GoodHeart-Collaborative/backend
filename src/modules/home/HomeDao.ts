@@ -24,11 +24,19 @@ export class HomeDao extends BaseDao {
 
 
             // const endDateee = new Date().setHours(23, 59, 58, 999)
-            const endDateee = new Date(new Date().setHours(23, 59, 58, 999)).getTime() + header.timezone;
+            // const endDateee = new Date(new Date().setHours(23, 59, 58, 999)).getTime() + header.timezone;
 
             // .getTime();
+            console.log('header.timezoneheader.timezone', header.timezone);
 
-            console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
+            let endDateee = (moment().utc(header.timezone)).endOf('day').format("x")
+            // off_set = '+05:30'
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>', endDateee);
+
+            const a = parseInt(endDateee)
+            console.log('>>>>>>>>>>>>>>',);
+
+            console.log('endDateeeendDateeeendDateeeendDateee', a);
             //   convert      moment.utc("2015-10-01 01:24:21").utcOffset("-04:00").format('YYYYMMDD HHmmss ZZ')
 
             // const aa = new Date(endDateee - (header.timeZone / 60))
@@ -49,7 +57,7 @@ export class HomeDao extends BaseDao {
             // let endDateee = new Date().se    tUTCHours(23, 59, 59, 999) - header.timeZone;
 
             // endDateee = endDateee.getTime();
-            match["postAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
+            match["postAt"] = { $lte: a }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {
