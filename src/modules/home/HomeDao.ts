@@ -20,8 +20,14 @@ export class HomeDao extends BaseDao {
 
             let idKey: string = '$_id'
             // endDateee.set
+            // 19800000
 
-            const endDateee = new Date().setHours(23, 59, 58, 999) // .getTime();
+
+            // const endDateee = new Date().setHours(23, 59, 58, 999)
+            const endDateee = new Date(new Date().setHours(23, 59, 58, 999)).getTime() + header.timezone;
+
+            // .getTime();
+
             console.log('endDateeeendDateeeendDateeeendDateee', endDateee);
             //   convert      moment.utc("2015-10-01 01:24:21").utcOffset("-04:00").format('YYYYMMDD HHmmss ZZ')
 
@@ -40,7 +46,7 @@ export class HomeDao extends BaseDao {
             // console.log('todayDatetodayDatetodayDatetodayDate', endDateee);
 
             //  = '+05:30'
-            // let endDateee = new Date().setUTCHours(23, 59, 59, 999) - header.timeZone;
+            // let endDateee = new Date().se    tUTCHours(23, 59, 59, 999) - header.timeZone;
 
             // endDateee = endDateee.getTime();
             match["postAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
