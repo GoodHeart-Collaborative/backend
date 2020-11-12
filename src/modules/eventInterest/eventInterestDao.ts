@@ -25,6 +25,20 @@ export class EventInterest extends BaseDao {
     //         return Promise.reject(error)
     //     }
     // }
+
+
+    async updateStatus(params) {
+        try {
+            const dataToUpdate = {
+                status: params.status
+            }
+            const data = await this.updateMany('event_interest', { userId: params.userId }, dataToUpdate, {})
+            return;
+
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
 }
 
 export const eventInterestDao = new EventInterest();

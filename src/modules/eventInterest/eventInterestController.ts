@@ -91,6 +91,7 @@ class InterestController {
 
             match['eventId'] = appUtils.toObjectId(eventId);
             match['type'] = type;
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
 
             aggPipe.push({ $match: match });
             aggPipe.push({
@@ -107,7 +108,12 @@ class InterestController {
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $eq: ['$_id', '$$uId'],
+                                $and: [{
+                                    $eq: ['$_id', '$$uId'],
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
                             }
                         }
                     }]

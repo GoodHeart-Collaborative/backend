@@ -57,7 +57,7 @@ const commonAuthorizationHeaderObj = Joi.object({
 			});
 			return errors;
 		}),
-	timezone: Joi.number().default("0").optional().description("time zone")
+	timezone: Joi.string().default("0").optional().description("time zone")
 }).unknown();
 
 const headerObject = {

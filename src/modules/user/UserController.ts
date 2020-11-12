@@ -266,7 +266,7 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
-						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+						// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
 					}
 
@@ -278,7 +278,7 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
-						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+						// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 
 					}
@@ -315,7 +315,7 @@ export class UserController {
 						}
 						params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken });
 						// const step4 = loginHistoryDao.createUserLoginHistory(params);
-						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+						// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 
 						let step5, step6;
 						if (config.SERVER.IS_REDIS_ENABLE) {
@@ -366,7 +366,7 @@ export class UserController {
 							subscriptionType: step1.subscriptionType,
 							subscriptionEndDate: step1.subscriptionEndDate,
 							// subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? "0" : step1.subscriptionPlatform
-							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE) ? params.platform : step1.subscriptionPlatform
+							subscriptionPlatform: (step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value || step1.subscriptionType === config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value) ? params.platform : step1.subscriptionPlatform
 						}
 
 						delete step1['subscriptionType'];
