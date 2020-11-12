@@ -15,7 +15,7 @@ const userAuthorizationHeaderObj = Joi.object({
 			config.CONSTANT.DEVICE_TYPE.WEB
 		])
 		.description("device OS '1'-Android, '2'-iOS, '3'-WEB"),
-	timezone: Joi.number().default("0").optional().description("time zone")
+	timezone: Joi.string().default("0").optional().description("time zone")
 }).unknown();
 
 const adminAuthorizationHeaderObj = Joi.object({
@@ -29,7 +29,7 @@ const adminAuthorizationHeaderObj = Joi.object({
 			config.CONSTANT.DEVICE_TYPE.WEB
 		])
 		.description("device OS '1'-Android, '2'-iOS, '3'-WEB"),
-	timezone: Joi.number().default("0").optional().description("time zone")
+	timezone: Joi.string().default("0").optional().description("time zone")
 }).unknown();
 
 const commonAuthorizationHeaderObj = Joi.object({
@@ -85,7 +85,7 @@ const headerObject = {
 				});
 				return errors;
 			}),
-		timezone: Joi.number().default("0").required().description("time zone")
+		timezone: Joi.string().default("0").required().description("time zone")
 	}).unknown(),
 
 	"optional": Joi.object({
@@ -112,7 +112,7 @@ const headerObject = {
 				});
 				return errors;
 			}),
-		timezone: Joi.number().default("0").optional().description("time zone")
+		timezone: Joi.string().default("0").optional().description("time zone")
 	}).unknown()
 };
 
