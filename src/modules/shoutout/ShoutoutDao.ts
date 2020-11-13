@@ -258,127 +258,137 @@ export class ShoutoutDao extends BaseDao {
 
             const step1 = await shoutoutDao.find('shoutout', { receiverId: userId, ...match, }, {}, {}, {}, {}, {});
 
-            let step2, step3;
-            if (step1 && step1.length == 0) {
-                // myconnections shouotut
-                match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
-                step2 = await shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match }, {}, {}, {}, {}, {})
-            }
-            if (step1 && step2 && step2.length == 0 && step1.length == 0) {
-                match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
-                step3 = await shoutoutDao.find('shoutout', {
-                    ...match, senderId: userId,
-                }, {}, {}, {}, {}, {})
-            }
+            // let step2, step3;
+            // if (step1 && step1.length == 0) {
+            //     // myconnections shouotut
+            //     match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
+            //     step2 = await shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match }, {}, {}, {}, {}, {})
+            // }
+            // if (step1 && step2 && step2.length == 0 && step1.length == 0) {
+            //     match['privacy'] = CONSTANT.PRIVACY_STATUS.PUBLIC;
+            //     step3 = await shoutoutDao.find('shoutout', {
+            //         ...match, senderId: userId,
+            //     }, {}, {}, {}, {}, {})
+            // }
 
-            aggPipe.push({ "$sort": { "_id": -1 } })
-            aggPipe.push({ "$match": match })
-            // aggPipe.push({
-            //     $lookup: {
-            //         "from": "users",
-            //         "localField": "senderId",
-            //         "foreignField": "_id",
-            //         "as": "sender"
-            //     }
-            // })
-            aggPipe.push({
-                $lookup: {
-                    "from": "users",
-                    "as": "sender",
-                    let: { sId: '$senderId' },
-                    pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    {
-                                        $eq: ['$_id', '$$sId']
-                                    },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    },
-                                ]
+            const [data1, data2, data3] = await Promise.all([
+                shoutoutDao.find('shoutout', { receiverId: userId, ...match, }, {}, {}, {}, {}, {}),
+                shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match, ...{ privacy: CONSTANT.PRIVACY_STATUS.PUBLIC } }, {}, {}, {}, {}, {}),
+                shoutoutDao.find('shoutout', { senderId: userId, ...match }, {}, {}, {}, {}, {})
+            ]);
+
+            if (data1.length > 0 || data2.length > 0 || data3.length > 0) {
+                aggPipe.push({ "$sort": { "_id": -1 } })
+                aggPipe.push({ "$match": match })
+                // aggPipe.push({
+                //     $lookup: {
+                //         "from": "users",
+                //         "localField": "senderId",
+                //         "foreignField": "_id",
+                //         "as": "sender"
+                //     }
+                // })
+                aggPipe.push({
+                    $lookup: {
+                        "from": "users",
+                        "as": "sender",
+                        let: { sId: '$senderId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$_id', '$$sId']
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        },
+                                    ]
+                                }
                             }
-                        }
-                    }]
-                }
-            })
-            aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: false } })
-            // aggPipe.push({
-            //     $lookup: {
-            //         "from": "users",
-            //         "localField": "receiverId",
-            //         "foreignField": "_id",
-            //         "as": "receiver"
-            //     }
-            // })
-            aggPipe.push({
-                $lookup: {
-                    "from": "users",
-                    "as": "receiver",
-                    let: { rId: '$receiverId' },
-                    pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    {
-                                        $eq: ['$_id', '$$rId']
-                                    },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    },
-                                ]
-                            }
-                        }
-                    }]
-                }
-            })
-            aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: false } })
-            aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
-            aggPipe.push({
-                $sort: {
-                    _id: -1,
-                },
-            },
-                {
-                    $limit: 1
-                });
-            aggPipe.push({
-                "$project": {
-                    sender: {
-                        _id: '$sender._id',
-                        industryType: "$sender.industryType",
-                        myConnection: "$sender.myConnection",
-                        experience: "$sender.experience",
-                        // discover_status: 
-                        about: "$sender.about",
-                        name: { $ifNull: ["$sender.firstName", ""] },
-                        profilePicUrl: "$sender.profilePicUrl",
-                        profession: { $ifNull: ["$sender.profession", ""] }
-                    },
-                    receiver: {
-                        _id: "$receiver._id",
-                        industryType: "$receiver.industryType",
-                        myConnection: "$receiver.myConnection",
-                        experience: "$receiver.experience",
-                        // discover_status: 
-                        about: "$receiver.about",
-                        name: { $ifNull: ["$receiver.firstName", ""] },
-                        profilePicUrl: "$receiver.profilePicUrl",
-                        profession: { $ifNull: ["$receiver.profession", ""] }
-                    },
-                    created: 1,
-                    story: {
-                        storyDuration: 6, // in seconds
-                        greetWord: 'congratulates',
-                        gif: "$gif",
-                        title: "$title",
-                        description: "$description"
+                        }]
                     }
-                }
-            });
-            result = await this.aggregate('shoutout', aggPipe, {});
+                })
+                aggPipe.push({ '$unwind': { path: '$sender', preserveNullAndEmptyArrays: false } })
+                // aggPipe.push({
+                //     $lookup: {
+                //         "from": "users",
+                //         "localField": "receiverId",
+                //         "foreignField": "_id",
+                //         "as": "receiver"
+                //     }
+                // })
+                aggPipe.push({
+                    $lookup: {
+                        "from": "users",
+                        "as": "receiver",
+                        let: { rId: '$receiverId' },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$_id', '$$rId']
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        },
+                                    ]
+                                }
+                            }
+                        }]
+                    }
+                })
+                aggPipe.push({ '$unwind': { path: '$receiver', preserveNullAndEmptyArrays: false } })
+                aggPipe.push({ "$addFields": { created: { "$subtract": ["$createdAt", new Date("1970-01-01")] } } });
+                aggPipe.push({
+                    $sort: {
+                        _id: -1,
+                    },
+                },
+                    {
+                        $limit: 1
+                    });
+                aggPipe.push({
+                    "$project": {
+                        sender: {
+                            _id: '$sender._id',
+                            industryType: "$sender.industryType",
+                            myConnection: "$sender.myConnection",
+                            experience: "$sender.experience",
+                            // discover_status: 
+                            about: "$sender.about",
+                            name: { $ifNull: ["$sender.firstName", ""] },
+                            profilePicUrl: "$sender.profilePicUrl",
+                            profession: { $ifNull: ["$sender.profession", ""] }
+                        },
+                        receiver: {
+                            _id: "$receiver._id",
+                            industryType: "$receiver.industryType",
+                            myConnection: "$receiver.myConnection",
+                            experience: "$receiver.experience",
+                            // discover_status: 
+                            about: "$receiver.about",
+                            name: { $ifNull: ["$receiver.firstName", ""] },
+                            profilePicUrl: "$receiver.profilePicUrl",
+                            profession: { $ifNull: ["$receiver.profession", ""] }
+                        },
+                        created: 1,
+                        story: {
+                            storyDuration: 6, // in seconds
+                            greetWord: 'congratulates',
+                            gif: "$gif",
+                            title: "$title",
+                            description: "$description"
+                        }
+                    }
+                });
+                result = await this.aggregate('shoutout', aggPipe, {});
+            }
 
-            if (result[0]) {
+            // result = await this.aggregate('shoutout', aggPipe, {});
+
+            if (result && result[0]) {
                 result[0]["type"] = config.CONSTANT.HOME_TYPE.CONGRATS
                 return result[0]
             }
