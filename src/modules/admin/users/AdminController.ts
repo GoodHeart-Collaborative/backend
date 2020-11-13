@@ -18,6 +18,8 @@ import * as createPayload from '@utils/NotificationManager';
 import * as moment from 'moment';
 import { subscriptionDao } from "@modules/subscription/subscriptionDao";
 import { notificationDao } from "@modules/notification";
+import { eventDao } from "@modules/event/eventDao";
+import { eventInterestDao } from "@modules/eventInterest/eventInterestDao";
 class AdminController {
 
 	/**
@@ -601,6 +603,10 @@ class AdminController {
 			}
 			if (params.status === config.CONSTANT.STATUS.DELETED || params.status === config.CONSTANT.STATUS.BLOCKED) {
 				const updatUserInNotificationList = await notificationDao.updatNotificationStatus(params)
+				const eventInterestStatus = await eventInterestDao.updateStatus(params);
+			}
+			if (params.status === config.CONSTANT.STATUS.ACTIVE) {
+				const eventInterestStatus = await eventInterestDao.updateStatus(params);
 			}
 			// send push from here
 			params['title'] = 'Request Approval';
