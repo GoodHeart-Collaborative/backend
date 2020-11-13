@@ -406,7 +406,7 @@ export class DiscoverDao extends BaseDao {
                 }
             })
             result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
-            return Promise.reject(result) //result
+            return result
         } catch (error) {
             throw error;
         }
