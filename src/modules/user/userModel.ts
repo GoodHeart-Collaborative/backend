@@ -162,7 +162,7 @@ const userSchema = new Schema({
 			config.INDUSTRIES.LAW_ENFORCEMENT,
 			config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
 		],
-		default: config.INDUSTRIES.NONPROFIT
+		// default: config.INDUSTRIES.NONPROFIT
 	},
 	// isAdminVerified: { type: Boolean, default: false },
 	// isAdminRejected: { type: Boolean, default: false },

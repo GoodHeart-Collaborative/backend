@@ -329,8 +329,8 @@ export const commonRoute: ServerRoute = [
 				let message;
 				let title;
 				if (error === "alreadyVerified") {
-					message = "Hi your email is already been verified . Please login to continue."
-					title = "Email Already verified";
+					message = "Hi your email is already been verified. Please login to continue."
+					title = "Email already verified";
 					return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
 				} else {
 					// const message = "Your link has been expired. Please regenerate your link again.";
