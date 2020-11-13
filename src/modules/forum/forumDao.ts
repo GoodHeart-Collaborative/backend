@@ -4,6 +4,7 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
 import { reportDao } from "@modules/report/reportDao";
+import { userDao } from "@modules/user";
 
 export class ForumTopic extends BaseDao {
 
@@ -105,7 +106,12 @@ export class ForumTopic extends BaseDao {
                     data = await this.aggregate('categories', categoryPipe, {});
                 }
             }
+            let findBlockedUser = await userDao.findBlcokedUser();
+            findBlockedUser = findBlockedUser[0].Ids1 ? findBlockedUser[0].Ids1 : [];
 
+            console.log('findBlockedUserfindBlockedUserfindBlockedUser', findBlockedUser);
+
+            match['createrId'] = { $nin: findBlockedUser };
             aggPipe.push({ $match: match });
             aggPipe.push({
                 $lookup: {
@@ -145,29 +151,17 @@ export class ForumTopic extends BaseDao {
             aggPipe.push({
                 $lookup: {
                     from: 'users',
-                    let: { 'uId': '$createrId', uType: '$userType' },
+                    let: { 'uId': '$createrId', },
                     as: 'users',
                     pipeline: [{
                         $match: {
                             $expr: {
-                                $or: [{
-                                    $and: [{
-                                        $eq: ['$_id', '$$uId']
-                                    },
-                                        // {
-                                        //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                        // },
-                                        // {
-                                        //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.USER]
-                                        // }
-                                    ],
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
                                 },
-                                    // {
-                                    //     $ne: ['$_id', '$$uId'],
-                                    // },
-                                    // {
-                                    //     $eq: ['$$uType', config.CONSTANT.ACCOUNT_LEVEL.ADMIN]
-                                    // }
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                },
                                 ]
                             }
                         }
@@ -176,7 +170,7 @@ export class ForumTopic extends BaseDao {
                 }
             });
 
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } })
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } });
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });

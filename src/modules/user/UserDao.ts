@@ -860,6 +860,31 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
+
+	async findBlcokedUser() {
+		try {
+			const query = [{
+				$match: {
+					status: { $ne: "active" }
+				}
+			}, {
+				$group: {
+					_id: null,
+					Ids1: { $push: "$_id" }
+				}
+			},
+			{
+				$project: {
+					_id: 0
+				}
+			}
+			];
+			const blockedUsers = await this.aggregate('users', query, {});
+			return blockedUsers;
+		} catch (error) {
+			return Promise.reject(error)
+		}
+	}
 }
 
 export const userDao = new UserDao();
