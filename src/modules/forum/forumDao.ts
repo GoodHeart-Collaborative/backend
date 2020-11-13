@@ -170,7 +170,7 @@ export class ForumTopic extends BaseDao {
                 }
             });
 
-            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: false } });
+            aggPipe.push({ '$unwind': { path: '$users', preserveNullAndEmptyArrays: true } });
 
             aggPipe.push({ "$match": match });
             aggPipe.push({ "$sort": { "postAt": -1 } });
