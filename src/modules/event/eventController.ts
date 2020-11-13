@@ -914,11 +914,13 @@ class EventController {
 
             const data = await eventDao.aggregate('event', aggPipe, {})
 
-            const goingCount = eventDao.count('event_interest', { type: 1, userId: tokenData.userId, status: config.CONSTANT.STATUS.ACTIVE })
-            const interestCount = eventDao.count('event_interest', { type: 2, userId: tokenData.userId, status: config.CONSTANT.STATUS.ACTIVE })
+            const goingCount = await eventDao.count('event_interest', { type: 1, userId: tokenData.userId, eventId: payload.eventId, status: config.CONSTANT.STATUS.ACTIVE })
+            const interestCount = await eventDao.count('event_interest', { type: 2, userId: tokenData.userId, eventId: payload.eventId, status: config.CONSTANT.STATUS.ACTIVE })
+            console.log('>>>>>', goingCount);
+            console.log('interestCountinterestCount', interestCount);
 
-            data[0]['interestCount'] = interestCount;
-            data[0]['goingCount'] = goingCount;
+            data[0]['interestCount'] = interestCount ? interestCount : 0;
+            data[0]['goingCount'] = goingCount
 
             // for the deeplink case
             if (payload.eventId && data[0] && data[0].endDate < new Date().getTime()) {
