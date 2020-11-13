@@ -914,8 +914,8 @@ class EventController {
 
             const data = await eventDao.aggregate('event', aggPipe, {})
 
-            const goingCount = await eventDao.count('event_interest', { type: 1, userId: tokenData.userId, eventId: payload.eventId, status: config.CONSTANT.STATUS.ACTIVE })
-            const interestCount = await eventDao.count('event_interest', { type: 2, userId: tokenData.userId, eventId: payload.eventId, status: config.CONSTANT.STATUS.ACTIVE })
+            const goingCount = await eventDao.count('event_interest', { type: 1, eventId: payload.eventId, status: config.CONSTANT.STATUS.ACTIVE })
+            const interestCount = await eventDao.count('event_interest', { type: 2, eventId: payload.eventId, status: config.CONSTANT.STATUS.ACTIVE })
             console.log('>>>>>', goingCount);
             console.log('interestCountinterestCount', interestCount);
 
