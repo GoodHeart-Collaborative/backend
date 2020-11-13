@@ -72,7 +72,7 @@ export class ForumTopic extends BaseDao {
                     as: 'userData'
                 }
             })
-            aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: true } });
+            aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: false } });
 
             // aggPipe.push({
             //     $lookup: {
