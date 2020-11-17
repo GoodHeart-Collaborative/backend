@@ -274,7 +274,7 @@ export class ShoutoutDao extends BaseDao {
             const [data1, data2, data3] = await Promise.all([
                 shoutoutDao.find('shoutout', { receiverId: userId, ...match, }, {}, {}, {}, {}, {}),
                 shoutoutDao.find('shoutout', { senderId: { $in: userIds.members, }, ...match, ...{ privacy: CONSTANT.PRIVACY_STATUS.PUBLIC } }, {}, {}, {}, {}, {}),
-                shoutoutDao.find('shoutout', { senderId: userId, ...match }, {}, {}, {}, {}, {})
+                shoutoutDao.find('shoutout', { senderId: userId, ...match, ...{ privacy: CONSTANT.PRIVACY_STATUS.PUBLIC } }, {}, {}, {}, {}, {})
             ]);
 
             if (data1.length > 0 || data2.length > 0 || data3.length > 0) {
