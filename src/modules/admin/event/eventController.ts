@@ -7,7 +7,6 @@ import * as config from "@config/index";
 import * as eventConstant from "@modules/admin/event/eventConstant";
 import { eventDao } from "@modules/event/eventDao";
 import * as appUtils from "@utils/appUtils";
-import * as XLSX from 'xlsx'
 import { categoryDao } from "../catgeory";
 import { eventInterestDao } from "@modules/eventInterest/eventInterestDao";
 

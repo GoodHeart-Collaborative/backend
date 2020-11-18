@@ -112,8 +112,8 @@ class AdminNotificationController {
 				tokenData.permission.indexOf("delete_notification") !== -1
 			) {
 				if (params.image) {
-					const step1: any = await imageUtil.uploadSingleMediaToS3(params.image);
-					params.image = step1;
+					// const step1: any = await imageUtil.uploadSingleMediaToS3(params.image);
+					// params.image = step1;
 				}
 				const step2 = adminNotificationDao.editNotification(params);
 				const notificationData = config.CONSTANT.NOTIFICATION_DATA.BULK_NOTIFICATION(params.title, params.message);

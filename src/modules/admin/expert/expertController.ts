@@ -7,7 +7,6 @@ import * as config from "@config/index";
 import * as expertConstant from "@modules/admin/expert/expertConstant";
 import { expertDao } from "@modules/admin/expert/expertDao";
 import * as appUtils from "@utils/appUtils";
-import * as XLSX from 'xlsx'
 
 class ExpertController {
 
