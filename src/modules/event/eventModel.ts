@@ -5,12 +5,8 @@ import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 import * as shortid from 'shortid';
 
-// import * as 
-
 export interface Ievent extends Document {
     userId: string,
-    // categoryId: string;
-    // name: string;
     location: any;
     title: string,
     privacy: string;
@@ -39,8 +35,6 @@ var geoSchema = new Schema({
 
 const eventSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, required: true, ref: 'users', index: true },
-    // categoryId:{type:Schema.Types.ObjectId },
-    // name: { type: String, index: true },
     userType: {
         type: String, required: true, enum: [
             config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
@@ -62,7 +56,6 @@ const eventSchema = new Schema({
     price: { type: Number, default: 0 },
     title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
-    // membersDetail: [{userId: { type: Schema.Types.ObjectId, ref: "users", default: null, index: true }}],
     status: {
         type: String,
         enum: [
@@ -80,16 +73,7 @@ const eventSchema = new Schema({
     shortId: { type: String, default: shortid.generate, unique: true },
     goingCount: { type: Number, default: 0 },
     eventCategoryName: { type: String },
-    // eventCategoryDisplayName: { type: String },
     eventCategoryId: { type: Schema.Types.ObjectId, required: true },
-    // {
-    //     type: Number, index: true, enum: [
-    //         config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
-    //         config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
-    //         config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
-    //         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
-    //     ]
-    // },
     interestCount: { type: Number, default: 0 },
     created: { type: Number },
 
@@ -97,17 +81,10 @@ const eventSchema = new Schema({
     versionKey: false,
     timestamps: true
 });
-// eventSchema.index({
-//     location: '2dsphere'
-// });
+
 eventSchema.set("toObject", {
     virtuals: true
 });
-
-// eventSchema.index({
-//     location: '2dsphere'
-// });
-
 
 eventSchema.methods.toJSON = function () {
     const object = appUtils.clean(this.toObject());

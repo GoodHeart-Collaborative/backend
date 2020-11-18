@@ -21,7 +21,6 @@ let getCategorList = Joi.object({
     longitude: Joi.number().optional(),
     latitude: Joi.number().optional(),
     distance: Joi.number().default(40)
-    // forWhichFlow : Joi.string([])
 }).unknown();
 
 

@@ -24,8 +24,6 @@ export interface Ihome extends Document {
     addedBy: string;
     postAt: number;
     reportCount: number;
-    // addedBy: Object;
-    // imageUrl: string;
 }
 
 
@@ -69,12 +67,6 @@ const homeSchema = new Schema({
     // imageUrl: { type: String },
     created: { type: Number, default: new Date() },
     addedBy: { type: Schema.Types.ObjectId }
-    // {
-    //     name: { type: String },
-    //     profilePicture: { type: String }
-    // }
-    // // createdAt: { type: Date },
-    // updatedAt: { type: Date }
 }, {
     versionKey: false,
     timestamps: true

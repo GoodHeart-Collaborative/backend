@@ -18,7 +18,6 @@ export interface Iforum extends Document {
     created: number;
     postAt: string;
     createrId: string;
-    // topic: string;
     thumbnailUrl: string;
     mediaUrl: string;
     mediaType: number;

@@ -9,8 +9,6 @@ import { eventInterestDao } from "@modules/eventInterest/eventInterestDao";
 import * as appUtils from "@utils/appUtils";
 import { eventDao } from "@modules/event/eventDao";
 import { baseDao } from "@modules/base/BaseDao";
-import { userDao } from "@modules/user";
-import { discoverDao } from "@modules/discover";
 import { notificationManager } from '@utils/NotificationManager';
 import { eventController } from "@modules/event/eventController";
 class InterestController {
@@ -58,7 +56,7 @@ class InterestController {
                 params['eventId'] = eventId;
                 params['userId'] = findCreatedUserId.userId;
                 // params['userId'] = params.followerId;
-                const data1111 = notificationManager.sendOneToOneNotification(params, { userId: tokenData.userId }, true);
+                const data = notificationManager.sendOneToOneNotification(params, { userId: tokenData.userId }, true);
             }
 
             const userEvent = await eventInterestDao.findAll('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {});
@@ -71,11 +69,7 @@ class InterestController {
             }
 
             const eventData = await eventController.getEventDetail({ eventId: params.eventId }, { userId: tokenData.userId });
-            // console.log('eventDataeventDataeventData', eventData);
-
             return eventData;
-
-            // return data;
         } catch (error) {
             return Promise.reject(error);
         }
@@ -162,17 +156,6 @@ class InterestController {
 
             aggPipe.push({
                 '$project': {
-                    //         members: 0,
-                    //         adminStatus: 0,
-                    //         hash: 0,
-                    //         location: 0,
-                    //         createdAt: 0,
-                    //         updatedAt: 0,
-                    //         badgeCount: 0,
-                    //         fullMobileNo: 0,
-                    //         status: 0,
-                    // users: {
-
                     _id: '$userData._id',
                     status: '$userData.status',
                     industryType: "$userData.industryType",
@@ -190,11 +173,8 @@ class InterestController {
                             else: false
                         },
                     },
-                    // }
                 }
             })
-
-
             const data = await baseDao.paginate('event_interest', aggPipe, limit, page, true)
             return data;
 

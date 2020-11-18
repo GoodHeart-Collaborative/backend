@@ -3,12 +3,7 @@
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
-import { DataSync, Config } from "aws-sdk";
-import { categoryDao } from "@modules/admin/catgeory";
-import { expert } from "@modules/admin/expert/expertModel";
-import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
 import * as moment from 'moment';
-import { eventDao } from "@modules/event/eventDao";
 export class ExpertDao extends BaseDao {
 
     async getGratitudeJournalData(params) {
@@ -157,47 +152,7 @@ export class ExpertDao extends BaseDao {
                     $limit: paginateOptions.limit
                 }
             ]
-            const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {})
-
-            // const pipeline = [
-            //     {
-            //         $match: searchCriteria,
-            //     },
-            //     {
-            //         $sort: {
-            //             _id: -1
-            //         },
-            //     },
-            //     {
-            //         $lookup: {
-            //             from: 'experts',
-            //             let: { cId: '$_id' },
-            //             as: 'expertData',
-            //             pipeline: [
-            //                 {
-            //                     $match: {
-            //                         $expr: {
-            //                             $and: [{
-            //                                 $in: ['$$cId', '$categoryId'],
-            //                             },
-            //                             {
-            //                                 $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-            //                             }
-            //                             ]
-            //                         }
-            //                     }
-            //                 },
-            //             ],
-            //         },
-            //     },
-            //     {
-            //         $match: {
-            //             expertData: { $ne: [] }
-            //         }
-            //     }
-            // ];
-
-            // const data1 = await expertDao.aggregate('categories', pipeline, {});
+            const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {});
 
             const expertPipline = [
                 {
@@ -252,7 +207,6 @@ export class ExpertDao extends BaseDao {
 
             const EXPERTS1 = await expertDao.aggregate('categories', expertPipline, {});
 
-            // if (CategoryLIST.length > 0) {
             CATEGORIES = {
                 CategoryLIST,
                 type: 0,
@@ -417,7 +371,7 @@ export class ExpertDao extends BaseDao {
 
                 if (longitude == undefined && latitude == undefined) {
                     const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                    console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>', lat_lng);
+                    console.log('lat_lnglat_lng', lat_lng);
                     latitude = lat_lng.lat;
                     longitude = lat_lng.long;
                 }
@@ -472,7 +426,6 @@ export class ExpertDao extends BaseDao {
                 //     }
                 // });
 
-                // const categoryData = await eventDao.paginate('event', aggPipe, paginateOptions.limit, paginateOptions.pageNo, {});
                 categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.pageNo)];
                 let result = await this.aggregateWithPagination("event", aggPipe, limit, page, true);
 

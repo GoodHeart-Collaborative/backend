@@ -5,9 +5,6 @@ declare namespace UserEventRequest {
         coordinates: number[]
     }
     export interface AddEvent {
-        // userId: string,
-        // categoryId: Joi.string().required(),
-        // name: Joi.string(),
         title: string;
         privacy: string
         startDate: Date;
@@ -22,8 +19,6 @@ declare namespace UserEventRequest {
         description: string,
         created: number;
         eventCategoryName: string;
-        // eventCategoryType: string;
-        // eventCategoryDisplayName: string;
     }
 
     export interface getExpert {

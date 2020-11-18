@@ -2,9 +2,6 @@ declare namespace UserForumRequest {
 
     export interface AddForum {
         categoryId: string,
-        // categoryName: string, // only for searching
-        // userId: string,
-        // userStatus: string
         topic?: string,
         mediaUrl: string,
         description: string,
@@ -34,7 +31,6 @@ declare namespace UserForumRequest {
         postId: string;
         categoryId: string,
         categoryName: string, // only for searching
-        // userId: string,
         userStatus: string
         topic: string,
         mediaUrl: string,

@@ -47,7 +47,6 @@ export interface IUser extends Document {
 	about: string;
 	userPrivacy: string;
 	loginToken: string;
-	// createdAt: number;
 	countMember: number;
 	memberCreatedAt: string;
 	isMemberOfDay: boolean;
@@ -62,8 +61,6 @@ export interface IUser extends Document {
 	subscriptionPlatform: string;
 	subscriptionStartDate: number;
 	isDowngradeDone: boolean;
-	// isAdminRejected: boolean;
-	// isAdminVerified: boolean;
 }
 
 var geoSchema = new Schema({
@@ -125,16 +122,13 @@ const userSchema = new Schema({
 	subscriptionType: {
 		// memberType: {
 		type: Number, enum: [
-			// config.CONSTANT.MEMBER_TYPE.FREE,
-			// config.CONSTANT.MEMBER_TYPE.PREMIUM,
 			config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value,
 			config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.value,
 			config.CONSTANT.USER_SUBSCRIPTION_PLAN.YEARLY.value,
 			config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
 		],
 		default: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value
-		// default: config.CONSTANT.MEMBER_TYPE.FREE
-	}, // Free(Default rakho)
+	},
 	subscriptionEndDate: {
 		type: Number
 	},
@@ -164,9 +158,6 @@ const userSchema = new Schema({
 		],
 		// default: config.INDUSTRIES.NONPROFIT
 	},
-	// isAdminVerified: { type: Boolean, default: false },
-	// isAdminRejected: { type: Boolean, default: false },
-
 	adminStatus: {
 		type: String, enum: [
 			config.CONSTANT.USER_ADMIN_STATUS.PENDING,
@@ -200,8 +191,6 @@ const userSchema = new Schema({
 	likeCount: { type: Number, default: 0 },
 	commentCount: { type: Number, default: 0 },
 	badgeCount: { type: Number, default: 0 },
-	// createdAt: { type: Date },
-	// updatedAt: { type: Date },
 	reportCount: { type: Number, default: 0 }
 }, {
 	versionKey: false,
@@ -234,29 +223,6 @@ userSchema.virtual("password")
 // 		return this.firstName;
 // 	});
 
-// If elastic search engine is enabled
-// if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
-// 	// save user data in elastic search db
-// 	userSchema.post("save", function (doc) {
-// 		doc = doc.toJSON();
-// 		const id = doc["_id"];
-// 		if (doc["_id"]) delete doc["_id"];
-// 		if (doc["password"]) delete doc["password"];
-// 		elasticSearch.addDocument("admin_rcc", id, "users", doc);
-// 	});
-
-// 	// update user data in elastic search db
-// 	userSchema.post("findOneAndUpdate", async function (doc) {
-// 		doc = doc.toJSON();
-// 		const id = doc["_id"];
-// 		return await elasticSearch.deleteDocument("admin_rcc", id, "users")
-// 			.then(async () => {
-// 				if (doc["_id"]) delete doc["_id"];
-// 				if (doc["password"]) delete doc["password"];
-// 				return await elasticSearch.addDocument("admin_rcc", id, "users", doc);
-// 			});
-// 	});
-// }
 
 userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
@@ -270,8 +236,4 @@ userSchema.index({
 // to set findAndModify false
 mongoose.set("useFindAndModify", false);
 
-// mongoose autoincrement
-// userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
-
-// Export user
 export const users: Model<IUser> = mongoose.model<IUser>(config.CONSTANT.DB_MODEL_REF.USER, userSchema);

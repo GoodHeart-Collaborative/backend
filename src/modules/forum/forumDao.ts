@@ -289,8 +289,6 @@ export class ForumTopic extends BaseDao {
                     isCreatedByMe: {
                         $cond: { if: { "$eq": ["$createrId", await appUtils.toObjectId(params.userId)] }, then: true, else: false }
                     },
-                    // comment: { $ifNull: ["$comments.comment", ""] },
-                    // commentCreated: { $ifNull: ["$comments.created", ''] },
                     user: {
                         status: "$users.status",
                         _id: "$users._id",
@@ -302,36 +300,6 @@ export class ForumTopic extends BaseDao {
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] },
                         name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
-                        // name: {
-                        //     $cond: {
-                        //         if: {
-                        //             $and: [
-                        //                 {
-                        //                     $ifNull: ['$userId', false],
-                        //                 },
-                        //                 {
-                        //                     $eq: ['$userType', 'user']
-                        //                 }
-                        //             ]
-                        //         },
-                        //         then: 'Anonymous',
-                        //         else: {
-                        //             $cond: {
-                        //                 if: {
-                        //                     $and: [
-                        //                         {
-                        //                             $ifNull: ['$userId', true],
-                        //                         },
-                        //                         {
-                        //                             $eq: ['$userType', 'user']
-                        //                         }
-                        //                     ]
-                        //                 }, then: "$users.firstName",
-                        //                 else: 'Good heart team'
-                        //             }
-                        //         }
-                        //     }
-                        // },
                     },
                     isLike: {
                         $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
@@ -643,8 +611,6 @@ export class ForumTopic extends BaseDao {
             })
 
             let myForumData;
-            //  myForumData = await this.paginate('gratitude_journals', aggPipe, paginateOptions.limit, paginateOptions.page, {}, true)
-
             aggPipe = [...aggPipe, ...this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
             myForumData = await this.aggregateWithPagination('forum', aggPipe)
             return myForumData;

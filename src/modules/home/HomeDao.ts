@@ -17,46 +17,10 @@ export class HomeDao extends BaseDao {
             let result: any = {}
             // let endDateee = new Date();
             // let endDateee = moment().utc().endOf('day').toDate();
-
             let idKey: string = '$_id'
-            // endDateee.set
-            // 19800000
-
-
-            // const endDateee = new Date().setHours(23, 59, 58, 999)
-            // const endDateee = new Date(new Date().setHours(23, 59, 58, 999)).getTime() + header.timezone;
-
-            // .getTime();
-            console.log('header.timezoneheader.timezone', header.timezone);
-
             let endDateee = (moment().utc(header.timezone)).format("x")
-            // off_set = '+05:30'
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>', endDateee);
-
             const a = parseInt(endDateee)
-            console.log('>>>>>>>>>>>>>>',);
-
-            console.log('endDateeeendDateeeendDateeeendDateee', a);
-            //   convert      moment.utc("2015-10-01 01:24:21").utcOffset("-04:00").format('YYYYMMDD HHmmss ZZ')
-
-            // const aa = new Date(endDateee - (header.timeZone / 60))
-            // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,', aa);
-
-            // console.log('new Date()new Date()new Date()new Date()', new Date());
-
-            // let endDateee = new Date().getTime() - header.timezone;
-
-            // let todayDate = moment().utcOffset(header.timeZone).format('YYYYMMDD HHmmss ZZ')
-
-            // console.log('todayDate', todayDate);
-
-            // let endDateee = moment().endOf('day').unix()
-            // console.log('todayDatetodayDatetodayDatetodayDate', endDateee);
-
-            //  = '+05:30'
-            // let endDateee = new Date().se    tUTCHours(23, 59, 59, 999) - header.timeZone;
-
-            // endDateee = endDateee.getTime();
+            console.log('endDateeeend', a);
             match["postAt"] = { $lte: a }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
@@ -115,7 +79,6 @@ export class HomeDao extends BaseDao {
                     as: "likeData"
                 }
             })
-            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
                     from: "comments",
@@ -198,7 +161,6 @@ export class HomeDao extends BaseDao {
         try {
             // options['new'] = true;
             // options['lean'] = true;
-
             return await this.updateOne('home', query, update, {});
         } catch (error) {
             throw error;
