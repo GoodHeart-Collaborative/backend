@@ -201,7 +201,7 @@ const REPORT_MESSAGE = {
 		id: 13
 	},
 	SOMETHING_ELSE: {
-		reason: "Other",
+		reason: "Something else",
 		id: 14
 	}
 }
