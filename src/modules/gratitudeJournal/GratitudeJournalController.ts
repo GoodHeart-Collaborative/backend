@@ -11,9 +11,8 @@ import * as config from '@config/constant';
 class GratitudeJournalController {
 
     /**
-     * @function signup
-     * @description if IS_REDIS_ENABLE set to true,
-     * than redisClient.storeList() function saves value in redis.
+     * @function getGratitudeJournalData
+     * @description user's gratitude journal 
      */
     async getGratitudeJournalData(params: GratitudeJournalRequest.GetGratitudeJournalRequest, userId) {
         try {

@@ -393,28 +393,6 @@ class AdminController {
 		}
 	}
 
-	/**
-	 * @function userReportGraph
-	 */
-	async userReportGraph(params: AdminRequest.UserReportGraph) {
-		try {
-			if (params.type === config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year & Month"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Month"));
-			} else {
-				let step1 = await loginHistoryDao.userReportGraph(params);
-				step1 = adminMapper.userReportGraphResponseMapping(params, step1);
-				return adminConstant.MESSAGES.SUCCESS.DASHBOARD(step1);
-			}
-		} catch (error) {
-			throw error;
-		}
-	}
 
 	async verifyLink(params) {
 		try {

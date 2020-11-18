@@ -83,20 +83,6 @@ export class SMSManager {
 			}
 		});
 	}
-
-	sendPassword(params) {
-		return new Promise(async function (resolve, reject) {
-			try {
-				const link = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}
-					/login&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?type=login&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}login@&type=login`;
-				const tinyLink = await appUtils.tinyUrl(link);
-				const sms = config.CONSTANT.SMS.TEMPLATES.WELCOME.replace(/LINK/g, String(tinyLink)).replace(/EMAIL/g, params.email).replace(/PASSWORD/g, params.password);
-				resolve(this._sendMessage(params.countryCode, params.mobileNo, sms));
-			} catch (error) {
-				throw error;
-			}
-		});
-	}
 }
 
 export const smsManager = new SMSManager();

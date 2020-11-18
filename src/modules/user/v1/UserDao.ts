@@ -4,12 +4,9 @@ import * as _ from "lodash";
 
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
-import { ElasticSearch } from "@lib/ElasticSearch";
 import * as appUtils from '@utils/appUtils'
 import * as mongoose from "mongoose";
 
-
-const elasticSearch = new ElasticSearch();
 
 export class UserDao extends BaseDao {
 

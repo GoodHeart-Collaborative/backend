@@ -8,8 +8,6 @@ import { join } from "path";
 // when mediaType =2 then in mediaUrl you will give video url and in thumbnailUrl you will give video thumbnail image url
 
 
-
-
 let AddCategory = Joi.object({
 
     // name: Joi.string().lowercase().required(),

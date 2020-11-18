@@ -7,9 +7,6 @@ import { Schema, Model, Document } from "mongoose";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import { ElasticSearch } from "@lib/ElasticSearch";
-
-const elasticSearch = new ElasticSearch();
 
 // const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
 // autoIncrement.initialize(connection);
@@ -222,7 +219,6 @@ userSchema.virtual("password")
 // 		}
 // 		return this.firstName;
 // 	});
-
 
 userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());

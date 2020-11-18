@@ -43,9 +43,6 @@ export const EventInterestRoute: ServerRoute[] = [
             }
         }
     },
-
-
-
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/users/event/interest-going`,

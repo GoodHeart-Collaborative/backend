@@ -5,10 +5,7 @@ import * as Jwt from "jsonwebtoken";
 import * as jwtRefresh from "jsonwebtoken-refresh";
 
 import * as config from "@config/index";
-import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
-import { redisClient } from "@lib/redis/RedisClient";
 import { responseHandler } from "@utils/ResponseHandler";
-import { userDao } from "@modules/user/UserDao";
 
 export const generateAdminToken = async function (params) {
 	try {
@@ -89,43 +86,5 @@ export const refreshToken = async function (params, accountLevel) {
 	} catch (error) {
 		console.log("refreshToken=======================>", error);
 		return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));
-	}
-};
-
-export const verifySocketToken = async function (socket, accessToken) {
-	try {
-		const jwtPayload = await decodeToken({ accessToken });
-		const tokenData = await verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, false);
-		if (config.SERVER.IS_REDIS_ENABLE) {
-			const step1 = await redisClient.getValue(accessToken);
-			if (!step1) {
-				if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-					const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId });
-				} else {
-					const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId });
-				}
-				socket.emit(config.CONSTANT.SOCKET.EVENT.SOCKET_ERROR, config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED);
-			}
-		}
-		let userData = await userDao.findUserById({ "userId": tokenData.userId });
-		if (!userData) {
-			socket.emit(config.CONSTANT.SOCKET.EVENT.SOCKET_ERROR, config.CONSTANT.MESSAGES.ERROR.USER_NOT_FOUND);
-		} else {
-			if (userData.status === config.CONSTANT.STATUS.BLOCKED) {
-				return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.BLOCKED));
-			} else if (userData.status === config.CONSTANT.STATUS.DELETED) {
-				socket.emit(config.CONSTANT.SOCKET.EVENT.SOCKET_ERROR, config.CONSTANT.MESSAGES.ERROR.DELETED);
-			} else {
-				const step3 = await loginHistoryDao.findDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId, "salt": jwtPayload.payload.salt });
-				if (!step3) {
-					socket.emit(config.CONSTANT.SOCKET.EVENT.SOCKET_ERROR, config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED);
-				} else {
-					userData = _.extend(userData, { "deviceId": tokenData.deviceId, "accountLevel": tokenData.accountLevel, "platform": tokenData.platform, "userId": tokenData.userId });
-					return tokenData["userData"] = userData;
-				}
-			}
-		}
-	} catch (error) {
-		throw error;
 	}
 };

@@ -175,7 +175,6 @@ export class NotificationManager {
 			}
 			if (iosUsers.length) {
 				// const getCountForBadge = await notificationDao.count('notifications', { receiverId: params.userId, isRead: false });
-				// console.log('getCountForBadgegetCountForBadge', getCountForBadge);
 				// params['countForBadge'] = getCountForBadge;
 				iosPayload = appUtils.createIOSPushPayload(params);
 			}

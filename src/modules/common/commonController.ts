@@ -49,6 +49,7 @@ export class CommonController {
 
 	/**
 	 * @function deepLink
+	 * @description for the login forgot
 	 */
 	async deepLink(params: DeeplinkRequest) {
 		try {
@@ -92,8 +93,6 @@ export class CommonController {
 							// if (!IsTokenExist) {
 							// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 							// }
-							console.log(params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,);
-
 							const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 								.compileFile({
 									url: params.android || "", // android scheme,
@@ -187,8 +186,10 @@ export class CommonController {
 		}
 	}
 
-
-
+	/** 
+	 * @param veryEmailAndroid 
+	 * @description used only for android browser directly not open on android for default api hit
+	 */
 	async veryEmailAndroid(params) {
 		try {
 			const userData = await baseDao.findOne("users", { _id: params.userId }, {}, {});

@@ -4,7 +4,6 @@ import { Schema, Model, Document } from "mongoose";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import { ElasticSearch } from "@lib/ElasticSearch";
 
 
 export interface IGratitudeJournal extends Document {

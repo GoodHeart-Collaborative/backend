@@ -6,9 +6,8 @@ import * as promise from "bluebird";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import { contactDao } from "@modules/contact/ContactDao";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
-import { mailManager, redisClient } from "@lib/index";
+import { mailManager } from "@lib/index";
 import { smsManager } from "@lib/SMSManager";
 import * as sns from "@lib/pushNotification/sns";
 import * as tokenManager from "@lib/tokenManager";
@@ -188,7 +187,7 @@ export class UserController {
 
 
 				let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+				smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
 				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
 				// let userResponse = appUtils.formatUserData(updateUserQr);
@@ -316,20 +315,6 @@ export class UserController {
 						params = _.extend(params, { "arn": arn, "salt": step1.salt, "refreshToken": refreshToken });
 						// const step4 = loginHistoryDao.createUserLoginHistory(params);
 						// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
-
-						let step5, step6;
-						if (config.SERVER.IS_REDIS_ENABLE) {
-							if (!config.SERVER.IN_ACTIVITY_SESSION)
-								step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
-							else
-								step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": step1.salt, "userId": step1._id }));
-							const jobPayload = {
-								jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-								time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-								params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-							};
-							step6 = redisClient.createJobs(jobPayload);
-						}
 
 						step1['isPasswordAvailable'] = (step1 && step1['hash']) ? true : false;
 						// const step7 = await promise.join(step4, step5, step6);
@@ -605,53 +590,12 @@ export class UserController {
 
 				if (step1 || step2) {
 					if (step1 && !step2 && step1.isEmailVerified === false) {
-						console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
-
 						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
 					}
 					if (!step1 && step2 && step2.isMobileVerified === false) {
-						console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
 						const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 					}
 				}
-
-				// if (step1 || step2) {
-				// 	if (step1 && !step2 && step1.isEmailVerified === false) {
-				// 		const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { email: 'N/A' }, {})
-				// 	}
-
-				// 	if (!step1 && step2 && step2.isMobileVerified === false) {
-				// 		const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-				// 	}
-				// }
-
-
-				// let step3;
-				// // if both email and mobile are verified
-				// if (step1 && step2 && step1.isEmailVerified === true && step1.isMobileVerified === true && step1.isEmailVerified === true) {
-				// 	console.log('22222222222222222222222222222222222222222');
-				// 	step3 = await userDao.mergeAccountAndCheck(step1, params);
-				// 	console.log('					step6					step6', step3);
-				// }
-				// if (step1 && step2 && step1.isEmailVerified === false && step2.isMobileVerified === false) {
-				// 	console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
-				// 	step3 = await userDao.mergeAccountAndCheck(step1, params);
-				// 	console.log('					step6					step6					step6', step3);
-				// }
-
-
-				// if (step1 && step1.isEmailVerified === false && step1.email === params.email && step1.isMobileVerified === false && step2) {
-				// 	console.log('step6step6step6step6step6step6step6step6666666666666666666666^^^>>>>>>>>>>>>>>>>>',);
-				// 	step6 = await userDao.mergeAccountAndCheck(step1, params);
-				// 	console.log('					step6					step6					step6', step6);
-				// }
-
-				// if (step1) {
-				// 	// if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
-				// 	const mergeUser = await userDao.mergeAccountAndCheck(step1, params);
-				// }
-				// params[step3._id] 
-				console.log('step3step3step3step3step3step3step3step3step3step3', step3);
 
 				let salt;
 				let tokenData;
@@ -685,8 +629,6 @@ export class UserController {
 				} else {
 					// salt = await appUtils.CryptDataMD5(params[step3._id] + "." + new Date().getTime() + "." + params.deviceId);
 					params['salt'] = step3.salt;
-					console.log('>>>>>>>@@@@@@@@@@@@@@@@@@@@@@@@@@@222222222222222', params.salt);
-
 					tokenData = _.extend(params, {
 						"userId": step3._id,
 						"firstName": step3.firstName,
@@ -718,19 +660,7 @@ export class UserController {
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 				params = _.extend(params, { "arn": arn, "salt": step3.salt || salt, "refreshToken": refreshToken, "lastLogin": Date.now() });
 				const step34 = loginHistoryDao.createUserLoginHistory(tokenData);
-				let step4, step5;
-				if (config.SERVER.IS_REDIS_ENABLE) {
-					if (!config.SERVER.IN_ACTIVITY_SESSION)
-						step4 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
-					else
-						step4 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
-					const jobPayload = {
-						jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-						time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-						params: { "userId": step3._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-					};
-					step5 = redisClient.createJobs(jobPayload);
-				}
+
 				// const step6 = await promise.join(step3, step4, step5);
 				// await userDao.updateLikeAndCommentCount({ _id: appUtils.toObjectId(step1._id) }, { "$set": { isEmailVerified: true } })
 				step3['isPasswordAvailable'] = (step3 && step3['hash']) ? true : false;
@@ -897,46 +827,41 @@ export class UserController {
 			} else {
 				step1 = loginHistoryDao.removeDeviceById(tokenData);
 			}
-			let step2;
-			if (config.SERVER.IS_REDIS_ENABLE) {
-				step2 = redisClient.deleteKey(params.accessToken);
-			}
-			const step3 = await promise.join(step1, step2);
 			return userConstant.MESSAGES.SUCCESS.LOGOUT;
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	/**
-	 * @function deleteUser
-	 * @description if IS_REDIS_ENABLE set to true,
-	 * than redisClient.storeSet() function saves value in redis.
-	 */
-	async deleteUser(params: UserId, tokenData: TokenData) {
-		try {
-			if (
-				tokenData.adminType === config.CONSTANT.ADMIN_TYPE.SUPER_ADMIN ||
-				tokenData.permission.indexOf("deconst e_user") !== -1
-			) {
-				// const step1 = userDao.deleteUser(params);
-				// store deconst ed_set as a key and userId as a value (redis SET)
-				let step2;
-				if (config.SERVER.IS_REDIS_ENABLE) {
-					step2 = redisClient.storeSet("deconst ed_set", [params.userId]);
-				}
-				const step3 = contactDao.deleteContactOnRemoveAccount(params); // update contacts & to change isAppUser=false when the account is removed
-				const step4 = loginHistoryDao.removeDeviceById({ "userId": params.userId });
-				// const step5 = await promise.join(step1, step2, step3, step4);
-				// const step6 = await logDao.deleteUser(step5[0], tokenData);
-				return userConstant.MESSAGES.SUCCESS.DELETE_USER;
-			} else {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.UNAUTHORIZED_ACCESS);
-			}
-		} catch (error) {
-			throw error;
-		}
-	}
+	// /**
+	//  * @function deleteUser
+	//  * @description if IS_REDIS_ENABLE set to true,
+	//  * than redisClient.storeSet() function saves value in redis.
+	//  */
+	// async deleteUser(params: UserId, tokenData: TokenData) {
+	// 	try {
+	// 		if (
+	// 			tokenData.adminType === config.CONSTANT.ADMIN_TYPE.SUPER_ADMIN ||
+	// 			tokenData.permission.indexOf("deconst e_user") !== -1
+	// 		) {
+	// 			// const step1 = userDao.deleteUser(params);
+	// 			// store deconst ed_set as a key and userId as a value (redis SET)
+	// 			let step2;
+	// 			if (config.SERVER.IS_REDIS_ENABLE) {
+	// 				step2 = redisClient.storeSet("deconst ed_set", [params.userId]);
+	// 			}
+	// 			const step3 = contactDao.deleteContactOnRemoveAccount(params); // update contacts & to change isAppUser=false when the account is removed
+	// 			const step4 = loginHistoryDao.removeDeviceById({ "userId": params.userId });
+	// 			// const step5 = await promise.join(step1, step2, step3, step4);
+	// 			// const step6 = await logDao.deleteUser(step5[0], tokenData);
+	// 			return userConstant.MESSAGES.SUCCESS.DELETE_USER;
+	// 		} else {
+	// 			return Promise.reject(config.CONSTANT.MESSAGES.ERROR.UNAUTHORIZED_ACCESS);
+	// 		}
+	// 	} catch (error) {
+	// 		throw error;
+	// 	}
+	// }
 
 	/**
 	 * @function profile
@@ -990,15 +915,12 @@ export class UserController {
 			}
 			// else if (userData.isEmailVerified === true && userData.mobileNo !== params.mobileNo) {
 			if (checkUser) {
-				console.log('checkUSer>>>>>>>>>>>>>>', checkUser._id.toString(), userData.userId.toString());
-
 				if (checkUser._id.toString() != userData.userId.toString() && checkUser.isMobileVerified === true) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_ALREADY_EXIST)
 				}
 				// }
 				// else if (userData.isEmailVerified === true && userData.isMobileVerified === true) {
 				if (checkUser.isMobileVerified === false && checkUser._id.toString() != userData.userId.toString()) {
-					console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
 					const removePhoneNo = await userDao.findOneAndUpdate('users', { _id: checkUser._id }, { mobileNo: 'N/A' }, {});
 					const updateUserNewPhoneNo = await userDao.findOneAndUpdate('users', { _id: userData.userId }, { mobileNo: params.mobileNo }, {});
 				}
@@ -1021,7 +943,6 @@ export class UserController {
 				}
 			}
 			// const checkVerifiedEmailORPhone = await userDao.findVerifiedEmailOrMobile(params)
-			// dataToUpdate = {
 			dataToUpdate['dob'] = params.dob;
 			dataToUpdate['profession'] = params.profession;
 			dataToUpdate['email'] = params.email;
@@ -1071,7 +992,6 @@ export class UserController {
 			delete data['subscriptionType'];
 			delete data['subscriptionEndDate'];
 
-			// const projection = { hash: 0, salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0 };
 			return userConstant.MESSAGES.SUCCESS.PROFILE_UPDATE(data);
 
 		} catch (error) {
@@ -1232,20 +1152,6 @@ export class UserController {
 					}
 					params = _.extend(params, { "salt": data.salt, "refreshToken": refreshToken, "lastLogin": step3 });
 					const step4 = loginHistoryDao.createUserLoginHistory(params);
-					let step5, step6;
-					if (config.SERVER.IS_REDIS_ENABLE) {
-						if (!config.SERVER.IN_ACTIVITY_SESSION)
-							step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": data.salt, "userId": data._id }));
-						else
-							step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": data.salt, "userId": data._id }));
-						const jobPayload = {
-							jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-							time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-							params: { "userId": data._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-						};
-						step6 = redisClient.createJobs(jobPayload);
-					}
-					const step7 = await promise.join(step4, step5, step6);
 					return userConstant.MESSAGES.SUCCESS.OTP_VERIFIED_SUCCESSFULLY({ "accessToken": accessToken });
 				}
 				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);

@@ -4,14 +4,13 @@ import * as _ from "lodash";
 import fs = require("fs");
 
 import * as config from "@config/index";
-import * as inspirationConstant from "@modules/admin/dailyAdvice/AdviceConstant";
 import { adviceDao } from "@modules/admin/dailyAdvice/AdviceDao";
 
 
 class AdviceController {
 
 	/**
-	 * @function signup
+	 * @function addAdvice
 	 * @description if IS_REDIS_ENABLE set to true,
 	 * than redisClient.storeList() function saves value in redis.
 	 */
@@ -32,9 +31,9 @@ class AdviceController {
 
             const data = await adviceDao.findOne('advice', criteria, {}, {})
             if (!data) {
-                return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
+                // return inspirationConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            // return inspirationConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
 
         } catch (error) {
             throw error;

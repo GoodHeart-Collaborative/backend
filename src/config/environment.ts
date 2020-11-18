@@ -117,21 +117,6 @@ export const SERVER = Object.freeze({
 		PASSWORD: "Admin@123",
 		NAME: "Rcc Admin"
 	},
-	REDIS: {
-		SERVER: "localhost",
-		PORT: 6379,
-		NAMESPACE: "rccapp",
-		APP_NAME: "rcc"
-	},
-	SOCKET: {
-		PORT: 6379,
-		HOST: "localhost"
-	},
-	ELASTIC_SEARCH: {
-		SERVER: "localhost",
-		PORT: 9200,
-		HOST: process.env["ELASTIC_SEARCH_HOST"]
-	},
 	MAIL: {
 		SENDGRID: {
 			API_USER: "rajat_maheshwari",
@@ -225,7 +210,7 @@ export const IN_APP = {
 		CANCEL: "CANCEL",
 		DID_CHANGE_RENEWAL_PREF: "DID_CHANGE_RENEWAL_PREF",
 		DID_CHANGE_RENEWAL_STATUS: "DID_CHANGE_RENEWAL_STATUS",
-		DID_FAIL_TO_RENEW : "DID_FAIL_TO_RENEW",
+		DID_FAIL_TO_RENEW: "DID_FAIL_TO_RENEW",
 		DID_RECOVER: "DID_RECOVER",
 		INITIAL_BUY: "INITIAL_BUY",
 		INTERACTIVE_RENEWAL: "INTERACTIVE_RENEWAL",

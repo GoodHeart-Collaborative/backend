@@ -39,26 +39,10 @@ class EventController {
             params.created = new Date().getTime();
             params['eventCategoryImage'] = categoryData['imageUrl'];
 
-            // params['location']['coordinates'] = params['location']['coordinates'].reverse();
-
             const data = await eventDao.insert("event", params, {});
-
-            // const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
-
-            // const eventUrl = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
 
             const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
                 `&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}&eventId=${data._id}`;
-            console.log('eventUrl1eventUrl1', eventUrl);
-
-
-            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-            //     `&type=eventhttp://womencomdevapi.appskeeper.com/v1/common/deepLink-share?ios=com.goodheart://?eventId=5f8eaa211ab6800fcdb6989e&type=event&android=com.goodheart://?eventId=5f8eaa211ab6800fcdb6989e&eventId=5f8eaa211ab6800fcdb6989e`;
-
-            // const eventUrl = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-            //     `&type=event`;
 
             const updateEvent = await eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl }, {});
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);

@@ -22,7 +22,6 @@ export const
 				try {
 					console.log(' request.info. request.info.', request.info);
 					const xFF = request.headers['x-forwarded-for']
-					console.log('xFFxFFxFFxFFxFFxFFxFF', xFF);
 					const ip = xFF ? xFF.split(',')[0] : request.info.remoteAddress;
 					payload['getIpfromNtwk'] = ip;
 

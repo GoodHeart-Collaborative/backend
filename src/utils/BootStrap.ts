@@ -5,8 +5,6 @@ import { contentDao } from "@modules/content/v1/ContentDao";
 import * as config from "@config/index";
 import { cronJob } from "@lib/CronUtils";
 import { Database } from "@utils/Database";
-import { elasticSearch, rabbitMQ, redisClient, redisStorage } from "@lib/index";
-import * as socket from "@lib/socketManager";
 import { userDao } from "@modules/user";
 
 export class BootStrap {
@@ -20,20 +18,6 @@ export class BootStrap {
 		await this.generateMemberOfDay();
 
 		console.log("Init Request");
-		// rabbitMQ.init();
-
-		// If elastic search engine is enabled
-		if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
-			elasticSearch.init();
-		}
-
-		// If redis is enabled
-		if (config.SERVER.IS_REDIS_ENABLE) {
-			redisClient.init();
-			redisStorage.init();
-			// socket initializer
-			this.initiateSocket(server);
-		}
 
 		// ENABLE/DISABLE Console Logs
 		if (config.SERVER.ENVIRONMENT === "production") {
@@ -145,9 +129,5 @@ export class BootStrap {
 		} catch (error) {
 			return Promise.resolve();
 		}
-	}
-
-	async initiateSocket(server) {
-		socket.connectSocket(server);
 	}
 }

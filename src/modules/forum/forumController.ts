@@ -10,15 +10,6 @@ import * as config from "@config/constant";
 import * as moment from 'moment';
 class forumController {
 
-    // getTypeAndDisplayName(findObj, num: number) {
-    //     const obj = findObj;
-    //     const data = Object.values(obj);
-    //     const result = data.filter((x: any) => {
-    //         return x.VALUE === num;
-    //     });
-    //     console.log('resultresultresult', result);
-    //     return result[0];
-    // }
 	/**
 	 * @function add event
 	 * @description user add event
@@ -62,22 +53,6 @@ class forumController {
             return Promise.reject(error);
         }
     }
-
-    // async updateExpert(params: AdminExpertRequest.updateExpert) {
-    //     try {
-    //         const criteria = {
-    //             _id: params.expertId,
-    //         };
-
-    //         const data = await eventDao.updateOne('expert', criteria, params, {})
-    //         if (!data) {
-    //             // return forumConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
-    //         }
-    //         // return forumConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
     /**
      * @function updateStatus

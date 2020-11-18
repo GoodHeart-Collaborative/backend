@@ -139,7 +139,6 @@ export class MailManager {
 	// }
 
 	async forgotPasswordEmailToAdmin(params) {
-		console.log('params.name', params.name);
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
 				"url": `${config.SERVER.API_URL}/v1/admin/verifyLink/${params.accessToken}`,
@@ -176,51 +175,12 @@ export class MailManager {
 					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?` +
 					`&type=verifyEmail&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}` +
 					`&userId=${params.userId}`,
-
-
-				// "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/verifyEmail/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?` +
-				// 	`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?`,
-
 				"name": params.firstName + " " + lastName,
 				"year": new Date().getFullYear(),
 				"userId": params.userId
 				// "validity": appUtils.timeConversion(10 * 60 * 1000) // 10 mins
 			});
 		await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.VERIFY_EMAIL, "content": mailContent });
-	}
-
-	async sendPassword(payload) {
-		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "register-user.html"))
-			.compileFile({
-				"name": payload.firstName + " " + payload.middleName + " " + payload.lastName,
-				"email": payload.email,
-				"password": payload.password,
-				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}/login&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?type=login&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}login@&type=login`,
-				"year": new Date().getFullYear()
-			});
-
-		await this.sendMail({
-			"email": payload.email,
-			"subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.WELCOME,
-			"content": mailContent
-		});
-	}
-
-	async sendFailedUserSheetToAdmin(payload) {
-		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "attachment.html"))
-			.compileFile({
-				"name": payload.name,
-				"year": new Date().getFullYear()
-			});
-
-		const attachment = appUtils.mailAttachments(payload);
-
-		await this.sendMail({
-			"email": payload.email,
-			"subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.IMPORT_SHEET_FAILURE,
-			"content": mailContent,
-			"attachments": attachment
-		});
 	}
 }
 

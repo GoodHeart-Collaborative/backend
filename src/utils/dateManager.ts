@@ -14,8 +14,6 @@ const getWeekendDates = function () {
         var friday;
         friday = 5 - curr.getDay();
         fridayDate.setDate(fridayDate.getDate() + friday);
-        console.log('friday', fridayDate);
-
         const sundayEndDate = moment().endOf('week').toISOString();
 
         return { fridayDate, sundayEndDate }

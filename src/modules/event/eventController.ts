@@ -40,12 +40,6 @@ class EventController {
             // params['location']['coordinates'] = params['location']['coordinates'].reverse();
 
             const data = await eventDao.insert("event", params, {});
-
-            // location: Joi.object().keys({
-            //     type: Joi.string().valid(["Point"]),
-            //     coordinates: Joi.array().items(Joi.number())
-
-
             const updateEventAndGoing = [
                 {
                     createrId: appUtils.toObjectId(params['userId']),
@@ -60,35 +54,8 @@ class EventController {
             ];
 
             const updateISGoing = await eventDao.insertMany('event_interest', updateEventAndGoing, {})
-
-            // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
-
-            // const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
-            //     `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}` +
-            //     `&type=event`;
-
             const eventUrl1 = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink-share?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?eventId=${data._id}` +
                 `&type=event&android=${config.CONSTANT.DEEPLINK.IOS_SCHEME}&eventId=${data._id}`;
-
-            // const eventUrl1 = `${config.SERVER.APP_URL}?type=event&eventId=5f5903250711f37999791887`
-
-            // const eventUrl1 = `${config.CONSTANT.DEEPLINK.IOS_SCHEME}?type=event&eventId=${data._id}`
-            // let link = `${ config.SERVER.APP_URL }${ config.SERVER.API_BASE_URL }/user/deeplink ? fallback = ${ config.SERVER.WEB_URL } /layout/forums / post / ${ data._id }& url=epluribus://${config.SERVER.ANDROID_DEEP_LINK}?id=${data._id}&type=post&ios=sharePost://${data._id}`;
-
-            // async forgotPasswordEmailToUser(params) {
-            //     const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
-            //         .compileFile({
-            //             "url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
-            //                 `&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
-            //                 `&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
-            //             "name": params.firstName + " " + params.lastName,
-            //             "year": new Date().getFullYear(),
-            //             "validity": appUtils.timeConversion(10 * 60 * 1000), // 10 mins
-            //             "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png",
-            //         });
-            //     await this.sendMail({ "email": params.email, "subject": config.CONSTANT.EMAIL_TEMPLATE.SUBJECT.FORGOT_PWD_EMAIL, "content": mailContent });
-            // }
-
             const updateEvent = eventDao.findByIdAndUpdate('event', { _id: data._id }, { shareUrl: eventUrl1 }, {});
 
             return eventConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(data);
@@ -115,103 +82,6 @@ class EventController {
             let typeAggPipe = [];
             let match: any = {};
 
-
-            const interesetData = {
-                $lookup: {
-                    from: 'event_interests',
-                    let: { uId: '$userId', eId: '$_id' },
-                    pipeline: [{
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    {
-                                        $eq: ['$userId', appUtils.toObjectId(tokenData.userId)]
-                                    },
-                                    {
-                                        $eq: ['$eventId', '$$eId']
-                                    },
-                                    // {
-                                    //     $eq: ['$type', config.CONSTANT.EVENT_INTEREST.INTEREST]
-                                    // }
-                                ]
-                            }
-                        },
-                    }],
-                    as: 'interestData',
-                }
-            }
-
-            const projection = {
-                "$project": {
-                    name: 1,
-                    title: 1,
-                    location: 1,
-                    privacy: 1,
-                    startDate: 1,
-                    endDate: 1,
-                    price: 1,
-                    url: 1,
-                    imageUrl: 1,
-                    userType: 1,
-                    eventUrl: 1,
-                    allowSharing: 1,
-                    isFeatured: 1,
-                    description: 1,
-                    address: 1,
-                    goingCount: 1,
-                    interestCount: 1,
-                    eventCategory: 1,
-                    eventCategoryId: 1,
-                    eventCategoryName: 1,
-                    created: 1,
-                    "isInterest": {
-                        $cond: {
-                            if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
-                        }
-                    },
-                    // interestData: 1,
-                    isHostedByMe: 1,
-                    shareUrl: {
-                        $cond: {
-                            if: {
-                                $and: [{
-                                    $eq: ['$isHostedByMe', true]
-                                },
-                                ]
-                            }, then: '$shareUrl',
-                            else: {
-                                $cond: {
-                                    if: {
-                                        $and: [{
-                                            $eq: ['$isHostedByMe', false]
-                                        }, {
-                                            $eq: ['$allowSharing', 1]
-                                        }]
-                                    },
-                                    then: '$shareUrl',
-                                    else: ''
-                                }
-                            }
-                        }
-                    },
-                    users: 1,
-                }
-            };
-
-            // featureAggPipe.push(interesetData);
-            // // featureAggPipe.push(unwind);
-            // featureAggPipe.push({
-            //     $addFields: {
-            //         isHostedByMe: {
-            //             $cond: {
-            //                 if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
-            //                 then: true,
-            //                 else: false
-            //             },
-            //         },
-            //     }
-            // });
-
             match['userId'] = appUtils.toObjectId(tokenData.userId);
             // match['status'] = config.CONSTANT.STATUS.ACTIVE;
 
@@ -231,17 +101,6 @@ class EventController {
                         type: config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
                 });
-                // defaultAndInterestEveent.push({
-                //     $addFields: {
-                //         isHostedByMe: {
-                //             $cond: {
-                //                 if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
-                //                 then: true,
-                //                 else: false
-                //             },
-                //         },
-                //     }
-                // })
 
                 defaultAndInterestEveent.push({
                     $lookup: {

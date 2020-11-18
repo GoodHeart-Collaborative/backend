@@ -25,11 +25,6 @@ import { versionRoute as versionRouteV1 } from "@modules/version/versionRoute";
 
 import { categoryRoute as categoryRouteV1 } from "@modules/admin/catgeory/categoryRoute";
 import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
-// import { inspirationRoute as inspirationRouteV1 } from "@modules/admin/dailyInspiration/v1/inspirationRoute";
-
-// import { unicornRoute as unicornRouteV1 } from "@modules/admin/unicornHumour/v1/UnicornRoute";
-
-// import { adviceROute as adviceROuteV1 } from "@modules/admin/dailyAdvice/v1/AdviceRoute";
 import { memberRoute as memberRouteV1 } from "@modules/admin/memberOfDay/MemberRoute";
 
 import { likeRoute as likeRouteV1 } from "@modules/like/LikeRoute";
@@ -42,7 +37,6 @@ import { gratitudeJournalRoute as gratitudeJournalRoutev1 } from "@modules/grati
 
 import { gratitudeRoute as gratitudeRouteV1 } from "@modules/admin/gratitudeJournal/gratitudeRoute";
 
-// simple routing
 import { adminLikeRoute as adminLikeRouteV1 } from "@modules/admin/like/likeRoute";
 
 import { adminCommentRoute as adminCommentRouteV1 } from "@modules/admin/comment/commentRoute";

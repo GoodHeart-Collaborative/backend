@@ -11,9 +11,8 @@ class CategoryController {
 	/**
 	 * @function addCategory
 	 * @description admin add category name is unique
-	 * @param params { "platform": double, "name": string, "email": string, "password": string }
 	 * @returns object
-	 * @author Rajat Maheshwari
+	 * @author Shubham Maheshwari
 	 */
     async addCategory(params: CategoryRequest.CategoryAdd) {
         try {
@@ -26,10 +25,7 @@ class CategoryController {
             }
             params['name'] = result;
             const data = await categoryDao.insert('categories', params, {});
-            if (data) {
-                return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED
-            }
-            return;
+            return CategoryConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED
         } catch (error) {
             throw error;
         }
@@ -121,9 +117,7 @@ class CategoryController {
                         as: 'Posts'
                     }
                 })
-            }
-
-
+            };
 
             aggPipe.push({
                 '$addFields': {

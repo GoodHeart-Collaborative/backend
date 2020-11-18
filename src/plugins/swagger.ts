@@ -12,7 +12,7 @@ export const plugin = {
 		const swaggerOptions = {
 			info: {
 				title: "Good Heart Collaborative API Documentation",
-				description: "RCC",
+				description: "Good Heart Collaborative",
 				contact: {
 					name: "Shubham Maheshwari",
 					email: "shubham.maheshwari@appinventiv.com"

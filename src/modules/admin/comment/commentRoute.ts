@@ -1,13 +1,11 @@
 "use strict";
 
 import { ServerRoute, Request, ResponseToolkit } from "hapi";
-import * as Joi from "joi";
 
 import * as appUtils from "@utils/appUtils";
 import * as validator from "@utils/validator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
-import { likeController } from "@modules/admin/like/likeController";
 import * as commentValidator from './commentValidator';
 import { commentController } from "@modules/admin/comment/commentController";
 export const adminCommentRoute: ServerRoute[] = [

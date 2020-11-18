@@ -4,11 +4,8 @@ import * as _ from "lodash";
 
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
-import { ElasticSearch } from "@lib/ElasticSearch";
 import * as appUtils from '@utils/appUtils'
 import * as moment from 'moment'
-
-const elasticSearch = new ElasticSearch();
 
 export class UserDao extends BaseDao {
 
@@ -26,8 +23,6 @@ export class UserDao extends BaseDao {
 			// }
 			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-
 			const options = { lean: true };
 
 			return await this.findOne("users", query, { mobileOtp: 0 }, options, {});
@@ -43,7 +38,6 @@ export class UserDao extends BaseDao {
 			let checkPhone: any = {};
 			// if (countryCode && mobileNo) {
 			checkPhone = { "countryCode": countryCode, "mobileNo": mobileNo }
-			// } else {
 			emailQuery = { "email": email }
 			// }
 			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
@@ -234,7 +228,6 @@ export class UserDao extends BaseDao {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
 			const lat_lng: any = await appUtils.getLocationByIp(params.getIpfromNtwk);
-			console.log('lat_lnglat_lng>>>>>>>>>>>>>>>>>>>>11111111111111111', lat_lng);
 			params['location'] = {
 				"type": "Point",
 				"coordinates": [
@@ -561,7 +554,6 @@ export class UserDao extends BaseDao {
 				{
 					$project: {
 						createdAt: { "$month": "$createdAt" },
-						//            "createdAt" :{"$year":"$createdAt"},
 						price: 1,
 						subscriptionType: 1
 					}
@@ -580,18 +572,6 @@ export class UserDao extends BaseDao {
 
 
 			const totalEarningYearly = [
-				// {
-				// 	$match: {
-				// 		createdAt: {
-				// 			$gt: {
-				// 				firstDay
-				// 			},
-				// 			$lt: {
-				// 				lastDay
-				// 			}
-				// 		},
-				// 	},
-				// },
 				{
 					$group: {
 						_id: null,
@@ -687,33 +667,6 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
-
-	// /**
-	//  * @function updateUser
-	//  */
-	// async updateUser(params) {
-	// 	const query: any = {};
-	// 	query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-	// 	query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-
-	// 	const set = {};
-	// 	const unset = {};
-	// 	const update = {};
-	// 	update["$set"] = set;
-
-	// 	const fieldsToFill = ["firstName", "middleName", "lastName", "dob", "age", "gender"];
-
-	// 	set = appUtils.setInsertObject(params, set, fieldsToFill);
-
-	// 	unset = appUtils.unsetInsertObject(params, unset, fieldsToFill);
-	// 	if (!_.isEmpty(unset)) {
-	// 		update["$unset"] = unset;
-	// 	}
-
-	// 	const options = { new: true };
-
-	// 	return await this.findOneAndUpdate("users", query, update, options);
-	// }
 
 	async checkOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {

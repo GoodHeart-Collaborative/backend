@@ -30,11 +30,8 @@ class InterestController {
                 eventId: appUtils.toObjectId(eventId),
                 userId: appUtils.toObjectId(userId)
             };
-
             const findCreatedUserId = await eventDao.findOne('event', { _id: appUtils.toObjectId(eventId) }, {}, {})
-
             // const findEventCreaterId = await eventInterestDao.findOne('event_interest', { eventId: appUtils.toObjectId(eventId), userId: appUtils.toObjectId(userId) }, {}, {})
-
             const checkExist = await eventInterestDao.findOne('event_interest', criteria, {}, {})
 
             if (checkExist) {
@@ -44,7 +41,6 @@ class InterestController {
             else if (!checkExist) {
                 criteria["created"] = new Date().getTime();
                 const createrId = await eventInterestDao.insert('event_interest', criteria, {});
-
                 // const userEvent = await eventInterestDao.find('event_interest', { eventId: params.eventId, userId: params.userId }, {}, {}, {}, {}, {});
                 params['title'] = 'event Interests';
                 params['body'] = {
@@ -74,7 +70,6 @@ class InterestController {
             return Promise.reject(error);
         }
     }
-
 
     async interestAndGoingUser(params: EventInterest.interestAndGoingUser, tokenData) {
         try {

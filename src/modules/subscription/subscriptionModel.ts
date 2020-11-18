@@ -7,11 +7,8 @@ import { Schema, Model, Document } from "mongoose";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import { ElasticSearch } from "@lib/ElasticSearch";
 import { IN_APP } from "@config/environment";
 import { CONSTANT } from "@config/index";
-
-const elasticSearch = new ElasticSearch();
 
 // const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
 // autoIncrement.initialize(connection);
@@ -64,10 +61,12 @@ const subscriptionSchema = new Schema({
     amount: { type: Number },
     tries: { type: Number, default: 0 },
     created: { type: Number },
-    deviceType: { type: Number , enum: [
-        CONSTANT.DEVICE_TYPE.ANDROID,
-        CONSTANT.DEVICE_TYPE.IOS
-    ] },
+    deviceType: {
+        type: Number, enum: [
+            CONSTANT.DEVICE_TYPE.ANDROID,
+            CONSTANT.DEVICE_TYPE.IOS
+        ]
+    },
     receiptToken: { type: String },
     subscriptionRenewalType: {
         type: Number, enum: [
@@ -80,9 +79,9 @@ const subscriptionSchema = new Schema({
     startDate: { type: Date, required: true, default: new Date() },
     subscriptionEndDate: { type: Number, required: true }
 }, {
-        versionKey: false,
-        timestamps: true
-    });
+    versionKey: false,
+    timestamps: true
+});
 
 subscriptionSchema.set("toObject", {
     virtuals: true,

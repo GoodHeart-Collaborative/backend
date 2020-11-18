@@ -115,9 +115,7 @@ const DATE_FILTER = {
 const DB_MODEL_REF: any = {
 	ADMIN: "admin",
 	ADMIN_NOTIFICATION: "admin_notification",
-	CONTACT: "contact",
 	CONTENT: "content",
-	COUPON: "coupon",
 	LOG: "log",
 	NOTIFICATION: "notification",
 	USER: "user",
@@ -220,19 +218,6 @@ const EXPERIENCE_LEVEL = {
 	years_5_10: "5-10 years",
 	year_10: "10+",
 }
-
-// export const INDUSTRIES = {
-// 	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
-// 	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
-// 	// Wellness_Coaches: "Wellness Coaches",
-// 	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
-// 	// Compassion_Fatigue: "Compassion Fatigue",
-// 	Nonprofit: "Nonprofit",
-// 	Emergency_Services: "Emergency Services",
-// 	Social_And_Community_Services: "Social and Community Services",
-// 	Law_Enforcement: "Law Enforcement",
-// 	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
-// };
 
 export const INDUSTRIES = {
 	NONPROFIT: 1,
@@ -666,25 +651,6 @@ const CONTENT_TYPE = {
 	ABOUT_US: "5"
 };
 
-const MIME_TYPE = {
-	XLSX: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-	CSV1: "application/vnd.ms-excel",
-	CSV2: "text/csv",
-	XLS: "application/vnd.ms-excel"
-};
-
-const EXCEL_KEY_MAP = {
-	"First Name": "firstName",
-	"Middle Name": "middleName",
-	"Last Name": "lastName",
-	"DOB": "dob",
-	"Gender": "gender",
-	"Email": "email",
-	"Country Code": "countryCode",
-	"Mobile Number": "mobileNo"
-	// "Company Reg 1":{"parent":"companyReg", "child":"registration1"}
-};
-
 const REGEX = {
 	EMAIL: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/,
 	// EMAIL: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -839,84 +805,6 @@ const WEBSITE_URL = {
 	ADMIN_URL: "http://womenappdevadmin.appskeeper.com"
 };
 
-let SOCKET = {
-	DEFAULT: {
-		CONNECTION: "connection",
-		CONNECTED: "connected",
-		DISCONNECT: "disconnect",
-	},
-	TYPE: {
-		CONTACT_SYNCING: 1,
-		BELL_COUNT: 2
-	},
-	ERROR: {
-		FAILURE_ACKNOWLEDGEMENT: (listner) => {
-			return {
-				"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-				"message": "Message not recveived on server.",
-				"type": "FAILURE_ACKNOWLEDGEMENT",
-				"data": {
-					"listner": listner
-				}
-			};
-		},
-		INVALID_LISTENER_TYPE: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Invalid Listener type.",
-			"type": "INVALID_LISTENER_TYPE",
-			"data": {}
-		},
-		AUTHORIZATION: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Error in authorization.",
-			"type": "AUTHORIZATION_ERROR",
-			"data": {}
-		},
-		NETWORK: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Implementation error.",
-			"type": "NETWORK_ERROR",
-			"data": {}
-		},
-		SOCKET: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Socket Implementation error.",
-			"type": "SOCKET_ERROR",
-			"data": {}
-		}
-	},
-	SUCCESS: {
-		CONNECTION_ESTABLISHED: {
-			"statusCode": HTTP_STATUS_CODE.OK,
-			"message": "Connection Established",
-			"data": {}
-		},
-		CONTACT_SYNCING: (data) => {
-			return {
-				"statusCode": data.statusCode,
-				"message": "Contacts synchronize successfully.",
-				"type": "CONTACT_SYNCING",
-				"data": {
-					"contacts": data.contacts,
-					"lastSno": data.lastSno
-				}
-			};
-		}
-	},
-	EVENT: {
-		NETWORK_ERROR: "network-error",
-		SOCKET_ERROR: "socket-error",
-		ACK_ERROR: "ack-error",
-		INSUFFICIENT_INFO_ERROR: "insufficient-info",
-		AUTHORIZATION_ERROR: "authorization-error",
-		CONTACT_SYNC: "contact-sync", // add
-		CONTACT_FETCH: "contact-fetch",
-		CONTACT_DELETE: "contact-delete",
-		CONTACT_UPDATE: "contact-update",
-		BELL_COUNT: "bell-count"
-	}
-};
-
 const LOG_HISTORY_TYPE = {
 	ADD_USER: "1",
 	EDIT_USER: "2",
@@ -999,8 +887,6 @@ export const CONSTANT = Object.freeze({
 	NOTIFICATION_TYPE: NOTIFICATION_TYPE,
 	SNS_SERVER_TYPE: SNS_SERVER_TYPE,
 	CONTENT_TYPE: CONTENT_TYPE,
-	MIME_TYPE: MIME_TYPE,
-	EXCEL_KEY_MAP: EXCEL_KEY_MAP,
 	REGEX: REGEX,
 	VERSION_UPDATE_TYPE: VERSION_UPDATE_TYPE,
 	EXPORT_SHEET: EXPORT_SHEET,
@@ -1009,7 +895,6 @@ export const CONSTANT = Object.freeze({
 	SMS_SENDING_TYPE: SMS_SENDING_TYPE,
 	NOTIFICATION_DATA: NOTIFICATION_DATA,
 	DEEPLINK: DEEPLINK,
-	SOCKET: SOCKET,
 	LOG_HISTORY_TYPE: LOG_HISTORY_TYPE,
 	TEMPLATES: TEMPLATES,
 	GRAPH_TYPE: GRAPH_TYPE,

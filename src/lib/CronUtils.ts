@@ -113,7 +113,6 @@ export class CronUtils extends BaseDao {
 
 	async updateCount(minMemberCount) {
 		const findGlobalCount = await userDao.findOneAndUpdate('global_var', { _id: minMemberCount._id }, { memberOfDayCount: minMemberCount.memberOfDayCount + 1 }, {});
-		console.log('findGlobalCountfindGlobalCount', findGlobalCount);
 		this.createMember();
 	}
 
@@ -124,19 +123,13 @@ export class CronUtils extends BaseDao {
 		query["status"] = CONSTANT.STATUS.ACTIVE;
 
 		const events = await this.find(CONSTANT.DB_MODEL_REF.EVENT, query, {}, { lean: true }, {}, {}, {});
-		console.log('eventseventseventsevents', events);
 
 		events.forEach(async (element) => {
 			const eventIntrests = await this.find(CONSTANT.DB_MODEL_REF.EVENT_INTEREST, { eventId: element._id }, {}, { lean: true }, {}, {}, {});
 			const members: any = [];
-			console.log('eventIntrestseventIntrests', eventIntrests);
 			eventIntrests.forEach(async (element) => {
 				members.push(element.userId);
-				console.log("Send Push Notification", element.userId);
 			});
-			console.log(' element.eventId element.eventId element.eventId', element.eventId);
-
-			console.log('membersmembersmembersmembers', members);
 
 			if (members.length > 0) {
 				const params: any = {};
@@ -158,40 +151,3 @@ export class CronUtils extends BaseDao {
 }
 
 export const cronJob = new CronUtils()
-
-
-
-
-
-	// }
-		// if (!getUsers || !getUsers[0]) {
-		// 	const findGlobalCount1 = await userDao.find('global_var', {}, {}, {}, {}, {}, {});
-
-
-		// 	const findGlobalCount = await userDao.updateOne('global_var', { _id: findGlobalCount1._id }, {}, {});
-		// 	console.log('findGlobalCountfindGlobalCount', findGlobalCount);
-
-		// 	const criteria1 = [
-		// 		{
-		// 			$match: {
-		// 				status: config.CONSTANT.STATUS.ACTIVE,
-		// 				adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
-		// 				isEmailVerified: true,
-		// 				countMember: { $not: { $lt: minMemberCount.countMember } }
-		// 			}
-		// 		},
-		// 		{ $sample: { size: 1 } } // You want to get 5 docs
-		// 	];
-		// 	console.log(' minMemberCount.countMember minMemberCount.countMember', minMemberCount.countMember);
-
-		// 	const dataToUpdate = {
-		// 		countMember: minMemberCount.countMember + 1,
-		// 		memberCreatedAt: new Date(),
-		// 	};
-
-		// 	const getUser = await userDao.aggregate('users', criteria1, {});
-		// 	console.log('datadatadatadata>>>>>>>>', getUser);
-
-		// 	const data = await userDao.findOneAndUpdate('users', { _id: getUser[0]._id }, dataToUpdate, {});
-
-		// }

@@ -7,7 +7,6 @@ import { Request, ResponseToolkit } from "hapi";
 import { adminDao } from "@modules/admin/users/AdminDao";
 import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
-import { redisClient } from "@lib/redis/RedisClient";
 import { responseHandler } from "@utils/ResponseHandler";
 import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/UserDao";
@@ -79,21 +78,6 @@ export const plugin = {
 						const jwtPayload = await tokenManager.decodeToken({ accessToken });
 						const tokenData = await tokenManager.verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, true);
 
-						if (config.SERVER.IS_REDIS_ENABLE) {
-							const step1 = await redisClient.getValue(accessToken);
-							if (!step1) {
-								if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-									const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId });
-								} else {
-									const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId });
-								}
-								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
-							} else {
-								if (config.SERVER.IN_ACTIVITY_SESSION) {
-									redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, step1);
-								}
-							}
-						}
 						let userData = await userDao.findUserById({ "userId": tokenData.userId });
 
 						if (!userData) {
@@ -156,8 +140,6 @@ export const plugin = {
 			validate: async (request: Request, token, h: ResponseToolkit) => {
 				// validate user and pwd here
 				const checkFunction = await basicAuthFunction(token);
-				console.log('checkFunctioncheckFunctioncheckFunction', checkFunction);
-
 				if (!checkFunction) {
 					return ({ isValid: false, credentials: { token, userData: {} } });
 				}
@@ -181,21 +163,7 @@ export const plugin = {
 				} else {
 					const jwtPayload = await tokenManager.decodeToken({ accessToken });
 					const tokenData = await tokenManager.verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, true);
-					if (config.SERVER.IS_REDIS_ENABLE) {
-						const step1 = await redisClient.getValue(accessToken);
-						if (!step1) {
-							if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-								const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId });
-							} else {
-								const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId });
-							}
-							return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
-						} else {
-							if (config.SERVER.IN_ACTIVITY_SESSION) {
-								redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, step1);
-							}
-						}
-					}
+
 					let userData = await userDao.findUserById({ "userId": tokenData.userId });
 					if (!userData) {
 						return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));

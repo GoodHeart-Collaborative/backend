@@ -13,20 +13,6 @@ import * as config from "@config/index";
 
 class PostController {
 
-	/**
-	 * @function signup
-	 * @description if IS_REDIS_ENABLE set to true,
-	 * than redisClient.storeList() function saves value in redis.
-	 */
-    // async addPost(params) {
-    //     try {
-    //         const data = await postDao.insert("posts", params, {});
-    //         return postConstant.MESSAGES.SUCCESS.DEFAULT;
-
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
     async getPostById(params) {
         try {

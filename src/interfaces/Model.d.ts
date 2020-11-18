@@ -108,7 +108,6 @@ declare interface UsedByRequest {
 declare type ModelNames =
 	"admins" |
 	"admin_notifications" |
-	"contacts" |
 	"contents" |
 	"likes" |
 	"comments" |
