@@ -65,48 +65,6 @@ export class ImageUtil {
 		}
 	}
 
-	/**
-	 * @function uploadSingleMediaToS3 This Function is used to upload single image to S3 Server
-	*/
-	uploadSingleMediaToS3(file) {
-		return new Promise((resolve, reject) => {
-			if (this.imageFilter(file.hapi.filename) || this.videoFilter(file.hapi.filename) || this.audioFilter(file.hapi.filename)) {
-				const fileName = appUtils.getDynamicName(file);
-				const filePath = `${config.SERVER.UPLOAD_DIR}${fileName}`;
-				const r = file.pipe(fs.createWriteStream(filePath));
-				r.on("close", () => {
-					fs.readFile(filePath, (error, fileBuffer) => {
-						if (error) {
-							reject(error);
-						}
-
-						let contentType;
-						if (this.imageFilter(file.hapi.filename)) {
-							contentType = "image/png";
-						} else if (this.videoFilter(file.hapi.filename)) {
-							contentType = "video/mp4";
-						} else if (this.audioFilter(file.hapi.filename)) {
-							contentType = "audio/mpeg";
-						} else {
-							contentType = "image/png";
-						}
-						this._uploadToS3(fileName, fileBuffer, contentType)
-							.then((data: any) => {
-								appUtils.deleteFiles(filePath);
-								const location = data.Location;
-								resolve(location);
-							})
-							.catch((error) => {
-								reject(error);
-							});
-					});
-				});
-			} else {
-				reject(new Error("Invalid file type!"));
-			}
-		});
-	}
-
 	deleteFromS3(filename) {
 		filename = filename.split("/").slice(-1)[0];
 		const s3 = new AWS.S3({ params: { Bucket: config.SERVER.S3.BUCKET_NAME } });
