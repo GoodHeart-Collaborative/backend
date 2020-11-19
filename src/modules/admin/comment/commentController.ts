@@ -49,7 +49,8 @@ class AdminCommentController {
                             firstName: 1,
                             lastName: 1,
                             status: 1,
-                            profilePicUrl: 1
+                            profilePicUrl: 1,
+                            adminStatus: 1,
                         },
                     },
                     ],

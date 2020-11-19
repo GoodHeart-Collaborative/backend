@@ -51,7 +51,8 @@ class AdminLikeController {
                             lastName: { $ifNull: ["$users.lastName", ""] },
                             profilePicUrl: "$users.profilePicUrl",
                             profession: { $ifNull: ["$users.profession", ""] },
-                            status: '$users.status'
+                            status: '$users.status',
+                            adminStatus: '$users.adminStatus'
                         }
                     }
                 });

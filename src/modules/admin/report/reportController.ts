@@ -129,6 +129,7 @@ class ReportController {
                             email: 1,
                             profilePicUrl: 1,
                             status: 1,
+                            adminStatus: 1,
                             fullName: {
                                 $cond: {
                                     if: {

@@ -92,9 +92,9 @@ class AdminFeedController {
                                     {
                                         $eq: ['$_id', '$$uId']
                                     },
-                                    {
-                                        $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                    }
+                                    // {
+                                    //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    // },
                                 ]
                             }
                         }
@@ -105,6 +105,7 @@ class AdminFeedController {
                             lastName: 1,
                             email: 1,
                             status: 1,
+                            adminStatus: 1,
                             fullName: {
                                 $cond: {
                                     if: {
