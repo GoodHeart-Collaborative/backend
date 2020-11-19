@@ -74,7 +74,21 @@ export class LikeDao extends BaseDao {
                         "category": 1,
                         // user : {
                         myConnection: "$users.myConnection",
-                        status: '$users.status',
+                        status: {
+                            $cond: {
+                                if: {
+                                    $or: [{
+                                        $ne: ['$users.status', config.CONSTANT.STATUS.ACTIVE]
+                                    },
+                                    {
+                                        $ne: ['$users.adminStatus', config.CONSTANT.USER_ADMIN_STATUS.VERIFIED]
+                                    }],
+                                }, then: config.CONSTANT.STATUS.BLOCKED,
+                                else: config.CONSTANT.STATUS.ACTIVE
+
+
+                            }
+                        },  //'$users.status',
                         _id: "$users._id",
                         name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                         // name: { $ifNull: ["$users.firstName", ""] },

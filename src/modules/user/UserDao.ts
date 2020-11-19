@@ -818,7 +818,13 @@ export class UserDao extends BaseDao {
 		try {
 			const query = [{
 				$match: {
-					status: { $ne: "active" }
+					$or: [{
+						status: { $ne: config.CONSTANT.STATUS.ACTIVE }
+					},
+					{
+						admnStatus: { $ne: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED }
+					}]
+
 				}
 			}, {
 				$group: {

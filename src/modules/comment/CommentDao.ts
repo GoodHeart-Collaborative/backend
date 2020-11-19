@@ -183,7 +183,20 @@ export class CommentDao extends BaseDao {
                         "comment": 1,
                         "createdAt": 1,
                         user: {
-                            status: '$users.status',
+                            // status: '$users.status',
+                            status: {
+                                $cond: {
+                                    if: {
+                                        $or: [{
+                                            $ne: ['$users.status', CONSTANT.STATUS.ACTIVE]
+                                        },
+                                        {
+                                            $ne: ['$users.adminStatus', CONSTANT.USER_ADMIN_STATUS.VERIFIED]
+                                        }],
+                                    }, then: CONSTANT.STATUS.BLOCKED,
+                                    else: CONSTANT.STATUS.ACTIVE
+                                }
+                            },
                             _id: "$users._id",
                             industryType: "$users.industryType",
                             myConnection: "$users.myConnection",
