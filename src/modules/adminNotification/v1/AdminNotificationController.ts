@@ -6,7 +6,6 @@ import * as promise from "bluebird";
 import * as adminNotificationConstant from "@modules/adminNotification/adminNotificationConstant";
 import { adminNotificationDao } from "@modules/adminNotification/v1/AdminNotificationDao";
 import * as config from "@config/constant";
-import { imageUtil } from "@lib/ImageUtil";
 import { notificationManager } from "@utils/NotificationManager";
 
 class AdminNotificationController {

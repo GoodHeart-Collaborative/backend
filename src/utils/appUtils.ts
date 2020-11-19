@@ -17,13 +17,6 @@ import * as validator from "validator";
 import * as environment from '@config/environment'
 import * as config from "@config/index";
 import fetch from 'node-fetch';
-import * as  geoip from 'geoip-lite';
-
-
-// import ipLocation from "iplocation";
-// import * as geoip from 'geoip-lite';
-
-
 
 
 const verifyEmailFormat = function (value: string) {
@@ -214,7 +207,6 @@ const createIOSPushPayload = function (data) {
 	// data.mutableContent = 1;
 	data.sound = 'default';
 	// data.threadId = "RichPush";
-
 	// data['badge'] = data['countForBadge'];
 
 	data.title = data.title ? data.title : '';
@@ -246,21 +238,6 @@ const createIOSPushPayload = function (data) {
 				"priority": data.priority
 			}
 		}
-		// return {
-		// 	set={
-		// 		"data": set,
-		// 		"data": {
-		// 			"data": set
-		// 		},
-		// 		"notification": {
-		// 			"title": data.title,
-		// 			"body": data.body, // 	// 		  "body" : "Bob wants to connect with you",
-		// 			data: {
-		// 				userId: data.userId
-		// 			},
-		// 			type: data.type // notificatioj tyope : admin or user 1 or 2
-		// 		},
-		// 		category: data.category
 
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {};
@@ -269,34 +246,6 @@ const createIOSPushPayload = function (data) {
 		});
 		return payload;
 	}
-
-	// let set = {};
-	// let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
-
-	// data.mutableContent = 1;
-	// data.threadId = "womenCommunity";
-	// data.priority = data.priority ? data.priority : "high";
-	// data.image = data.icon ? data.icon : "";
-	// data.contentType = "text";
-	// data.badge = 1;
-
-	// if (data.entityData !== undefined) data.entityData = data.entityData;
-	// // data.category = "action"; // to show buttons
-	// set = setInsertObject(data, set, fieldsToFill);
-	// let notification = {
-	// 	"title": data.title,
-	// 	"body": data.message,
-	// 	"sound": "default",
-	// 	"priority": data.priority
-	// }
-	// if (data.entityData !== undefined)
-	// 	set = Object.assign(set, data.entityData);
-
-	// return {
-	// 	data: set,
-	// 	notification: notification
-	// };
-
 };
 
 const createWebPushPayload = function (data) {
@@ -654,51 +603,3 @@ export {
 	previousDate,
 	todayDateTimeStamp
 };
-
-
-
-// const createAndroidPushPayload = function (data) {
-// 	let set = {};
-// 	let fieldsToFill = ["type", "title", "message", "priority", "sound", "image", "contentType", "category", "click_action", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
-
-// 	data.priority = data.priority ? data.priority : "high";
-// 	data.image = data.icon ? data.icon : "";
-// 	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
-// 	// data.category = "action";
-// 	// data.click_action = "FLUTTER_NOTIFICATION_CLICK";
-// 	set = setInsertObject(data, set, fieldsToFill);
-// 	// if(data.entityData !== undefined) {
-// 	// 	set = Object.assign(set, {entityData: data.entityData })
-// 	// }
-
-// 	return set;
-// };
-
-// const createIOSPushPayload = function (data) {
-// 	let set = {};
-// 	let fieldsToFill = ["entityData", "type", "title", "message", "body", "mutableContent", "threadId", "priority", "sound", "image", "contentType", "category", "eventId", "challengeId", "bookingId", "articleId", "badgeId", "rewardId", "challengeName"];
-
-// 	data.mutableContent = 1;
-// 	data.threadId = "nowccrowd";
-// 	data.priority = data.priority ? data.priority : "high";
-// 	data.image = data.icon ? data.icon : "";
-// 	data.contentType = "text";
-// 	data.badge = 1;
-
-// 	if (data.entityData !== undefined) data.entityData = data.entityData;
-// 	// data.category = "action"; // to show buttons
-// 	set = setInsertObject(data, set, fieldsToFill);
-// 	let notification = {
-// 		"title": data.title,
-// 		"body": data.message,
-// 		"sound": "default",
-// 		"priority": data.priority
-// 	}
-// 	if (data.entityData !== undefined)
-// 		set = Object.assign(set, data.entityData);
-
-// 	return {
-// 		data: set,
-// 		notification: notification
-// 	};
-// };

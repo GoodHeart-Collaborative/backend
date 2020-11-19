@@ -273,20 +273,6 @@ export class EventDao extends BaseDao {
                 }
             }
             filterdata['eventCategory'] = eventCategory1
-            // let events = {
-            //     ...event,
-            //     type: 1
-            // }
-            // const forFilter = {
-            //     filterdata,
-            //     type: 2
-            // }
-
-            // "total": 8,
-            //     "page": 1,
-            //         "total_page": 1,
-            //             "next_hit": 0,
-            //                 "limit": 10
 
             return paginateOptions.pageNo === 1 ? { event: event.list, total: event.total, page: event.page, total_page: event.total_page, next_hit: event.next_hit, limit: event.limit, filterdata } :
                 {

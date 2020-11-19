@@ -9,7 +9,6 @@ import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
 import { mailManager } from "@lib/index";
 import { smsManager } from "@lib/SMSManager";
-import * as sns from "@lib/pushNotification/sns";
 import * as tokenManager from "@lib/tokenManager";
 import * as userConstant from "@modules/user/userConstant";
 import { userDao } from "@modules/user/index";
@@ -1250,9 +1249,6 @@ export class UserController {
 				}
 
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
-
-				// const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
-
 			}
 		} catch (error) {
 			throw error;
@@ -1303,11 +1299,7 @@ export class UserController {
 	async changePassword(params, tokenData) {
 		try {
 			const step1 = await userDao.findUserById(tokenData);
-			console.log('step1step1', step1);
-
 			const oldHash = await appUtils.encryptHashPassword(params.oldPassword, step1.salt);
-			console.log('oldHasholdHash', oldHash);
-
 			if (oldHash !== step1.hash) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
 			} else {
