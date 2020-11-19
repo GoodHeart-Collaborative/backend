@@ -450,71 +450,9 @@ class AdminController {
 				const step3 = loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
 
 				if (step2) {
-					userDao.emptyForgotToken({ "token": params.token });
+					adminDao.emptyForgotToken({ "token": params.token });
 				}
-
 				return adminConstant.MESSAGES.SUCCESS.CHANGE_FORGOT_PASSWORD;
-
-
-				// return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
-
-
-				// params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-				// let salt;
-				// salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-				// const tokenData = _.extend(params, {
-				// 	"userId": step1._id,
-				// 	"name": step1.name,
-				// 	"email": step1.email,
-				// 	"salt": step1.salt,
-				// 	"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
-				// 	"adminType": step1.adminType
-				// });
-				// const adminObject = appUtils.buildToken(tokenData);
-				// const accessToken = await tokenManager.generateAdminToken({ "type": "ADMIN_LOGIN", "object": adminObject });
-				// const step3 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-				// const step4 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
-
-				// const loginObj = {
-				// 	"userId": step1._id,
-				// 	"remoteAddress": params.remoteAddress,
-				// 	"platform": params.platform,
-				// 	"deviceId": params.deviceId,
-				// 	"deviceToken": params.deviceToken,
-				// 	"lastLogin": step4
-				// };
-
-				// // const step5 = loginHistoryDao.createUserLoginHistory(loginObj);
-
-				// delete step1.salt, delete step1.hash;
-				// const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-				// const clearForGotToken = await adminDao.updateOne('admins', { _id: jwtPayload.payload.userId }, { forgotToken: "" }, {})
-
-
-
-				// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-				// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-				// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
-				// } else {
-				// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
-				// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
-				// }
-				// params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": step3 });
-				// let step5, step6;
-				// if (config.SERVER.IS_REDIS_ENABLE) {
-				// 	if (!config.SERVER.IN_ACTIVITY_SESSION)
-				// 		step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
-				// 	else
-				// 		step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
-				// 	const jobPayload = {
-				// 		jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-				// 		time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-				// 		params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-				// 	};
-				// 	step6 = redisClient.createJobs(jobPayload);
-				// }
-
-				// return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, });
 			}
 		}
 		catch (error) {
