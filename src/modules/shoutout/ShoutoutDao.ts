@@ -303,6 +303,9 @@ export class ShoutoutDao extends BaseDao {
                                         {
                                             $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
                                         },
+                                        {
+                                            $eq: ['$adminStatus', config.CONSTANT.USER_ADMIN_STATUS.VERIFIED]
+                                        },
                                     ]
                                 }
                             }
@@ -332,6 +335,9 @@ export class ShoutoutDao extends BaseDao {
                                         },
                                         {
                                             $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        },
+                                        {
+                                            $eq: ['$adminStatus', config.CONSTANT.USER_ADMIN_STATUS.VERIFIED]
                                         },
                                     ]
                                 }

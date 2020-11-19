@@ -75,6 +75,9 @@ export class GratitudeJournalDao extends BaseDao {
                                 },
                                 {
                                     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                },
+                                {
+                                    $eq: ['$adminStatus', config.CONSTANT.USER_ADMIN_STATUS.VERIFIED]
                                 }]
                             }
                         }
