@@ -145,6 +145,7 @@ export class DiscoverDao extends BaseDao {
                                 profilePicUrl: "$followers.profilePicUrl",
                                 profession: { $ifNull: ["$followers.profession", ""] },
                                 about: { $ifNull: ["$followers.about", ""] },
+                                companyName: '$followers.companyName'
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
@@ -156,6 +157,7 @@ export class DiscoverDao extends BaseDao {
                                 profilePicUrl: "$users.profilePicUrl",
                                 profession: { $ifNull: ["$users.profession", ""] },
                                 about: { $ifNull: ["$users.about", ""] },
+                                companyName: '$users.companyName'
                             }]
                         }
                     }
@@ -175,6 +177,7 @@ export class DiscoverDao extends BaseDao {
                         profilePicUrl: "$user.profilePicUrl",
                         profession: "$user.profession",
                         about: "$user.about",
+                        companyName: '$user.companyName'
                     }
                 })
             } else {
@@ -194,6 +197,7 @@ export class DiscoverDao extends BaseDao {
                                 profilePicUrl: "$followers.profilePicUrl",
                                 profession: { $ifNull: ["$followers.profession", ""] },
                                 about: { $ifNull: ["$followers.about", ""] },
+                                companyName: '$followers.companyName'
                             }, {
                                 _id: "$users._id",
                                 industryType: "$users.industryType",
@@ -204,6 +208,7 @@ export class DiscoverDao extends BaseDao {
                                 profilePicUrl: "$users.profilePicUrl",
                                 profession: { $ifNull: ["$users.profession", ""] },
                                 about: { $ifNull: ["$users.about", ""] },
+                                companyName: '$users.companyName'
                             }]
                         },
                         created: 1
@@ -295,6 +300,7 @@ export class DiscoverDao extends BaseDao {
                     created: 1,
                     adminStatus: 1,
                     createdAt: 1,
+                    companyName: 1
 
                 }
             })
@@ -398,7 +404,9 @@ export class DiscoverDao extends BaseDao {
                         name: '$name',
                         profilePicUrl: "$profilePicUrl",
                         profession: '$profession',
-                        about: "$about"
+                        about: "$about",
+                        companyName: "$companyName"
+
                     },
                     created: '$created'
                 }
@@ -579,7 +587,9 @@ export class DiscoverDao extends BaseDao {
                     name: { $concat: [{ $ifNull: ["$otherUserData.firstName", ""] }, " ", { $ifNull: ["$otherUserData.lastName", ""] }] },
                     profilePicUrl: "$otherUserData.profilePicUrl",
                     profession: { $ifNull: ["$otherUserData.profession", ""] },
-                    about: { $ifNull: ["$otherUserData.about", ""] }
+                    about: { $ifNull: ["$otherUserData.about", ""] },
+                    companyName: "$otherUserData.companyName"
+
                     // },
                 },
             });

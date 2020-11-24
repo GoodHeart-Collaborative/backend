@@ -206,7 +206,8 @@ export class GratitudeJournalDao extends BaseDao {
                         name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                         profilePicUrl: "$users.profilePicUrl",
                         profession: { $ifNull: ["$users.profession", ""] },
-                        about: { $ifNull: ["$users.about", ""] }
+                        about: { $ifNull: ["$users.about", ""] },
+                        companyName: '$users.companyName'
                     },
                     isComment: {
                         $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }

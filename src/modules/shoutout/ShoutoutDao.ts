@@ -65,7 +65,8 @@ export class ShoutoutDao extends BaseDao {
                             _id: "$userss._id",
                             name: { $ifNull: ["$userss.firstName", ""] },
                             profilePicUrl: "$userss.profilePicUrl",
-                            profession: { $ifNull: ["$userss.profession", ""] }
+                            profession: { $ifNull: ["$userss.profession", ""] },
+                            // companyName: "$userss.companyName"
                         }
                     },
                     membersDetail: {
@@ -73,7 +74,7 @@ export class ShoutoutDao extends BaseDao {
                             _id: "$membersDetail.userInfo._id",
                             name: { $ifNull: ["$membersDetail.userInfo.firstName", ""] },
                             profilePicUrl: "$membersDetail.userInfo.profilePicUrl",
-                            profession: { $ifNull: ["$membersDetail.userInfo.profession", ""] }
+                            profession: { $ifNull: ["$membersDetail.userInfo.profession", ""] },
                         }
                     }
                 }
@@ -366,7 +367,8 @@ export class ShoutoutDao extends BaseDao {
                             about: "$sender.about",
                             name: { $ifNull: ["$sender.firstName", ""] },
                             profilePicUrl: "$sender.profilePicUrl",
-                            profession: { $ifNull: ["$sender.profession", ""] }
+                            profession: { $ifNull: ["$sender.profession", ""] },
+                            companyName: '$sender.companyName'
                         },
                         receiver: {
                             _id: "$receiver._id",
@@ -377,7 +379,8 @@ export class ShoutoutDao extends BaseDao {
                             about: "$receiver.about",
                             name: { $ifNull: ["$receiver.firstName", ""] },
                             profilePicUrl: "$receiver.profilePicUrl",
-                            profession: { $ifNull: ["$receiver.profession", ""] }
+                            profession: { $ifNull: ["$receiver.profession", ""] },
+                            companyName: "$receiver.companyName"
                         },
                         created: 1,
                         story: {
