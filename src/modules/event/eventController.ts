@@ -171,6 +171,7 @@ class EventController {
                     title: 1,
                     eventUrl: 1,
                     userId: 1,
+                    isEventFree: 1,
                     isInterest: '',
                     isHostedByMe: {
                         $cond: {
@@ -376,6 +377,7 @@ class EventController {
                             if: { "$eq": ["$going", 0] }, then: false, else: true
                         }
                     },
+                    isEventFree: 1,
                     isHostedByMe: '$isHostedByMe',
                     shareUrl: {
                         $cond: {

@@ -173,6 +173,7 @@ export class EventDao extends BaseDao {
                     interestCount: 1,
                     eventCategory: 1,
                     created: 1,
+                    isEventFree: 1,
                     "isInterest": {
                         $cond: {
                             if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
