@@ -144,7 +144,7 @@ export class UserController {
 
 
 				let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-				smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
 				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
 				// let userResponse = appUtils.formatUserData(updateUserQr);
