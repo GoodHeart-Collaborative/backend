@@ -24,7 +24,7 @@ import { homeRoute as HomeRoute } from "@modules/home/HomeRoute";
 import { versionRoute as versionRouteV1 } from "@modules/version/versionRoute";
 
 import { categoryRoute as categoryRouteV1 } from "@modules/admin/catgeory/categoryRoute";
-import { postRoute as postRouteV1 } from "@modules/post/ v1/PostRoute";
+// import { postRoute as postRouteV1 } from "@modules/post/v1/PostRoute";
 import { memberRoute as memberRouteV1 } from "@modules/admin/memberOfDay/MemberRoute";
 
 import { likeRoute as likeRouteV1 } from "@modules/like/LikeRoute";
@@ -57,7 +57,7 @@ import { ReportRoute as ReportRouteV1 } from "@modules/report/reportRoute";
 import { AdminReportRoutes as AdminReportRoutesV1 } from "@modules/admin/report/reportRoutes";
 
 import { subscriptionRoute as SubscriptionRoutesV1 } from "@modules/subscription/subscriptionRoute";
-
+import { cronRoute as cronRoutesV1 } from '@modules/cron/cronRoutes';
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -81,7 +81,7 @@ export const routes: ServerRoute[] = [
 	...notificationRouteV1,
 	...userRouteV1,
 	...categoryRouteV1,
-	...postRouteV1,
+	// ...postRouteV1,
 	// ...inspirationRouteV1,
 	// ...adviceROuteV1,
 	...memberRouteV1,
@@ -106,5 +106,6 @@ export const routes: ServerRoute[] = [
 	...AdminShoutOutV1,
 	...ReportRouteV1,
 	...AdminReportRoutesV1,
-	...SubscriptionRoutesV1
+	...SubscriptionRoutesV1,
+	...cronRoutesV1
 ];

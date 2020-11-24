@@ -181,8 +181,12 @@ export class UserDao extends BaseDao {
 				}
 			})
 			result = await this.aggregate("users", aggPipe, {})
-			result[0]["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
-			return result[0]
+			console.log('resultresult', result);
+			if (result && result.length > 0) {
+				result[0]["type"] = config.CONSTANT.HOME_TYPE.MEMBER_OF_DAY
+				return result[0]
+			}
+			return;
 		} catch (error) {
 			throw error;
 		}

@@ -13,4 +13,6 @@ package-lock.json
 /app.log
 .env.local
 .env.development
+.env.staging
+.env.testing
 /.vscode

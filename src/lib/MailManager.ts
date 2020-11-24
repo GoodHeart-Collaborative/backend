@@ -1,34 +1,10 @@
 "use strict";
 
 import * as nodemailer from "nodemailer";
-import * as sgTransport from "nodemailer-sendgrid-transport";
-import * as ses from "nodemailer-ses-transport";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 import { TemplateUtil } from "@utils/TemplateUtil";
-
-// using sendgrid
-const options = {
-	auth: {
-		api_user: config.SERVER.MAIL.SENDGRID.API_USER,
-		api_key: config.SERVER.MAIL.SENDGRID.API_KEY
-	}
-};
-const client = nodemailer.createTransport(sgTransport(options));
-
-// using smtp
-/*var transporter = nodemailer.createTransport({
-	host: config.SERVER.MAIL.SMTP.HOST,
-	port: config.SERVER.MAIL.SMTP.PORT,
-	secure: true, // use SSL
-	service: "gmail",
-	// requireTLS: true,
-	auth: {
-		user: config.SERVER.MAIL.SMTP.USER,
-		pass: config.SERVER.MAIL.SMTP.PASSWORD
-	}
-});*/
 
 // using smtp
 const transporter = nodemailer.createTransport({
@@ -42,30 +18,8 @@ const transporter = nodemailer.createTransport({
 	}
 });
 
-// using Amazon SES
-const sesTransporter = nodemailer.createTransport(ses({
-	accessKeyId: "YOUR_AMAZON_KEY",
-	secretAccessKey: "YOUR_AMAZON_SECRET_KEY"
-}));
-
 export class MailManager {
 	private fromEmail: string = config.CONSTANT.EMAIL_TEMPLATE.FROM_MAIL;
-
-	async sendMailViaSendgrid(params) {
-		try {
-			const mailOptions = {
-				from: `${config.SERVER.APP_NAME} <${this.fromEmail}>`, // sender email
-				to: params.email, // list of receivers
-				subject: params.subject, // Subject line
-				html: params.content,
-				bcc: config.CONSTANT.EMAIL_TEMPLATE.BCC_MAIL
-			};
-			const mailResponse = await client.sendMail(mailOptions);
-		} catch (error) {
-			console.log(error);
-		}
-		return {};
-	}
 
 	async sendMailViaSmtp(params) {
 		try {
@@ -93,33 +47,8 @@ export class MailManager {
 		return {};
 	}
 
-	async sendMailViaAmazonSes(params) {
-		try {
-			sesTransporter.sendMail({
-				from: `${config.SERVER.APP_NAME} <${this.fromEmail}>`,
-				to: params.email,
-				subject: params.subject,
-				text: params.content,
-				// cc: 'superganteng@yopmail.com, supertampan@yopmail.com',
-				bcc: config.CONSTANT.EMAIL_TEMPLATE.BCC_MAIL,
-				// attachments: [{
-				// 	filename: 'My Cool Document',
-				// 	path: 'https://path/to/cool-document.docx',
-				// 	contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-				// }]
-			});
-		} catch (error) {
-			console.log(error);
-		}
-		return {};
-	}
-
 	async sendMail(params) {
-		if (config.SERVER.MAIL_TYPE === config.CONSTANT.MAIL_SENDING_TYPE.SENDGRID) {
-			return await this.sendMailViaSendgrid(params);
-		} else {
-			return await this.sendMailViaSmtp(params);
-		}
+		return await this.sendMailViaSmtp(params);
 	}
 
 	// async forgotPasswordEmailToAdmin(params) {
@@ -153,8 +82,6 @@ export class MailManager {
 		const getLastName = (params && params.lastName) ? params.lastName : ''
 		const mailContent = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "forgot-password.html"))
 			.compileFile({
-				// 	"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?token=${params.token}` +
-				// 		`&type=forgot&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,
 				"url": `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/v1/common/deepLink?ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}?token=${params.token}` +
 					`&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?token=${params.token}` +
 					`&type=forgot&token=${params.token}&accountLevel=${config.CONSTANT.ACCOUNT_LEVEL.USER}&name=${params.firstName + " " + params.lastName}`,

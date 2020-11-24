@@ -174,6 +174,20 @@ export class ForumTopic extends BaseDao {
                             else: ['$adminData.profilePicture']
 
                         }
+                    },
+                    'userData.status': {
+                        $cond: {
+                            if: '$userData.status',
+                            then: '$userData.status',
+                            else: ''
+                        }
+                    },
+                    'userData.adminStatus': {
+                        $cond: {
+                            if: '$userData.adminStatus',
+                            then: '$userData.adminStatus',
+                            else: ''
+                        }
                     }
                 }
             });

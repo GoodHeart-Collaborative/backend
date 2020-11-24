@@ -145,70 +145,70 @@ export class BaseDao {
 		}
 	}
 
-	async aggregateWithPagination1(model: ModelNames, pipeline?: Array<Object>, limit?: number, page?: number, pageCount = true) {
-		try {
-			let ModelName: any = models[model];
-			if (limit) {
-				limit = Math.abs(limit);
+	// async aggregateWithPagination1(model: ModelNames, pipeline?: Array<Object>, limit?: number, page?: number, pageCount = true) {
+	// 	try {
+	// 		let ModelName: any = models[model];
+	// 		if (limit) {
+	// 			limit = Math.abs(limit);
 
-				// If limit exceeds max limit
-				if (limit > 100) {
-					limit = 100;
-				}
+	// 			// If limit exceeds max limit
+	// 			if (limit > 100) {
+	// 				limit = 100;
+	// 			}
 
-			} else {
-				limit = 10;
-			}
-			if (page && (page != 0)) {
-				page = Math.abs(page);
-			} else {
-				page = 1;
-			}
-			let skip = (limit * (page - 1));
-			let promiseAll = [
-				await ModelName.aggregate(pipeline).allowDiskUse(true)
-			];
+	// 		} else {
+	// 			limit = 10;
+	// 		}
+	// 		if (page && (page != 0)) {
+	// 			page = Math.abs(page);
+	// 		} else {
+	// 			page = 1;
+	// 		}
+	// 		let skip = (limit * (page - 1));
+	// 		let promiseAll = [
+	// 			await ModelName.aggregate(pipeline).allowDiskUse(true)
+	// 		];
 
-			if (pageCount) {
-				for (let index = 0; index < pipeline.length; index++) {
-					if ('$skip' in pipeline[index]) {
-						pipeline = pipeline.slice(0, index);
-					} else {
-						pipeline = pipeline
-					}
-				}
-				pipeline.push({ $count: "total" });
-				promiseAll.push(ModelName.aggregate(pipeline).allowDiskUse(true))
-			}
-			let result = await Promise.all(promiseAll);
-			let next_hit = 0;
-			let total = 0;
-			let total_page = 0;
+	// 		if (pageCount) {
+	// 			for (let index = 0; index < pipeline.length; index++) {
+	// 				if ('$skip' in pipeline[index]) {
+	// 					pipeline = pipeline.slice(0, index);
+	// 				} else {
+	// 					pipeline = pipeline
+	// 				}
+	// 			}
+	// 			pipeline.push({ $count: "total" });
+	// 			promiseAll.push(ModelName.aggregate(pipeline).allowDiskUse(true))
+	// 		}
+	// 		let result = await Promise.all(promiseAll);
+	// 		let next_hit = 0;
+	// 		let total = 0;
+	// 		let total_page = 0;
 
-			if (pageCount) {
-				total = result[1] && result[1][0] ? result[1][0]['total'] : 0;
-				total_page = Math.ceil(total / limit);
-			}
+	// 		if (pageCount) {
+	// 			total = result[1] && result[1][0] ? result[1][0]['total'] : 0;
+	// 			total_page = Math.ceil(total / limit);
+	// 		}
 
-			let data: any = result[0];
-			if (result[0].length > limit) {
-				next_hit = page + 1;
-				data = result[0].slice(0, limit);
-			}
+	// 		let data: any = result[0];
+	// 		if (result[0].length > limit) {
+	// 			next_hit = page + 1;
+	// 			data = result[0].slice(0, limit);
+	// 		}
 
-			return {
-				list: data,
-				total: total,
-				// page: page,
-				// total_page: total_page,
-				next_hit: next_hit,
-				// limit: limit
-			};
-		} catch (err) {
-			console.error(err);
-			throw new Error(err);
-		}
-	}
+	// 		return {
+	// 			list: data,
+	// 			total: total,
+	// 			// page: page,
+	// 			// total_page: total_page,
+	// 			next_hit: next_hit,
+	// 			// limit: limit
+	// 		};
+	// 	} catch (err) {
+	// 		console.error(err);
+	// 		throw new Error(err);
+	// 	}
+	// }
 
 
 

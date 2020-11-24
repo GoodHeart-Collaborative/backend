@@ -30,6 +30,8 @@ class HomeController {
             params.limit = 10
             if (!params.type) {
                 getmemberOfTheDay = await userDao.getMemberOfDays(userId.tokenData)
+                console.log('getmemberOfTheDaygetmemberOfTheDay', getmemberOfTheDay);
+
                 responseData = await homeDao.getHomeData(params, userId.tokenData, headers);
                 shoutOutCard = await shoutoutDao.getShoutOutForHome(params, userId.tokenData);
 
@@ -49,7 +51,9 @@ class HomeController {
                     if (shoutOutCard) {
                         responseData.unshift(shoutOutCard);
                     }
-                    responseData.unshift(getmemberOfTheDay);
+                    if (getmemberOfTheDay) {
+                        responseData.unshift(getmemberOfTheDay);
+                    }
 
                     // responseData["getGratitudeJournal"] = getGeneralGratitude
                     //     if(responseData && responseData.list && responseData.list.length > 9) {
@@ -63,7 +67,9 @@ class HomeController {
                     if (shoutOutCard) {
                         responseData.unshift(shoutOutCard);
                     }
-                    responseData.unshift(getmemberOfTheDay)
+                    if (getmemberOfTheDay) {
+                        responseData.unshift(getmemberOfTheDay)
+                    }
 
                 }
                 responseData["getmemberOfTheDay"] = getmemberOfTheDay

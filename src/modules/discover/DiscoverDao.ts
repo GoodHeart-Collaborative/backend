@@ -117,6 +117,9 @@ export class DiscoverDao extends BaseDao {
                                     {
                                         $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
                                     },
+                                    {
+                                        $eq: ['$status', config.CONSTANT.USER_ADMIN_STATUS.VERIFIED]
+                                    },
                                 ]
                             }
                         }
@@ -377,7 +380,7 @@ export class DiscoverDao extends BaseDao {
                     _id: 1,
                     discover_status: { $ifNull: ["$discovers.discover_status", 4] },
                     user: {
-                        'discovers1111': '$discovers.userId',
+                        // 'discovers1111': '$discovers.userId',
                         isRequestSendByMe: {
                             $cond: {
                                 if: {

@@ -59,7 +59,7 @@ export const plugin = {
 		/**
 		 * @function UserAuth
 		 * @description if IS_REDIS_ENABLE set to true,
-		 * than redisClient.getList() function fetch value from redis.
+		 * than redisClient.getList() function  value from redis.
 		 */
 		server.auth.strategy("UserAuth", "bearer-access-token", {
 			allowQueryToken: false,

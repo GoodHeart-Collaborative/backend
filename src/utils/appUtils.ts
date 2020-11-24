@@ -16,7 +16,7 @@ import * as TinyURL from "tinyurl";
 import * as validator from "validator";
 import * as environment from '@config/environment'
 import * as config from "@config/index";
-import fetch from 'node-fetch';
+import * as request from "request-promise";
 
 
 const verifyEmailFormat = function (value: string) {
@@ -500,21 +500,35 @@ const getLocationByIp = async (ipaddress: string) => {
 	try {
 		let ip = ipaddress || '';
 
-		const request = {
-			method: 'GET',
-			params: ipaddress,
-		};
+		// const request = {
+		// 	method: 'GET',
+		// 	params: ipaddress,
+		// };
 		let url = 'http://ip-api.com/json/' + ip
+		console.log('ipip', ip);
 
-		// const response = await fetch('http://ip-api.com/json/', request);
-		const response = await fetch(url, request);
-		let theData = await response.json();
-		console.log('lt_lnglt_lnglt_lng', theData);
+		// // const response = await fetch('http://ip-api.com/json/', request);
+
+		// const response = await fetch(url, request);
+		// let theData = await response.json();
+		// console.log('lt_lnglt_lnglt_lng', theData);
+		// return {
+		// 	lat: theData.lat || 0.0,
+		// 	long: theData.lon || 0.0
+		// }
+
+		let data: any = await request({
+			method: "POST",
+			url: 'http://ip-api.com/json',
+			parmas: ip,
+			json: true // Automatically stringifies the body to JSON
+		});
+		console.log('datadatadatadatadata', data);
+
 		return {
-			lat: theData.lat || 0.0,
-			long: theData.lon || 0.0
+			lat: data.lat || 0.0,
+			long: data.lon || 0.0
 		}
-
 	} catch (error) {
 		return Promise.reject(error)
 	}
@@ -549,6 +563,23 @@ const nextMinuteTimeStamp = async () => {
 	return new Date().setHours(hours, minutes + 10, 0, 0); // 10 minute more from current time
 	// const OneHourLaterTime = new Date().setHours(new Date().getHours() + 1);
 	// return OneHourLaterTime;
+};
+
+const getWeekendDates = function () {
+	try {
+		let curr;
+		curr = new Date();
+		var fridayDate;
+		fridayDate = new Date();
+		var friday;
+		friday = 5 - curr.getDay();
+		fridayDate.setDate(fridayDate.getDate() + friday);
+		const sundayEndDate = moment().endOf('week').toISOString();
+
+		return { fridayDate, sundayEndDate }
+	} catch (error) {
+		return Promise.reject(error)
+	}
 };
 
 export {
@@ -601,5 +632,6 @@ export {
 	fiveMinuteBeforeTimeStampTime,
 	nextMinuteTimeStamp,
 	previousDate,
-	todayDateTimeStamp
+	todayDateTimeStamp,
+	getWeekendDates
 };

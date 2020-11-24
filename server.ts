@@ -1,7 +1,7 @@
 "use strict";
 
 console.log("");
-console.log("//************************* RCC 1.0 **************************//");
+console.log("//************************* GOOD HEART 1.0 **************************//");
 console.log("");
 
 console.log("env : ", process.env.NODE_ENV.trim());
@@ -58,7 +58,6 @@ const start = async () => {
 			html: require("handlebars")
 		},
 		path: "src/views",
-		// isCached: config.SERVER.ENVIRONMENT === "production"
 	});
 
 	// serving static files
@@ -75,19 +74,6 @@ const start = async () => {
 			}
 		}
 	});
-
-	// server.route({
-	// 	method: "GET",
-	// 	path: "./views/images/{path*}",
-	// 	options: {
-	// 		handler: {
-	// 			directory: {
-	// 				path: process.cwd() + "/src/views/",
-	// 				listing: false
-	// 			}
-	// 		}
-	// 	}
-	// });
 };
 
 routes.push(
@@ -125,17 +111,7 @@ start();
 
 const init = async () => {
 	await server.register(plugins);
-	// await server.register({plugin: YourPlugin}, {routes:{prefix: '/api'}});
 	const a = server.route(routes);
-	console.log('aaaa', a);
-	// server.route({
-	// 	method: 'GET',
-	// 	path: '/images/{image}',
-	// 	handler: function (request, h) {
-	// 		return h.file(`/images/${request.params.image}`);
-	// 	}
-	// });
-
 	await server.start();
 	const boot = new BootStrap.BootStrap();
 	await boot.bootStrap(server);

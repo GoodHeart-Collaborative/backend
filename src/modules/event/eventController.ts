@@ -8,7 +8,6 @@ import * as eventConstant from "@modules/admin/event/eventConstant";
 import { eventDao } from "@modules/event/eventDao";
 import { eventInterestDao } from '@modules/eventInterest/eventInterestDao'
 import * as appUtils from "@utils/appUtils";
-import * as weekend from '@utils/dateManager'
 import { categoryDao } from "@modules/admin/catgeory";
 import * as tokenManager from '@lib/tokenManager';
 import { errorReporter } from "@lib/flockErrorReporter";
@@ -213,31 +212,11 @@ class EventController {
             return Promise.reject(error);
         }
     }
-
     /**
-     * @function calenderEvent
-     * @description event home screen nearest location by the lat lng
-     * @params (UserEventRequest.userGetEvent)
-     */
-
-    // let searchDistance = distance ? distance * 1000 : 100 * 1000// Default value is 10 km.
-    // let pickupLocation = [];
-    // let match: any = {}
-    // if (longitude != undefined && latitude != undefined) {
-    //     pickupLocation.push(latitude, longitude);
-    //     aggPipe.push(
-    //         {
-    //             '$geoNear': {
-    //                 near: { type: "Point", coordinates: pickupLocation },
-    //                 spherical: true,
-    //                 maxDistance: searchDistance,
-    //                 distanceField: "dist",
-    //             }
-    //         },
-    //         { "$sort": { dist: -1 } }
-    //     )
-    // }
-
+      * @function getEvent
+      * @description user get event for the home screen
+      * @params ( UserEventRequest.getEvents)
+      */
     async getEvent(params: UserEventRequest.getEvents, tokenData) {
         try {
             const { distance, eventCategoryId, date, searchKey, getIpfromNtwk, startDate, endDate } = params;
@@ -421,21 +400,6 @@ class EventController {
                             }
                         }
                     },
-                    // shareUrl: {
-                    //     $cond: {
-                    //         if: {
-                    //             $or: [{
-                    //                 $eq: ['$isHostedByMe', true]
-                    //             },
-                    //             {
-                    //                 $eq: ['$allowSharing', true]
-                    //             }
-                    //             ]
-                    //         }, then: '$shareUrl',
-                    //         else: ''
-                    //     }
-                    // },
-                    // users: 1,
                 }
             };
 
@@ -481,16 +445,6 @@ class EventController {
 
             const event = await eventDao.aggregate('event', aggPipe, {});
 
-            // const time = ['Today', 'Tomorrow', 'Weekend']         // console.log('datadata', EVENT);
-            // const TIMES = {
-            //     time,
-            //     type: 2
-            // }
-            // const category = {
-            //     eventCategoryListName,
-            //     type: 0
-            // }
-
             featuredEvent.map((data: any) => {
                 categoryList.push({
                     _id: data.eventCategoryId,
@@ -518,20 +472,12 @@ class EventController {
                 return result;
             }
             categoryList = await removeDuplicates(categoryList, '_id')
-
-            // console.log(getUnique(categoryList, '_id'));
-            // const unquesData = await uniqueKeepLast(categoryList, it => it._id)
-
-            // categoryList = (result.sort(() => Math.random() - 0.5)).slice(0, 5);
-
             categoryList = categoryList.slice(0, 5);
-
             return {
                 categoryList,
                 featuredEvent,
                 event,
             }
-
         } catch (error) {
             return Promise.reject(error)
         }

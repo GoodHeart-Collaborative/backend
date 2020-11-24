@@ -622,14 +622,14 @@ const SMS = {
 		FORGOT_PASSWORD: "Your forgot password link!\
 		\nLINK\
 		\n \
-		\nRegards, \nRCC app",
-		WELCOME: "Welcome! Thank you for creating rcc user\
+		\nRegards, \nWOMEN app",
+		WELCOME: "Welcome! Thank you for creating women user\
 		\naccount. You are almost there… To start your service,\
 		\nplease enter your Email as EMAIL and password as PASSWORD\
 		\nin the below link\
 		\nLINK\
 		\n \
-		\nRegards, \nRCC app",
+		\nRegards, \nWOMEN app",
 	}
 };
 
@@ -717,9 +717,9 @@ const PUSH_SENDING_TYPE = {
 };
 
 const MAIL_SENDING_TYPE = {
-	SENDGRID: 1,
+	// SENDGRID: 1,
 	SMTP: 2,
-	AMAZON: 3
+	// AMAZON: 3
 };
 
 const NOTIFICATION_CATEGORY = {
@@ -763,7 +763,6 @@ const NOTIFICATION_CATEGORY = {
 }
 
 const SMS_SENDING_TYPE = {
-	TWILIO: 1,
 	AWS_SDK: 2
 };
 

@@ -8,11 +8,7 @@ import { Schema, Model, Document } from "mongoose";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 
-// const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
-// autoIncrement.initialize(connection);
-
 export interface IUser extends Document {
-	// sno: string;
 	appleId: string;
 	isAppleLogin: boolean;
 	isAppleVerified: boolean;
@@ -70,7 +66,6 @@ var geoSchema = new Schema({
 
 const userSchema = new Schema({
 	mobileOtp: { type: Number },
-	// social data
 	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },
@@ -205,20 +200,9 @@ userSchema.virtual("password")
 	})
 	.set(function (password) {
 		this._password = password;
-		// const salt = this.salt = bcrypt.genSaltSync(config.SERVER.SALT_ROUNDS);
 		const salt = this.salt = appUtils.genRandomString(config.SERVER.SALT_ROUNDS);
 		this.hash = appUtils.encryptHashPassword(password, salt);
 	});
-
-// userSchema.virtual("fullName")
-// 	.get(function () {
-// 		if (this.middleName) {
-// 			this.firstName = this.firstName + " " + this.middleName;
-// 		} if (this.lastName) {
-// 			this.firstName = this.firstName + " " + this.lastName;
-// 		}
-// 		return this.firstName;
-// 	});
 
 userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());

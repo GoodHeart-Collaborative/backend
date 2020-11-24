@@ -5,27 +5,9 @@ import * as AWS from "aws-sdk";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 
-// Twilio Constants
-const TWILIO_NUMBER = config.SERVER.TWILIO.TWILIO_NUMBER,
-	client = require("twilio")(config.SERVER.TWILIO.ACCOUNT_SID, config.SERVER.TWILIO.AUTH_TOKEN);
-
 let smsCounter = 0;
 
 export class SMSManager {
-
-	sendMessageViaTwilio(countryCode, mobileNo, body) {
-		return client.messages.create({
-			to: countryCode ? "+" + countryCode + mobileNo : "+" + mobileNo,
-			from: TWILIO_NUMBER,
-			body: body
-		})
-			.then(function (data) {
-				smsCounter++;
-			})
-			.catch(function (error) {
-				throw error;
-			});
-	}
 
 	sendMessageViaAWS(countryCode, mobileNo, body) {
 		// Set region
@@ -66,8 +48,6 @@ export class SMSManager {
 		this._validateNumber(countryCode, mobileNo);
 		if (config.SERVER.SMS_TYPE === config.CONSTANT.SMS_SENDING_TYPE.AWS_SDK) {
 			return this.sendMessageViaAWS(countryCode, mobileNo, body);
-		} else { // config.CONSTANT.SMS_SENDING_TYPE.TWILIO
-			return this.sendMessageViaTwilio(countryCode, mobileNo, body);
 		}
 	}
 

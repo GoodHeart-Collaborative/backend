@@ -161,8 +161,7 @@ export class ForumTopic extends BaseDao {
                                 },
                                 {
                                     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                },
-                                ]
+                                },]
                             }
                         }
                     }

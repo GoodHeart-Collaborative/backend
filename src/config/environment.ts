@@ -93,7 +93,6 @@ export const SERVER = Object.freeze({
 	API_BASE_URL: "",
 	API_URL: process.env['API_URL'],
 	flockApi: process.env['flock'],
-	// API_BASE_URL: "/rcc/api",
 	MONGO: {
 
 		DB_NAME: process.env["DB_NAME"],
@@ -115,24 +114,15 @@ export const SERVER = Object.freeze({
 	ADMIN_CREDENTIALS: {
 		EMAIL: "adminwc@yopmail.com",
 		PASSWORD: "Admin@123",
-		NAME: "Rcc Admin"
+		NAME: "women Admin"
 	},
 	MAIL: {
-		SENDGRID: {
-			API_USER: "rajat_maheshwari",
-			API_KEY: "Rajat@123"
-		},
 		SMTP: {
 			HOST: "smtp.gmail.com",
 			PORT: "587",
 			USER: "womencommunite@gmail.com",
 			PASSWORD: "12345@women"
 		}
-	},
-	TWILIO: {
-		ACCOUNT_SID: process.env["ACCOUNT_SID"],
-		AUTH_TOKEN: process.env["AUTH_TOKEN"],
-		TWILIO_NUMBER: process.env["TWILIO_NUMBER"]
 	},
 	BASIC_AUTH: {
 		NAME: "wc",

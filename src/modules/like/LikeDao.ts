@@ -85,8 +85,6 @@ export class LikeDao extends BaseDao {
                                     }],
                                 }, then: config.CONSTANT.STATUS.BLOCKED,
                                 else: config.CONSTANT.STATUS.ACTIVE
-
-
                             }
                         },  //'$users.status',
                         _id: "$users._id",

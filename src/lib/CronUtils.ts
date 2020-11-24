@@ -1,5 +1,5 @@
-const cron = require("node-cron");
-const request = require("request");
+// const cron = require("node-cron");
+// const request = require("request");
 // import { memberDao } from "@modules/admin/memberOfDay/v1/MemberDao";
 import * as config from "@config/index";
 import { userDao } from "@modules/user";
@@ -16,27 +16,37 @@ let task3;
 
 export class CronUtils extends BaseDao {
 
-	init() {
+	init(payload) {
 		console.log("Cron job");
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule("5 0 * * *", async function () {
-			// task = cron.schedule('* * * * * *', function () {
-			console.log("this will execute on the server time at 00:01:00 each day by server time");
-			cronJob.createMember();
+		// task = cron.schedule("5 0 * * *", async function () {
+		// 	// task = cron.schedule('* * * * * *', function () {
+		// 	console.log("this will execute on the server time at 00:01:00 each day by server time");
+		// 	cronJob.createMember();
 
-		}, { scheduled: false });
-		task.start();
+		// }, { scheduled: false });
+		// task.start();
 
-		task2 = cron.schedule("*/10 * * * *", () => {  //every past 10 minute
-			this.eventReminder();
-		}, { scheduled: false });
+		// task2 = cron.schedule("*/10 * * * *", () => {  //every past 10 minute
+		// 	this.eventReminder();
+		// }, { scheduled: false });
 
-		task2.start();
+		// task2.start();
 
-		task3 = cron.schedule("0 0 0 * * *", async () => {
-			await subscriptionController.verifySubscriptionRenewal();
-		}, { schedule: false });
-		task3.start();
+		// task3 = cron.schedule("0 0 0 * * *", async () => {
+		// 	await subscriptionController.verifySubscriptionRenewal();
+		// }, { schedule: false });
+		// task3.start();
+
+		// type: Joi.string().allow(['memberOfDay', 'subscription', 'eventReminder']),
+
+		if (payload.type === 'memberOfDay') {
+			this.createMember()
+		} else if (payload.type === 'subscription') {
+			subscriptionController.verifySubscriptionRenewal()
+		} else if (payload.type === 'eventReminder') {
+			this.eventReminder()
+		}
 	}
 
 	async createMember() {

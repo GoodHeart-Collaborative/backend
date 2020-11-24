@@ -709,7 +709,7 @@ export class ExpertDao extends BaseDao {
                 }
             });
             expertPostspipeline = [...expertPostspipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
-            let EXPERTPOST = await this.aggregateWithPagination1("expert_post", expertPostspipeline);
+            let EXPERTPOST = await this.aggregateWithPagination("expert_post", expertPostspipeline, paginateOptions.limit, paginateOptions.page, true);
             const data0 = data ? data[0] : {};
             const expertPosts = EXPERTPOST
             return {

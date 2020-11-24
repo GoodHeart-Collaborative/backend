@@ -79,8 +79,7 @@ export class BootStrap {
 	}
 
 	async generateMemberOfDay() {
-		cronJob.init();
-
+		// cronJob.init();
 		try {
 			let a = 0;
 			// if (globalVariable = 1) {

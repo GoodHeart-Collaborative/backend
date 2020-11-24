@@ -31,10 +31,7 @@ class EventController {
     async addEvent(params: AdminEventRequest.IEventAdd) {
         try {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
-            // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId'])
-
-            // params.eventCategoryType = categoryData['name'];
-            params.eventCategoryName = categoryData['title'];
+            // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId']);            params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
             params['eventCategoryImage'] = categoryData['imageUrl'];
 
@@ -231,13 +228,6 @@ class EventController {
             aggPipe.push({
                 $project: {
                     hostUser: 1,
-                    // {
-                    //     _id: '$hostUser._id',
-                    //     status: '$hostUser.status',
-                    //     profilePicUrl: '$hostUser.profilePicUrl',
-                    //     firstName: '$hostUser.firstName',
-                    //     lastName: '$hostUser.lastName'
-                    // },
                     isFeatured: 1,
                     price: 1,
                     status: 1,
@@ -247,16 +237,13 @@ class EventController {
                     allowSharing: 1,
                     description: 1,
                     endDate: 1,
-                    // eventCategoryId : ObjectId("5f884ef2129d2a385dc84c00"),
                     eventUrl: 1,
                     imageUrl: 1,
                     startDate: 1,
                     title: 1,
-                    // userId : ObjectId(5f4e597ecf7d51347939b781),
                     userType: 1,
                     eventCategoryName: 1,
                     created: 1,
-                    // shortId : 1,
                     createdAt: 1,
                     shareUrl: 1,
                     isExpired: 1
@@ -299,61 +286,5 @@ class EventController {
         }
     }
 
-    // async getCalender(params) {
-    //     try {
-    //         const { page, limit } = params;
-    //         let match: any = {};
-    //         let aggPipe = [];
-    //         const paginateOptions = {
-    //             limit: limit || 10,
-    //             page: page || 1
-    //         }
-
-    //         match['status'] = config.CONSTANT.STATUS.ACTIVE;
-    //         // const findAdmin = await adminDao.findOne('admins', { email: '' }, {}, {})
-
-
-    //         aggPipe.push({
-    //             $match: match
-    //         });
-
-    //         aggPipe.push({
-    //             $lookup: {
-    //                 from: 'users',
-    //                 let: { uId: '$userId' },
-    //                 as: 'userData',
-    //                 pipeline: [{
-    //                     $match: {
-    //                         $expr: {
-    //                             $eq: ['$_id', '$$uId']
-    //                         }
-    //                     }
-    //                 },
-    //                 {
-    //                     $project: {
-    //                         firstName: 1,
-    //                         lastName: 1,
-    //                         email: 1
-    //                     }
-    //                 }],
-    //             }
-    //         });
-
-
-    //         aggPipe.push({
-    //             $unwind: {
-    //                 path: '$userData',
-    //                 preserveNullAndEmptyArrays: true,
-    //             },
-    //         })
-    //         console.log('aggPipeaggPipe', aggPipe);
-
-    //         // aggPipe.push([...aggPipe, eventDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)]);
-    //         const data = await eventDao.aggregateWithPagination('event', aggPipe);
-    //         return data;
-    //     } catch (error) {
-    //         return Promise.reject(error);
-    //     }
-    // }
 }
 export const eventController = new EventController();

@@ -39,9 +39,6 @@ export class UserController {
 				const step = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, { type: "email" });
 
 				const step1 = await userDao.findUserByEmailOrMobileNoForSocialSignUp(params, {});
-				console.log('stepstepstepstepstepstepstepstepstepstepstepstepv', step);
-				console.log('step1step1step1step1step1step1step1step1step1step1v>>>>>>>>>>', step1);
-
 				if (step || step1) {
 					if ((step && step.status === config.CONSTANT.STATUS.DELETED) || (step1 && step1.status === config.CONSTANT.STATUS.DELETED)) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.DELETED_USER_TRYING_TO_REGISTER);
@@ -93,41 +90,12 @@ export class UserController {
 				}
 
 				if (step && !step1 && step.isEmailVerified === false) {
-					console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT');
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step._id }, { email: 'N/A' }, {})
 				}
 				if (!step && step1 && step1.isMobileVerified === false) {
-					console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-					console.log('updateEmailToNA1>>>>>>>>>>>>>>>1111111111111111111111111');
 				}
-				// if (step && step1 && step.isEmailVerified === false && step._id.toString() === step1._id.toString()) {
-				// 	console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE22222222222222');
-				// 	console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE111111111111');
-				// 	const tokenData = _.extend(params, {
-				// 		"userId": step._id,
-				// 		"firstName": step.firstName,
-				// 		"lastName": step.lastName,
-				// 		"countryCode": step.countryCode,
-				// 		"mobileNo": step.mobileNo,
-				// 		"email": step.email,
-				// 		"salt": step.salt,
-				// 		"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.USER
-				// 	});
-				// 	const userObject = appUtils.buildToken(tokenData);
-				// 	const accessToken = await tokenManager.generateUserToken({ "type": "", "object": userObject, "salt": step.salt });
-				// 	mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step._id });
-				// 	// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
-				// 	// "refreshToken": refreshToken
 
-				// 	const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step._id });
-				// 	console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
-
-				// 	const step6 = await loginHistoryDao.createUserLoginHistory(params);
-				// 	return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, mobileNo: step1.mobileNo, countryCode: step1.countryCode });
-
-				// 	// const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
-				// }
 
 				const generateOtp = await appUtils.generateOtp();
 
@@ -149,16 +117,6 @@ export class UserController {
 				const userObject = appUtils.buildToken(tokenData);
 
 				const accessToken = await tokenManager.generateUserToken({ "type": "USER_SIGNUP", "object": userObject, "salt": salt });
-				// for SNS notofication
-				// let arn;
-				// if (params.platform === config.CONSTANT.DEVICE_TYPE.ANDROID) {
-				// 	// arn = await sns.registerAndroidUser(params.deviceToken);
-				// 	arn = "";
-				// } else if (params.platform === config.CONSTANT.DEVICE_TYPE.IOS) {
-				// 	// arn = await sns.registerIOSUser(params.deviceToken);
-				// 	arn = "";
-				// }
-				// console.log('arnarn>>>>>>>>>>>', arn);
 
 				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 
@@ -209,8 +167,6 @@ export class UserController {
 			}
 			else {
 				const step1 = await userDao.findUserByEmailOrMobileNo(params);
-				console.log('step1step1step1step1step1step1step1>>>>>>>>>>>>>>>>', step1);
-
 				if (!step1) {
 					if (params.email) {
 						return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_NOT_REGISTERED);
@@ -704,6 +660,7 @@ export class UserController {
 
 	/**
 	 * @function forgotPassword
+	 * @description user forgot password
 	 */
 	async forgotPassword(params: ForgotPasswordRequest) {
 		try {
@@ -832,38 +789,9 @@ export class UserController {
 		}
 	}
 
-	// /**
-	//  * @function deleteUser
-	//  * @description if IS_REDIS_ENABLE set to true,
-	//  * than redisClient.storeSet() function saves value in redis.
-	//  */
-	// async deleteUser(params: UserId, tokenData: TokenData) {
-	// 	try {
-	// 		if (
-	// 			tokenData.adminType === config.CONSTANT.ADMIN_TYPE.SUPER_ADMIN ||
-	// 			tokenData.permission.indexOf("deconst e_user") !== -1
-	// 		) {
-	// 			// const step1 = userDao.deleteUser(params);
-	// 			// store deconst ed_set as a key and userId as a value (redis SET)
-	// 			let step2;
-	// 			if (config.SERVER.IS_REDIS_ENABLE) {
-	// 				step2 = redisClient.storeSet("deconst ed_set", [params.userId]);
-	// 			}
-	// 			const step3 = contactDao.deleteContactOnRemoveAccount(params); // update contacts & to change isAppUser=false when the account is removed
-	// 			const step4 = loginHistoryDao.removeDeviceById({ "userId": params.userId });
-	// 			// const step5 = await promise.join(step1, step2, step3, step4);
-	// 			// const step6 = await logDao.deleteUser(step5[0], tokenData);
-	// 			return userConstant.MESSAGES.SUCCESS.DELETE_USER;
-	// 		} else {
-	// 			return Promise.reject(config.CONSTANT.MESSAGES.ERROR.UNAUTHORIZED_ACCESS);
-	// 		}
-	// 	} catch (error) {
-	// 		throw error;
-	// 	}
-	// }
-
 	/**
 	 * @function profile
+	 * @description profile detail
 	 */
 	async profile(tokenData: TokenData, userId) {
 		try {
@@ -880,6 +808,10 @@ export class UserController {
 		}
 	}
 
+	/**
+	 * @function updateProfile
+	 * @description user update profile for the first time register before verify 
+	 */
 	async updateProfile(params, userData) {
 		try {
 			const updateCriteria = {
@@ -897,6 +829,10 @@ export class UserController {
 		}
 	}
 
+	/**
+	 * @function updateProfile
+	 * @description user update profile change email or phone
+	 */
 	async updateProfileUser(params, userData, token) {
 		try {
 			const updateCriteria = {
@@ -905,9 +841,7 @@ export class UserController {
 			let dataToUpdate: any = {};
 
 			let checkUser = await userDao.findUserByEmailOrMobileNo({ mobileNo: params.mobileNo, countryCode: params.countryCode })
-			console.log('checkUser', checkUser);
 			let checkEmail = await userDao.findUserByEmailOrMobileNo({ email: params.email })
-			console.log('checkEmail', checkEmail);
 
 			if (userData.isEmailVerified === false && userData.mobileNo !== params.mobileNo) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.CAN_NOT_CHANGE_MOBILE)
@@ -953,7 +887,6 @@ export class UserController {
 			dataToUpdate['experience'] = params.experience;
 			dataToUpdate['about'] = params.about;
 			dataToUpdate['profilePicUrl.0'] = params.profilePicUrl
-
 
 			const data = await userDao.findOneAndUpdate('users', updateCriteria, dataToUpdate, { new: true, lean: true });
 			data['accessToken'] = token.Token;
@@ -1022,7 +955,11 @@ export class UserController {
 		}
 	}
 
-
+	/**
+	 * 
+	 * @param verifyOTP 
+	 * @description user verifyOtp registeration login time 
+	 */
 	async verifyOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {
 			const headers = params.authorization;
@@ -1057,7 +994,7 @@ export class UserController {
 						const dataToUpdate = {
 							isEmailVerified: true,
 						}
-						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
 						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
 					}
 					return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
@@ -1072,7 +1009,7 @@ export class UserController {
 							isMobileVerified: true,
 							mobileOtp: 0
 						}
-						const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
 						// return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({})
 						// return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, "refreshToken": refreshToken, ...step1 });
 						if (data && !data.dob || !data.dob == null && data.industryType) {
@@ -1089,14 +1026,13 @@ export class UserController {
 			return Promise.reject(error)
 		}
 	}
-
+	/**
+	 * 
+	 * @verifyForGotOTP user verify forGotOtp
+	 * @description user veify forgot password otp 
+	 */
 	async verifyForGotOTP(params: UserRequest.verifyOTP) {
 		try {
-			// if (config.SERVER.ENVIRONMENT === 'development') {
-			// 	if (params.otp === config.CONSTANT.BYPASS_OTP) {
-			// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
-			// 	}
-			// }
 			if (params.otp === '0000') {
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INVALID_OTP)
 			}
@@ -1137,20 +1073,17 @@ export class UserController {
 					const userObject = appUtils.buildToken(tokenData);
 
 					const accessToken = await tokenManager.generateUserToken({ "type": "FORGOT_PASSWORD", "object": userObject, "salt": data.salt });
-
-					// return userConstant.MESSAGES.SUCCESS.FORGET_PASSWORD({ "accessToken": accessToken, userData: data });
-
 					const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
 					let step3;
 					if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-						const step2 = await loginHistoryDao.removeDeviceById({ "userId": data._id });
+						await loginHistoryDao.removeDeviceById({ "userId": data._id });
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": data._id });
 					} else {
-						const step2 = await loginHistoryDao.removeDeviceById({ "userId": data._id, "deviceId": params.deviceId });
+						await loginHistoryDao.removeDeviceById({ "userId": data._id, "deviceId": params.deviceId });
 						step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": data._id, "deviceId": params.deviceId });
 					}
 					params = _.extend(params, { "salt": data.salt, "refreshToken": refreshToken, "lastLogin": step3 });
-					const step4 = loginHistoryDao.createUserLoginHistory(params);
+					loginHistoryDao.createUserLoginHistory(params);
 					return userConstant.MESSAGES.SUCCESS.OTP_VERIFIED_SUCCESSFULLY({ "accessToken": accessToken });
 				}
 				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
@@ -1167,19 +1100,10 @@ export class UserController {
 							countryCode: params.countryCode,
 							mobileNo: params.mobileNo,
 						}
-						const statusUpdate = await userDao.updateOne('users', criteria, dataToUpdate, {});
+						await userDao.updateOne('users', criteria, dataToUpdate, {});
 						return userConstant.MESSAGES.SUCCESS.DEFAULT;
 					};
 				}
-				// else if (params.type === 'email') {
-				// 	if (data.emailOtp === params.otp) {
-				// 		const dataToUpdate = {
-				// 			isEmailVerified: true,
-				// 		}
-				// 		const statusUpdate = await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
-				// 		return userConstant.MESSAGES.SUCCESS.DEFAULT;
-				// 	};
-				// }
 				return userConstant.MESSAGES.ERROR.OTP_NOT_MATCH
 
 			}
@@ -1188,13 +1112,15 @@ export class UserController {
 			return Promise.reject(error)
 		}
 	}
-
+	/**
+	 * @function resetPassword
+	 * @default user reset password after verify lonk of phne number 
+	 */
 	async resetPassword(params) {
 		try {
 			if (params.token) {
 				params['accessToken'] = params.token;
 			}
-			console.log('params>>>>>>>>>>>>>>>>>>>>>>>', params);
 
 			// let jwtPayload = await tokenManager.decodeToken({ "accessToken": params.accessToken });
 			// console.log('jwtPayloadjwtPayload', jwtPayload);
@@ -1208,8 +1134,6 @@ export class UserController {
 				params['countryCode'] = tokenData['countryCode'];
 				params['mobileNo'] = tokenData['mobileNo'];
 
-				// const checkMobile = await userDao.findUserByEmailOrMobileNo(params);
-
 				const step1 = await userDao.findOne('users', { _id: tokenData.userId }, {}, {})  //(tokenData);
 
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
@@ -1217,44 +1141,28 @@ export class UserController {
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 
 			} else {
-				// if (isExpire) {
-				// 	let step2;
-				// 	step2 = userDao.emptyForgotToken({ "token": params.token });
-				// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
-				// }
-
-				// const tokenData = await verifyToken(params, 'FORGOT_PASSWORD', false)
-				// console.log('tokenDatatokenDatatokenDatatokenData', tokenData);
-
-				// const step1 = await userDao.findOne('users', { _id: jwtPayload.payload.userId }, {}, {})  //(tokenData);
-				// console.log('step1step1step1', step1);
-				// if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
-				// 	return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
-				// }
 				const step1 = await userDao.findOne('users', { forgotToken: params.accessToken }, {}, {})  //(tokenData);
 				console.log('step1step1step1', step1);
 
 				if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
 					return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
 				}
-
-				// const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
-				// if (oldHash !== step1.hash) {
-				// 	return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
-				// } else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = userDao.changeForgotPassword(params, { userId: step1._id });
 				if (step2) {
 					userDao.emptyForgotToken({ "token": params.token });
 				}
-
 				return userConstant.MESSAGES.SUCCESS.RESET_PASSWORD_SUCCESSFULLY
 			}
 		} catch (error) {
 			throw error;
 		}
 	}
-
+	/**
+	 * 
+	 * @function getProfileHome 
+	 * @description user profile from 3 section inside home screen  
+	 */
 	async getProfileHome(query, tokenData) {
 		try {
 			let getData: any = {}
@@ -1295,7 +1203,10 @@ export class UserController {
 			return Promise.reject(error);
 		}
 	}
-
+	/**
+	 * @function changePassword 
+	 * @description user chanage passord from application  
+	 */
 	async changePassword(params, tokenData) {
 		try {
 			const step1 = await userDao.findUserById(tokenData);
@@ -1317,9 +1228,7 @@ export class UserController {
 
 	async getMemberOfDayDetail(tokenData) {
 		try {
-			const data = await userDaoMember.userDao.getMemberOfDays({ userId: tokenData.userId })
-			console.log('datadatadata', data);
-
+			const data = await userDaoMember.userDao.getMemberOfDays({ userId: tokenData.userId });
 			return data;
 		} catch (error) {
 			errorReporter(error);

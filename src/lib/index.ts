@@ -2,7 +2,6 @@
 
 export * from "./pushNotification/fcm";
 export { pushNotification } from "./pushNotification/pushManager";
-export * from "./pushNotification/sns";
 export { CronUtils } from "./CronUtils";
 export { imageCropUtil } from "./ImageCropUtil";
 export { imageUtil } from "./ImageUtil";

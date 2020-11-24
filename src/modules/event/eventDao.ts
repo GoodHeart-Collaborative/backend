@@ -4,7 +4,7 @@ import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/index";
 import * as appUtils from '@utils/appUtils'
 import * as moment from 'moment';
-import * as weekend from '@utils/dateManager';
+// import * as weekend from '@utils/dateManager';
 export class EventDao extends BaseDao {
 
     async getGratitudeJournalData(params) {
@@ -65,7 +65,7 @@ export class EventDao extends BaseDao {
                 }
             }
             else if (date == config.CONSTANT.DATE_FILTER.WEEKEND) {
-                const dates = await weekend.getWeekendDates()
+                const dates = await appUtils.getWeekendDates()
                 match['startDate'] = {
                     $gte: dates.fridayDate,
                     $lte: dates.sundayEndDate
@@ -178,37 +178,7 @@ export class EventDao extends BaseDao {
                             if: { "$eq": [{ $size: "$interestData" }, 0] }, then: false, else: true
                         }
                     },
-                    // "isInterest": {
-                    //     $cond: {
-                    //         if: { "$eq": ["$interestData.userId", await appUtils.toObjectId(tokenData.userId)] },
-                    //         then: true,
-                    //         else: false
-                    //     }
-                    // },
                     isHostedByMe: 1,
-                    // isHostedByMe: {
-                    //     $cond: {
-                    //         if: {
-                    //             $eq: ['$userId', appUtils.toObjectId(tokenData.userId)]
-                    //         },
-                    //         then: true,
-                    //         else: false
-                    //     }
-                    // },
-                    // shareUrl: {
-                    //     $cond: {
-                    //         if: {
-                    //             $or: [{
-                    //                 $eq: ['$isHostedByMe', true]
-                    //             },
-                    //             {
-                    //                 $eq: ['$allowSharing', 1]
-                    //             }
-                    //             ]
-                    //         }, then: '$shareUrl',
-                    //         else: ''
-                    //     }
-                    // },
                     shareUrl: {
                         $cond: {
                             if: {
