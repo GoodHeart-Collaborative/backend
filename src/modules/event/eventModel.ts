@@ -24,6 +24,7 @@ export interface Ievent extends Document {
     eventCategoryName: string;
     eventCategoryId: string;
     eventCategoryImage: string;
+    isEventFree: boolean;
 }
 var geoSchema = new Schema({
     // location: { type: String, trim: true, required: true, default: '' },
@@ -52,8 +53,9 @@ const eventSchema = new Schema({
     startDate: { type: Number, index: true },
     endDate: { type: Number, index: true },
     location: geoSchema,
+    isEventFree: { type: Boolean, required: true },
     address: { type: String, trim: true, required: true, index: true },
-    price: { type: Number, default: 0 },
+    price: { type: Number },
     title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
     status: {

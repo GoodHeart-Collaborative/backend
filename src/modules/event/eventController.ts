@@ -692,6 +692,7 @@ class EventController {
                     eventUrl: 1,
                     isFeatured: 1,
                     endDate: 1,
+                    isEventFree: 1,
                     allowSharing: 1,
                     description: 1,
                     eventCategory: 1,

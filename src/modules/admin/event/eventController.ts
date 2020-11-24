@@ -246,6 +246,7 @@ class EventController {
                     created: 1,
                     createdAt: 1,
                     shareUrl: 1,
+                    isEventFree: 1,
                     isExpired: 1
                 }
             })

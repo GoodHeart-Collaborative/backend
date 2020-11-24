@@ -58,6 +58,7 @@ let addEvents = Joi.object({
     startDate: Joi.number().required(), //  Joi.date().required(),
     endDate: Joi.number().required(),
     price: Joi.number(),
+    isEventFree: Joi.boolean().required(),
     imageUrl: Joi.string(),
     eventUrl: Joi.string().allow(''),
     location: Joi.object().keys({
@@ -90,6 +91,7 @@ let updateEvent = Joi.object({
     startDate: Joi.number().required(),
     endDate: Joi.number().required(),
     price: Joi.number(),
+    isEventFree: Joi.boolean().required(),
     imageUrl: Joi.string(),
     eventUrl: Joi.string().allow(''),
     location: Joi.object().keys({
