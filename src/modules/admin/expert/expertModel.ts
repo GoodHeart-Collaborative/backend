@@ -31,7 +31,21 @@ export interface IExpert extends Document {
 const expertSchema = new Schema({
     name: { type: String },
     email: { type: String },
-    profession: { type: String },
+    // profession: { type: String },
+    profession: {
+        type: String, enum: [
+            config.PROFESSION_TYPE.CEO,
+            config.PROFESSION_TYPE.Founder,
+            config.PROFESSION_TYPE.Consultant,
+            config.PROFESSION_TYPE.Director,
+            config.PROFESSION_TYPE.Executive_Director,
+            config.PROFESSION_TYPE.Licensed_Counselor,
+            config.PROFESSION_TYPE.Managing_Director,
+            config.PROFESSION_TYPE.Professional_Coach,
+            config.PROFESSION_TYPE.Professional_Trainer,
+            config.PROFESSION_TYPE.Professor
+        ]
+    },
     industry: {
         type: Number, enum: [
             config.INDUSTRIES.NONPROFIT,

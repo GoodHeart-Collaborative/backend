@@ -231,7 +231,13 @@ export const PROFESSION_TYPE = {
 	Founder: "Founder",
 	CEO: "CEO",
 	Executive_Director: "Executive Director",
-	Managing_Director: "Managing Director"
+	Managing_Director: "Managing Director",
+	Licensed_Counselor: "Licensed Counselor",
+	Professional_Coach: "Professional Coach",
+	Consultant: "Consultant",
+	Professor: "Professor",
+	Professional_Trainer: "Professional Trainer",
+	Director: " Director"
 }
 
 const SOCIAL_LOGIN_TYPE = {

@@ -7,7 +7,18 @@ let validaExpertAdd = Joi.object({
     categoryId: Joi.array().items(Joi.string()),
     name: Joi.string().required(),
     email: Joi.string().email().trim().lowercase().required(),
-    profession: Joi.string().required(),
+    profession: Joi.string().valid([
+        config.PROFESSION_TYPE.CEO,
+        config.PROFESSION_TYPE.Founder,
+        config.PROFESSION_TYPE.Consultant,
+        config.PROFESSION_TYPE.Director,
+        config.PROFESSION_TYPE.Executive_Director,
+        config.PROFESSION_TYPE.Licensed_Counselor,
+        config.PROFESSION_TYPE.Managing_Director,
+        config.PROFESSION_TYPE.Professional_Coach,
+        config.PROFESSION_TYPE.Professional_Trainer,
+        config.PROFESSION_TYPE.Professor
+    ]).required(),
     industry: Joi.number().valid([
         config.INDUSTRIES.NONPROFIT,
         config.INDUSTRIES.EMERGENCY_SERVICES,
@@ -54,7 +65,19 @@ let updateExpert = Joi.object({
     categoryId: Joi.array().items(Joi.string()).required(),
     name: Joi.string().required(),
     // email: Joi.string().email().lowercase(),
-    profession: Joi.string().required(),
+    // profession: Joi.string().required(),
+    profession: Joi.string().valid([
+        config.PROFESSION_TYPE.CEO,
+        config.PROFESSION_TYPE.Founder,
+        config.PROFESSION_TYPE.Consultant,
+        config.PROFESSION_TYPE.Director,
+        config.PROFESSION_TYPE.Executive_Director,
+        config.PROFESSION_TYPE.Licensed_Counselor,
+        config.PROFESSION_TYPE.Managing_Director,
+        config.PROFESSION_TYPE.Professional_Coach,
+        config.PROFESSION_TYPE.Professional_Trainer,
+        config.PROFESSION_TYPE.Professor
+    ]).required(),
     industry: Joi.number().valid([
         config.INDUSTRIES.NONPROFIT,
         config.INDUSTRIES.EMERGENCY_SERVICES,
