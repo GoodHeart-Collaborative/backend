@@ -212,7 +212,7 @@ let updateProfile = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Founder,
         config.CONSTANT.PROFESSION_TYPE.Managing_Director,
     ]),
-
+    companyName: Joi.string().trim().optional(),
     // userName: Joi.string(),
     industryType: Joi.number().valid([
         config.INDUSTRIES.NONPROFIT,
@@ -246,6 +246,7 @@ let updateProfileUser = Joi.object({
     email: Joi.string().email().required(),
     // firstName: Joi.string().regex(config.CONSTANT.REGEX)required(),
     // lastName: Joi.string().allow(''),
+    companyName: Joi.string().trim().optional(),
     firstName: Joi.string()
         .trim()
         .min(config.CONSTANT.VALIDATION_CRITERIA.FIRST_NAME_MIN_LENGTH)

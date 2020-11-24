@@ -110,6 +110,7 @@ export class NotificationDao extends BaseDao {
 						experience: '$users.experience',
 						about: '$users.about',
 						myConnection: '$users.myConnection',
+						companyName: '$users.companyName'
 					},
 					likeCount: '$users.likeCount',
 					commentCount: '$users.commentCount',

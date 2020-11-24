@@ -320,7 +320,9 @@ export class GratitudeJournalDao extends BaseDao {
                         name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
                         profilePicUrl: "$profilePicUrl",
                         profession: { $ifNull: ["$profession", ""] },
-                        about: { $ifNull: ["$about", ""] }
+                        about: { $ifNull: ["$about", ""] },
+                        // companyName: { $ifNull: ["$companyName", ""] }
+                        companyName: 1
                     }
                 }
             ]

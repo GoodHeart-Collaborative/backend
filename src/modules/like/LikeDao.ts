@@ -94,7 +94,8 @@ export class LikeDao extends BaseDao {
                         profession: { $ifNull: ["$users.profession", ""] },
                         about: { $ifNull: ["$users.about", ""] },
                         industryType: "$users.industryType",
-                        experience: "$users.experience"
+                        experience: "$users.experience",
+                        companyName: "$users.companyName",
                         // }
                     }
                 });

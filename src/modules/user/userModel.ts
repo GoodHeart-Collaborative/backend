@@ -54,6 +54,7 @@ export interface IUser extends Document {
 	subscriptionPlatform: string;
 	subscriptionStartDate: number;
 	isDowngradeDone: boolean;
+	companyName: string;
 }
 
 var geoSchema = new Schema({
@@ -93,6 +94,7 @@ const userSchema = new Schema({
 			config.CONSTANT.PROFESSION_TYPE.Managing_Director,
 		]
 	},
+	companyName: { type: String },
 	gender: {
 		type: String,
 		enum: [

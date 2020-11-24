@@ -161,6 +161,7 @@ class InterestController {
                     profilePicUrl: "$userData.profilePicUrl",
                     profession: { $ifNull: ["$userData.profession", ""] },
                     about: { $ifNull: ["$userData.about", ""] },
+                    companyName: "$userData.companyName",
                     isHostedByMe: {
                         $cond: {
                             if: { $eq: ['$createrId', appUtils.toObjectId(tokenData.userId)] },
