@@ -111,7 +111,7 @@ class EventController {
             if (isExpired == true) {
                 match['endDate'] = { $lte: new Date().getTime() }
             }
-            else if (isExpired == false) {
+            else if (isExpired == false || status === config.CONSTANT.STATUS.ACTIVE) {
                 match['endDate'] = { $gt: new Date().getTime() }
             }
 
