@@ -118,7 +118,7 @@ export class DiscoverDao extends BaseDao {
                                         $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
                                     },
                                     {
-                                        $eq: ['$status', config.CONSTANT.USER_ADMIN_STATUS.VERIFIED]
+                                        $eq: ['$adminStatus', config.CONSTANT.USER_ADMIN_STATUS.VERIFIED]
                                     },
                                 ]
                             }
