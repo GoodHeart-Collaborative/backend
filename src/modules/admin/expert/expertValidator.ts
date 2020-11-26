@@ -19,13 +19,14 @@ let validaExpertAdd = Joi.object({
         config.PROFESSION_TYPE.Professional_Trainer,
         config.PROFESSION_TYPE.Professor
     ]).required(),
-    industry: Joi.number().valid([
-        config.INDUSTRIES.NONPROFIT,
-        config.INDUSTRIES.EMERGENCY_SERVICES,
-        config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
-        config.INDUSTRIES.LAW_ENFORCEMENT,
-        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
-    ]).required(),
+    industry: Joi.string().required(),
+    //  Joi.number().valid([
+    //     config.INDUSTRIES.NONPROFIT,
+    //     config.INDUSTRIES.EMERGENCY_SERVICES,
+    //     config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+    //     config.INDUSTRIES.LAW_ENFORCEMENT,
+    //     config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    // ]).required(),
     bio: Joi.string().required(),
     experience: Joi.string().valid([
         'Junior', 'Mid', 'Senior',
@@ -78,13 +79,14 @@ let updateExpert = Joi.object({
         config.PROFESSION_TYPE.Professional_Trainer,
         config.PROFESSION_TYPE.Professor
     ]).required(),
-    industry: Joi.number().valid([
-        config.INDUSTRIES.NONPROFIT,
-        config.INDUSTRIES.EMERGENCY_SERVICES,
-        config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
-        config.INDUSTRIES.LAW_ENFORCEMENT,
-        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
-    ]).required(),
+    // industry: Joi.number().valid([
+    //     config.INDUSTRIES.NONPROFIT,
+    //     config.INDUSTRIES.EMERGENCY_SERVICES,
+    //     config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+    //     config.INDUSTRIES.LAW_ENFORCEMENT,
+    //     config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    // ]).required(),
+    industry: Joi.string().required(),
     bio: Joi.string().required(),
     experience: Joi.string().valid([
         'Junior', 'Mid', 'Senior',

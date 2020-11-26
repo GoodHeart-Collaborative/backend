@@ -19,7 +19,7 @@ export interface IExpert extends Document {
     name: string;
     email: string;
     profession: string;
-    industry: number;
+    industry: string;
     experience: string;
     categoryId: [string];
     price: number;
@@ -46,15 +46,16 @@ const expertSchema = new Schema({
             config.PROFESSION_TYPE.Professor
         ]
     },
-    industry: {
-        type: Number, enum: [
-            config.INDUSTRIES.NONPROFIT,
-            config.INDUSTRIES.EMERGENCY_SERVICES,
-            config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
-            config.INDUSTRIES.LAW_ENFORCEMENT,
-            config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
-        ]
-    },
+    industry: { type: String },
+    // {
+    //     type: Number, enum: [
+    //         config.INDUSTRIES.NONPROFIT,
+    //         config.INDUSTRIES.EMERGENCY_SERVICES,
+    //         config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+    //         config.INDUSTRIES.LAW_ENFORCEMENT,
+    //         config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    //     ]
+    // },
     experience: {
         type: String, enum: [
             'Junior', 'Mid', 'Senior',

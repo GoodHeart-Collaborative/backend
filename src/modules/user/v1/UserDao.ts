@@ -169,7 +169,8 @@ export class UserDao extends BaseDao {
 						name: { $concat: [{ $ifNull: ["$firstName", ""] }, " ", { $ifNull: ["$lastName", ""] }] },
 						profilePicUrl: "$profilePicUrl",
 						profession: { $ifNull: ["$profession", ""] },
-						about: { $ifNull: ["$about", ""] }
+						about: { $ifNull: ["$about", ""] },
+						companyName: "$companyName"
 					},
 					isComment: {
 						$cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
