@@ -119,20 +119,20 @@ class EventController {
 
             aggPipe.push({ $match: match })
 
-            // if (status) {
-            aggPipe.push({
-                $addFields: {
-                    isExpired: {
-                        $cond: {
-                            if: {
-                                $gte: ['$endDate', new Date().getTime()]
-                            }, then: false,
-                            else: true
-                        },
+            if (!status) {
+                aggPipe.push({
+                    $addFields: {
+                        isExpired: {
+                            $cond: {
+                                if: {
+                                    $gte: ['$endDate', new Date().getTime()]
+                                }, then: false,
+                                else: true
+                            },
+                        }
                     }
-                }
-            })
-            // }
+                })
+            }
             // aggPipe.push({ $sort: { _id: -1 } });
             // aggPipe.push({
             //     $lookup: {
