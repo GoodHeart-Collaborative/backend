@@ -119,7 +119,7 @@ class EventController {
 
             aggPipe.push({ $match: match })
 
-            if (!status) {
+            if (!status && (status && isExpired)) {
                 aggPipe.push({
                     $addFields: {
                         isExpired: {
