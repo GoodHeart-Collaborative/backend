@@ -25,14 +25,14 @@ export const cronRoute: ServerRoute[] = [
         config: {
             tags: ["api", "cron"],
             description: "get experts and category",
-            auth: {
-                strategies: ["BasicAuth"]
-            },
+            // auth: {
+            //     strategies: ["BasicAuth"]
+            // },
             validate: {
-                headers: validator.headerObject["required"],
-                query: {
-                    type: Joi.string().allow(['memberOfDay', 'subscription']).required(),
-                },
+                // headers: validator.headerObject["required"],
+                // query: {
+                //     type: Joi.string().allow().required(),
+                // },
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -56,16 +56,12 @@ export const cronRoute: ServerRoute[] = [
         config: {
             tags: ["api", "cron"],
             description: "get experts and category",
-            auth: {
-                strategies: ["BasicAuth"]
-            },
+            // auth: {
+            //     strategies: ["BasicAuth"]
+            // },
             validate: {
-                headers: validator.headerObject["required"],
+                // headers: validator.headerObject["required"],
                 // query: {
-                // limit: Joi.number(),
-                // page: Joi.number(),
-                // searchTerm: Joi.string()
-                // },
                 failAction: appUtils.failActionFunction
             },
             plugins: {

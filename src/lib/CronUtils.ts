@@ -40,13 +40,13 @@ export class CronUtils extends BaseDao {
 
 		// type: Joi.string().allow(['memberOfDay', 'subscription', 'eventReminder']),
 
-		if (payload.type === 'memberOfDay') {
-			this.createMember()
-		} else if (payload.type === 'subscription') {
-			subscriptionController.verifySubscriptionRenewal()
-		} else if (payload.type === 'eventReminder') {
-			this.eventReminder()
-		}
+		// if (payload.type === 'memberOfDay') {
+		this.createMember()
+		// } else if (payload.type === 'subscription') {
+		subscriptionController.verifySubscriptionRenewal()
+		// } else if (payload.type === 'eventReminder') {
+		// this.eventReminder()
+		// }
 	}
 
 	async createMember() {
@@ -156,6 +156,7 @@ export class CronUtils extends BaseDao {
 			}
 		});
 		console.log(events);
+
 	}
 
 }
