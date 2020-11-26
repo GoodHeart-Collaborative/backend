@@ -33,6 +33,8 @@ class EventController {
             const categoryData = await categoryDao.findOne('categories', { _id: params.eventCategoryId }, {}, {})
             // const result = this.getTypeAndDisplayName(config.CONSTANT.EVENT_CATEGORY, params['eventCategoryId']);            params.eventCategoryName = categoryData['title'];
             params.created = new Date().getTime();
+
+            params.eventCategoryName = categoryData['title'];
             params['eventCategoryImage'] = categoryData['imageUrl'];
 
             const data = await eventDao.insert("event", params, {});
@@ -117,6 +119,7 @@ class EventController {
 
             aggPipe.push({ $match: match })
 
+            // if (status) {
             aggPipe.push({
                 $addFields: {
                     isExpired: {
@@ -129,6 +132,7 @@ class EventController {
                     }
                 }
             })
+            // }
             // aggPipe.push({ $sort: { _id: -1 } });
             // aggPipe.push({
             //     $lookup: {
@@ -155,7 +159,6 @@ class EventController {
             return Promise.reject(error);
         }
     }
-
     /**
      * @function updateStatus
      * @description admin update status active ,block ,delete
