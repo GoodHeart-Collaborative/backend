@@ -212,6 +212,8 @@ class DiscoverController {
                 let param: any = {}
                 param["_id"] = params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
+                console.log('getData', getData);
+
                 getData.data[0].user.discover_status = CONSTANT.DISCOVER_STATUS.PENDING;
                 getData.data[0].user.isReqestSendByMe = true
 

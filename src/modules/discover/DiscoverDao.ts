@@ -411,12 +411,16 @@ export class DiscoverDao extends BaseDao {
                     created: '$created'
                 }
             })
+            // if (!_id) {
             aggPipe.push({
                 $match: {
                     _id: { $ne: appUtils.toObjectId(userId) }
                 }
             })
+            // }
             result = await this.paginate('users', aggPipe, limit, pageNo, {}, true)
+            console.log('resultresultresult', result);
+
             return result
         } catch (error) {
             throw error;
