@@ -209,9 +209,10 @@ class DiscoverController {
                 return homeConstants.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED(getData.data[0])
             } else {
                 params['userId'] = userId.userId
-                await discoverDao.saveDiscover(params)
+                const discoverID = await discoverDao.saveDiscover(params)
                 let param: any = {}
-                param["_id"] = params.followerId
+                // param["_id"] = params.followerId
+                param["_id"] = discoverID //params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
                 console.log('getData', getData);
 
