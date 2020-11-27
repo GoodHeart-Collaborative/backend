@@ -151,6 +151,7 @@ class DiscoverController {
 
             checkQuery["$or"] = [{ userId: userId.userId, followerId: params.followerId }, { followerId: userId.userId, userId: params.followerId }]
             let checkDiscover = await discoverDao.checkDiscover(checkQuery)
+            console.log('>>>>>>', checkDiscover);
 
 
             // { followerId: params.followerId, userId: userId.userId })
