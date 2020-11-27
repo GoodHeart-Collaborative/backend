@@ -248,32 +248,33 @@ export class DiscoverDao extends BaseDao {
                 latitude = lat_lng.lat;
                 longitude = lat_lng.long;
             }
-
-            if (distance && longitude != undefined && latitude != undefined) {
-                pickupLocation.push(longitude, latitude);
-                aggPipe.push(
-                    {
-                        '$geoNear': {
-                            near: { type: "Point", coordinates: pickupLocation },
-                            spherical: true,
-                            maxDistance: searchDistance,
-                            distanceField: "dist",
-                        }
-                    },
-                    { "$sort": { distanceField: -1 } }
-                )
-            } else {
-                pickupLocation.push(longitude, latitude);
-                aggPipe.push(
-                    {
-                        '$geoNear': {
-                            near: { type: "Point", coordinates: pickupLocation },
-                            spherical: true,
-                            distanceField: "dist",
-                        }
-                    },
-                    { "$sort": { distanceField: -1 } }
-                )
+            if (!params._id) {
+                if (distance && longitude != undefined && latitude != undefined) {
+                    pickupLocation.push(longitude, latitude);
+                    aggPipe.push(
+                        {
+                            '$geoNear': {
+                                near: { type: "Point", coordinates: pickupLocation },
+                                spherical: true,
+                                maxDistance: searchDistance,
+                                distanceField: "dist",
+                            }
+                        },
+                        { "$sort": { distanceField: -1 } }
+                    )
+                } else {
+                    pickupLocation.push(longitude, latitude);
+                    aggPipe.push(
+                        {
+                            '$geoNear': {
+                                near: { type: "Point", coordinates: pickupLocation },
+                                spherical: true,
+                                distanceField: "dist",
+                            }
+                        },
+                        { "$sort": { distanceField: -1 } }
+                    )
+                }
             }
             if (pageNo === 1) {
                 params['location'] = {
@@ -373,7 +374,6 @@ export class DiscoverDao extends BaseDao {
                                 ]
                             }
                         }
-
                     }],
                     as: "discovers",
                 }
