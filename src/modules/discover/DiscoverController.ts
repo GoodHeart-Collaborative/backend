@@ -210,9 +210,11 @@ class DiscoverController {
             } else {
                 params['userId'] = userId.userId
                 const discoverID = await discoverDao.saveDiscover(params)
+                console.log('discoverID', discoverID);
+
                 let param: any = {}
                 // param["_id"] = params.followerId
-                param["_id"] = discoverID //params.followerId
+                param["_id"] = discoverID._id //params.followerId
                 let getData = await discoverDao.getUserData(param, userId)
                 console.log('getData', getData);
 
