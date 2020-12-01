@@ -6,6 +6,7 @@ import * as config from "@config/index";
 import { cronJob } from "@lib/CronUtils";
 import { Database } from "@utils/Database";
 import { userDao } from "@modules/user";
+import { global_var } from "@modules/models";
 
 export class BootStrap {
 
@@ -127,7 +128,25 @@ export class BootStrap {
 			console.log('checkMember', checkMember);
 
 			if (!checkMember) {
-				cronJob.createMember()
+				const criteria = [
+					{
+						$match: {
+							status: config.CONSTANT.STATUS.ACTIVE,
+							adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+							countMember: 1,//minMemberCount.memberOfDayCount,
+							profession: { $ne: "" },
+						}
+					},
+					{ $sample: { size: 1 } } // You want to get 5 docs
+				];
+				const isUsers = await userDao.findOne('users', criteria, {}, {})
+				console.log('22', isUsers);
+
+				if (!isUsers) {
+					await userDao.insert('global_var', { memberOfDayCount: 0 }, {})
+					cronJob.createMember()
+				}
+				return
 			}
 			// CronUtils.init();
 			return;

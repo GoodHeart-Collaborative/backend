@@ -51,6 +51,7 @@ export class CronUtils extends BaseDao {
 
 	async createMember() {
 		const minMemberCount = await userDao.findOne('global_var', {}, {}, {}, {});
+		console.log('minMemberCount', minMemberCount);
 
 		const criteria = [
 			{
