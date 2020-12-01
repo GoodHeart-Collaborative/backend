@@ -85,46 +85,52 @@ export class BootStrap {
 			// if (globalVariable = 1) {
 			// 	countMember: a
 			// }
-			const criteria = [
-				{
-					$match: {
-						status: config.CONSTANT.STATUS.ACTIVE,
-						adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
-						countMember: 0,
-					}
-				},
-				{ $sample: { size: 1 } } // You want to get 5 docs
-			];
-			const dataToUpdate = {
-				countMember: a,
-				isMemberOfDay: true,
-				memberCreatedAt: Date.now()
-			};
+			// const criteria = [
+			// 	{
+			// 		$match: {
+			// 			status: config.CONSTANT.STATUS.ACTIVE,
+			// 			adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+			// 			countMember: 0,
+			// 		}
+			// 	},
+			// 	{ $sample: { size: 1 } } // You want to get 5 docs
+			// ];
+			// const dataToUpdate = {
+			// 	countMember: a,
+			// 	isMemberOfDay: true,
+			// 	memberCreatedAt: Date.now()
+			// };
 
-			const getUsers = await userDao.aggregate('users', criteria, {});
+			// const getUsers = await userDao.aggregate('users', criteria, {});
 
-			if (getUsers && getUsers[0]) {
-				const criteria = {
-					_id: getUsers[0]._id
-				};
-				let startDate: any
-				let endDate: any
-				startDate = new Date();
-				startDate.setHours(0, 0, 0, 0);
+			// if (getUsers && getUsers[0]) {
+			// 	const criteria = {
+			// 		_id: getUsers[0]._id
+			// 	};
+			// 	let startDate: any
+			// 	let endDate: any
+			// 	startDate = new Date();
+			// 	startDate.setHours(0, 0, 0, 0);
 
-				endDate = new Date();
-				endDate.setHours(23, 59, 59, 999);
-				// await userDao.updateMany('users', { memberCreatedAt: { $gte: startDate, $lte: endDate } }, { "$unset": { memberCreatedAt: "" } }, {});
-				// await userDao.updateMany('users', { isMemberOfDay: true }, { "$set": { isMemberOfDay: false } }, {});
-				// const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
-			}
+			// 	endDate = new Date();
+			// 	endDate.setHours(23, 59, 59, 999);
+			// 	// await userDao.updateMany('users', { memberCreatedAt: { $gte: startDate, $lte: endDate } }, { "$unset": { memberCreatedAt: "" } }, {});
+			// 	// await userDao.updateMany('users', { isMemberOfDay: true }, { "$set": { isMemberOfDay: false } }, {});
+			// 	// const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
+			// }
 
-			if (!getUsers && !getUsers[0]) {
+			// if (!getUsers && !getUsers[0]) {
 
 
+			// }
+			const checkMember = await userDao.findOne('users', { isMemberOfDay: true }, {}, {});
+			console.log('checkMember', checkMember);
+
+			if (!checkMember) {
+				cronJob.createMember()
 			}
 			// CronUtils.init();
-
+			return;
 		} catch (error) {
 			return Promise.resolve();
 		}
