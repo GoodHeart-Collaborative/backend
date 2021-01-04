@@ -822,7 +822,7 @@ export class UserDao extends BaseDao {
 						status: { $ne: config.CONSTANT.STATUS.ACTIVE }
 					},
 					{
-						admnStatus: { $ne: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED }
+						adminStatus: { $ne: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED }
 					}]
 
 				}
