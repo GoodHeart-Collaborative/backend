@@ -567,7 +567,7 @@ class AdminController {
 
 			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED && findUserCurrenstatus.adminStatus !== config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 				const date = new Date();
-				date.setDate(date.getDate() + 365);
+				date.setDate(date.getDate() + 7);
 				dataToUpdate['subscriptionType'] = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
 				dataToUpdate['subscriptionEndDate'] = date.setHours(0, 0, 5, 0);  // moment(date).format('YYYY-MM-DD');
 				dataToUpdate['isSubscribed'] = true;
