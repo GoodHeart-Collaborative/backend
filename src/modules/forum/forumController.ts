@@ -37,7 +37,7 @@ class forumController {
             params['postAt'] = moment(new Date()).format('YYYY-MM-DD')
             let data = await forumtopicDao.saveForum(params)
             let param: any = { page: 1, limit: 1, postId: data._id }
-            let response = await forumtopicDao.getFormPostsById(param);
+            let response = await forumtopicDao.getFormPosts(param);
             response['isCreatedByMe'] = true
             return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED(response);
         } catch (error) {
