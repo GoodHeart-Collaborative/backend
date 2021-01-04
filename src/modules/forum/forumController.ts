@@ -10,10 +10,10 @@ import * as config from "@config/constant";
 import * as moment from 'moment';
 class forumController {
 
-	/**
-	 * @function add event
-	 * @description user add event
-	 */
+    /**
+     * @function add event
+     * @description user add event
+     */
     async updateForum(params: UserForumRequest.EditForum, userId) {
         try {
             const criteria = { _id: params.postId, createrId: userId.userId };
@@ -37,7 +37,7 @@ class forumController {
             params['postAt'] = moment(new Date()).format('YYYY-MM-DD')
             let data = await forumtopicDao.saveForum(params)
             let param: any = { page: 1, limit: 1, postId: data._id }
-            let response = await forumtopicDao.getFormPosts(param);
+            let response = await forumtopicDao.getFormPostsById(param);
             response['isCreatedByMe'] = true
             return forumConstant.MESSAGES.SUCCESS.FORUM_ADDED(response);
         } catch (error) {
