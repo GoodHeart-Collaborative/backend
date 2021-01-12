@@ -29,7 +29,7 @@ export const MESSAGES = {
         GRATITUDE_JOURNAL_DATA_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Journal added to your daily dairy",
+                "message": "Journal added to your daily diary",
                 "type": "GRATITUDE_JOURNAL_DATA_ADDED",
                 "data": data
             };
@@ -37,7 +37,7 @@ export const MESSAGES = {
         GRATITUDE_JOURNAL_DATA_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Journal updated to your daily dairy",
+                "message": "Journal updated to your daily diary",
                 "type": "GRATITUDE_JOURNAL_DATA_UPDATED",
                 "data": data
             };
