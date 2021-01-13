@@ -43,6 +43,12 @@ export const adminUser: ServerRoute[] = [
                         config.CONSTANT.STATUS.BLOCKED,
                         config.CONSTANT.STATUS.ACTIVE,
                     ]),
+                    subscriptionType: Joi.number().allow([
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value,
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.value,
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.YEARLY.value,
+                        config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
+                    ]),
                     adminStatus: Joi.string().valid([
                         config.CONSTANT.USER_ADMIN_STATUS.PENDING,
                         config.CONSTANT.USER_ADMIN_STATUS.REJECTED,
@@ -101,12 +107,14 @@ export const adminUser: ServerRoute[] = [
         method: "PATCH",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/user/{userId}/status`,
         handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+
             const payload = {
                 ...request.payload,
                 ...request.params
             };
             try {
-                const result = await adminController.updateStatus(payload);
+                const result = await adminController.updateStatus(payload, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

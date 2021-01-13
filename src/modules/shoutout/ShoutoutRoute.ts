@@ -6,6 +6,7 @@ import * as validator from "@utils/validator";
 import * as shoutoutValidator from "./ShoutoutValidator";
 import * as config from "@config/index";
 import { responseHandler } from "@utils/ResponseHandler";
+import * as Joi from "joi";
 
 export const shoutoutRoute: ServerRoute[] = [
     {
@@ -46,7 +47,7 @@ export const shoutoutRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: ShoutoutRequest.ShoutoutRequestAdd = request.payload;
             try {
-                const result = await shoutoutController.saveShoutoutData({ ...payload }, { userId: tokenData.userId });
+                const result = await shoutoutController.saveShoutoutData({ ...payload }, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -69,5 +70,41 @@ export const shoutoutRoute: ServerRoute[] = [
                 }
             }
         }
+    },
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/shoutout/myConnection`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            const query = request.query;
+            try {
+                const result = await shoutoutController.getShoutouMyConnection({ userId: tokenData.userId }, query);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "shoutout"],
+            description: "get shoutout list",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                query: {
+                    pageNo: Joi.number().required(),
+                    limit: Joi.number().required(),
+                    searchKey: Joi.string()
+                },
+                headers: validator.userAuthorizationHeaderObj,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
     }
+
 ];

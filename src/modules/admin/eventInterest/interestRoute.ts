@@ -14,7 +14,7 @@ export const adminEventInterest: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const payload: AdminEventInterest.GetInterest = request.query;
             try {
-                // appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+                appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventInterestController.getInterests(payload);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
@@ -39,7 +39,6 @@ export const adminEventInterest: ServerRoute[] = [
             }
         }
     },
-
 ];
 
 

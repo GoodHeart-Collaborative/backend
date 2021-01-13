@@ -41,7 +41,8 @@ export const contentRoute: ServerRoute = [
 							config.CONSTANT.CONTENT_TYPE.CONTACT_US,
 							config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
 							config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
-							config.CONSTANT.CONTENT_TYPE.ABOUT_US
+							config.CONSTANT.CONTENT_TYPE.ABOUT_US,
+							config.CONSTANT.CONTENT_TYPE.FAQ,
 						])
 						.required()
 						.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us")
@@ -167,10 +168,10 @@ export const contentRoute: ServerRoute = [
 	},
 	{
 		method: "PUT",
-		path: `${config.SERVER.API_BASE_URL}/v1/content/{contentId}`,
+		path: `${config.SERVER.API_BASE_URL}/v1/content/{type}`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-			const params: ContentRequest.Id = request.params;
+			const params = request.params;
 			const payload: ContentRequest.Edit = request.payload;
 			try {
 				const result = await contentController.editContent({ ...params, ...payload }, tokenData);
@@ -189,10 +190,15 @@ export const contentRoute: ServerRoute = [
 			validate: {
 				headers: validator.adminAuthorizationHeaderObj,
 				params: {
-					contentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+					// contentId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required()
+					type: Joi.string().allow([
+						config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
+						config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
+						config.CONSTANT.CONTENT_TYPE.ABOUT_US
+					]),
 				},
 				payload: {
-					title: Joi.string().trim().required(),
+					// title: Joi.string().trim().required(),
 					description: Joi.string().trim().required()
 				},
 				failAction: appUtils.failActionFunction
@@ -212,8 +218,16 @@ export const contentRoute: ServerRoute = [
 			const query: ContentRequest.View = request.query;
 			try {
 				const result = await contentController.viewContent({ ...query });
-				// return h.view("content-page", { "content": result.data.description });
-				return responseHandler.sendSuccess(h, result);
+				if (query.type === config.CONSTANT.CONTENT_TYPE.FAQ) {
+					return h.view("faq", { "content": result.data });
+				}
+				return h.view("content-page", { "content": result.data.description });
+				// return result
+
+				// return responseHandler.sendSuccess(h, result);
+				// } else {
+				// 	return h.view("content-page", { "content": result.data.description });
+				// }
 			} catch (error) {
 				return responseHandler.sendError(error);
 			}
@@ -229,10 +243,11 @@ export const contentRoute: ServerRoute = [
 							config.CONSTANT.CONTENT_TYPE.CONTACT_US,
 							config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
 							config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
-							config.CONSTANT.CONTENT_TYPE.ABOUT_US
-						])
-						.required()
-						.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us")
+							config.CONSTANT.CONTENT_TYPE.ABOUT_US,
+							config.CONSTANT.CONTENT_TYPE.FAQ,
+						]).required()
+						.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us"),
+					from: Joi.string().allow(['user', 'admin'])
 				},
 				failAction: appUtils.failActionFunction
 			},
@@ -285,8 +300,9 @@ export const contentRoute: ServerRoute = [
 		path: `${config.SERVER.API_BASE_URL}/v1/content/faq`,
 		handler: async (request: Request, h: ResponseToolkit) => {
 			const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+			const params = request.query;
 			try {
-				const result = await contentController.faqList(tokenData);
+				const result = await contentController.faqList(tokenData, params);
 				return responseHandler.sendSuccess(h, result);
 			} catch (error) {
 				return responseHandler.sendError(error);
@@ -300,6 +316,17 @@ export const contentRoute: ServerRoute = [
 				strategies: ["AdminAuth"]
 			},
 			validate: {
+				query: {
+					limit: Joi.number(),
+					page: Joi.number(),
+					searchKey: Joi.string(),
+					fromDate: Joi.string(),
+					toDate: Joi.string(),
+					sortOrder: Joi.number().valid([
+						config.CONSTANT.ENUM.SORT_TYPE
+					]),
+					sortBy: Joi.string().valid('createdAt').default('createdAt'),
+				},
 				headers: validator.adminAuthorizationHeaderObj,
 				failAction: appUtils.failActionFunction
 			},
@@ -410,5 +437,48 @@ export const contentRoute: ServerRoute = [
 				}
 			}
 		}
-	}
+	},
+
+
+	// {
+	// 	method: "GET",
+	// 	path: `${config.SERVER.API_BASE_URL}/v1/users/content/view`,
+	// 	handler: async (request: Request, h: ResponseToolkit) => {
+	// 		const query: ContentRequest.View = request.query;
+	// 		try {
+	// 			const result = await contentController.viewContent({ ...query });
+	// 			// return h.view("content-page", { "content": result.data.description });
+	// 			return responseHandler.sendSuccess(h, result);
+	// 		} catch (error) {
+	// 			return responseHandler.sendError(error);
+	// 		}
+	// 	},
+	// 	config: {
+	// 		tags: ["api", "content"],
+	// 		description: "View Content user",
+	// 		validate: {
+	// 			query: {
+	// 				type: Joi.string()
+	// 					.trim()
+	// 					.valid([
+	// 						config.CONSTANT.CONTENT_TYPE.CONTACT_US,
+	// 						config.CONSTANT.CONTENT_TYPE.PRIVACY_POLICY,
+	// 						config.CONSTANT.CONTENT_TYPE.TERMS_AND_CONDITIONS,
+	// 						config.CONSTANT.CONTENT_TYPE.ABOUT_US
+	// 					])
+	// 					.required()
+	// 					.description("'1'-Privacy Policy, '2'-Terms & Conditions, '3'-FAQ, '4'-Contact Us")
+	// 			},
+	// 			failAction: appUtils.failActionFunction
+	// 		},
+	// 		plugins: {
+	// 			"hapi-swagger": {
+	// 				// payloadType: 'form',
+	// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+	// 			}
+	// 		}
+	// 	}
+	// },
+
+
 ];

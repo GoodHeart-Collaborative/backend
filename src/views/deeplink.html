@@ -17,7 +17,7 @@
 			// alert("deepLink()==========================>" + JSON.stringify(options));
 			var ua = window.navigator.userAgent;
 			// alert("ua==========================>" + ua);
-
+			// console.log('uauauauauaua', ua);
 			// split the first :// from the url string
 			var split = options.url.split(/:\/\/(.+)/);
 			var scheme = split[0];
@@ -35,7 +35,9 @@
 					';package=' +
 					options.android_package_name +
 					';end;',
+				// android_case_broweser_link: options.android_case_fallback || 'https://google.com',
 				playStoreLink: "https://market.android.com/details?id=" + options.android_package_name,
+				// playStoreLink: "https://play.google.com/store/apps/dev?id=5032485548806526009",
 				fallback: options.fallback
 			};
 			// alert("urls==========================>" + JSON.stringify(urls));
@@ -110,11 +112,22 @@
 				// alert("androidLaunch==============================>");
 				if (ua.match(/Chrome/)) {
 					// alert("chrome===========================>");
-					document.location = urls.android_intent;
+					// document.location = urls.android_case_broweser_link // urls.android_intent;
+					// document.location = urls.android_intent;
+					document.location = urls.fallback;
+
 				} else if (ua.match(/Firefox/)) {
 					// alert("firefox===========================>");
 					// launchWekitApproach(urls.deepLink, urls.playStoreLink || urls.fallback);
 					launchWekitApproach(urls.android_intent, urls.playStoreLink || urls.fallback);
+
+					// launchWekitApproach(urls.android_case_broweser_link, urls.android_case_broweser_link || urls.android_case_broweser_link);
+
+					// document.location = urls.android_case_broweser_link // urls.android_intent;
+
+					document.location = urls.fallback
+
+					// console.log('vdocument.locationdocument.locationdocument.location', document.location);
 				} else {
 					// alert("other===========================>");
 					launchIframeApproach(urls.deepLink, urls.playStoreLink || urls.fallback);
@@ -128,7 +141,8 @@
 			url: '{{{url}}}',
 			iosLink: '{{{iosLink}}}',
 			ios_store_link: '{{{ios_store_link}}}',
-			android_package_name: '{{android_package_name}}'
+			android_package_name: '{{{android_package_name}}}',
+			android_case_fallback: '{{{android_case_fallback}}}'
 		}
 		deepLink(options);
 	</script>

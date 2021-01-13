@@ -5,27 +5,9 @@ import * as AWS from "aws-sdk";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 
-// Twilio Constants
-const TWILIO_NUMBER = config.SERVER.TWILIO.TWILIO_NUMBER,
-	client = require("twilio")(config.SERVER.TWILIO.ACCOUNT_SID, config.SERVER.TWILIO.AUTH_TOKEN);
-
 let smsCounter = 0;
 
 export class SMSManager {
-
-	sendMessageViaTwilio(countryCode, mobileNo, body) {
-		return client.messages.create({
-			to: countryCode ? "+" + countryCode + mobileNo : "+" + mobileNo,
-			from: TWILIO_NUMBER,
-			body: body
-		})
-			.then(function (data) {
-				smsCounter++;
-			})
-			.catch(function (error) {
-				throw error;
-			});
-	}
 
 	sendMessageViaAWS(countryCode, mobileNo, body) {
 		// Set region
@@ -66,8 +48,6 @@ export class SMSManager {
 		this._validateNumber(countryCode, mobileNo);
 		if (config.SERVER.SMS_TYPE === config.CONSTANT.SMS_SENDING_TYPE.AWS_SDK) {
 			return this.sendMessageViaAWS(countryCode, mobileNo, body);
-		} else { // config.CONSTANT.SMS_SENDING_TYPE.TWILIO
-			return this.sendMessageViaTwilio(countryCode, mobileNo, body);
 		}
 	}
 
@@ -78,20 +58,6 @@ export class SMSManager {
 				const tinyLink = await appUtils.tinyUrl(link);
 				const sms = config.CONSTANT.SMS.TEMPLATES.FORGOT_PASSWORD.replace(/LINK/g, String(tinyLink));
 				resolve(this._sendMessage(countryCode, mobileNo, sms));
-			} catch (error) {
-				throw error;
-			}
-		});
-	}
-
-	sendPassword(params) {
-		return new Promise(async function (resolve, reject) {
-			try {
-				const link = `${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/common/deepLink?fallback=${config.SERVER.ADMIN_URL}
-					/login&android=${config.CONSTANT.DEEPLINK.ANDROID_SCHEME}?type=login&ios=${config.CONSTANT.DEEPLINK.IOS_SCHEME}login@&type=login`;
-				const tinyLink = await appUtils.tinyUrl(link);
-				const sms = config.CONSTANT.SMS.TEMPLATES.WELCOME.replace(/LINK/g, String(tinyLink)).replace(/EMAIL/g, params.email).replace(/PASSWORD/g, params.password);
-				resolve(this._sendMessage(params.countryCode, params.mobileNo, sms));
 			} catch (error) {
 				throw error;
 			}

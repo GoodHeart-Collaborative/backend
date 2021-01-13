@@ -317,14 +317,16 @@ export const adminRoute: ServerRoute[] = [
 				const result = await adminController.verifyLink({ payload });
 				return h.redirect(config.SERVER.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL + payload.token);
 			} catch (error) {
-				if (error.JsonWebTokenError) {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
-				} else if (error === 'LinkExpired') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + '/LinkExpired');
-				} else if (error === 'error') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
-				} else {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+				if (error) {
+					// return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
+					// } else if (error === 'LinkExpired') {
+					return h.redirect(config.SERVER.ADMIN_URL + '/link-expired')
+					// } else if (error === 'error') {
+					// return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
+					// } else {
+					// return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+					// const message = "Your link has been expired. Please regenerate your link again.";
+					// return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png" });			
 				}
 			}
 		},
@@ -365,13 +367,13 @@ export const adminRoute: ServerRoute[] = [
 
 			} catch (error) {
 				if (error.JsonWebTokenError) {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'invalid url');
+					return h.redirect(config.SERVER.ADMIN_URL + 'invalid url');
 				} else if (error === 'LinkExpired') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'LinkExpired');
+					return h.redirect(config.SERVER.ADMIN_URL + 'LinkExpired');
 				} else if (error === 'error') {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'error');
+					return h.redirect(config.SERVER.ADMIN_URL + 'error');
 				} else {
-					return h.redirect(config.CONSTANT.WEBSITE_URL.ADMIN_URL + 'Something went wrong');
+					return h.redirect(config.SERVER.ADMIN_URL + '/link-expired');
 				}
 			}
 		},
@@ -511,7 +513,7 @@ export const adminRoute: ServerRoute[] = [
 				payload: {
 					oldPassword: Joi.string()
 						.trim()
-						.min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
+						// .min(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MIN_LENGTH)
 						.max(config.CONSTANT.VALIDATION_CRITERIA.PASSWORD_MAX_LENGTH)
 						.default(config.CONSTANT.DEFAULT_PASSWORD)
 						.required(),
@@ -642,116 +644,4 @@ export const adminRoute: ServerRoute[] = [
 			}
 		}
 	},
-	// {
-	// 	method: "PUT",
-	// 	path: `${config.SERVER.API_BASE_URL}/v1/admin`,
-	// 	handler: async (request: Request, h: ResponseToolkit) => {
-	// 		const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-	// 		const payload: AdminRequest.EditProfile = request.payload;
-	// 		try {
-	// 			const result = await adminController.editProfile(payload, tokenData);
-	// 			return responseHandler.sendSuccess(h, result);
-	// 		} catch (error) {
-	// 			return responseHandler.sendError(error);
-	// 		}
-	// 	},
-	// 	config: {
-	// 		tags: ["api", "admin"],
-	// 		description: "Dashboard",
-	// 		// notes: "",
-	// 		auth: {
-	// 			strategies: ["AdminAuth"]
-	// 		},
-	// 		validate: {
-	// 			headers: validator.adminAuthorizationHeaderObj,
-	// 			payload: {
-	// 				name: Joi.string()
-	// 					.trim()
-	// 					.min(config.CONSTANT.VALIDATION_CRITERIA.NAME_MIN_LENGTH)
-	// 					.required(),
-	// 				email: Joi.string()
-	// 					.trim()
-	// 					.lowercase({ force: true })
-	// 					.email({ minDomainAtoms: 2 })
-	// 					.regex(config.CONSTANT.REGEX.EMAIL)
-	// 					.required()
-	// 			},
-	// 			failAction: appUtils.failActionFunction
-	// 		},
-	// 		plugins: {
-	// 			"hapi-swagger": {
-	// 				// payloadType: 'form',
-	// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-	// 			}
-	// 		}
-	// 	}
-	// },
-
-
-	// {
-	// 	method: "GET",
-	// 	path: `${config.SERVER.API_BASE_URL}/v1/admin/reports/user`,
-	// 	handler: async (request: Request, h: ResponseToolkit) => {
-	// 		const query: AdminRequest.UserReportGraph = request.query;
-	// 		try {
-	// 			const result = await adminController.userReportGraph(query);
-	// 			return responseHandler.sendSuccess(h, result);
-	// 		} catch (error) {
-	// 			return responseHandler.sendError(error);
-	// 		}
-	// 	},
-	// 	config: {
-	// 		tags: ["api", "admin"],
-	// 		description: "User Report Graph",
-	// 		// notes: "",
-	// 		auth: {
-	// 			strategies: ["AdminAuth"]
-	// 		},
-	// 		validate: {
-	// 			headers: validator.adminAuthorizationHeaderObj,
-	// 			query: {
-	// 				year: Joi.number().optional(),
-	// 				month: Joi.number().optional(),
-	// 				platform: Joi.string()
-	// 					.trim()
-	// 					.optional()
-	// 					.valid([
-	// 						config.CONSTANT.DEVICE_TYPE.ANDROID,
-	// 						config.CONSTANT.DEVICE_TYPE.IOS,
-	// 						config.CONSTANT.DEVICE_TYPE.WEB
-	// 					])
-	// 					.description("device OS '1'-Android, '2'-iOS, '3'-WEB"),
-	// 				type: Joi.string()
-	// 					.trim()
-	// 					.required()
-	// 					.default(config.CONSTANT.GRAPH_TYPE.YEARLY)
-	// 					.valid([
-	// 						config.CONSTANT.GRAPH_TYPE.DAILY,
-	// 						config.CONSTANT.GRAPH_TYPE.WEEKLY,
-	// 						config.CONSTANT.GRAPH_TYPE.MONTHLY,
-	// 						config.CONSTANT.GRAPH_TYPE.YEARLY,
-	// 					])
-	// 					.description("Type => 'Daily', 'Weekly', 'Monthly', 'Yearly'"),
-	// 				status: Joi.string()
-	// 					.trim()
-	// 					.lowercase({ force: true })
-	// 					.optional()
-	// 					.valid([
-	// 						config.CONSTANT.STATUS.BLOCKED,
-	// 						config.CONSTANT.STATUS.ACTIVE
-	// 					])
-	// 					.description("Status => 'blocked', 'unblocked'"),
-	// 				fromDate: Joi.number().optional().description("in timestamp"),
-	// 				toDate: Joi.number().optional().description("in timestamp")
-	// 			},
-	// 			failAction: appUtils.failActionFunction
-	// 		},
-	// 		plugins: {
-	// 			"hapi-swagger": {
-	// 				// payloadType: 'form',
-	// 				responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-	// 			}
-	// 		}
-	// 	}
-	// },
 ];

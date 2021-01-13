@@ -20,6 +20,11 @@ export const
 				const headers: Device = request.headers;
 				const payload: UserRequest.Signup = request.payload;
 				try {
+					console.log(' request.info. request.info.', request.info);
+					const xFF = request.headers['x-forwarded-for']
+					const ip = xFF ? xFF.split(',')[0] : request.info.remoteAddress;
+					payload['getIpfromNtwk'] = ip;
+
 					const result = await userController.signup({ ...headers, ...payload });
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
@@ -35,6 +40,37 @@ export const
 				validate: {
 					headers: validator.headerObject["required"],
 					payload: validateUser.signUp,
+					failAction: appUtils.failActionFunction,
+				},
+				plugins: {
+					"hapi-swagger": {
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+		{
+			method: "PUT",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/location`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				let userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				let payload: UserRequest.Location = request.payload;
+				try {
+					const result = await userController.updateUserLocation(payload, userData);
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			options: {
+				tags: ["api", "user"],
+				description: "Set user location",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					headers: validator.userAuthorizationHeaderObj,
+					payload: validateUser.localtion,
 					failAction: appUtils.failActionFunction,
 				},
 				plugins: {
@@ -112,12 +148,11 @@ export const
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 
-				const headers: Device = request.headers;
-
+				const headers = request.headers;
 				const payload: UserRequest.verifyOTP = request.payload;
 				try {
 					const result = await userController.verifyOTP({ ...headers, ...payload }, userData);
-					result["data"] = {}
+					// result["data"] = {}
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
@@ -317,6 +352,8 @@ export const
 					return responseHandler.sendSuccess(h, result);
 
 				} catch (error) {
+					// const message = "Your link has been expired. Please regenerate your link again.";
+					// return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear() });
 					return responseHandler.sendError(error);
 				}
 			},
@@ -343,8 +380,9 @@ export const
 			path: `${config.SERVER.API_BASE_URL}/v1/user/profile`,
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const userId = request.query.userId;
 				try {
-					const result = await userController.profile(tokenData);
+					const result = await userController.profile(tokenData, userId);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
 					return responseHandler.sendError(error);
@@ -358,6 +396,9 @@ export const
 					strategies: ["UserAuth"]
 				},
 				validate: {
+					query: {
+						userId: Joi.string()
+					},
 					headers: validator.userAuthorizationHeaderObj,
 					failAction: appUtils.failActionFunction
 				},
@@ -407,7 +448,6 @@ export const
 			handler: async (request: Request, h: ResponseToolkit) => {
 				const userData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const payload = request.payload
-				console.log('headersheaders', request.headers.authorization);
 				try {
 					const result = await userController.updateProfileUser(payload, userData, { accessToken: request.headers.authorization });
 					return responseHandler.sendSuccess(h, result);
@@ -442,6 +482,9 @@ export const
 				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
 				const query = request.query;
 				try {
+					if (query && query.userId) {
+						query["user"] = query.userId
+					}
 					const result = await userController.getProfileHome(query, tokenData);
 					return responseHandler.sendSuccess(h, result);
 				} catch (error) {
@@ -466,6 +509,39 @@ export const
 				}
 			}
 		},
+		{
+			method: "GET",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/member`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				// const params = request.params;
+				try {
+					const result = await userController.getMemberOfDayDetail(tokenData);
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			options: {
+				tags: ["api", "user", "home"],
+				description: "User Profile home",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					// params: validateUser.memberOfDay,
+					headers: validator.userAuthorizationHeaderObj,
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
+
+
 		// {
 		// 	method: "GET",
 		// 	path: `${config.SERVER.API_BASE_URL}/v1/user/{userId}`,
@@ -496,4 +572,37 @@ export const
 		// 		}
 		// 	}
 		// },
+
+		{
+			method: "PATCH",
+			path: `${config.SERVER.API_BASE_URL}/v1/user/change-password`,
+			handler: async (request: Request, h: ResponseToolkit) => {
+				const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+				const payload = request.payload;
+				try {
+					const result = await userController.changePassword(payload, tokenData);
+					return responseHandler.sendSuccess(h, result);
+				} catch (error) {
+					return responseHandler.sendError(error);
+				}
+			},
+			config: {
+				tags: ["api", "user"],
+				description: "Change Password",
+				notes: "change password",
+				auth: {
+					strategies: ["UserAuth"]
+				},
+				validate: {
+					headers: validator.userAuthorizationHeaderObj,
+					payload: validateUser.changePassword,
+					failAction: appUtils.failActionFunction
+				},
+				plugins: {
+					"hapi-swagger": {
+						responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+					}
+				}
+			}
+		},
 	];

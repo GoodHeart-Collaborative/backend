@@ -1,6 +1,8 @@
 "use strict";
 
 import { SERVER } from "@config/environment";
+// import * as config from "@config/index";
+// ${config.SERVER.APP_URL}${config.SERVER.API_BASE_URL}/
 
 const SWAGGER_DEFAULT_RESPONSE_MESSAGES = [
 	{ code: 200, message: "OK" },
@@ -28,6 +30,7 @@ const HTTP_STATUS_CODE = {
 	UNREGISTERED: 410,
 	PAYLOAD_TOO_LARGE: 413,
 	BLOCKED_USER: 420,
+	DELETD_USER: 420,
 	CONCURRENT_LIMITED_EXCEEDED: 429,
 	// TOO_MANY_REQUESTS: 429,
 	INTERNAL_SERVER_ERROR: 500,
@@ -48,34 +51,71 @@ const HTTP_STATUS_CODE = {
 	ADMIN_REJECT_ACCOUNT: 415,
 	LOGIN_STATUS_HOME_SCREEN: 416,
 	ADMIN_REJECTED_USER: 421,
+
+	SUBSCRIPTION_EXPIRE_ERROR_CODE: 422
+
 };
 
 const EVENT_INTEREST = {
 	GOING: 1,
-	INTEREST: 2
+	INTEREST: 2,
+	MY_EVENT: 3
 }
 
 const MEMBER_TYPE = {
-	FREE: 'Free',
-	PREMIUM: 'Premium'
+	FREE: "Free",
+	PREMIUM: "Premium"
 }
 
+const USER_SUBSCRIPTION_PLAN = {
+	FREE: {
+		price: 0,
+		value: 1
+	},
+	MONTHLY: {
+		price: 8,
+		value: 2
+	},
+	YEARLY: {
+		price: 78,
+		value: 3
+	},
+	NONE: {
+		price: 0,
+		value: 4
+	}
+}
+
+// const USER_SUBSCRIPTION_PLAN_PRICE = {
+// 	FREE: 0,
+// 	MONTHLY: 8,
+// 	YEARLY: 787,
+// 	NONE: 0,
+// }
+
+
 const USER_ADMIN_STATUS = {
-	PENDING: 'pending',
-	VERIFIED: 'verified',
-	REJECTED: 'rejected',
+	PENDING: "pending",
+	VERIFIED: "verified",
+	REJECTED: "rejected",
 }
 const ACCOUNT_LEVEL = {
 	ADMIN: "admin",
 	USER: "user"
 };
 
-const DB_MODEL_REF = {
+const DATE_FILTER = {
+	LAST_WEEK: 1,
+	LAST_MONTH: 2,
+	TODAY: 3,
+	TOMORROW: 4,
+	WEEKEND: 5,
+}
+
+const DB_MODEL_REF: any = {
 	ADMIN: "admin",
 	ADMIN_NOTIFICATION: "admin_notification",
-	CONTACT: "contact",
 	CONTENT: "content",
-	COUPON: "coupon",
 	LOG: "log",
 	NOTIFICATION: "notification",
 	USER: "user",
@@ -84,20 +124,23 @@ const DB_MODEL_REF = {
 	VERSION: "version",
 	POST: "posts",
 	CATEGORY: "categories",
-	INSPIRATION: 'inspiration',
-	HOME: 'home',
-	DISCOVER: 'discover',
-	SHOUTOUT: 'shoutout',
-	UNICORN: 'unicorn',
+	INSPIRATION: "inspiration",
+	HOME: "home",
+	DISCOVER: "discover",
+	SHOUTOUT: "shoutout",
+	UNICORN: "unicorn",
 	COMMENT: "comment",
 	LIKE: "like",
-	ADVICE: 'advice',
-	MEMBER: 'member',
-	EXPERT: 'expert',
-	EXPERT_POST: 'expert_post',
-	EVENT: 'event',
-	EVENT_INTEREST: 'event_interest'
-
+	ADVICE: "advice",
+	MEMBER: "member",
+	EXPERT: "expert",
+	EXPERT_POST: "expert_post",
+	EVENT: "event",
+	EVENT_INTEREST: "event_interest",
+	FORUM: "forum",
+	REPORT: "report",
+	GLOBAL_VARIABLE: "global_var",
+	SUBSCRIPTION: "subscription"
 };
 
 const DEVICE_TYPE = {
@@ -112,6 +155,55 @@ const ADMIN_TYPE = {
 	SUB_ADMIN: "sub"
 };
 
+
+// const EVENT_CATEGORY = {
+// 	EVENTS: {
+// 		TYPE: "events",
+// 		VALUE: 1,
+// 		DISPLAY_NAME: "EVENTS"
+// 	},
+
+const REPORT_MESSAGE = {
+	Explicit_photos: {
+		reason: "Explicit photos",
+		id: 1
+	},
+	Offensive_content: {
+		reason: "Offensive content",
+		id: 2
+	},
+	Impostor_accounts: {
+		reason: "Impostor accounts",
+		id: 3
+	},
+	Other: {
+		reason: "Other",
+		id: 4
+	},
+
+
+	PretendingToBeSomeOne: {
+		reason: "Pretending to be Someone",
+		id: 10
+	},
+	FAKE_ACCOUNT: {
+		reason: "Fake account",
+		id: 11
+	},
+	FAKE_NAME: {
+		reason: "Fake name",
+		id: 12
+	},
+	POSTING_IN_APPROPRIATE_THINGS: {
+		reason: "Posting in appropriate things",
+		id: 13
+	},
+	SOMETHING_ELSE: {
+		reason: "Something else",
+		id: 14
+	}
+}
+
 const GENDER = {
 	MALE: "male",
 	FEMALE: "female",
@@ -119,24 +211,13 @@ const GENDER = {
 	// TRANSG
 };
 
-const EXPERIENCE_LEVEL = {
-	JUNIOR: 'Junior',
-	MID: 'Mid',
-	SENIOR: 'Senior',
-}
 
-// export const INDUSTRIES = {
-// 	// Experts_in_Executive_Burnout: "Experts in Executive Burnout",
-// 	// Nonprofit_Resiliency_Coaches: "Nonprofit Resiliency Coaches",
-// 	// Wellness_Coaches: "Wellness Coaches",
-// 	// Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma: "Licensed Therapists specializing in Vicarious and Secondary Trauma",
-// 	// Compassion_Fatigue: 'Compassion Fatigue',
-// 	Nonprofit: 'Nonprofit',
-// 	Emergency_Services: 'Emergency Services',
-// 	Social_And_Community_Services: 'Social and Community Services',
-// 	Law_Enforcement: "Law Enforcement",
-// 	Healthcare_And_Community_Medical_Services: "Healthcare and Community Medical Services"
-// };
+const EXPERIENCE_LEVEL = {
+	years_0_2: "0-2 years",
+	years_2_5: "2-5 years",
+	years_5_10: "5-10 years",
+	year_10: "10+",
+}
 
 export const INDUSTRIES = {
 	NONPROFIT: 1,
@@ -149,8 +230,14 @@ export const INDUSTRIES = {
 export const PROFESSION_TYPE = {
 	Founder: "Founder",
 	CEO: "CEO",
-	Executive_Director: 'Executive Director',
-	Managing_Director: 'Managing Director'
+	Executive_Director: "Executive Director",
+	Managing_Director: "Managing Director",
+	Licensed_Counselor: "Licensed Counselor",
+	Professional_Coach: "Professional Coach",
+	Consultant: "Consultant",
+	Professor: "Professor",
+	Professional_Trainer: "Professional Trainer",
+	Director: " Director"
 }
 
 const SOCIAL_LOGIN_TYPE = {
@@ -167,6 +254,17 @@ const STATUS = {
 	ACTIVE: "active",
 	DELETED: "deleted"
 };
+
+const SUBSCRIPTION_STATUS = {
+	INACTIVE: 2,
+	ACTIVE: 1,
+	DELETED: 3
+}
+const CATEGORY_TYPE = {
+	EVENT_CAEGORY: 1,
+	OTHER_CATEGORY: 2
+};
+
 const COMMENT_CATEGORY = {
 	POST: 1,
 	COMMENT: 2
@@ -193,98 +291,154 @@ const USER_PROFILE_TYPE = {
 // const COMMENT_TYPE = {
 // 	UNICORN: 1,
 // 	INSPIRATION: 2,
-// 	DAILY_ADVICE: 3,
+// 	DAILY_ADVICE: 3,nnec
 // 	GENERAL_GRATITUDE: 4,
 // 	MEMBER_OF_DAY: 5
 // };
+
+const REQUEST_TYPE = {
+	RECEIVED_REQUEST: 0,
+	SEND_REQUEST: 1
+}
 const HOME_TYPE = {
 	UNICORN: 1,
 	INSPIRATION: 2,
 	DAILY_ADVICE: 3,
 	GENERAL_GRATITUDE: 4,
-	MEMBER_OF_DAY: 5
+	MEMBER_OF_DAY: 5,
+	CONGRATS: 6,
+	EXPERTS_POST: 7,
+	SHOUTOUT: 8,
+	FORUM_TOPIC: 9,
+	USER: 10
 };
 
 const HOME_TYPES = {
-	UNICORN: 'Daily smiles',
-	INSPIRATION: 'Inspiring women',
-	DAILY_ADVICE: 'Daily pep talk',
-	GENERAL_GRATITUDE: 'General gratitude',
-	MEMBER_OF_DAY: 'Leader of the day'
+	UNICORN: "Daily smiles",
+	INSPIRATION: "Inspiring women",
+	DAILY_ADVICE: "Daily pep talk",
+	GENERAL_GRATITUDE: "General gratitude",
+	MEMBER_OF_DAY: "Leader of the day"
 };
 
 
 const EXPERT_CONTENT_TYPE = {
 	VIDEO: {
-		TYPE: 'video',
-		VALUE: 1,
-		DISPLAY_NAME: 'VIDEO'
+		TYPE: "video",
+		VALUE: 2,
+		DISPLAY_NAME: "VIDEO"
 	},
 	ARTICLE: {
-		TYPE: 'article',
-		VALUE: 2,
-		DISPLAY_NAME: 'ARTICLE'
+		TYPE: "article",
+		VALUE: 3,
+		DISPLAY_NAME: "ARTICLE"
 	},
 	IMAGE: {
-		TYPE: 'image',
-		VALUE: 3,
-		DISPLAY_NAME: 'IMAGE'
+		TYPE: "image",
+		VALUE: 1,
+		DISPLAY_NAME: "IMAGE"
 	},
 	VOICE_NOTE: {
-		TYPE: 'voice_note',
+		TYPE: "voice_note",
 		VALUE: 4,
-		DISPLAY_NAME: 'VOICE_NOTE'
-	}
+		DISPLAY_NAME: "VOICE_NOTE"
+	},
+	// NONE: {
+	// 	TYPE: "none",
+	// 	VALUE: 4,
+	// 	DISPLAY_NAME: "NONE"
+	// },
+
 }
 const MEDIA_TYPE = {
 	IMAGE: 1,
-	VIDEO: 2
+	VIDEO: 2,
+	NONE: 5
 };
 
 const PRIVACY_STATUS = {
-	PUBLIC: 'public',
-	PRIVATE: 'private',
-	PROTECTED: 'protected'
+	PUBLIC: "public",
+	PRIVATE: "private",
+	PROTECTED: "protected"
 };
 
 const EVENT_CATEGORY = {
-	EVENTS: 'events',
-	CLASSES: 'classes',
-	TRAINING: 'training',
-	MEETUP: 'meetup'
+	EVENTS: {
+		TYPE: "events",
+		VALUE: 1,
+		DISPLAY_NAME: "EVENTS"
+	},
+	CLASSES: {
+		TYPE: "classes",
+		VALUE: 2,
+		DISPLAY_NAME: "CLASSES"
+	},
+	TRAINING: {
+		TYPE: "training",
+		VALUE: 3,
+		DISPLAY_NAME: "TRAINING"
+	},
+	MEETUP: {
+		TYPE: "meetup",
+		VALUE: 4,
+		DISPLAY_NAME: "MEETUP"
+	}
 }
+
+// const EVENT_CATEGORY = {
+// 	EVENTS: "events",
+// 	CLASSES: "classes",
+// 	TRAINING: "training",
+// 	MEETUP: "meetup"
+// }
 const VALIDATION_CRITERIA = {
-	FIRST_NAME_MIN_LENGTH: 3,
-	FIRST_NAME_MAX_LENGTH: 20,
+	FIRST_NAME_MIN_LENGTH: 1,
+	FIRST_NAME_MAX_LENGTH: 50,
 	MIDDLE_NAME_MIN_LENGTH: 3,
 	MIDDLE_NAME_MAX_LENGTH: 10,
-	LAST_NAME_MIN_LENGTH: 3,
-	LAST_NAME_MAX_LENGTH: 20,
+	LAST_NAME_MIN_LENGTH: 1,
+	LAST_NAME_MAX_LENGTH: 50,
 	NAME_MIN_LENGTH: 3,
 	COUNTRY_CODE_MIN_LENGTH: 1,
 	COUNTRY_CODE_MAX_LENGTH: 4,
 	PASSWORD_MIN_LENGTH: 8,
-	PASSWORD_MAX_LENGTH: 30
+	PASSWORD_MAX_LENGTH: 40
 };
 
-const BYPASS_OTP = '4242';
+const BYPASS_OTP = "4242";
 
 const MESSAGES = {
 	ERROR: {
 		UNAUTHORIZED_ACCESS: {
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
 			"message": "You are not authorized to perform this action.",
 			"type": "UNAUTHORIZED_ACCESS"
+		},
+		SOMETHING_WENT_WRONG: {
+			"statusCode": HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
+			"message": "Something went wrong",
+			"type": "SOMETHING_WENT_WRONG"
 		},
 		INTERNAL_SERVER_ERROR: {
 			"statusCode": HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
 			"message": "Please try after some time.",
 			"type": "INTERNAL_SERVER_ERROR"
 		},
+		SUBSCRIPTION_EXPIRED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Subscription has been already expired",
+			"type": "SUBSCRIPTION_EXPIRED"
+		},
+		APPLE_ID_ALRADY_IN_USE: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "This apple id is already in use with other account",
+			"type": "APPLE_ID_ALRADY_IN_USE"
+		},
 		INVALID_TOKEN: {
-			// "statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
-			"statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Token is invalid.",
+			"statusCode": HTTP_STATUS_CODE.INVALID_TOKEN,
+			// "statusCode": HTTP_STATUS_CODE.UNAUTHORIZED,
+			// "message": "Token is invalid.",
+			"message": "Your login session has expired. Please login again",
 			"type": "INVALID_TOKEN"
 		},
 		TOKEN_EXPIRED: {
@@ -299,19 +453,19 @@ const MESSAGES = {
 				"type": "TOKEN_GENERATE_ERROR"
 			};
 		},
+		EMAIL_ALREADY_VERIFIED: {
+			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Hi your email is already been verified, please login to continue",
+			"type": "EMAIL_NOT_REGISTERED"
+		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Please register your email address.",
+			"message": "Oops! It looks like you are not registered on the network",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED,
 			"message": "Your email is not verified. Please check your email for email verification instruction.",
-			"type": "EMAIL_NOT_REGISTERED"
-		},
-		EMAIL_ALREADY_VERIFIED: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Email already verified.",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		MOBILE_NOT_VERIFIED: {
@@ -330,8 +484,8 @@ const MESSAGES = {
 			"type": "USER_BLOCKED"
 		},
 		DELETED: {
-			statusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
-			"message": "Your account have been deleted by admin.",
+			statusCode: HTTP_STATUS_CODE.DELETD_USER,
+			"message": "Your account has been deleted by admin.",
 			type: "DELETED"
 		},
 		ADMIN_REJECTED_USER: {
@@ -388,6 +542,16 @@ const MESSAGES = {
 			"message": "Success",
 			"type": "DEFAULT"
 		},
+		USER_SUBSCRIBED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "User subscribed",
+			"type": "USER_SUBSCRIBED"
+		},
+		USER_NOT_SUBSCRIBED: {
+			"statusCode": HTTP_STATUS_CODE.OK,
+			"message": "User not subscribed",
+			"type": "USER_NOT_SUBSCRIBED"
+		},
 		SUCCESSFULLY_ADDED: {
 			"statusCode": HTTP_STATUS_CODE.OK,
 			"message": "Successfully added",
@@ -411,8 +575,25 @@ const MESSAGES = {
 				"data": data
 			};
 		},
+		USER_EMAIL_VERIFY: (data) => {
+			// data['message'] = "Your email has been verified. You can now login with your verified email."
+			return {
+				"statusCode": HTTP_STATUS_CODE.OK,
+				"message": "Your email has been verified. You can now login with your verified email",
+				"type": "USER_EMAIL_VERIFY",
+				data: data,
+			}
+		},
+		EMAIL_ALREADY_VERIFIED: (data) => {
+			return {
+				"statusCode": HTTP_STATUS_CODE.OK,
+				"message": "Email already verified.",
+				"type": "EMAIL_NOT_REGISTERED",
+				"data": data
+			}
+		},
 		MOBILE_NOT_VERIFIED: (data) => {
-			data['message'] = "Please verify your mobile number"
+			data["message"] = "Please verify your mobile number"
 			return {
 				"statusCode": HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY,
 				"message": "Please verify your mobile number",
@@ -434,7 +615,7 @@ const EMAIL_TEMPLATE = {
 		FORGOT_PWD_EMAIL: "Reset Password Request",
 		RESET_PASSWORD: "Reset password link",
 		VERIFY_EMAIL: "Verify e-mail address",
-		WELCOME: "Welcome to Women community!",
+		WELCOME: "Welcome to Good Heart Collaborative!",
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
 	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
@@ -447,20 +628,20 @@ const SMS = {
 		FORGOT_PASSWORD: "Your forgot password link!\
 		\nLINK\
 		\n \
-		\nRegards, \nRCC app",
-		WELCOME: "Welcome! Thank you for creating rcc user\
+		\nRegards, \nWOMEN app",
+		WELCOME: "Welcome! Thank you for creating women user\
 		\naccount. You are almost there… To start your service,\
 		\nplease enter your Email as EMAIL and password as PASSWORD\
 		\nin the below link\
 		\nLINK\
 		\n \
-		\nRegards, \nRCC app",
+		\nRegards, \nWOMEN app",
 	}
 };
 
 const NOTIFICATION_TYPE = {
-	BULK_NOTIFICATION: "1",
-	ONE_TO_ONE: "2"
+	BULK_NOTIFICATION: 1,
+	ONE_TO_ONE: 2
 };
 
 const SNS_SERVER_TYPE = {
@@ -476,30 +657,11 @@ const CONTENT_TYPE = {
 	ABOUT_US: "5"
 };
 
-const MIME_TYPE = {
-	XLSX: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-	CSV1: "application/vnd.ms-excel",
-	CSV2: "text/csv",
-	XLS: "application/vnd.ms-excel"
-};
-
-const EXCEL_KEY_MAP = {
-	"First Name": "firstName",
-	"Middle Name": "middleName",
-	"Last Name": "lastName",
-	"DOB": "dob",
-	"Gender": "gender",
-	"Email": "email",
-	"Country Code": "countryCode",
-	"Mobile Number": "mobileNo"
-	// 'Company Reg 1':{'parent':'companyReg', 'child':'registration1'}
-};
-
 const REGEX = {
 	EMAIL: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/,
-	// EMAIL: /^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+	// EMAIL: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 	/* URL: /^(http?|ftp|https):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|\
-		int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/, */
+		int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?"\\+&%$#=~_-]+))*$/, */
 	URL: /^(https?|http|ftp|torrent|image|irc):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i,
 	SSN: /^(?!219-09-9999|078-05-1120)(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$/, // US SSN
 	ZIP_CODE: /^[0-9]{5}(?:-[0-9]{4})?$/,
@@ -507,7 +669,7 @@ const REGEX = {
 	// PASSWORD: /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/,
 	COUNTRY_CODE: /^\d{1,4}$/,
 	MOBILE_NUMBER: /^\d{6,16}$/,
-	STRING_REPLACE: /[-+ ()*_$#@!{}|\/^%`~=?,.<>:;'"]/g,
+	STRING_REPLACE: /[-+ ()*_$#@!{}|\/^%`~=?,.<>:;""]/g,
 	MONGO_ID: /^[a-f\d]{24}$/i
 };
 
@@ -561,13 +723,52 @@ const PUSH_SENDING_TYPE = {
 };
 
 const MAIL_SENDING_TYPE = {
-	SENDGRID: 1,
+	// SENDGRID: 1,
 	SMTP: 2,
-	AMAZON: 3
+	// AMAZON: 3
 };
 
+const NOTIFICATION_CATEGORY = {
+	ADMIN_STATUS_VERIFIED: {
+		type: 1,
+		category: "ADMIN_STATUS_VERIFIED"
+	},
+	FRIEND_REQUEST_SEND: {
+		type: 2,
+		category: "FRIEND_REQUEST"
+	},
+	FRIEND_REQUEST_APPROVED: {
+		type: 3,
+		category: "VIEW_PROFILE"
+	},
+	LEADER_OF_DAY: {
+		type: 4,
+		category: "LEADER_OF_DAY"
+	},
+	SHOUTOUT_TAGGED_ME: {
+		type: 5,
+		category: "VIEW_SHOUTLIST_ACTION"
+	},
+	EVENT_GOING: {
+		type: 6,
+		category: "going"
+	},
+	EVENT_INTEREST: {
+		type: 7,
+		category: "interst events"
+	},
+	EVENT_REMINDER: {
+		type: 8,
+		category: "Event Reminder",
+		message: "Your event is about to start"
+	},
+	// EVENT_INTEREST :{
+	// 	type: 8,
+	// 	category: "VIEW_SHOUTLIST_ACTION"
+	// }
+}
+
 const SMS_SENDING_TYPE = {
-	TWILIO: 1,
 	AWS_SDK: 2
 };
 
@@ -589,97 +790,24 @@ const NOTIFICATION_DATA = {
 };
 
 const DEEPLINK = {
-	DEFAULT_FALLBACK_URL: "https://google.com",
+	GOOGLE: 'https://google.com',
+	DEFAULT_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb",
+	RESET_PASSWORD_FALLBACK_URL: `${SERVER.API_BASE_URL}?accessToken=`,
+	WELCOME_FALLBACK: `${SERVER.APP_URL}/src/views/welcome-email.html`,
+	// RESET_PASSWORD_FALLBACK_URL: "http://womencomdevapi.appskeeper.com/v1/common/resetPasswordWeb/?accessToken=",
+
 	// for android deeplink
 	// ANDROID_SCHEME: "ustandbyuser://" + SERVER.APP_URL.split("://")[1], // scheme:// + app url + ?token=&type=
-	ANDROID_SCHEME: "com.womencommunity://",
+	ANDROID_SCHEME: "com.goodheart://",
 	// for ios user deeplink
-	IOS_SCHEME: "com.womencommunity://",
+	IOS_SCHEME: "com.goodheart://",
 	// for ios sp deeplink
 	IOS_STORE_LINK: "https://itunes.apple.com",
-	ANDROID_PACKAGE_NAME: "com.womencommunity", // when app is not installed redirect to google playstore
-	IOS_PACKAGE_NAME: "com.womencommunity"
+	ANDROID_PACKAGE_NAME: "com.goodheart", // when app is not installed redirect to google playstore
+	IOS_PACKAGE_NAME: "com.goodheart"
 };
 const WEBSITE_URL = {
 	ADMIN_URL: "http://womenappdevadmin.appskeeper.com"
-};
-
-let SOCKET = {
-	DEFAULT: {
-		CONNECTION: "connection",
-		CONNECTED: "connected",
-		DISCONNECT: "disconnect",
-	},
-	TYPE: {
-		CONTACT_SYNCING: 1,
-		BELL_COUNT: 2
-	},
-	ERROR: {
-		FAILURE_ACKNOWLEDGEMENT: (listner) => {
-			return {
-				"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-				"message": "Message not recveived on server.",
-				"type": "FAILURE_ACKNOWLEDGEMENT",
-				"data": {
-					"listner": listner
-				}
-			};
-		},
-		INVALID_LISTENER_TYPE: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Invalid Listener type.",
-			"type": "INVALID_LISTENER_TYPE",
-			"data": {}
-		},
-		AUTHORIZATION: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Error in authorization.",
-			"type": "AUTHORIZATION_ERROR",
-			"data": {}
-		},
-		NETWORK: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Implementation error.",
-			"type": "NETWORK_ERROR",
-			"data": {}
-		},
-		SOCKET: {
-			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Socket Implementation error.",
-			"type": "SOCKET_ERROR",
-			"data": {}
-		}
-	},
-	SUCCESS: {
-		CONNECTION_ESTABLISHED: {
-			"statusCode": HTTP_STATUS_CODE.OK,
-			"message": "Connection Established",
-			"data": {}
-		},
-		CONTACT_SYNCING: (data) => {
-			return {
-				"statusCode": data.statusCode,
-				"message": "Contacts synchronize successfully.",
-				"type": "CONTACT_SYNCING",
-				"data": {
-					"contacts": data.contacts,
-					"lastSno": data.lastSno
-				}
-			};
-		}
-	},
-	EVENT: {
-		NETWORK_ERROR: "network-error",
-		SOCKET_ERROR: "socket-error",
-		ACK_ERROR: "ack-error",
-		INSUFFICIENT_INFO_ERROR: "insufficient-info",
-		AUTHORIZATION_ERROR: "authorization-error",
-		CONTACT_SYNC: "contact-sync", // add
-		CONTACT_FETCH: "contact-fetch",
-		CONTACT_DELETE: "contact-delete",
-		CONTACT_UPDATE: "contact-update",
-		BELL_COUNT: "bell-count"
-	}
 };
 
 const LOG_HISTORY_TYPE = {
@@ -692,16 +820,23 @@ const LOG_HISTORY_TYPE = {
 
 const TEMPLATES = {
 	FAQ: (question, answer) => {
-		return `<div class="coll-box">
-			<div class="col-header clearfix">
-			<span><img src="./public/images/plus.svg" > </span>
-			<h3>
-			${question}
-				</h3>
-				</div>
-				<div class= "col-content hide-col-con">
-				${answer} </div>
-			</div>`;
+		// return `<div class="coll-box">
+		// 	<div class="col-header clearfix">
+		// 	<span><img src="./public/images/plus.svg" > </span>
+		// 	<h3>
+		// 	${question}
+		// 		</h3>
+		// 		</div>
+		// 		<div class= "col-content hide-col-con">
+		// 		${answer} </div>
+		// 	</div>`;
+		return `<div class="panel_wrap">
+		<button class="accordion">${question}</button>
+		<div class="panel_body">
+			<p> ${answer}</p>
+		</div>
+	</div>`
+
 	}
 };
 
@@ -737,7 +872,7 @@ const JOB_SCHEDULER_TYPE = {
 const PAGINATION = {
 	limit: 10,
 	page: 1
-}
+};
 
 export const CONSTANT = Object.freeze({
 	SWAGGER_DEFAULT_RESPONSE_MESSAGES: SWAGGER_DEFAULT_RESPONSE_MESSAGES,
@@ -757,8 +892,6 @@ export const CONSTANT = Object.freeze({
 	NOTIFICATION_TYPE: NOTIFICATION_TYPE,
 	SNS_SERVER_TYPE: SNS_SERVER_TYPE,
 	CONTENT_TYPE: CONTENT_TYPE,
-	MIME_TYPE: MIME_TYPE,
-	EXCEL_KEY_MAP: EXCEL_KEY_MAP,
 	REGEX: REGEX,
 	VERSION_UPDATE_TYPE: VERSION_UPDATE_TYPE,
 	EXPORT_SHEET: EXPORT_SHEET,
@@ -767,7 +900,6 @@ export const CONSTANT = Object.freeze({
 	SMS_SENDING_TYPE: SMS_SENDING_TYPE,
 	NOTIFICATION_DATA: NOTIFICATION_DATA,
 	DEEPLINK: DEEPLINK,
-	SOCKET: SOCKET,
 	LOG_HISTORY_TYPE: LOG_HISTORY_TYPE,
 	TEMPLATES: TEMPLATES,
 	GRAPH_TYPE: GRAPH_TYPE,
@@ -792,5 +924,12 @@ export const CONSTANT = Object.freeze({
 	EVENT_CATEGORY,
 	HOME_TYPES,
 	EVENT_INTEREST,
-	EXPERIENCE_LEVEL
+	EXPERIENCE_LEVEL,
+	DATE_FILTER,
+	REQUEST_TYPE,
+	REPORT_MESSAGE,
+	NOTIFICATION_CATEGORY,
+	USER_SUBSCRIPTION_PLAN,
+	SUBSCRIPTION_STATUS,
+	CATEGORY_TYPE
 });

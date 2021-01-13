@@ -70,12 +70,10 @@ const adminSchema = new Schema({
 	// toObject: {
 	// 	transform: function(doc, ret){
 	// 		// delete ret._id;
-	// 		console.log(doc, ret, "toObject");
 	// 	}
 	// },
 	// toJSON: {
 	// 	transform: function(doc, ret){
-	// 		console.log(doc, ret, "toJSON");
 	// 		// delete ret._id;
 	// 	}
 	// }

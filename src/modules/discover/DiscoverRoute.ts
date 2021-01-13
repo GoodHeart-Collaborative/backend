@@ -29,7 +29,7 @@ export const discoverRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                query: discoverValidator.validateListDiscover,
+                query: discoverValidator.validateListUsers,
                 failAction: appUtils.failActionFunction
             },
             plugins: {
@@ -45,8 +45,11 @@ export const discoverRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const query: ListingRequest = request.query;
+            const xFF = request.headers['x-forwarded-for']
+            const ip = xFF ? xFF.split(',')[0] : request.info.remoteAddress;
+            query['getIpfromNtwk'] = ip;
             try {
-                const result = await discoverController.getDiscoverData({ ...query }, { userId: tokenData.userId });
+                const result = await discoverController.getDiscoverData({ ...query }, { userId: tokenData.userId, coordinates: tokenData['location'] });
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -77,7 +80,7 @@ export const discoverRoute: ServerRoute[] = [
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: DiscoverRequest.DiscoverRequestAdd = request.payload;
             try {
-                const result = await discoverController.saveDiscoverData({ ...payload }, { userId: tokenData.userId });
+                const result = await discoverController.saveDiscoverData({ ...payload }, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -103,13 +106,13 @@ export const discoverRoute: ServerRoute[] = [
     },
     {
         method: "PUT",
-        path: `${config.SERVER.API_BASE_URL}/v1/users/discover/{discoverId}`,
+        path: `${config.SERVER.API_BASE_URL}/v1/users/discover/{followerId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
             const payload: DiscoverRequest.DiscoverRequestEdit = request.payload;
-            const discoverId: DiscoverRequest.DiscoverRequestEditParams = request.params;
+            const followerId: DiscoverRequest.DiscoverRequestEditParams = request.params;
             try {
-                const result = await discoverController.updateDiscoverData({ ...payload, ...discoverId }, { userId: tokenData.userId });
+                const result = await discoverController.updateDiscoverData({ ...payload, ...followerId }, tokenData);
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
@@ -123,7 +126,7 @@ export const discoverRoute: ServerRoute[] = [
             },
             validate: {
                 headers: validator.userAuthorizationHeaderObj,
-                params: discoverValidator.validateEditDiscoverParams,
+                params: discoverValidator.validateAddDiscover,
                 payload: discoverValidator.validateEditDiscover,
                 failAction: appUtils.failActionFunction
             },
@@ -133,5 +136,37 @@ export const discoverRoute: ServerRoute[] = [
                 }
             }
         }
-    }
+    },
+
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/discover-status/{otherUserId}`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
+            const payload: DiscoverRequest.DiscoverRequestAdd = request.params;
+            try {
+                let result = await discoverController.getDiscoverStatus({ ...payload }, tokenData);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "discover"],
+            description: "get discover status",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                params: discoverValidator.otherUserIdDiscoverStatus,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
 ];

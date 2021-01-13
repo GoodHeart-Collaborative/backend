@@ -11,54 +11,6 @@ import { responseHandler } from "@utils/ResponseHandler";
 import * as gratitudeValidator from './gratitudeValidator'
 
 export const gratitudeRoute: ServerRoute[] = [
-    // {
-    //     method: "POST",
-    //     path: `${config.SERVER.API_BASE_URL}/v1/admin/gratitude`,
-    //     handler: async (request: Request, h: ResponseToolkit) => {
-    //         const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-    //         const payload: InspirationRequest.InspirationAdd = request.payload;
-    //         try {
-    //             appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
-    //             const result = await gratitudeController.addGratitude(payload);
-    //             return responseHandler.sendSuccess(h, result);
-    //         } catch (error) {
-    //             return responseHandler.sendError(error);
-    //         }
-    //     },
-    //     config: {
-    //         tags: ["api", "inspiration"],
-    //         description: "Add inspiration post",
-    //         auth: {
-    //             strategies: ["AdminAuth"]
-    //         },
-    //         validate: {
-    //             headers: validator.adminAuthorizationHeaderObj,
-    //             payload: {
-    //                 // categoryId: Joi.string(),
-    //                 // subCategoryId: Joi.string().required(),
-    //                 title: Joi.string().required(),
-    //                 // privacy: Joi.string().valid([
-    //                 //     config.CONSTANT.PRIVACY_STATUS.PUBLIC,
-    //                 //     config.CONSTANT.PRIVACY_STATUS.PROTECTED,
-    //                 //     config.CONSTANT.PRIVACY_STATUS.PRIVATE
-    //                 // ]),
-    //                 description: Joi.string().required(),
-    //                 // shortDescription: string;
-    //                 imageUrl: Joi.string(),
-    //                 postedAt: Joi.date(),
-    //                 isPostLater: Joi.boolean().default(false),
-    //                 // createdAt: Joi.number()
-    //             },
-    //             failAction: appUtils.failActionFunction
-    //         },
-    //         plugins: {
-    //             "hapi-swagger": {
-    //                 // payloadType: 'form',
-    //                 responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
-    //             }
-    //         }
-    //     }
-    // },
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/gratitude/{Id}`,
@@ -68,15 +20,13 @@ export const gratitudeRoute: ServerRoute[] = [
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await gratitudeController.getPostById(payload);
-                // console.log('resultresultresultresultresult', result);
-
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);
             }
         },
         config: {
-            tags: ["api", "inspiration"],
+            tags: ["api", "gratitude"],
             description: "get inspiration by id",
             auth: {
                 strategies: ["AdminAuth"]
@@ -111,7 +61,7 @@ export const gratitudeRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "inspiration"],
+            tags: ["api", "gratitude"],
             description: "get inspiration list",
             auth: {
                 strategies: ["AdminAuth"]
@@ -135,9 +85,6 @@ export const gratitudeRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
             const payload: GratitudeRequest.IUpdateStatus = request.params;
-            //     ...request.payload,
-            //     ...request.params
-            // };
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await gratitudeController.updateStatus(payload);
@@ -147,7 +94,7 @@ export const gratitudeRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "inspiration"],
+            tags: ["api", "gratitude"],
             description: "get inspiration list",
             auth: {
                 strategies: ["AdminAuth"]
@@ -184,7 +131,7 @@ export const gratitudeRoute: ServerRoute[] = [
             }
         },
         config: {
-            tags: ["api", "inspiration"],
+            tags: ["api", "gratitude"],
             description: "get inspiration list",
             auth: {
                 strategies: ["AdminAuth"]

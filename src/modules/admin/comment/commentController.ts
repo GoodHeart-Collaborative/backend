@@ -1,18 +1,24 @@
 "use strict";
 
 import * as _ from "lodash";
-import fs = require("fs");
 import { commentDao } from "./commentDao";
-import * as config from "@config/index";
 import { CONSTANT } from "@config/index";
 import * as appUtils from '../../../utils/appUtils'
+import { homeDao } from "@modules/home/HomeDao";
+// import * as  config from "@config/constant";
 
 
 class AdminCommentController {
 
+    /**
+     * @function getComments
+     * @description admin get comments normal comment and nested comment
+     * @param { CommentRequest.getComments  } params
+     * @author Shubham
+     */
     async getComments(params: CommentRequest.getComments) {
         try {
-            let { pageNo, limit, commentId, postId } = params
+            let { pageNo, limit, commentId, postId, type } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
@@ -43,7 +49,8 @@ class AdminCommentController {
                             firstName: 1,
                             lastName: 1,
                             status: 1,
-                            profilePicUrl: 1
+                            profilePicUrl: 1,
+                            adminStatus: 1,
                         },
                     },
                     ],
@@ -56,9 +63,10 @@ class AdminCommentController {
                         preserveNullAndEmptyArrays: true,
                     },
                 },
-            )
+            );
 
-            result = await commentDao.aggreagtionWithPaginateTotal("comments", aggPipe, limit, pageNo, true)
+            // aggPipe = [...aggPipe,]
+            result = await commentDao.paginate("comments", aggPipe, limit, pageNo, true)
             return result
         } catch (error) {
             throw error;

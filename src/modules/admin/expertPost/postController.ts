@@ -15,12 +15,10 @@ class ExpertPostController {
     getTypeAndDisplayName(findObj, num: number) {
         const obj = findObj;
         const data = Object.values(obj);
-        console.log('datadatadatadatadatadatadatadata', data);
 
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
 
         return result[0];
     }
@@ -33,10 +31,10 @@ class ExpertPostController {
         try {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
             const result = this.getTypeAndDisplayName(config.CONSTANT.EXPERT_CONTENT_TYPE, params['contentId'])
-            console.log('data1data1data1data1data1', result);
             params['contentType'] = result['TYPE']
             params['contentDisplayName'] = result['DISPLAY_NAME'];
 
+            params['created'] = new Date().getTime();
             const data = await expertPostDao.insert("expert_post", params, {});
 
             return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
@@ -51,19 +49,67 @@ class ExpertPostController {
      * @description admin get postDetails
      * /
      **/
-    async getPostById(params: InspirationRequest.IGetInspirationById) {
+    async getPostById(params) {
         try {
-            const criteria = {
-                _id: params.Id,
-            };
+            const match: any = {}
+            const aggPipe = [];
+            match['_id'] = appUtils.toObjectId(params.postId);
+            aggPipe.push({ $match: match })
+            aggPipe.push({
+                $lookup: {
+                    from: 'categories',
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$cId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+                            }
+                        }
+                    }]
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } });
 
-            const data = await expertPostDao.findOne('expert_post', criteria, {}, {})
+            aggPipe.push({
+                $lookup: {
+                    from: 'experts',
+                    let: { eId: '$expertId' },
+                    as: 'expertData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$eId']
+                                },
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            "profilePicUrl": 1,
+                            "name": 1,
+                            "email": 1,
+                            "profession": 1,
+                            "industry": 4,
+                            "bio": 1,
+                            "experience": 1,
+                        }
+                    }]
+                }
+            });
+            aggPipe.push({ '$unwind': { path: '$expertData', preserveNullAndEmptyArrays: true } });
+            const data = await expertPostDao.aggregate('expert_post', aggPipe, {})
             if (!data) {
                 return expertPostConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
             return expertPostConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
-
-            // return data;
         } catch (error) {
             throw error;
         }
@@ -77,8 +123,8 @@ class ExpertPostController {
     async getExpertPosts(params: AdminExpertPostRequest.getExpert) {
         try {
             const pageNo = params.page;
-            const { expertId, categoryId, limit, contentId, searchTerm, fromDate, toDate } = params;
-
+            const { expertId, categoryId, limit, contentId, searchTerm, fromDate, toDate, sortBy, sortOrder } = params;
+            let sort = {};
             let aggPipe = [];
             const match: any = {};
 
@@ -89,12 +135,11 @@ class ExpertPostController {
                 match['status'] = { "$ne": config.CONSTANT.STATUS.DELETED };
                 match['expertId'] = appUtils.toObjectId(expertId);
                 match.contentId = contentId;
-
             }
 
             if (searchTerm) {
                 match["$or"] = [
-                    { "description": { "$regex": searchTerm, "$options": "-i" } },
+                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
 
@@ -102,14 +147,25 @@ class ExpertPostController {
             if (fromDate && !toDate) { match['createdAt'] = { $gte: fromDate }; }
             if (!fromDate && toDate) { match['createdAt'] = { $lte: toDate }; }
 
-            let query;
+            aggPipe.push({ $match: match })
+
+            if (sortBy && sortOrder) {
+                if (sortBy === "topic") {
+                    sort = { "topic": sortOrder };
+                } else {
+                    sort = { "createdAt": sortOrder };
+                }
+            } else {
+                sort = { "createdAt": -1 };
+            }
 
             // if (contentId) {
             //     match.contentId = contentId;
             //     // match.status = config.CONSTANT.STATUS.ACTIVE;
             //     // match.expertId = appUtils.toObjectId(expertId)
             // }
-            aggPipe.push({ $match: match })
+            aggPipe.push({ "$sort": sort });
+
 
             if (!contentId) {
                 aggPipe.push({
@@ -139,15 +195,6 @@ class ExpertPostController {
                                         {
                                             $eq: ['$_id', '$$cId']
                                         },
-                                        // {
-                                        //     $eq: ['$contentId', contentId]
-                                        // },
-                                        // {
-                                        //     $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
-                                        // },
-                                        // {
-                                        //     $eq: ['expertId', appUtils.toObjectId(expertId)]
-                                        // }
                                     ]
                                 }
                             }
@@ -157,13 +204,10 @@ class ExpertPostController {
                 })
                 // aggPipe.push({ '$unwind': { path: '$categoryData', preserveNullAndEmptyArrays: true } })
             }
-            console.log('aggPipeaggPipe', JSON.stringify(aggPipe));
 
             // aggPipe.push({ $match: query })
             aggPipe = [...aggPipe, ...await expertDao.addSkipLimit(limit, pageNo)];
             if (!contentId) {
-                console.log('5f193411e8e62430c62cada55f193411e8e62430c62cada5');
-
                 // aggPipe.push(query)
                 return await expertDao.aggregate('expert', aggPipe, {},)
             }
@@ -219,7 +263,7 @@ class ExpertPostController {
 
     async updateStatus(params: AdminExpertPostRequest.updateStatus) {
         try {
-            const {postId ,status} =params;
+            const { postId, status } = params;
             const criteria = {
                 _id: postId
             };
@@ -228,13 +272,13 @@ class ExpertPostController {
                 status: status
             };
             const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
-            if(data && status ==config.CONSTANT.STATUS.DELETED){
-                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED ;
-           }
-            else if(data && status ==config.CONSTANT.STATUS.BLOCKED){
-            return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            if (data && status == config.CONSTANT.STATUS.DELETED) {
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
             }
-             return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE; 
+            else if (data && status == config.CONSTANT.STATUS.BLOCKED) {
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            }
+            return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
 
         } catch (error) {
             return Promise.reject(error)
@@ -249,10 +293,11 @@ class ExpertPostController {
             const datatoUpdate = {
                 ...params
             };
-            const data = await expertPostDao.updateOne('expert_post', criteria, datatoUpdate, {})
+            const data = await expertPostDao.findOneAndUpdate('expert_post', criteria, datatoUpdate, { new: true })
             if (data) {
-                 expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED ;
+                return expertPostConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
             }
+            return;
         } catch (error) {
             throw error;
         }

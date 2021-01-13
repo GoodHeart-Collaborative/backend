@@ -22,15 +22,15 @@ const adminNotificationSchema = new Schema({
 	title: { type: String, trim: true, index: true, required: true },
 	link: { type: String, required: false },
 	message: { type: String, required: true },
-	platform: {
-		type: String,
-		required: true,
-		enum: [
-			config.CONSTANT.DEVICE_TYPE.ANDROID,
-			config.CONSTANT.DEVICE_TYPE.IOS,
-			config.CONSTANT.DEVICE_TYPE.ALL
-		]
-	},
+	// platform: {
+	// 	type: String,
+	// 	required: true,
+	// 	enum: [
+	// 		config.CONSTANT.DEVICE_TYPE.ANDROID,
+	// 		config.CONSTANT.DEVICE_TYPE.IOS,
+	// 		config.CONSTANT.DEVICE_TYPE.ALL
+	// 	]
+	// },
 	fromDate: { type: Number },
 	toDate: { type: Number },
 	gender: {

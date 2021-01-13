@@ -26,13 +26,13 @@ export interface IExpert extends Document {
     mediaUrl: string;
     thumbnailUrl: string;
     created: number;
+    reportCount: number;
 }
 
 
 const expertPostSchema = new Schema({
     expertId: { type: Schema.Types.ObjectId, ref: 'expert' },
     topic: { type: String },
-    // profession: { type: String },
     categoryId: { type: Schema.Types.ObjectId },
     price: { type: Number, default: 0 },
     contentId: {
@@ -75,7 +75,8 @@ const expertPostSchema = new Schema({
     postAt: { type: String, trim: true },
     mediaUrl: { type: String },
     thumbnailUrl: { type: String },
-    created: { type: Number }
+    created: { type: Number },
+    reportCount: { type: Number, default: 0 }
 }, {
     versionKey: false,
     timestamps: true

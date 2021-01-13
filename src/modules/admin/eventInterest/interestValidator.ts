@@ -11,10 +11,8 @@ let GetInterestUser = Joi.object({
         config.CONSTANT.EVENT_INTEREST.GOING,
         config.CONSTANT.EVENT_INTEREST.INTEREST
     ]),
-}).unknown()
-
+}).unknown();
 
 export {
     GetInterestUser,
-
 };

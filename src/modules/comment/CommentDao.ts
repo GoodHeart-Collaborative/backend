@@ -3,6 +3,8 @@ import { BaseDao } from "../base/BaseDao";
 import * as appUtils from '../../utils/appUtils'
 import { config } from "aws-sdk";
 import { CONSTANT } from "@config/index";
+import * as mongoose from "mongoose";
+import { homeDao } from "@modules/home/HomeDao";
 
 
 export class CommentDao extends BaseDao {
@@ -52,7 +54,6 @@ export class CommentDao extends BaseDao {
                 limit = 1
                 isPaginationEnable = false
             } else {
-                // match["userId"] = appUtils.toObjectId(userId)
                 match["postId"] = appUtils.toObjectId(postId)
                 aggPipe.push({ "$sort": { "createdAt": -1 } });
             }
@@ -100,6 +101,44 @@ export class CommentDao extends BaseDao {
                     as: "likeData"
                 }
             })
+            aggPipe.push({
+                $lookup: {
+                    from: "discovers",
+                    let: { "users": "$userId", "user": mongoose.Types.ObjectId(userId) },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$followerId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$userId", "$$users"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {
+                                                    $eq: ["$userId", "$$user"]
+                                                },
+                                                {
+                                                    $eq: ["$followerId", "$$users"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "DiscoverData"
+                }
+            })
+            aggPipe.push({ '$unwind': { path: '$DiscoverData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
@@ -121,9 +160,6 @@ export class CommentDao extends BaseDao {
                                     {
                                         $eq: ['$category', CONSTANT.COMMENT_CATEGORY.COMMENT]
                                     }
-                                    // {
-                                    //     $eq: ["$type", CONSTANT.HOME_TYPE.GENERAL_GRATITUDE]
-                                    // }
                                 ]
                             }
                         }
@@ -143,22 +179,67 @@ export class CommentDao extends BaseDao {
                         "isLike": {
                             $cond: { if: { "$eq": ["$likeData.userId", await appUtils.toObjectId(userId)] }, then: true, else: false }
                         },
+                        postId: postId,
                         "comment": 1,
                         "createdAt": 1,
                         user: {
+                            // status: '$users.status',
+                            status: {
+                                $cond: {
+                                    if: {
+                                        $or: [{
+                                            $ne: ['$users.status', CONSTANT.STATUS.ACTIVE]
+                                        },
+                                        {
+                                            $ne: ['$users.adminStatus', CONSTANT.USER_ADMIN_STATUS.VERIFIED]
+                                        }],
+                                    }, then: CONSTANT.STATUS.BLOCKED,
+                                    else: CONSTANT.STATUS.ACTIVE
+                                }
+                            },
                             _id: "$users._id",
-                            name: { $ifNull: ["$users.firstName", ""] },
+                            industryType: "$users.industryType",
+                            myConnection: "$users.myConnection",
+                            experience: "$users.experience",
+                            discover_status: { $ifNull: ["$DiscoverData.discover_status", 4] },
+                            name: { $concat: [{ $ifNull: ["$users.firstName", ""] }, " ", { $ifNull: ["$users.lastName", ""] }] },
                             profilePicUrl: "$users.profilePicUrl",
-                            profession: { $ifNull: ["$users.profession", ""] }
+                            profession: { $ifNull: ["$users.profession", ""] },
+                            about: { $ifNull: ["$users.about", ""] },
                         },
-                        // commentData:1
                         isComment: {
                             $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
                         },
                     }
                 });
+
+            let likeCount;
+            if (!commentId && params.type === CONSTANT.HOME_TYPE.UNICORN || params.type === CONSTANT.HOME_TYPE.INSPIRATION || params.type === CONSTANT.HOME_TYPE.DAILY_ADVICE) {
+                likeCount = await homeDao.findOne('home', { _id: postId }, {}, {})
+            } else if (!commentId && params.type === CONSTANT.HOME_TYPE.GENERAL_GRATITUDE) {
+                likeCount = await homeDao.findOne('gratitude_journals', { _id: postId }, {}, {})
+            } else if (!commentId && params.type === CONSTANT.HOME_TYPE.MEMBER_OF_DAY) {
+                likeCount = await homeDao.findOne('users', { _id: postId }, {}, {})
+            } else if (!commentId && params.type === CONSTANT.HOME_TYPE.EXPERTS_POST) {
+                likeCount = await homeDao.findOne('expert_post', { _id: postId }, {}, {})
+            } else if (!commentId && params.type === CONSTANT.HOME_TYPE.FORUM_TOPIC) {
+                likeCount = await homeDao.findOne('forum', { _id: postId }, {}, {})
+            }
+            // else if (params.type === CONSTANT.HOME_TYPE.USER) {
+            //     likeCount = await homeDao.findOne('us', { _id: postId }, {}, {})
+            // }
+            else if (commentId && !params.type) {
+                // match["commentId"] = appUtils.toObjectId(commentId)
+                // match["category"] = CONSTANT.COMMENT_CATEGORY.COMMENT
+                likeCount = await commentDao.findOne('comments', { _id: appUtils.toObjectId(commentId), category: 1 }, { likeCount: 1 }, {});
+            }
+            console.log(' likeCount likeCount', likeCount);
+
             aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
             result = await this.aggregateWithPagination("comments", aggPipe, limit, pageNo, isPaginationEnable)
+            console.log('likeCount>>>>>>>>>>>>>>>>>>>>>', likeCount);
+
+            result['likeCount'] = likeCount ? likeCount['likeCount'] : 0;
             return result
         } catch (error) {
             throw error;

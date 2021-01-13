@@ -21,7 +21,6 @@ let validaExpertPostAdd = Joi.object({
     thumbnailUrl: Joi.string(),
     privacy: Joi.string().valid([
         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
-        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]).default(config.CONSTANT.PRIVACY_STATUS.PUBLIC)
 }).unknown()
@@ -45,7 +44,7 @@ let getExpertPosts = Joi.object({
     fromDate: Joi.date(),
     toDate: Joi.date(),
     sortBy: Joi.string().valid([
-        'createdAt'
+        'createdAt', 'topic'
     ]),
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
@@ -53,13 +52,12 @@ let getExpertPosts = Joi.object({
 }).unknown()
 
 
-let adminUpdateExpertPostId = Joi.object({
-    postId: Joi.string().required(),
+let exprtPostId = Joi.object({
+    postId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
 }).unknown()
 
 
 let adminUpdateExpertPost = Joi.object({
-    expertId: Joi.string(),
     categoryId: Joi.string(),
     topic: Joi.string().allow(''),
     price: Joi.number(),
@@ -95,7 +93,7 @@ let updateStatus = Joi.object({
 export {
     validaExpertPostAdd,
     getExpertPosts,
-    adminUpdateExpertPostId,
+    exprtPostId,
     adminUpdateExpertPost,
     updateStatus
 };

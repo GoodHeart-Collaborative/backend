@@ -79,7 +79,10 @@ declare interface Address {
 	coordinates: number[];
 }
 
-declare interface ListingRequest extends Pagination, Filter { }
+declare interface ListingRequest extends Pagination, Filter {
+	request_type?: number
+	platform?: string;
+}
 
 declare interface BlockRequest {
 	status: string;
@@ -105,7 +108,6 @@ declare interface UsedByRequest {
 declare type ModelNames =
 	"admins" |
 	"admin_notifications" |
-	"contacts" |
 	"contents" |
 	"likes" |
 	"comments" |
@@ -125,4 +127,8 @@ declare type ModelNames =
 	'shoutout' |
 	'expert_post' |
 	'event' |
-	'event_interest';
+	'event_interest' |
+	'forum' |
+	'report' |
+	'global_var' |
+	'subscription';

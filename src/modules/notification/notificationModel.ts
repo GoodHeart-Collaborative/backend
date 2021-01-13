@@ -11,9 +11,12 @@ export interface INotification extends Document {
 	receiverId: mongoose.Schema.Types.ObjectId;
 	title: string;
 	message: string;
-	type: string;
+	type: Number;
 	isRead: boolean;
 	created: number;
+	postId: string;
+	eventId: string;
+	status: string;
 }
 
 /**
@@ -30,14 +33,34 @@ const notificationSchema = new Schema({
 	},
 	title: { type: String, required: true },
 	message: { type: String, required: true },
-	type: {
+	eventId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: config.CONSTANT.DB_MODEL_REF.EVENT
+	},
+	status: {
 		type: String,
 		enum: [
+			config.CONSTANT.STATUS.ACTIVE,
+			config.CONSTANT.STATUS.DELETED,
+		], default:
+			config.CONSTANT.STATUS.ACTIVE,
+	},
+	type: {
+		type: Number,
+		enum: [
 			config.CONSTANT.NOTIFICATION_TYPE.BULK_NOTIFICATION,
-			config.CONSTANT.NOTIFICATION_TYPE.ONE_TO_ONE
+			config.CONSTANT.NOTIFICATION_TYPE.ONE_TO_ONE,
+			// config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.LEADER_OF_DAY.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_APPROVED.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.SHOUTOUT_TAGGED_ME.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_GOING.type,
+			config.CONSTANT.NOTIFICATION_CATEGORY.EVENT_INTEREST.type,
 		],
 		required: true
 	},
+	postId: { type: Schema.Types.ObjectId },  // for the notification list memberof the day reposne only
 	isRead: { type: Boolean, default: false },
 	created: { type: Number }
 }, {

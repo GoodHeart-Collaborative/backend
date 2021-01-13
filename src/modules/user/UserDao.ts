@@ -4,11 +4,8 @@ import * as _ from "lodash";
 
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
-import { ElasticSearch } from "@lib/ElasticSearch";
 import * as appUtils from '@utils/appUtils'
 import * as moment from 'moment'
-
-const elasticSearch = new ElasticSearch();
 
 export class UserDao extends BaseDao {
 
@@ -26,8 +23,6 @@ export class UserDao extends BaseDao {
 			// }
 			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
 			query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-
 			const options = { lean: true };
 
 			return await this.findOne("users", query, { mobileOtp: 0 }, options, {});
@@ -35,6 +30,31 @@ export class UserDao extends BaseDao {
 			throw error;
 		}
 	}
+
+	async findUserByEmailOrMobileNoForSocialSignUp(params, type?) {
+		try {
+			let { mobileNo, countryCode, email } = params
+			let emailQuery: any = {};
+			let checkPhone: any = {};
+			// if (countryCode && mobileNo) {
+			checkPhone = { "countryCode": countryCode, "mobileNo": mobileNo }
+			emailQuery = { "email": email }
+			// }
+			// query["status"] = { "$ne": config.CONSTANT.STATUS.DELETED };
+			// query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
+			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+
+			const options = { lean: true };
+			if (type && type.type === 'email') {
+				return await this.findOne("users", emailQuery, { mobileOtp: 0 }, options, {});
+			} else {
+				return await this.findOne("users", checkPhone, { mobileOtp: 0 }, options, {});
+			}
+		} catch (error) {
+			throw error;
+		}
+	}
+
 
 	async getMemberOfDays(userId) {
 		try {
@@ -207,7 +227,15 @@ export class UserDao extends BaseDao {
 			if (params.countryCode && params.mobileNo) {
 				params.fullMobileNo = params.countryCode + params.mobileNo;
 			}
-			// params.createdAt = Date.now();
+			const lat_lng: any = await appUtils.getLocationByIp(params.getIpfromNtwk);
+			params['location'] = {
+				"type": "Point",
+				"coordinates": [
+					lat_lng.long,
+					lat_lng.lat
+				]
+			}
+
 			params["created"] = new Date().getTime()
 			return await this.save("users", params);
 		} catch (error) {
@@ -230,7 +258,7 @@ export class UserDao extends BaseDao {
 				query.googleId = params.socialId;
 				// query.isGoogleLogin = true;
 			}
-			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+			// query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
 			const options = { lean: true };
 
@@ -261,13 +289,23 @@ export class UserDao extends BaseDao {
 			}
 			params.created = new Date().getTime();
 			// params['status'] = config.CONSTANT.STATUS.ACTIVE;
+
+			// late long
+			params["location"] = {
+				"location": "Noida, Uttar Pradesh, India",
+				"type": "Point",
+				"coordinates": [
+					77.3619782,
+					28.6060713
+				]
+			}
 			return await this.save("users", params);
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	async mergeAccountAndCheck(step1, params: UserRequest.SocialSignup) {
+	async mergeAccountAndCheck(step1, params) { //UserRequest.SocialSignup
 		try {
 			if (params.socialLoginType === config.CONSTANT.SOCIAL_LOGIN_TYPE.FACEBOOK) {
 				params.facebookId = params.socialId;
@@ -285,7 +323,6 @@ export class UserDao extends BaseDao {
 			}
 			// params.created = new Date();
 			if (step1.email === params.email) {
-				console.log('22222222222');
 				await userDao.updateOne('users', { _id: step1._id }, { ...params }, {})
 				// return Promise.reject(userConstant.MESSAGES.ERROR.EMAIL_ALREADY_EXIST);
 			}
@@ -362,6 +399,32 @@ export class UserDao extends BaseDao {
 		}
 	}
 
+	async changeUserLocation(params: UserRequest.Location, tokenData: TokenData) {
+		try {
+			let query: any = {};
+			query._id = tokenData.userId;
+
+			let update = {};
+			// params["location"] = {
+			// 	"location": "Noida, Uttar Pradesh, India",
+			// 	"type": "Point",
+			// 	"coordinates": [
+			// 		params.longitude,
+			// 		params.latitude
+			// 	]
+			// }
+			update["$set"] = {
+				"location": {
+					"type": "Point",
+					"coordinates": [params.longitude, params.latitude]
+				}
+			};
+			return await this.findOneAndUpdate("users", query, update, { new: true });
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	/**
 		 * @function dashboardGraph
 		 */
@@ -403,6 +466,7 @@ export class UserDao extends BaseDao {
 			const userGraphCriteria = [
 				{
 					$match: {
+						status: { $ne: config.CONSTANT.STATUS.DELETED },
 						createdAt: {
 							$gte: new Date(new Date().getFullYear(), 0, 1)
 						}
@@ -456,19 +520,110 @@ export class UserDao extends BaseDao {
 				status: { $ne: config.CONSTANT.STATUS.DELETED }
 			};
 
+			var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+			var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+			const currentMonthEarning = [
+				// {
+				// 	$match: {
+				// 		createdAt: {
+				// 			$gt: {
+				// 				firstDay
+				// 			},
+				// 			$lt: {
+				// 				lastDay
+				// 			}
+				// 		},
+				// 	},
+				// },
+				{
+					$group: {
+						_id: null,
+						totalAmountMonthly: {
+							$sum: '$price'
+						}
+					}
+
+				}];
+
+			const conversionGraph = [
+				{
+					$match: {
+						createdAt: { $gt: firstDay }
+					}
+				},
+				{
+					$project: {
+						createdAt: { "$month": "$createdAt" },
+						price: 1,
+						subscriptionType: 1
+					}
+				},
+				{
+					$group: {
+						_id: { subscriptionType: '$subscriptionType', createdAt: '$createdAt' },
+						price: {
+							$sum: '$price'
+						}
+					}
+				},
+
+			]
+
+
+
+			const totalEarningYearly = [
+				{
+					$group: {
+						_id: null,
+						totalAmountYearly: {
+							$sum: '$price'
+						}
+					}
+
+				}]
+
+			const graphEarningMonthly = [
+				{
+
+					$match: {
+						createdAt: {
+							$gte: new Date(new Date().getFullYear(), 0, 1)
+						}
+					}
+				},
+				{
+					$project:
+						{ month: { $month: { $toDate: '$createdAt' } } },
+				},
+				{
+					$group: {
+						_id: { month_joined: '$month' },
+						number: { $sum: 1 }
+					}
+				},
+				{
+					$sort: { '_id.month_joined': 1 }
+				}]
+
+
 			pipeline.push(this.count("users", newUsers));
 			pipeline.push(this.count('users', previousYearTotalUser))
 			pipeline.push(this.count('users', thisYeartotalUser))
+			pipeline.push(this.aggregate('subscription', currentMonthEarning, {}))
+			pipeline.push(this.aggregate('subscription', totalEarningYearly, {}))
 
-			const [userCount, newUser, previousYearUserCount, currentYearUserCount] = await Promise.all(pipeline);
+			pipeline.push(this.aggregate('subscription', graphEarningMonthly, {}));
+			pipeline.push(this.aggregate('subscription', conversionGraph, {}));
+			const [userCount, newUser, previousYearUserCount, currentYearUserCount, monthlyEarning, earningYearly, earningMonthlyGraph, freePaidConverion] = await Promise.all(pipeline);
 
 			const userGraph = await this.aggregate("users", userGraphCriteria, {});
 			const userGraphPreviousYear = await this.aggregate('users', userGraphLastYearCriteria, {})
-			console.log('userGraph1userGraph1userGraph1userGraph1', userGraph);
 
 
 			const userGraphThisYear = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
 			const userGraphLastYear = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
+			const subscriptionEarningMonthly = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 };
+
 
 			userGraph.map(data => {
 				userGraphThisYear[data['_id']['month_joined']] = data.number;
@@ -478,13 +633,20 @@ export class UserDao extends BaseDao {
 				userGraphLastYear[data['_id']['month_joined']] = data.number;
 			});
 
+			earningMonthlyGraph.map(data => {
+				subscriptionEarningMonthly[data['_id']['month_joined']] = data.number;
+			});
 			return {
 				totalUsers: userCount,
 				newUser,
 				userGraphThisYear,
 				userGraphLastYear,
 				previousYearUserCount,
-				currentYearUserCount
+				currentYearUserCount,
+				monthlyEarning: monthlyEarning[0] ? monthlyEarning[0]['totalAmountMonthly'] : 0,
+				earningYearly: earningYearly[0] ? earningYearly[0]['totalAmountYearly'] : 0,
+				subscriptionEarningMonthly,
+				freePaidConverion
 			}
 
 		} catch (error) {
@@ -506,44 +668,19 @@ export class UserDao extends BaseDao {
 		}
 	}
 
-	// /**
-	//  * @function updateUser
-	//  */
-	// async updateUser(params) {
-	// 	const query: any = {};
-	// 	query["$or"] = [{ "email": params.email }, { "countryCode": params.countryCode, "mobileNo": params.mobileNo }];
-	// 	query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
-
-	// 	const set = {};
-	// 	const unset = {};
-	// 	const update = {};
-	// 	update["$set"] = set;
-
-	// 	const fieldsToFill = ["firstName", "middleName", "lastName", "dob", "age", "gender"];
-
-	// 	set = appUtils.setInsertObject(params, set, fieldsToFill);
-
-	// 	unset = appUtils.unsetInsertObject(params, unset, fieldsToFill);
-	// 	if (!_.isEmpty(unset)) {
-	// 		update["$unset"] = unset;
-	// 	}
-
-	// 	const options = { new: true };
-
-	// 	return await this.findOneAndUpdate("users", query, update, options);
-	// }
-
 	async checkOTP(params: UserRequest.verifyOTP, userData: TokenData) {
 		try {
-			if (params.mobileNo) {
+			if (params.type === 'mobile') {
 				const mobleCriteria = {
 					_id: userData.userId,
-					countryCode: params.countryCode,
-					mobileNo: params.mobileNo,
+					countryCode: userData.countryCode,
+					mobileNo: userData.mobileNo,
 				};
-				const options = { lean: true };
-				const projection = { mobileOtp: 1 }
-				return await this.findOne('users', mobleCriteria, {}, options, {});
+				const options = { lean: true, new: true };
+				// const projection = { mobileOtp: 1 }
+				const projection = { salt: 0, reportCount: 0, countMember: 0, isMemberOfDay: 0, location: 0, badgeCount: 0, memberCreatedAt: 0, myConnection: 0, subscriptionType: 0, fullMobileNo: 0, adminStatus: 0, status: 0, members: 0, likeCount: 0, commnectCount: 0, subscriptionEndDate: 0, mobileOtp: 0 };
+
+				return await this.findOne('users', mobleCriteria, projection, options, {});
 			}
 			return;
 		} catch (error) {
@@ -611,6 +748,100 @@ export class UserDao extends BaseDao {
 
 		} catch (error) {
 			return Promise.reject(error);
+		}
+	}
+
+	async pullMember(params) {
+		try {
+			let query: any = {}
+			query = {
+				_id: await appUtils.toObjectId(params.userId)
+			}
+			let update: any = {}
+			update["$pull"] = {
+				members: await appUtils.toObjectId(params.followerId)
+			}
+			update["$inc"] = { myConnection: -1 }
+			return await this.update('users', query, update, {});
+		} catch (error) {
+			throw error
+		}
+	}
+	async pushMember(params) {
+		try {
+			let query: any = {}
+			query = {
+				_id: await appUtils.toObjectId(params.userId)
+			}
+			let update: any = {}
+			update["$push"] = {
+				members: await appUtils.toObjectId(params.followerId)
+			}
+			update["$inc"] = { myConnection: 1 }
+			return await this.update('users', query, update, {});
+		} catch (error) {
+			throw error
+		}
+	}
+
+	async getMembers(params) {
+		try {
+			let { userId, followerId } = params
+			let query: any = {}
+			query = {
+				_id: await appUtils.toObjectId(userId),
+				"members": { $all: [await appUtils.toObjectId(followerId)] }
+			}
+			return await this.findOne('users', query, {}, {});
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async changePassword(params: ChangeForgotPasswordRequest | ChangePasswordRequest, tokenData: TokenData) {
+		try {
+			const query: any = {};
+			query._id = tokenData.userId;
+
+			const update = {};
+			update["$set"] = {
+				"hash": params.hash
+			};
+
+			return await this.updateOne("users", query, update, {});
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async findBlcokedUser() {
+		try {
+			const query = [{
+				$match: {
+					$or: [{
+						status: { $ne: config.CONSTANT.STATUS.ACTIVE }
+					},
+					{
+						adminStatus: { $ne: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED }
+					}]
+
+				}
+			}, {
+				$group: {
+					_id: null,
+					Ids1: { $push: "$_id" }
+				}
+			},
+			{
+				$project: {
+					_id: 0
+				}
+			}
+			];
+			const blockedUsers = await this.aggregate('users', query, {});
+			return blockedUsers;
+		} catch (error) {
+			return Promise.reject(error)
 		}
 	}
 }

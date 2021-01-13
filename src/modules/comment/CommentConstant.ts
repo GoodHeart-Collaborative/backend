@@ -34,7 +34,7 @@ export const MESSAGES = {
         //     "message": "Post is deleted by admin.",
         //     "type": "POST_DELETED"
         // },
-    
+
     },
     SUCCESS: {
         // DEFAULT: {
@@ -42,7 +42,7 @@ export const MESSAGES = {
         //     "message": "SUCCESS",
         //     "type": "DEFAULT"
         // },
-        COMMENT_LIST:(data) => {
+        COMMENT_LIST: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": "Comment data are.",
@@ -50,7 +50,7 @@ export const MESSAGES = {
                 "data": data
             }
         },
-        SUCCESSFULLY_ADDED:(data)=> {
+        SUCCESSFULLY_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": "successfully added",
@@ -58,43 +58,14 @@ export const MESSAGES = {
                 "type": "DEFAULT"
             }
         },
-        // SUCCESS_WITH_NO_DATA: {
-        //     "statusCode": config.CONSTANT.HTTP_STATUS_CODE.NO_CONTENT,
-        //     "message": "SUCCESS",
-        //     "type": "DEFAULT"
-        // },
 
-        // DEFAULT_WITH_DATA: (data) => {
-        //     return {
-        //         "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-        //         "message": "SUCCESS",
-        //         "type": "DEFAULT",
-        //         "data": data
-        //     }
-        // },
-
-        // LOGOUT: {
-        //     "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-        //     "message": "Logout successfully.",
-        //     "type": "LOGOUT"
-        // },
-        // HOME_DATA: (data) => {
-        //     return {
-        //         "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-        //         "message": "Home data are.",
-        //         "type": "HOME_DATA",
-        //         "data": data
-        //     };
-        // },
-
-        // BLOCK_USER: {
-        //     "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-        //     "message": "User account successfully blocked.",
-        //     "type": "BLOCK_USER"
-        // },
+        SUBSCRIPTION_NONE: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.SUBSCRIPTION_EXPIRE_ERROR_CODE,
+                "message": "please purchase subscription",
+                "type": "SUBSCRIPTION_NONE",
+                data: data
+            }
+        },
     },
-    // OTP_TEXT: (otp) => {
-    //     return `Your App code is " + ${otp} + ". " + "Welcome to the community!`
-    // },
 };
-

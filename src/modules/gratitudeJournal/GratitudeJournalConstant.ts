@@ -9,10 +9,10 @@ export const MESSAGES = {
             "message": "Gratitude journal not found.",
             "type": "GRATITUDE_JOURNAL_NOT_FOUND"
         },
-        GRATITUDE_JOURNAL_ALREADY_ADDED: (date)=> {
+        GRATITUDE_JOURNAL_ALREADY_ADDED: (date) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-                "message": `Gratitude journal already added on ${date}`,
+                "message": `Gratitude and Self-Love already added on ${date}`,
                 "type": "GRATITUDE_JOURNAL_ALREADY_ADDED"
             }
         },
@@ -29,7 +29,7 @@ export const MESSAGES = {
         GRATITUDE_JOURNAL_DATA_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Gratitude journal data added successfully.",
+                "message": "Journal added to your daily diary",
                 "type": "GRATITUDE_JOURNAL_DATA_ADDED",
                 "data": data
             };
@@ -37,7 +37,7 @@ export const MESSAGES = {
         GRATITUDE_JOURNAL_DATA_UPDATED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-                "message": "Gratitude journal data updated successfully.",
+                "message": "Journal updated to your daily diary",
                 "type": "GRATITUDE_JOURNAL_DATA_UPDATED",
                 "data": data
             };

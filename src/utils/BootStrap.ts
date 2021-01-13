@@ -3,11 +3,10 @@
 import { adminDao } from "@modules/admin/users/AdminDao";
 import { contentDao } from "@modules/content/v1/ContentDao";
 import * as config from "@config/index";
-import { CronUtils } from "@lib/CronUtils";
+import { cronJob } from "@lib/CronUtils";
 import { Database } from "@utils/Database";
-import { elasticSearch, rabbitMQ, redisClient, redisStorage } from "@lib/index";
-import * as socket from "@lib/socketManager";
 import { userDao } from "@modules/user";
+import { global_var } from "@modules/models";
 
 export class BootStrap {
 
@@ -17,21 +16,9 @@ export class BootStrap {
 
 		await this.dataBaseService.connectToDb();
 		await this.bootstrapSeedData();
-		await this.generateMemberOfDay()
-		// rabbitMQ.init();
+		await this.generateMemberOfDay();
 
-		// If elastic search engine is enabled
-		if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
-			elasticSearch.init();
-		}
-
-		// If redis is enabled
-		if (config.SERVER.IS_REDIS_ENABLE) {
-			redisClient.init();
-			redisStorage.init();
-			// socket initializer
-			this.initiateSocket(server);
-		}
+		console.log("Init Request");
 
 		// ENABLE/DISABLE Console Logs
 		if (config.SERVER.ENVIRONMENT === "production") {
@@ -87,63 +74,84 @@ export class BootStrap {
 				const step10 = contentDao.addContent(data);
 			}
 
-			CronUtils.init();
 		} catch (error) {
 			return Promise.resolve();
 		}
 	}
 
 	async generateMemberOfDay() {
+		// cronJob.init();
 		try {
 			let a = 0;
 			// if (globalVariable = 1) {
 			// 	countMember: a
 			// }
-			const criteria = [
-				{
-					$match: {
-						status: config.CONSTANT.STATUS.ACTIVE,
-						isAdminVerified: true,
-						countMember: 0,
-					}
-				},
-				{ $sample: { size: 1 } } // You want to get 5 docs
-			];
-			const dataToUpdate = {
-				countMember: a,
-				isMemberOfDay: true,
-				memberCreatedAt: Date.now()
-			};
+			// const criteria = [
+			// 	{
+			// 		$match: {
+			// 			status: config.CONSTANT.STATUS.ACTIVE,
+			// 			adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+			// 			countMember: 0,
+			// 		}
+			// 	},
+			// 	{ $sample: { size: 1 } } // You want to get 5 docs
+			// ];
+			// const dataToUpdate = {
+			// 	countMember: a,
+			// 	isMemberOfDay: true,
+			// 	memberCreatedAt: Date.now()
+			// };
 
-			const getUsers = await userDao.aggregate('users', criteria, {});
+			// const getUsers = await userDao.aggregate('users', criteria, {});
 
-			if (getUsers && getUsers[0]) {
-				const criteria = {
-					_id: getUsers[0]._id
-				};
-				let startDate:any 
-				let endDate:any
-					startDate = new Date();
-					startDate.setHours(0,0,0,0);
-					endDate = new Date();
-					endDate.setHours(23,59,59,999);
-				await userDao.updateMany('users', {memberCreatedAt: { $gte: startDate, $lte: endDate}}, {"$unset": {memberCreatedAt: ""}}, {});
-				await userDao.updateMany('users', {isMemberOfDay: true}, {"$set": {isMemberOfDay: false}}, {});
-				const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
-			}
+			// if (getUsers && getUsers[0]) {
+			// 	const criteria = {
+			// 		_id: getUsers[0]._id
+			// 	};
+			// 	let startDate: any
+			// 	let endDate: any
+			// 	startDate = new Date();
+			// 	startDate.setHours(0, 0, 0, 0);
 
-			if (!getUsers && !getUsers[0]) {
-				++a;
+			// 	endDate = new Date();
+			// 	endDate.setHours(23, 59, 59, 999);
+			// 	// await userDao.updateMany('users', { memberCreatedAt: { $gte: startDate, $lte: endDate } }, { "$unset": { memberCreatedAt: "" } }, {});
+			// 	// await userDao.updateMany('users', { isMemberOfDay: true }, { "$set": { isMemberOfDay: false } }, {});
+			// 	// const data = await userDao.findOneAndUpdate('users', criteria, dataToUpdate, {});
+			// }
 
+			// if (!getUsers && !getUsers[0]) {
+
+
+			// }
+			const checkMember = await userDao.findOne('users', { isMemberOfDay: true }, {}, {});
+			console.log('checkMember', checkMember);
+
+			if (!checkMember) {
+				const criteria = [
+					{
+						$match: {
+							status: config.CONSTANT.STATUS.ACTIVE,
+							adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+							countMember: 1,//minMemberCount.memberOfDayCount,
+							profession: { $ne: "" },
+						}
+					},
+					{ $sample: { size: 1 } } // You want to get 5 docs
+				];
+				const isUsers = await userDao.findOne('users', criteria, {}, {})
+				console.log('22', isUsers);
+
+				if (!isUsers) {
+					await userDao.insert('global_var', { memberOfDayCount: 0 }, {})
+					cronJob.createMember()
+				}
+				return
 			}
 			// CronUtils.init();
-
+			return;
 		} catch (error) {
 			return Promise.resolve();
 		}
-	}
-
-	async initiateSocket(server) {
-		socket.connectSocket(server);
 	}
 }

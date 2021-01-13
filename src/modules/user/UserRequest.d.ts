@@ -10,6 +10,11 @@ declare namespace UserRequest {
 		lastName: string;
 		createdAt?: number;
 		type: string;
+		getIpfromNtwk: string;
+	}
+	export interface Location extends Device {
+		longitude: number;
+		latitude: number;
 	}
 
 	export interface Login extends Device {
@@ -25,6 +30,7 @@ declare namespace UserRequest {
 
 	export interface SocialLogin extends Device {
 		socialId: string;
+		email: string
 	}
 
 	export interface SocialSignup extends Device {
@@ -73,5 +79,6 @@ declare namespace UserRequest {
 		type: string;
 		deviceId: string;
 		verificationFor: string;
+		authorization: string
 	}
 }

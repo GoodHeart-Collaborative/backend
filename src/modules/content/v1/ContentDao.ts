@@ -18,7 +18,7 @@ export class ContentDao extends BaseDao {
 
 			const options = { lean: true };
 
-			return await this.findOne("contents", query, {}, options, {});
+			return await this.findOne("contents", query, { title: 0 }, options, {});
 		} catch (error) {
 			throw error;
 		}
@@ -29,7 +29,7 @@ export class ContentDao extends BaseDao {
 	 */
 	async addContent(params: ContentRequest.Add) {
 		try {
-            params["created"] = new Date().getTime()
+			params["created"] = new Date().getTime()
 			return await this.save("contents", params);
 		} catch (error) {
 			throw error;
@@ -47,7 +47,10 @@ export class ContentDao extends BaseDao {
 			const match: any = {};
 			match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 			if (searchKey) {
-				match.title = { "$regex": searchKey, "$options": "-i" };
+				const reg = new RegExp(searchKey, 'ig');
+				match.title = reg
+				match.question = reg
+				match.answer = reg
 			}
 			aggPipe.push({ "$match": match });
 
@@ -109,11 +112,13 @@ export class ContentDao extends BaseDao {
 	async editContent(params: ContentRequest.Edit) {
 		try {
 			const query: any = {};
-			query._id = params.contentId;
+			// query._id = params.contentId;
+			query.type = params.type;
+
 
 			const update = {};
 			update["$set"] = {
-				"title": params.title,
+				// "title": params.title,
 				"description": params.description
 			};
 
@@ -139,15 +144,38 @@ export class ContentDao extends BaseDao {
 	/**
 	 * @function faqList
 	 */
-	async faqList() {
+	async faqList(params?) {
 		try {
+			let sort: any = {};
 			const query: any = {};
 			query.type = config.CONSTANT.CONTENT_TYPE.FAQ;
 			query.status = { "$ne": config.CONSTANT.STATUS.DELETED };
 
-			const projection: any = { question: 1, answer: 1 };
+			const projection: any = { question: 1, answer: 1, createdAt: 1 };
 
-			const options: any = { lean: true };
+			if (params && params.sortBy && params.sortOrder) {
+				sort = { "_id": params.sortOrder };
+			} else {
+				sort = { "_id": -1 };
+			}
+
+			const options: any = { sort, lean: true };
+			if (params && params.searchKey) {
+				// const reg = new RegExp(searchKey, 'ig');
+				query['$or'] = [
+					{ question: { $regex: params.searchKey, $options: 'i' } },
+					{ answer: { $regex: params.searchKey, $options: 'i' } }
+					// query.question  { $regex: searchKey },
+					// query.answer = { $regex: searchKey }
+				]
+			};
+			if (params && (params.fromDate || params.toDate)) {
+				if (params.fromDate && params.toDate) { query['createdAt'] = { $gte: params.fromDate, $lte: params.toDate }; }
+				if (params.fromDate && !params.toDate) { query['createdAt'] = { $gte: params.fromDate }; }
+				if (!params.fromDate && params.toDate) { query['createdAt'] = { $lte: params.toDate }; }
+			}
+
+
 
 			const step1 = this.find("contents", query, projection, options, {}, {}, {});
 			const step2 = this.countDocuments("contents", query);

@@ -7,6 +7,7 @@ declare namespace CommentRequest {
         limit: number;
         postId: string;
         commentId: string;
+        type: number;
     }
 
 }

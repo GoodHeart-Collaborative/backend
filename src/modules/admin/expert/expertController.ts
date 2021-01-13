@@ -7,7 +7,6 @@ import * as config from "@config/index";
 import * as expertConstant from "@modules/admin/expert/expertConstant";
 import { expertDao } from "@modules/admin/expert/expertDao";
 import * as appUtils from "@utils/appUtils";
-import * as XLSX from 'xlsx'
 
 class ExpertController {
 
@@ -17,15 +16,21 @@ class ExpertController {
         const result = data.filter((x: any) => {
             return x.VALUE === num;
         });
-        console.log('resultresultresult', result);
         return result[0];
     }
 	/**
 	 * @function addExpert
 	 * @description admin add experts
+     * @param (AdminExpertRequest.expertAdd)
 	 */
     async addExpert(params: AdminExpertRequest.expertAdd) {
         try {
+            params['created'] = new Date().getTime()
+
+            const findEmail = await expertDao.findOne('expert', { email: params.email }, {}, {});
+            if (findEmail) {
+                return Promise.reject(expertConstant.MESSAGES.ERROR.ALREADY_EXIST);
+            }
             const data = await expertDao.insert("expert", params, {});
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -36,26 +41,32 @@ class ExpertController {
 
 	/**
 	 * @function getExpert
-	 * @description admin get xperts and seacch and filter on the there [] category choose
+	 * @description admin get xperts and search and filter on the there [] category choose
 	 */
 
     async getExpert(params: AdminExpertRequest.getExpert) {
         try {
-            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm } = params;
+            const { categoryId, limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, status } = params;
             let aggPipe = [];
             const match: any = {};
             let sort = {};
-            match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+
+            if (status) {
+                match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
+            } else {
+                match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            }
 
             if (sortBy && sortOrder) {
                 if (sortBy === "name") {
                     sort = { "name": sortOrder };
                 } else {
-                    sort = { "created": sortOrder };
+                    sort = { "createdAt": sortOrder };
                 }
             } else {
-                sort = { "created": -1 };
+                sort = { "createdAt": -1 };
             }
+
             if (searchTerm) {
                 match["$or"] = [
                     { "name": { "$regex": searchTerm, "$options": "-i" } },
@@ -97,8 +108,6 @@ class ExpertController {
                     "as": "categoryData"
                 }
             })
-            console.log('>>>>>>>>>>>>>.');
-
             aggPipe.push({
                 $lookup: {
                     from: 'expert_posts',
@@ -106,7 +115,12 @@ class ExpertController {
                     pipeline: [{
                         $match: {
                             $expr: {
-                                "$eq": ['$expertId', '$$eId'],
+                                $and: [{
+                                    "$eq": ['$expertId', '$$eId'],
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
                             }
                         }
                     }],
@@ -122,9 +136,8 @@ class ExpertController {
                 }
             })
             aggPipe.push({ $project: { postData: 0 } })
-
+            aggPipe = [...aggPipe, ...expertDao.addSkipLimit(limit, page)]
             const data = await expertDao.aggreagtionWithPaginateTotal('expert', aggPipe, limit, page, true)
-            console.log('datadatadata', data);
             return data;
 
         } catch (error) {
@@ -142,12 +155,15 @@ class ExpertController {
             const criteria = {
                 _id: params.expertId,
             };
-
-            const data = await expertDao.updateOne('expert', criteria, params, {})
+            // params['profilePicUrl'] = [params.profilePicUrl]
+            const dataToUpdate = {
+                ...params
+            }
+            const data = await expertDao.updateOne('expert', criteria, dataToUpdate, {})
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return expertConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_UPDATED(data);
         } catch (error) {
             throw error;
         }
@@ -160,7 +176,7 @@ class ExpertController {
 
     async updateStatus(params: AdminExpertRequest.updateStatus) {
         try {
-            const {expertId ,status} =params;
+            const { expertId, status } = params;
             const criteria = {
                 _id: expertId
             };
@@ -168,13 +184,49 @@ class ExpertController {
                 status: status
             };
             const data = await expertDao.updateOne('expert', criteria, datatoUpdate, {});
-            if(data && status ==config.CONSTANT.STATUS.DELETED){
-               return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED ;
-          }
-           else if(data && status ==config.CONSTANT.STATUS.BLOCKED){
-           return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
-           }
+            if (data && status == config.CONSTANT.STATUS.DELETED) {
+                return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED;
+            }
+            else if (data && status == config.CONSTANT.STATUS.BLOCKED) {
+                return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_BLOCKED;
+            }
             return expertConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ACTIVE;
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async getExpertDetail(payload: AdminExpertRequest.expertDetail) {
+        try {
+            let aggPipe = [];
+            const match: any = {};
+            match['_id'] = appUtils.toObjectId(payload.expertId);
+
+            aggPipe.push({ $match: match })
+            aggPipe.push({
+                $lookup: {
+                    from: 'categories',
+                    let: { cId: '$categoryId' },
+                    as: 'categoryData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $in: ['$_id', '$$cId']
+                                },
+                                    // {
+                                    //     $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                    // }
+                                ]
+                            }
+                        }
+                    }]
+                },
+            });
+
+            const data = await expertDao.aggregate('expert', aggPipe, {});
+
+            return data;
         } catch (error) {
             return Promise.reject(error)
         }

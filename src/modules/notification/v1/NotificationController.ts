@@ -16,6 +16,14 @@ export class NotificationController {
 			throw error;
 		}
 	}
+
+	async clearNotification(tokenData) {
+		try {
+			return await notificationDao.clearNotification(tokenData);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
 }
 
 export const notificationController = new NotificationController();

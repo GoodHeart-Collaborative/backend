@@ -30,7 +30,7 @@ export const MESSAGES = {
             "message": "Comment unlike successfully.",
             "type": "COMMENT_LIKE"
         },
-        LIKE_LIST:(data) => {
+        LIKE_LIST: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": "like data are.",
@@ -38,6 +38,18 @@ export const MESSAGES = {
                 "data": data
             }
         },
+
+        SUBSCRIPTION_NONE: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.SUBSCRIPTION_EXPIRE_ERROR_CODE,
+                "message": "please purchase subscription",
+                "type": "SUBSCRIPTION_NONE",
+                data: data
+            }
+        },
+
+
+
         // SUCCESS_WITH_NO_DATA: {
         //     "statusCode": config.CONSTANT.HTTP_STATUS_CODE.NO_CONTENT,
         //     "message": "SUCCESS",

@@ -14,7 +14,12 @@ import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/UserDao";
 import { AdminuserDao } from "@modules/admin/users/userDao";
 import { TemplateUtil } from "@utils/TemplateUtil";
-
+import * as createPayload from '@utils/NotificationManager';
+import * as moment from 'moment';
+import { subscriptionDao } from "@modules/subscription/subscriptionDao";
+import { notificationDao } from "@modules/notification";
+import { eventDao } from "@modules/event/eventDao";
+import { eventInterestDao } from "@modules/eventInterest/eventInterestDao";
 class AdminController {
 
 	/**
@@ -205,6 +210,7 @@ class AdminController {
 	 */
 	async changeForgotPassword(params: ChangeForgotPasswordRequest, tokenData: TokenData) {
 		try {
+
 			const step1 = await adminDao.findAdminById(tokenData);
 			params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 			const step2 = adminDao.changePassword(params, tokenData);
@@ -387,28 +393,6 @@ class AdminController {
 		}
 	}
 
-	/**
-	 * @function userReportGraph
-	 */
-	async userReportGraph(params: AdminRequest.UserReportGraph) {
-		try {
-			if (params.type === config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year & Month"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Month"));
-			} else {
-				let step1 = await loginHistoryDao.userReportGraph(params);
-				step1 = adminMapper.userReportGraphResponseMapping(params, step1);
-				return adminConstant.MESSAGES.SUCCESS.DASHBOARD(step1);
-			}
-		} catch (error) {
-			throw error;
-		}
-	}
 
 	async verifyLink(params) {
 		try {
@@ -535,7 +519,7 @@ class AdminController {
 				// 	step6 = redisClient.createJobs(jobPayload);
 				// }
 
-				return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
+				// return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
 			}
 
 		}
@@ -558,34 +542,61 @@ class AdminController {
 			const criteria = {
 				_id: params.userId
 			}
-			const data = await userDao.findOne('users', criteria, {}, {}, {});
+			const data = await userDao.findOne('users', criteria, { members: 0 }, {}, {});
 			return data;
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	async updateStatus(params) {
+	async updateStatus(params, tokenData) {
 		try {
 			const criteria = {
 				_id: params.userId
 			};
-			let dataToUpdate;
+			let dataToUpdate: any = {};
 			if (params.status) {
 				dataToUpdate = {
 					status: params.status
 				}
 			}
 			else {
-				dataToUpdate = {
-					adminStatus: params.adminStatus
-				}
+				dataToUpdate['adminStatus'] = params.adminStatus;
+			}
+			const findUserCurrenstatus = await userDao.findOne('users', criteria, {}, {});
+
+			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED && findUserCurrenstatus.adminStatus !== config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+				const date = new Date();
+				date.setDate(date.getDate() + 7);
+				dataToUpdate['subscriptionType'] = config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value;
+				dataToUpdate['subscriptionEndDate'] = date.setHours(0, 0, 5, 0);  // moment(date).format('YYYY-MM-DD');
+				dataToUpdate['isSubscribed'] = true;
+				dataToUpdate['subscriptionStartDate'] = new Date().getTime()
+				const updateSubscription = await subscriptionDao.saveSubscription(dataToUpdate, tokenData)
 			}
 
 			const data = await userDao.updateOne('users', criteria, dataToUpdate, {})
 			if (!data) {
 				return adminConstant.MESSAGES.ERROR.INVALID_ID;
 			}
+			if (params.status === config.CONSTANT.STATUS.DELETED || params.status === config.CONSTANT.STATUS.BLOCKED) {
+				const updatUserInNotificationList = await notificationDao.updatNotificationStatus(params)
+				const eventInterestStatus = await eventInterestDao.updateStatus(params);
+			}
+			if (params.status === config.CONSTANT.STATUS.ACTIVE) {
+				const eventInterestStatus = await eventInterestDao.updateStatus(params);
+			}
+			// send push from here
+			params['title'] = 'Request Approval';
+			params['body'] = {};
+			// params['category'] = config.CONSTANT.NOTIFICATION_CATEGORY.FRIEND_REQUEST_SEND.category;
+			params['message'] = `your account has been ${params.adminStatus} successfully`;
+			params['type'] = config.CONSTANT.NOTIFICATION_CATEGORY.ADMIN_STATUS_VERIFIED.type;
+			if (params.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.VERIFIED) {
+				const data1111 = await createPayload.notificationManager.sendOneToOneNotification(params, tokenData)
+			}
+
+
 			if (data && params.status === config.CONSTANT.STATUS.DELETED) {
 				return adminUserConstant.MESSAGES.SUCCESS.SUCCESSFULLY_DELETED
 			}

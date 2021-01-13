@@ -2,15 +2,12 @@
 
 export { admins } from "./admin/adminModel";
 export { admin_notifications } from "./adminNotification/adminNotificationModel";
-export { contacts } from "./contact/contactModel";
 export { contents } from "./content/contentModel";
-export { logs } from "./log/logModel";
 export { login_histories } from "./loginHistory/loginHistoryModel";
 export { notifications } from "./notification/notificationModel";
 export { users } from "./user/userModel";
 export { versions } from "./version/versionModel";
 export { categories } from "./admin/catgeory/categoryModel";
-export { posts } from './post/postModel'
 export { inspiration } from './admin/dailyInspiration/inspirationModel';
 export { unicorn } from './admin/unicornHumour/unicornModel';
 export { advice } from './admin/dailyAdvice/adviceModel'
@@ -24,3 +21,7 @@ export { discover } from './discover/discoverModel'
 export { shoutout } from './shoutout/shoutoutModel';
 export { event } from './event/eventModel';
 export { event_interest } from './eventInterest/interestModel';
+export { forum } from './forum/forumModel';
+export { report } from './report/reportModel';
+export { global_var } from './user/globalVariableModel';
+export { subscription } from './subscription/subscriptionModel'

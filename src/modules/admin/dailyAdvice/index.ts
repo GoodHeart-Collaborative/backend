@@ -2,7 +2,6 @@
 
 /// <reference path="PostRequest.d.ts"/>
 
-export * from "./AdviceConstant";
 export { adviceController } from "./AdviceController";
 export { adviceDao } from "./AdviceDao";
 // export { userMapper } from "./UserMapper";

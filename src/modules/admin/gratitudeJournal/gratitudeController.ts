@@ -10,14 +10,12 @@ import * as appUtils from "@utils/appUtils";
 class GratitudeController {
 
 	/**
-	 * @function signup
-	 * @description if IS_REDIS_ENABLE set to true,
-	 * than redisClient.storeList() function saves value in redis.
+	 * @function addGratitude
+	 * @description admin add gratitude 
 	 */
     async addGratitude(params: InspirationRequest.InspirationAdd) {
         try {
             // params["postedAt"] = moment(para).format('YYYY-MM-DD')
-
             const data = await gratitudeJournalDao.insert("inspiration", params, {});
             return gratitudeConstant.MESSAGES.SUCCESS.SUCCESSFULLY_ADDED;
 
@@ -26,27 +24,65 @@ class GratitudeController {
         }
     }
 
+    /**
+     * @function getPostById
+     * @description admin get gratitude per user 
+     */
     async getPostById(params: GratitudeRequest.IgratitudeById) {
         try {
-            const criteria = {
-                _id: params.Id,
-            };
+            let aggPipe = [];
+            let match: any = {};
+            match['_id'] = appUtils.toObjectId(params.Id);
 
-            const data = await gratitudeJournalDao.findOne('gratitude_journals', criteria, {}, {})
-            if (!data) {
+            aggPipe.push({ $match: match })
+
+            aggPipe.push({
+                $lookup: {
+                    from: 'users',
+                    let: { 'uId': '$userId' },
+                    as: 'userData',
+                    pipeline: [{
+                        $match: {
+                            $expr: {
+                                $and: [{
+                                    $eq: ['$_id', '$$uId']
+                                },
+                                {
+                                    $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                }]
+
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            firstName: 1,
+                            lastName: 1,
+                            profilePicUrl: 1
+                        }
+                    }]
+                }
+            });
+            aggPipe.push({ '$unwind': { path: '$userData', preserveNullAndEmptyArrays: true } })
+
+            const data = await gratitudeJournalDao.aggregate('gratitude_journals', aggPipe, {})
+            if (!data[0]) {
                 return gratitudeConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }
-            return gratitudeConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data);
+            return gratitudeConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA(data[0]);
 
-            // return data;
         } catch (error) {
             throw error;
         }
     }
 
+    /**
+     * @function getPosts
+     * @description admin get gratitude list as in feed 
+    */
     async getPosts(params: GratitudeRequest.IGetGratitude) {
         try {
-            const { status, sortBy, sortOrder, limit, page, searchTerm, fromDate, toDate, } = params;
+            const { status, sortBy, sortOrder, privacy, limit, page, searchTerm, fromDate, toDate, } = params;
             const aggPipe = [];
 
             const match: any = {};
@@ -56,6 +92,9 @@ class GratitudeController {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
+            }
+            if (privacy) {
+                match['privacy'] = privacy;
             }
             if (searchTerm) {
                 match["$or"] = [
@@ -88,6 +127,10 @@ class GratitudeController {
         }
     }
 
+    /**
+     * @function updateStatus
+     * @description admin update gratitude status  active, block,delete
+     */
     async updateStatus(params: GratitudeRequest.IUpdateStatus) {
         try {
             const criteria = {
@@ -111,6 +154,11 @@ class GratitudeController {
         }
     }
 
+
+    /**
+     * @function updateStatus
+     * @description admin update gratitude
+     */
     async updatePost(params: GratitudeRequest.updateGratitude) {
         try {
             const criteria = {

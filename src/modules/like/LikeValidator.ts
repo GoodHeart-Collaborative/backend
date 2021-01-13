@@ -15,7 +15,7 @@ let validateUserLikeList = Joi.object({
 }).unknown()
 
 let validateUserLikeParams = Joi.object({
-    type: Joi.number().valid(Object.values(config.CONSTANT.HOME_TYPE)).required().description("1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude, 5-member of the day")
+    type: Joi.number().valid(Object.values(config.CONSTANT.HOME_TYPE)).required().description("1-unicorn, 2-inspiration, 3-daily advice, 4-general gratitude, 5-member of the day, 6-forum, 7-exports, 8-shoutout")
 }).unknown()
 export {
     validateUserLike,

@@ -1,7 +1,7 @@
 "use strict";
 
 console.log("");
-console.log("//************************* RCC 1.0 **************************//");
+console.log("//************************* GOOD HEART 1.0 **************************//");
 console.log("");
 
 console.log("env : ", process.env.NODE_ENV.trim());
@@ -23,7 +23,7 @@ import { logger } from "@lib/index";
 import { plugins } from "@plugins/index";
 import { routes } from "@routes/index";
 import * as BootStrap from "@utils/BootStrap";
-
+let path = require('path')
 const originArray: string[] = [
 	"http://localhost:4200",
 	"http://localhost:4201",
@@ -38,6 +38,7 @@ const server = new Server({
 	// host: "localhost",
 	port: config.SERVER.PORT,
 	routes: {
+		files: { relativeTo: path.join(__dirname, 'public') },
 		cors: {
 			origin: ["*"],
 			// origin: originArray,
@@ -57,7 +58,6 @@ const start = async () => {
 			html: require("handlebars")
 		},
 		path: "src/views",
-		// isCached: config.SERVER.ENVIRONMENT === "production"
 	});
 
 	// serving static files
@@ -91,23 +91,33 @@ routes.push(
 	}
 )
 
+routes.push(
+	{
+		method: 'GET',
+		path: '/src/views/'.toString() + `{path*}`, // ' /views/uploads/image/{path*}',
+		options: {
+			handler: {
+				directory: {
+					path: process.cwd() + '/src/views/'.toString(),
+					listing: false,
+				},
+			},
+		},
+	}
+)
+
+
 start();
 
 const init = async () => {
 	await server.register(plugins);
-	// await server.register({plugin: YourPlugin}, {routes:{prefix: '/api'}});
-
 	const a = server.route(routes);
-	console.log('aaaa', a);
-
 	await server.start();
 	const boot = new BootStrap.BootStrap();
 	await boot.bootStrap(server);
-	console.log('{}}}}}}}}}}}}}}}}}}}}}');
 
 };
 init().then(_ => {
-	// console.log(server.info.uri);
 	console.log(`Hapi server listening on ${config.SERVER.IP}:${config.SERVER.PORT}, in ${config.SERVER.TAG} mode`)
 	logger.info(`Hapi server listening on ${config.SERVER.IP}:${config.SERVER.PORT}, in ${config.SERVER.TAG} mode`);
 }).catch((error) => {

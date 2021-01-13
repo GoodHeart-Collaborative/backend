@@ -7,20 +7,30 @@ import * as config from "@config/index";
 
 export interface IeventInterest extends Document {
     userId: string,
-    // categoryId: string;
     eventId: string,
     created: number;
     type: number;
+    status: string;
 }
 
 const eventInterestSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
     eventId: { type: Schema.Types.ObjectId, ref: 'event' },
+    createrId: { type: Schema.Types.ObjectId, ref: 'users' },
     type: {
         type: Number, enum: [
             config.CONSTANT.EVENT_INTEREST.GOING,
             config.CONSTANT.EVENT_INTEREST.INTEREST,
         ]
+    },
+    status: {
+        type: String, enum: [
+            config.CONSTANT.STATUS.ACTIVE,
+            config.CONSTANT.STATUS.BLOCKED,
+            config.CONSTANT.STATUS.DELETED
+        ],
+        default: config.CONSTANT.STATUS.ACTIVE,
+
     },
     created: { type: Number },
 }, {
@@ -38,5 +48,4 @@ eventInterestSchema.methods.toJSON = function () {
     return object;
 };
 
-// Export shoutout
 export const event_interest: Model<IeventInterest> = mongoose.model<IeventInterest>(config.CONSTANT.DB_MODEL_REF.EVENT_INTEREST, eventInterestSchema);

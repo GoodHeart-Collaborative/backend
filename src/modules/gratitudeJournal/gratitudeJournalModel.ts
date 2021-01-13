@@ -4,7 +4,6 @@ import { Schema, Model, Document } from "mongoose";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import { ElasticSearch } from "@lib/ElasticSearch";
 
 
 export interface IGratitudeJournal extends Document {
@@ -17,15 +16,18 @@ export interface IGratitudeJournal extends Document {
     createdAt: Date,
     updatedAt: Date
     postedAt: String,
+    postAt: String,
     type: number;
     mediaType: number,
-    mediaUrl: number
+    mediaUrl: number,
+    reportCount: number;
 }
 
 
 const gratitudeJournalSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
     likeCount: { type: Schema.Types.Number, default: 0 },
+    reportCount: { type: Number },
     commentCount: { type: Schema.Types.Number, default: 0 },
     status: {
         type: String,
@@ -35,8 +37,8 @@ const gratitudeJournalSchema = new Schema({
             config.CONSTANT.STATUS.DELETED
         ],
         default: config.CONSTANT.STATUS.ACTIVE
-	},
-	privacy: {
+    },
+    privacy: {
         type: String,
         enum: [
             config.CONSTANT.PRIVACY_STATUS.PRIVATE,
@@ -50,12 +52,13 @@ const gratitudeJournalSchema = new Schema({
         type: Number,
         enum: [
             config.CONSTANT.MEDIA_TYPE.IMAGE,
-            config.CONSTANT.MEDIA_TYPE.VIDEO
+            // config.CONSTANT.MEDIA_TYPE.VIDEO
+            config.CONSTANT.MEDIA_TYPE.NONE
         ],
         default: config.CONSTANT.MEDIA_TYPE.IMAGE
     },
     postAt: { type: String, trim: true },
-    mediaUrl: { type: String },
+    mediaUrl: { type: String, trim: true },
     thumbnailUrl: { type: String },
     created: { type: Number }
 }, {

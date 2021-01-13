@@ -18,7 +18,7 @@ export const likeRoute: ServerRoute[] = [
             const payload: LikeRequest.AddLikeRequest = request.payload;
             const query: LikeRequest.LikeTypeRequest = request.query;
             try {
-                const result = await likeController.addLike({ ...payload, ...query, ...{ userId: tokenData.userId } });
+                const result = await likeController.addLike({ ...payload, ...query, ...{ userId: tokenData.userId, subscriptionEndDate: tokenData['subscriptionEndDate'], isSubscribed: tokenData['isSubscribed'] } });
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

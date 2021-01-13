@@ -3,31 +3,45 @@ import * as mongoose from "mongoose";
 import { Schema, Model, Document } from "mongoose";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-// import * as 
+import * as shortid from 'shortid';
 
 export interface Ievent extends Document {
     userId: string,
-    // categoryId: string;
-    name: string;
     location: any;
     title: string,
     privacy: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: number;
+    endDate: number;
     price: number;
     url: string;
-    allowSharing: boolean;
+    allowSharing: number;
     description: string;
     goingCount: number;
     interestCount: number;
     eventCategory: string,
     created: number;
+    isFeatured: boolean;
+    eventCategoryName: string;
+    eventCategoryId: string;
+    eventCategoryImage: string;
+    isEventFree: boolean;
 }
+var geoSchema = new Schema({
+    // location: { type: String, trim: true, required: true, default: '' },
+    type: { type: String, default: "Point" },
+    coordinates: { type: [Number], index: "2dsphere", default: [0, 0] }// [lngitude, latitude]
+}, {
+    _id: false
+});
 
 const eventSchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: 'users' },
-    // categoryId:{type:Schema.Types.ObjectId },
-    name: { type: String },
+    userId: { type: Schema.Types.ObjectId, required: true, ref: 'users', index: true },
+    userType: {
+        type: String, required: true, enum: [
+            config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
+            config.CONSTANT.ACCOUNT_LEVEL.USER
+        ]
+    },
     privacy: {
         type: String, enum: [
             config.CONSTANT.PRIVACY_STATUS.PRIVATE,
@@ -35,17 +49,15 @@ const eventSchema = new Schema({
             config.CONSTANT.PRIVACY_STATUS.PUBLIC
         ]
     },
-    startDate: { type: Date },
-    endDate: { type: Date },
-    location: {
-        type: { type: String, default: "Point" },
-        coordinates: [Number],
-    },
-    address: { type: String, trim: true, required: true },
-    price: { type: Number, default: 0 },
+    isFeatured: { type: Boolean, default: false, index: true },
+    startDate: { type: Number, index: true },
+    endDate: { type: Number, index: true },
+    location: geoSchema,
+    isEventFree: { type: Boolean, required: true },
+    address: { type: String, trim: true, required: true, index: true },
+    price: { type: Number },
     title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
-    // membersDetail: [{userId: { type: Schema.Types.ObjectId, ref: "users", default: null, index: true }}],
     status: {
         type: String,
         enum: [
@@ -55,18 +67,15 @@ const eventSchema = new Schema({
         ],
         default: config.CONSTANT.STATUS.ACTIVE
     },
+    eventCategoryImage: { type: String, trim: true },
     imageUrl: { type: String },
     eventUrl: { type: String },
-    allowSharing: { type: Boolean },
+    shareUrl: { type: String },
+    allowSharing: { type: Number },
+    shortId: { type: String, default: shortid.generate, unique: true },
     goingCount: { type: Number, default: 0 },
-    eventCategory: {
-        type: String, enum: [
-            config.CONSTANT.EVENT_CATEGORY.CLASSES,
-            config.CONSTANT.EVENT_CATEGORY.EVENTS,
-            config.CONSTANT.EVENT_CATEGORY.MEETUP,
-            config.CONSTANT.EVENT_CATEGORY.TRAINING
-        ]
-    },
+    eventCategoryName: { type: String },
+    eventCategoryId: { type: Schema.Types.ObjectId, required: true },
     interestCount: { type: Number, default: 0 },
     created: { type: Number },
 
@@ -78,7 +87,6 @@ const eventSchema = new Schema({
 eventSchema.set("toObject", {
     virtuals: true
 });
-
 
 eventSchema.methods.toJSON = function () {
     const object = appUtils.clean(this.toObject());

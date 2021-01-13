@@ -9,16 +9,19 @@ import * as appUtils from '@utils/appUtils'
 
 export class HomeDao extends BaseDao {
 
-    async getHomeData(params, userId) {
+    async getHomeData(params, userId, header) {
         try {
             let { pageNo, limit, endDate, type } = params
             let match: any = {};
             let aggPipe = [];
             let result: any = {}
-            let endDateee = new Date();
-            let idKey:string = '$_id'
-            endDateee.setHours(23, 59, 59, 999);
-            match["postedAt"] = { $lte: endDateee }// moment(new Date()).format('YYYY-MM-DD')
+            // let endDateee = new Date();
+            // let endDateee = moment().utc().endOf('day').toDate();
+            let idKey: string = '$_id'
+            let endDateee = (moment().utc(header.timezone)).format("x")
+            const a = parseInt(endDateee)
+            console.log('endDateeeend', a);
+            match["postAt"] = { $lte: a }// moment(new Date()).format('YYYY-MM-DD')
             match["status"] = config.CONSTANT.STATUS.ACTIVE
             aggPipe.push({ "$sort": { "createdAt": -1 } });
             if (endDate) {
@@ -38,11 +41,12 @@ export class HomeDao extends BaseDao {
                         likeCount: { $first: "$likeCount" },
                         commentCount: { $first: "$commentCount" },
                         // status: { $first : "$status" },
+                        thumbnailUrl: { $first: '$thumbnailUrl' },
                         type: { $first: "$type" },
                         mediaType: { $first: "$mediaType" },
                         created: { $first: "$created" },
                         mediaUrl: { $first: "$mediaUrl" },
-                        // title: { $first : "$title" },
+                        title: { $first: "$title" },
                         // isPostLater: { $first : "$isPostLater" },
                         // postedAt: { $first : "$postedAt" },
                         createdAt: { $first: "$createdAt" }
@@ -75,7 +79,6 @@ export class HomeDao extends BaseDao {
                     as: "likeData"
                 }
             })
-            // aggPipe.push({ '$unwind': { path: '$likeData', preserveNullAndEmptyArrays: true } })
             aggPipe.push({
                 $lookup: {
                     from: "comments",
@@ -111,8 +114,8 @@ export class HomeDao extends BaseDao {
                 type: "$type",
                 mediaType: "$mediaType",
                 mediaUrl: "$mediaUrl",
-                // thumbnailUrl: "$",
-                // title: "$title",
+                thumbnailUrl: "$thumbnailUrl",
+                title: "$title",
                 // createdd:"$created",
                 // isPostLater: "$isPostLater",
                 description: "$description",
@@ -158,7 +161,6 @@ export class HomeDao extends BaseDao {
         try {
             // options['new'] = true;
             // options['lean'] = true;
-
             return await this.updateOne('home', query, update, {});
         } catch (error) {
             throw error;

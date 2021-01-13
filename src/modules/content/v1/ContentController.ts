@@ -3,6 +3,7 @@
 import * as config from "@config/constant";
 import * as contentConstant from "@modules/content/contentConstant";
 import { contentDao } from "@modules/content/v1/ContentDao";
+import * as configApi from "@config/index";
 
 export class ContentController {
 
@@ -112,12 +113,26 @@ export class ContentController {
 	 */
 	async viewContent(params: ContentRequest.View) {
 		try {
+			if (params.type === config.CONSTANT.CONTENT_TYPE.FAQ) {
+				const getFaq = await contentDao.faqList();
+				let content = "";
+				for (let i = 0; i < getFaq.data.length; i++) {
+					content = content + config.CONSTANT.TEMPLATES.FAQ(getFaq.data[i].question, getFaq.data[i].answer);
+				}
+				if (params.type == config.CONSTANT.CONTENT_TYPE.FAQ) {
+					return contentConstant.MESSAGES.SUCCESS.CONTENT_DETAILS(content);
+				}
+			}
+
 			const step1 = await contentDao.isContentExists(params);
+
 			if (!step1) {
 				return Promise.reject(contentConstant.MESSAGES.ERROR.CONTENT_NOT_FOUND);
 			} else {
 				return contentConstant.MESSAGES.SUCCESS.CONTENT_DETAILS(step1);
+				// return `${configApi.SERVER.API_BASE_URL}/v1/content/view?type${params.type}`
 			}
+
 		} catch (error) {
 			throw error;
 		}
@@ -145,13 +160,13 @@ export class ContentController {
 	/**
 	 * @function faqList
 	 */
-	async faqList(tokenData: TokenData) {
+	async faqList(tokenData: TokenData, params) {
 		try {
 			if (
 				tokenData.adminType === config.CONSTANT.ADMIN_TYPE.SUPER_ADMIN ||
 				tokenData.permission.indexOf("view_content") !== -1
 			) {
-				const step1 = await contentDao.faqList();
+				const step1 = await contentDao.faqList(params);
 				return contentConstant.MESSAGES.SUCCESS.CONTENT_LIST({ "contentList": step1.data, "totalRecord": step1.total });
 			} else {
 				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.UNAUTHORIZED_ACCESS);

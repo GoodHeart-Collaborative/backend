@@ -17,18 +17,20 @@ export interface Ihome extends Document {
     thumbnailUrl: string,
     createdAt: Date,
     updatedAt: Date
-    postedAt: Date,
+    postedAt: number,
     type: number;
     mediaType: number,
     mediaUrl: number,
-    addedBy: Object;
-    // imageUrl: string;
+    addedBy: string;
+    postAt: number;
+    reportCount: number;
 }
 
 
 const homeSchema = new Schema({
     likeCount: { type: Schema.Types.Number, default: 0 },
     commentCount: { type: Schema.Types.Number, default: 0 },
+    reportCount: { type: Number, default: 0 },
     title: { type: Schema.Types.String },
     status: {
         type: String,
@@ -50,7 +52,8 @@ const homeSchema = new Schema({
     },
     description: { type: String },
     isPostLater: { type: Boolean },
-    postedAt: { type: Date, trim: true, },
+    postedAt: { type: Number },
+    postAt: { type: Number },
     mediaType: {
         type: Number,
         enum: [
@@ -63,12 +66,7 @@ const homeSchema = new Schema({
     thumbnailUrl: { type: String },
     // imageUrl: { type: String },
     created: { type: Number, default: new Date() },
-    addedBy: {
-        name: { type: String },
-        profilePicture: { type: String }
-    }
-    // // createdAt: { type: Date },
-    // updatedAt: { type: Date }
+    addedBy: { type: Schema.Types.ObjectId }
 }, {
     versionKey: false,
     timestamps: true

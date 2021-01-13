@@ -26,32 +26,21 @@ export class ExpertPostDao extends BaseDao {
         }
     }
 
-    async getInspirationHomeData(params, userId) {
+    async checkExpertPost(params) {
         try {
-            let { pageNo, limit, endDate } = params
-            let match: any = {};
-            let aggPipe = [];
-            let result: any = {}
-            match["postedAt"] = moment(new Date()).format('YYYY-MM-DD')
-            match["status"] = config.CONSTANT.STATUS.ACTIVE
-            aggPipe.push({ "$sort": { "createdAt": -1 } });
-            if (endDate) {
-                match["createdAt"] = { $lte: new Date(endDate) };
-            }
-            aggPipe.push({ "$match": match });
-            result = await this.aggregateWithPagination("inspiration", aggPipe, limit, pageNo, true)
-            if (result && result.data && result.data.length == 0) {
-                delete match.postedAt
-                aggPipe.pop()
-                result = await this.aggregateWithPagination("inspiration", aggPipe, limit, pageNo, true)
-                result = result
-            }
-            return result
+            return await this.findOne('expert_post', params, {}, {});
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    async updateLikeAndCommentCount(query, update) {
+        try {
+            return await this.updateOne('expert_post', query, update, {});
         } catch (error) {
             throw error;
         }
     }
-
 }
 
 export const expertPostDao = new ExpertPostDao();

@@ -4,18 +4,14 @@ import * as _ from "lodash";
 
 import { BaseDao } from "@modules/base/BaseDao";
 import * as config from "@config/constant";
-import { ElasticSearch } from "@lib/ElasticSearch";
-import * as appUtils from '@utils/appUtils'
 import { userDao } from '@modules/user/UserDao';
-
-const elasticSearch = new ElasticSearch();
 
 export class AdminUserDao extends BaseDao {
 
 
     async getUsers(params) {
         try {
-            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate, adminStatus } = params;
+            const { sortBy, sortOrder, limit, page, searchTerm, status, fromDate, toDate, adminStatus, subscriptionType } = params;
             const aggPipe = [];
 
 
@@ -28,6 +24,11 @@ export class AdminUserDao extends BaseDao {
             } else {
                 match.status = { "$ne": config.CONSTANT.STATUS.DELETED };
             }
+            if (subscriptionType) {
+                match.subscriptionType = parseInt(subscriptionType)
+            }
+
+
             aggPipe.push({
                 "$project": {
                     isAppleLogin: 1,
@@ -44,7 +45,8 @@ export class AdminUserDao extends BaseDao {
                     fullMobileNo: 1,
                     gender: 1,
                     dob: 1,
-                    profilePicUrl: [1],
+                    reportCount: 1,
+                    profilePicUrl: 1,
                     address: 1,
                     status: 1,
                     preference: 1,
@@ -66,7 +68,9 @@ export class AdminUserDao extends BaseDao {
                             then: '$firstName',
                             else: { $concat: ['$firstName', ' ', '$lastName'] }
                         }
-                    }
+                    },
+                    subscriptionType: 1,
+                    subscriptionEndDate: 1,
                 }
             });
 
@@ -105,11 +109,8 @@ export class AdminUserDao extends BaseDao {
             const totalRejected = userDao.count('users', { adminStatus: config.CONSTANT.USER_ADMIN_STATUS.REJECTED, status: { "$ne": config.CONSTANT.STATUS.DELETED } });
 
             const [verifiedCount, pendingCount, rejectedCount] = await Promise.all([totalVerified, totalPending, totalRejected])
-            console.log('verifiedCountverifiedCount', verifiedCount);
 
             const data: any = await userDao.paginate('users', aggPipe, limit, page, { salt: 0, hash: 0 }, true);
-            console.log('datadata', data);
-
             // return verifiedCount,
             // pendingCount,
             // rejectedCount,

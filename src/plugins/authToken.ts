@@ -7,7 +7,6 @@ import { Request, ResponseToolkit } from "hapi";
 import { adminDao } from "@modules/admin/users/AdminDao";
 import * as config from "@config/index";
 import { loginHistoryDao } from "@modules/loginHistory/LoginHistoryDao";
-import { redisClient } from "@lib/redis/RedisClient";
 import { responseHandler } from "@utils/ResponseHandler";
 import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/UserDao";
@@ -60,7 +59,7 @@ export const plugin = {
 		/**
 		 * @function UserAuth
 		 * @description if IS_REDIS_ENABLE set to true,
-		 * than redisClient.getList() function fetch value from redis.
+		 * than redisClient.getList() function  value from redis.
 		 */
 		server.auth.strategy("UserAuth", "bearer-access-token", {
 			allowQueryToken: false,
@@ -79,21 +78,6 @@ export const plugin = {
 						const jwtPayload = await tokenManager.decodeToken({ accessToken });
 						const tokenData = await tokenManager.verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, true);
 
-						if (config.SERVER.IS_REDIS_ENABLE) {
-							const step1 = await redisClient.getValue(accessToken);
-							if (!step1) {
-								if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-									const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId });
-								} else {
-									const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId });
-								}
-								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
-							} else {
-								if (config.SERVER.IN_ACTIVITY_SESSION) {
-									redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, step1);
-								}
-							}
-						}
 						let userData = await userDao.findUserById({ "userId": tokenData.userId });
 
 						if (!userData) {
@@ -104,6 +88,8 @@ export const plugin = {
 								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.USER_BLOCKED));
 							} else if (userData.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
 								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.ADMIN_REJECTED_USER));
+							} else if (userData.status === config.CONSTANT.STATUS.DELETED) {
+								return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.DELETED));
 							}
 							else {
 								const step3 = await loginHistoryDao.findDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId, "salt": jwtPayload.payload.salt });
@@ -154,8 +140,6 @@ export const plugin = {
 			validate: async (request: Request, token, h: ResponseToolkit) => {
 				// validate user and pwd here
 				const checkFunction = await basicAuthFunction(token);
-				console.log('checkFunctioncheckFunctioncheckFunction', checkFunction);
-
 				if (!checkFunction) {
 					return ({ isValid: false, credentials: { token, userData: {} } });
 				}
@@ -179,21 +163,7 @@ export const plugin = {
 				} else {
 					const jwtPayload = await tokenManager.decodeToken({ accessToken });
 					const tokenData = await tokenManager.verifyToken({ "accessToken": accessToken, "salt": jwtPayload.payload.salt }, config.CONSTANT.ACCOUNT_LEVEL.USER, true);
-					if (config.SERVER.IS_REDIS_ENABLE) {
-						const step1 = await redisClient.getValue(accessToken);
-						if (!step1) {
-							if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-								const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId });
-							} else {
-								const step2 = loginHistoryDao.removeDeviceById({ "userId": tokenData.userId, "deviceId": tokenData.deviceId });
-							}
-							return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.SESSION_EXPIRED));
-						} else {
-							if (config.SERVER.IN_ACTIVITY_SESSION) {
-								redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, step1);
-							}
-						}
-					}
+
 					let userData = await userDao.findUserById({ "userId": tokenData.userId });
 					if (!userData) {
 						return Promise.reject(responseHandler.sendError(config.CONSTANT.MESSAGES.ERROR.INVALID_TOKEN));

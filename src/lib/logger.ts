@@ -86,7 +86,7 @@ const initialize = _.once(function () {
 	}
 
 	logger = bunyan.createLogger({
-		name: "rccLog",
+		name: "GOOD HEARTLog",
 		streams: streams,
 		serializers: {
 			req: bunyan.stdSerializers.req,

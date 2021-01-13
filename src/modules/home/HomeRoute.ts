@@ -16,9 +16,12 @@ export const homeRoute: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/users/home`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const query = request.query;
+            const query: userHomeRequest.Igethome = request.query;
             try {
-                const result = await homeController.getHomeData({ ...query }, { tokenData });
+                const header = request.headers;
+                const result = await homeController.getHomeData({ ...query }, { tokenData }, header);
+                console.log('resultresultresultresult', result);
+
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {
                 return responseHandler.sendError(error);

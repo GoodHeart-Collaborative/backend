@@ -1,38 +1,18 @@
 "use strict";
 
 import * as _ from "lodash";
-import fs = require("fs");
 
 import * as gratitudeJournalConstants from "./expertConstant";
 import { expertDao } from "./expertDao";
-import * as moment from 'moment';
-import * as appUtils from '@utils/appUtils'
-import { categoryDao } from "@modules/admin/catgeory";
-import { expertPostDao } from "@modules/admin/expertPost/expertPostDao";
-
 
 class ExpertController {
 
     /**
-     * @function signup
-     * @description if IS_REDIS_ENABLE set to true,
-     * than redisClient.storeList() function saves value in redis.
-     */
-    // async getGratitudeJournalData(params) {
-    //     try {
-    //         let getGratitudeJournal: any = await expertDao.getGratitudeJournalData(params)
-    //         return gratitudeJournalConstants.MESSAGES.SUCCESS.GRATITUDE_JOURNAL_DATA(getGratitudeJournal)
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
-
-    /**
      * @function getExperts
-     * @description first get the category
-     * then in get the experts
+     * @params (UserExpertRequest.getExpert)
+     * @description expertlist home screen
      */
-    async getExperts(payload) {
+    async getExperts(payload: userExpertRequest.IgetExpert) {
         try {
             return await expertDao.getExperts(payload)
         } catch (error) {
@@ -40,7 +20,12 @@ class ExpertController {
         }
     }
 
-    async getcategory(payload) {
+    /**
+   * @function getCategory
+   * @params ( userExpertRequest.IgetCategory)
+   * @description get experts-categgory and category for add
+   */
+    async getcategory(payload: userExpertRequest.IgetCategory) {
         try {
             return await expertDao.getCategory(payload);
         } catch (error) {
@@ -48,7 +33,26 @@ class ExpertController {
         }
     }
 
-    async expertDetailWithPost(payload) {
+    /**
+     * @function getcategoryExperts
+     * @params (userExpertRequest.ICategoryRelatedExpert )
+     * @description categoryRelatedExperts
+     */
+
+    async getcategoryExperts(payload: userExpertRequest.ICategoryRelatedExpert) {
+        try {
+            return await expertDao.getcategoryExperts(payload);
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    /**
+    * @function expertDetailWithPost
+    * @params (userExpertRequest.IgetExpertRelatedPost)
+    * @description expertDetail and posts list
+    */
+    async expertDetailWithPost(payload: userExpertRequest.IgetExpertRelatedPost) {
         try {
             return await expertDao.expertDetailWithPost(payload);
         } catch (error) {
@@ -56,9 +60,28 @@ class ExpertController {
         }
     }
 
-    async postDetail(payload) {
+    /**
+     * @function postDetail
+     * @params (userExpertRequest.IgetExpertRelatedPost)
+     * @description expertDetail and posts list
+     */
+    async postDetail(payload: userExpertRequest.IPostId) {
         try {
             return await expertDao.getPostDetail(payload);
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
+    /**
+     * @function expertsListSearch
+     * @params (userExpertRequest.expertSearch)
+     * @description expertList on tap of view all
+     */
+    async expertsListSearch(payload: userExpertRequest.expertSearch) {
+        try {
+            const data = await expertDao.getExpertListBySearch(payload);
+            return data;
         } catch (error) {
             return Promise.reject(error)
         }

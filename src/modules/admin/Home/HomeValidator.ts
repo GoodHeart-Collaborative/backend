@@ -13,7 +13,7 @@ let AddHome = Joi.object({
     description: Joi.string(),
     isPostLater: Joi.boolean(),
     // imageUrl: Joi.string(),
-    postedAt: Joi.date(),
+    postedAt: Joi.number(),
     type: Joi.number().valid([
         config.CONSTANT.HOME_TYPE.UNICORN,
         config.CONSTANT.HOME_TYPE.INSPIRATION,
@@ -25,11 +25,7 @@ let AddHome = Joi.object({
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
     mediaUrl: Joi.string(),
     thumbnailUrl: Joi.string(),
-    addedBy: {
-        name: Joi.string(),
-        profilePicture: Joi.string()
-    }
-    // imageUrl: Joi.string()
+    addedBy: Joi.string().required()
 }).unknown()
 
 
@@ -73,17 +69,18 @@ let updateHome = Joi.object({
     description: Joi.string(),
     isPostLater: Joi.boolean(),
     // imageUrl: Joi.string(),
-    postedAt: Joi.date(),
+    postedAt: Joi.number(),
     mediaType: Joi.number().valid([
         config.CONSTANT.MEDIA_TYPE.IMAGE,
         config.CONSTANT.MEDIA_TYPE.VIDEO,
     ]).default(config.CONSTANT.MEDIA_TYPE.IMAGE),
     mediaUrl: Joi.string().allow(''),
     thumbnailUrl: Joi.string().allow(''),
-    addedBy: {
-        name: Joi.string().allow(''),
-        profilePicture: Joi.string().allow('')
-    }
+    addedBy: Joi.string()
+    // {
+    //     name: Joi.string().allow(''),
+    //     profilePicture: Joi.string().allow('')
+    // }
     // imageUrl: Joi.string()
 })
 let updateHomeId = Joi.object({

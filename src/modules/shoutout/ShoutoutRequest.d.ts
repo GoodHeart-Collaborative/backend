@@ -2,6 +2,8 @@ declare namespace ShoutoutRequest {
     export interface ShoutoutRequestAdd extends Device {
         description: string
         title: string
-        members: string[]
+        privacy: string
+        gif?: string
+        members: any
     }
 }

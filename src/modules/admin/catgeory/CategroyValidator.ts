@@ -8,14 +8,15 @@ import { join } from "path";
 // when mediaType =2 then in mediaUrl you will give video url and in thumbnailUrl you will give video thumbnail image url
 
 
-
-
 let AddCategory = Joi.object({
 
     // name: Joi.string().lowercase().required(),
     title: Joi.string().required(),
-    imageUrl: Joi.string().allow('')
-
+    imageUrl: Joi.string().allow(''),
+    type: Joi.number().allow([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY
+    ])
 })
 
 
@@ -33,7 +34,11 @@ let getCategory = Joi.object({
         config.CONSTANT.STATUS.DELETED
     ]),
     fromDate: Joi.date(),
-    toDate: Joi.date()
+    toDate: Joi.date(),
+    type: Joi.number().valid([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY
+    ]).required()
 })
 
 let GetCategoryDetailsList = Joi.object({
@@ -50,12 +55,21 @@ let GetCategoryDetailsList = Joi.object({
         config.CONSTANT.STATUS.BLOCKED,
         config.CONSTANT.STATUS.DELETED
     ]),
+    type: Joi.number().allow([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY,
+    ]),
     fromDate: Joi.date(),
-    toDate: Joi.date()
+    toDate: Joi.date(),
+    privacy: Joi.string().allow([
+        config.CONSTANT.PRIVACY_STATUS.PRIVATE,
+        config.CONSTANT.PRIVACY_STATUS.PROTECTED,
+        config.CONSTANT.PRIVACY_STATUS.PUBLIC
+    ])
 }).unknown()
 
 let GetCategoryId = Joi.object({
-    categoryId: Joi.string().required()
+    categoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
 })
 
 let UpdateCategory = Joi.object({
@@ -91,12 +105,12 @@ let GetList = Joi.object({
 })
 
 let updateStatus = Joi.object({
-    Id: Joi.string().required(),
+    categoryId: Joi.string().required(),
     status: Joi.string().valid([
         config.CONSTANT.STATUS.ACTIVE,
-        config.CONSTANT.STATUS.DELETED,
-        config.CONSTANT.STATUS.BLOCKED
-    ])
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED
+    ]).required()
 })
 
 let updateHome = Joi.object({

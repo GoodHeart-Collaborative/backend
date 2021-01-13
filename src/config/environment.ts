@@ -83,6 +83,7 @@ export const SERVER = Object.freeze({
 
 	JWT_CERT_KEY: "g8b9(-=~Sdf)",
 	SALT_ROUNDS: 10,
+	SERVER_URL: process.env["SERVER_URL"],
 	// for private.key file use RS256, SHA256, RSA
 	JWT_ALGO: "HS256", // HS384
 	CHUNK_SIZE: 100,
@@ -91,7 +92,7 @@ export const SERVER = Object.freeze({
 	ADMIN_RESST_PASSWORD_URL: "/auth/reset-password/token/",
 	API_BASE_URL: "",
 	API_URL: process.env['API_URL'],
-	// API_BASE_URL: "/rcc/api",
+	flockApi: process.env['flock'],
 	MONGO: {
 
 		DB_NAME: process.env["DB_NAME"],
@@ -112,40 +113,16 @@ export const SERVER = Object.freeze({
 	},
 	ADMIN_CREDENTIALS: {
 		EMAIL: "adminwc@yopmail.com",
-		PASSWORD: "Admin@123",
-		NAME: "Rcc Admin"
-	},
-	REDIS: {
-		SERVER: "localhost",
-		PORT: 6379,
-		NAMESPACE: "rccapp",
-		APP_NAME: "rcc"
-	},
-	SOCKET: {
-		PORT: 6379,
-		HOST: "localhost"
-	},
-	ELASTIC_SEARCH: {
-		SERVER: "localhost",
-		PORT: 9200,
-		HOST: process.env["ELASTIC_SEARCH_HOST"]
+		PASSWORD: "String@123",
+		NAME: "women Admin"
 	},
 	MAIL: {
-		SENDGRID: {
-			API_USER: "rajat_maheshwari",
-			API_KEY: "Rajat@123"
-		},
 		SMTP: {
 			HOST: "smtp.gmail.com",
 			PORT: "587",
 			USER: "womencommunite@gmail.com",
 			PASSWORD: "12345@women"
 		}
-	},
-	TWILIO: {
-		ACCOUNT_SID: process.env["ACCOUNT_SID"],
-		AUTH_TOKEN: process.env["AUTH_TOKEN"],
-		TWILIO_NUMBER: process.env["TWILIO_NUMBER"]
 	},
 	BASIC_AUTH: {
 		NAME: "wc",
@@ -206,3 +183,32 @@ export const SERVER = Object.freeze({
 	IS_ELASTIC_SEARCH_ENABLE: false,
 	IS_SINGLE_DEVICE_LOGIN: true
 });
+
+export const IN_APP = {
+	ANDROID: {
+		SUBSCRIPTIONS: {
+
+		},
+		ANDROID_PACKAGE_NAME: process.env["ANDROID_PACKAGE_NAME"]
+	},
+	IOS: {
+		SANDBOXURL: process.env["SANDBOX_URL"],
+		LIVE_URL: process.env["LIVE_URL"],
+		LIVE_SHARED_SECRET: process.env["LIVE_SHARED_SECRET"]
+	},
+	IOS_CALLBACK: {
+		CANCEL: "CANCEL",
+		DID_CHANGE_RENEWAL_PREF: "DID_CHANGE_RENEWAL_PREF",
+		DID_CHANGE_RENEWAL_STATUS: "DID_CHANGE_RENEWAL_STATUS",
+		DID_FAIL_TO_RENEW: "DID_FAIL_TO_RENEW",
+		DID_RECOVER: "DID_RECOVER",
+		INITIAL_BUY: "INITIAL_BUY",
+		INTERACTIVE_RENEWAL: "INTERACTIVE_RENEWAL",
+		RENEWAL: "RENEWAL",
+		REFUND: "REFUND"
+	},
+	SUBSCRIPTION_TYPE: {
+		RENEWAL: 1,
+		NON_RENEWAL: 2
+	}
+};

@@ -7,6 +7,11 @@ export const MESSAGES = {
             "message": "Discover not found.",
             "type": "DISCOVER_NOT_FOUND"
         },
+        PERMISSION_DENIED: {
+            "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+            "message": "Permission denied.",
+            "type": "PERMISSION_DENIED"
+        },
         DISCOVER_ALREADY_EXIST: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
             "message": "User with follower already added.",
@@ -14,26 +19,34 @@ export const MESSAGES = {
         },
     },
     SUCCESS: {
-        SUCCESSFULLY_ADDED:(data)=> {
+        SUCCESSFULLY_ADDED: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": "follow successfully",
                 "type": "SUCCESSFULLY_ADDED",
-                "data" : data
+                "data": data
             }
         },
-        SUCCESSFULLY_REMOVE:(data)=> {
+        SUCCESSFULLY_REMOVE: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": "unfollow successfully",
                 "type": "SUCCESSFULLY_REMOVE",
-                "data" : data
+                "data": data
             }
         },
         DISCOVER_DATA: (data) => {
             return {
                 "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
                 "message": "Discover data are.",
+                "type": "DISCOVER_DATA",
+                "data": data
+            };
+        },
+        DISCOVER_DATA_NO_USER: (data) => {
+            return {
+                "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+                "message": "No user found",
                 "type": "DISCOVER_DATA",
                 "data": data
             };

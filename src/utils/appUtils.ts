@@ -1,13 +1,9 @@
 "use strict";
 
 import * as _ from "lodash";
-// import * as atob from "atob";
-// import * as bcrypt from "bcrypt";
 import * as Boom from "boom";
-// import * as btoa from "btoa";
 import * as crypto from "crypto";
 import * as del from "del";
-import { ExcelJs } from "../lib/ExcelJs";
 // import fs = require("fs");
 import * as generatepassword from "generate-password";
 import { Request, ResponseToolkit } from "hapi";
@@ -18,10 +14,10 @@ import * as randomstring from "randomstring";
 import * as path from "path";
 import * as TinyURL from "tinyurl";
 import * as validator from "validator";
-
+import * as environment from '@config/environment'
 import * as config from "@config/index";
-import { logger } from "@lib/logger";
-const TAG = "rcc-uploads";
+import * as request from "request-promise";
+
 
 const verifyEmailFormat = function (value: string) {
 	return validator.isEmail(value);
@@ -41,7 +37,7 @@ const createMembersArray = function (members) {
 	try {
 		let membersMembers = []
 		for (const userId of members) {
-			membersMembers.push({userId: userId})
+			membersMembers.push({ userId: userId })
 		}
 		return membersMembers
 	} catch (error) {
@@ -109,6 +105,19 @@ const genRandomString = function (length) {
 		.slice(0, length);   /** return required number of characters */
 };
 
+const getShoutoutCard = function () {
+	let stringArr = ["Happy Birthday! ", "Congratulations! ", "Way to go! ", "Keep on Shining!", "So proud of you!", "Grateful for your passion!", "You go girl!", "You got this!", "Awesome job!"]
+	let response: any = []
+	for (let i = 0; i < stringArr.length; i++) {
+		response.push({
+			id: i + 1,
+			title: stringArr[i],
+			gif: `${environment.SERVER.API_URL}/images/card_${i + 1}.png`
+		})
+	}
+	return response
+};
+
 const encryptHashPassword = function (password: string, salt: string) {
 	// return bcrypt.hashSync(password, salt);
 	const hash = crypto.createHmac("sha512", salt); /** Hashing algorithm sha512 */
@@ -153,24 +162,32 @@ const splitArrayInToChunks = function (data) {
 
 const createAndroidPushPayload = function (data) {
 	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "priority", "sound", "click_action"];
-
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "priority", "sound", "click_action", "title", "message", "notification_type"];
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
 	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
 	data.category = "action";
+	// data.body = {};
+	data.notification_type = data.type;
+	data.message = data.message;
+	// data.notification_type = data.notification_type;
+	data.title = data.title ? data.title : "";
+	data.body = data.body;
+
+	// category
 	// data.click_action = "FLUTTER_NOTIFICATION_CLICK";
 	set = this.setInsertObject(data, set, fieldsToFill);
 
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {
-			"data": set,
+			// "data": set,
 			// "body": set,
-			"notification": {
-				"title": data.title,
-				"body": data.body
-			}
-		};
+			// "notification": {
+			// 	"title": data.title,
+			// 	"body": data.body
+			data: set,
+			// notification: set,
+		}
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {
 			data: set
@@ -181,29 +198,47 @@ const createAndroidPushPayload = function (data) {
 
 const createIOSPushPayload = function (data) {
 	let set: any = {};
-	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound"];
+	const fieldsToFill = ["type", "title", "body", "link", "image", "contentType", "category", "mutableContent", "threadId", "priority", "sound", "type", "body"];
 
 	data.priority = data.priority ? data.priority : "high";
 	// data.image = data.image ? data.image : "https://s3.amazonaws.com/appinventiv-development/ustandby/15644684745409Ri3K.png";
-	data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
-	data.category = "action"; // to show buttons
-	data.mutableContent = 1;
-	data.threadId = "RichPush";
+	// data.contentType = data.image ? "image" : "text"; // video, audio, gif, text
+	// data.category = "action"; // to show buttons
+	// data.mutableContent = 1;
+	data.sound = 'default';
+	// data.threadId = "RichPush";
+	// data['badge'] = data['countForBadge'];
+
+	data.title = data.title ? data.title : '';
+	// data.body = data.message;
+	if (data.category) {
+		data.category = data.category;
+	}
+	if (data.body) {
+		data.data = data.body;
+		data.type = data.type;
+	}
+
+	// data.type = data.type;
 	set = this.setInsertObject(data, set, fieldsToFill);
 
 	if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.FCM) { // create FCM payload
 		return {
-			// "data": set,
 			"data": {
-				"data": set
+				"category": data.category ? data.category : '',
+				"userId": data.userId ? data.userId : '',
+				"type": data.type,
+				eventId: data.eventId ? data.eventId : ''
 			},
 			"notification": {
 				"title": data.title,
-				"body": data.body,
-				"sound": "default",
-				"priority": data.priority ? data.priority : "high"
+				"body": data.message,
+				"sound": data.sound,
+				// "badge": data['countForBadge'] ? data['countForBadge'] : 0,
+				"priority": data.priority
 			}
-		};
+		}
+
 	} else if (config.SERVER.PUSH_TYPE === config.CONSTANT.PUSH_SENDING_TYPE.SNS) { // create SNS payload
 		const payload = {};
 		payload[config.CONSTANT.SNS_SERVER_TYPE.DEV] = JSON.stringify({
@@ -360,108 +395,8 @@ const convertStringDateToTimestamp = function (value: string) {
 	return new Date(value).getTime();
 };
 
-const excelFilter = function (fileName: string) {
-	// accept image only
-	if (!fileName.toLowerCase().match(/\.(csv|xlsx|xls)$/)) {
-		return false;
-	}
-	return true;
-};
-
 const getDynamicName = function (file) {
 	return file.hapi ? (new Date().getTime() + "_" + randomstring.generate(5) + path.extname(file.hapi.filename)) : (new Date().getTime() + "_" + randomstring.generate(5) + path.extname(file.filename));
-};
-
-const deleteFiles = function (filePath) {
-	// delete files inside folder but not the folder itself
-	del.sync([`${filePath}`, `!${config.SERVER.UPLOAD_DIR}`]);
-	// fs.unlink(filePath, (err) => {
-	// 	if (err) {
-	// 		console.error(err)
-	// 		return;
-	// 	}
-	// });
-	logger.info(TAG, "All files deleted successfully.");
-};
-
-// function _filterReadAndParseJSON(json) {
-// 	json = _.filter(json, function (value) {
-// 		if (value["email"] ? !isValidEmail(value["email"]) : false) {
-// 			return;
-// 		} else if (!value["email"] && (!value["countryCode"] || !value["mobileNo"])) {
-// 			return;
-// 		} else {
-// 			return value;
-// 		}
-// 	});
-// 	return json;
-// }
-
-const readAndParseJSON = function (json) {
-	const excelKeyMap = config.CONSTANT.EXCEL_KEY_MAP;
-	json = _.map(json, (element, elementIndex) => {
-		const jsonTemp = {};
-		_.each(element, (value, index) => {
-			if (value) {
-				if (typeof excelKeyMap[index] !== "undefined") {
-					if (typeof excelKeyMap[index] === "object") {
-						if (typeof jsonTemp[excelKeyMap[index]["parent"]] === "undefined") {
-							jsonTemp[excelKeyMap[index]["parent"]] = {};
-						}
-						jsonTemp[excelKeyMap[index]["parent"]][excelKeyMap[index]["child"]] = value;
-					} else {
-						jsonTemp[excelKeyMap[index]] = value;
-					}
-				} else if (typeof excelKeyMap[index] === "undefined") {
-					delete excelKeyMap[index];
-				} else {
-					jsonTemp[index] = value;
-				}
-			}
-		});
-		if (jsonTemp["countryCode"]) {
-			jsonTemp["countryCode"] = "" + jsonTemp["countryCode"];
-		}
-		if (jsonTemp["mobileNo"]) {
-			jsonTemp["mobileNo"] = jsonTemp["mobileNo"].toString();
-		}
-		if (jsonTemp["dob"]) {
-			jsonTemp["dob"] = Number(jsonTemp["dob"]);
-		}
-		// if (jsonTemp["gender"]) {
-		// 	jsonTemp["gender"] = (jsonTemp["gender"] === "Male") ? config.CONSTANT.GENDER.MALE : config.CONSTANT.GENDER.FEMALE;
-		// }
-		// if (jsonTemp["dob"]) {
-		// 	jsonTemp["dob"] = convertStringDateToTimestamp(jsonTemp["dob"]) + 19800000;
-		// 	jsonTemp["age"] = calculateAge(jsonTemp["dob"]);
-		// }
-		return jsonTemp;
-	});
-	return json;
-	// return _filterReadAndParseJSON(json);
-};
-
-const stringifyNumber = function (n) {
-	const special = ["zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelvth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth"];
-	const deca = ["twent", "thirt", "fourt", "fift", "sixt", "sevent", "eight", "ninet"];
-	if (n < 20) { return special[n]; }
-	if (n % 10 === 0) { return deca[Math.floor(n / 10) - 2] + "ieth"; }
-	return deca[Math.floor(n / 10) - 2] + "y-" + special[n % 10];
-};
-
-/**
- * @name createStream
- * @description To create stream
- * @param userInfo - userData comes from mongo query
- * @param ExcelSheetheader - header for exel sheet
-*/
-// const createStream = function (mongoQueryData: [object], ExcelSheetheader, sheetName: string) {
-const createStream = function (mongoQueryData: any, ExcelSheetheader, sheetName: string) {
-	const createInstace = new ExcelJs("");
-	const CreateWorkSheet = createInstace.addWorksheet(sheetName);
-	createInstace.addColumns(CreateWorkSheet, ExcelSheetheader);
-	createInstace.addRows(CreateWorkSheet, mongoQueryData);
-	return createInstace;
 };
 
 const makeBaseAuth = function (username, password) {
@@ -535,32 +470,6 @@ const generatePassword = function (length?: number) {
 	});
 };
 
-const mailAttachments = function (payload) {
-	switch (payload.type) {
-		case "xlsx":
-			return [
-				{
-					filename: new Date().getTime() + ".xlsx",
-					content: payload.data,
-					// content: new Buffer(payload.data),
-					// content: fs.createReadStream(payload.data),
-					// content: fs.readFileSync(payload.data),
-					contentType: config.CONSTANT.MIME_TYPE.CSV2
-				}
-			];
-		case "csv":
-			return [
-				{
-					filename: payload.url.split("/").slice(-1)[0],
-					path: payload.url,
-					// content: fs.readFileSync(payload.url),
-					cid: payload.url.split("/").slice(-1)[0],
-					contentType: payload.file.hapi.headers["content-type"]
-				}
-			];
-	}
-};
-
 const consolelog = (identifier: string, value: any, status: boolean) => {
 	try {
 		const displayColors = config.SERVER.DISPLAY_COLORS;
@@ -587,7 +496,94 @@ const consolelog = (identifier: string, value: any, status: boolean) => {
 	}
 };
 
+const getLocationByIp = async (ipaddress: string) => {
+	try {
+		let ip = ipaddress || '';
+
+		// const request = {
+		// 	method: 'GET',
+		// 	params: ipaddress,
+		// };
+		let url = 'http://ip-api.com/json/' + ip
+		console.log('ipip', ip);
+
+		// // const response = await fetch('http://ip-api.com/json/', request);
+
+		// const response = await fetch(url, request);
+		// let theData = await response.json();
+		// console.log('lt_lnglt_lnglt_lng', theData);
+		// return {
+		// 	lat: theData.lat || 0.0,
+		// 	long: theData.lon || 0.0
+		// }
+
+		let data: any = await request({
+			method: "POST",
+			url: 'http://ip-api.com/json',
+			parmas: ip,
+			json: true // Automatically stringifies the body to JSON
+		});
+		console.log('datadatadatadatadata', data);
+
+		return {
+			lat: data.lat || 0.0,
+			long: data.lon || 0.0
+		}
+	} catch (error) {
+		return Promise.reject(error)
+	}
+}
+
+const formatDate = async (date) => {
+	return moment(date).format("YYYY-MM-DD");
+};
+
+const todayDateTimeStamp = async (date) => {
+	return new Date().setHours(0, 0, 0, 0)
+}
+
+const previousDate = async (date) => {
+	return moment(date).subtract(1, "days").format("YYYY-MM-DD");
+};
+
+const fiveMinuteBeforeTimeStampTime = async () => {
+	// const d = new Date();
+	// const hours = d.getHours();
+	// const minutes = d.getMinutes();
+	// return new Date().setHours(hours, minutes - 5, 0, 0);
+	var dt = new Date();
+	dt.setHours(dt.getHours() + 2);
+
+};
+
+const nextMinuteTimeStamp = async () => {
+	const d = new Date();
+	const hours = d.getHours();
+	const minutes = d.getMinutes();
+	return new Date().setHours(hours, minutes + 10, 0, 0); // 10 minute more from current time
+	// const OneHourLaterTime = new Date().setHours(new Date().getHours() + 1);
+	// return OneHourLaterTime;
+};
+
+const getWeekendDates = function () {
+	try {
+		let curr;
+		curr = new Date();
+		var fridayDate;
+		fridayDate = new Date();
+		var friday;
+		friday = 5 - curr.getDay();
+		fridayDate.setDate(fridayDate.getDate() + friday);
+		const sundayEndDate = moment().endOf('week').toISOString();
+
+		return { fridayDate, sundayEndDate }
+	} catch (error) {
+		return Promise.reject(error)
+	}
+};
+
 export {
+	formatDate,
 	verifyEmailFormat,
 	setInsertObject,
 	unsetInsertObject,
@@ -621,12 +617,7 @@ export {
 	convertTimestampToUnixDate,
 	convertTimestampToLocalDate,
 	convertStringDateToTimestamp,
-	excelFilter,
 	getDynamicName,
-	deleteFiles,
-	readAndParseJSON,
-	stringifyNumber,
-	createStream,
 	makeBaseAuth,
 	basicAuthFunction,
 	validateLatLong,
@@ -634,7 +625,13 @@ export {
 	generateRandomString,
 	isTimeExpired,
 	generatePassword,
-	mailAttachments,
 	consolelog,
-	generateOtp
+	generateOtp,
+	getShoutoutCard,
+	getLocationByIp,
+	fiveMinuteBeforeTimeStampTime,
+	nextMinuteTimeStamp,
+	previousDate,
+	todayDateTimeStamp,
+	getWeekendDates
 };

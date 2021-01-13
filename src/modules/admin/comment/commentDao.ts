@@ -5,9 +5,6 @@ import * as appUtils from '../../../utils/appUtils'
 
 export class AdminCommentDao extends BaseDao {
 
-    // /**
-    //  * @function isContentExists
-    //  */
     async addComments(params) {
         try {
             params["created"] = new Date().getTime()

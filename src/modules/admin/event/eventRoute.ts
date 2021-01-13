@@ -12,9 +12,10 @@ export const adminEventRoutes: ServerRoute[] = [
         method: "POST",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/event`,
         handler: async (request: Request, h: ResponseToolkit) => {
-            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.userData;
-            const payload: any = request.payload;
-            // payload['userId'] = tokenData['userId']
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+            const payload: AdminEventRequest.IEventAdd = request.payload;
+            payload['userType'] = config.CONSTANT.ACCOUNT_LEVEL.ADMIN;
+            payload['userId'] = tokenData['userId'];
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.addEvent(payload);
@@ -42,13 +43,12 @@ export const adminEventRoutes: ServerRoute[] = [
         }
     },
 
-
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/admin/event`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = request.query;
+            const payload: AdminEventRequest.IGetEvent = request.query;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.getEvent(payload);
@@ -81,7 +81,7 @@ export const adminEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{Id}/status/{status}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = request.params;
+            const payload: AdminEventRequest.IupdateStatus = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.updateStatus(payload);
@@ -114,7 +114,7 @@ export const adminEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{eventId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = {
+            const payload: AdminEventRequest.IUpdateEvent = {
                 ...request.params,
                 ...request.payload
             }
@@ -150,7 +150,7 @@ export const adminEventRoutes: ServerRoute[] = [
         path: `${config.SERVER.API_BASE_URL}/v1/admin/event/{eventId}`,
         handler: async (request: Request, h: ResponseToolkit) => {
             const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
-            const payload: any = request.params;
+            const payload: AdminEventRequest.IgetEventDetail = request.params;
             try {
                 appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
                 const result = await eventController.getDetails(payload);
@@ -178,6 +178,39 @@ export const adminEventRoutes: ServerRoute[] = [
         }
     },
 
+
+    // {
+    //     method: "GET",
+    //     path: `${config.SERVER.API_BASE_URL}/v1/admin/event/calender`,
+    //     handler: async (request: Request, h: ResponseToolkit) => {
+    //         const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData.adminData;
+    //         const payload = request.query;
+    //         try {
+    //             appUtils.consolelog("This request is on", `${request.path}with parameters ${JSON.stringify(payload)}`, true);
+    //             const result = await eventController.getCalender(payload);
+    //             return responseHandler.sendSuccess(h, result);
+    //         } catch (error) {
+    //             return responseHandler.sendError(error);
+    //         }
+    //     },
+    //     config: {
+    //         tags: ["api", "events"],
+    //         description: "get events",
+    //         auth: {
+    //             strategies: ["AdminAuth"]
+    //         },
+    //         validate: {
+    //             headers: validator.adminAuthorizationHeaderObj,
+    //             query: eventValidator.eventCalender,
+    //             failAction: appUtils.failActionFunction
+    //         },
+    //         plugins: {
+    //             "hapi-swagger": {
+    //                 responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+    //             }
+    //         }
+    //     }
+    // },
 ];
 
 

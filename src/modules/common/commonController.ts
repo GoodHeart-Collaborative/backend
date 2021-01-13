@@ -10,6 +10,7 @@ import { imageCropUtil } from "@lib/ImageCropUtil";
 import { TemplateUtil } from "@utils/TemplateUtil";
 import * as tokenManager from "@lib/tokenManager";
 import { userDao } from "@modules/user/UserDao";
+import { errorReporter } from "@lib/flockErrorReporter";
 
 export class CommonController {
 
@@ -48,6 +49,7 @@ export class CommonController {
 
 	/**
 	 * @function deepLink
+	 * @description for the login forgot
 	 */
 	async deepLink(params: DeeplinkRequest) {
 		try {
@@ -63,7 +65,8 @@ export class CommonController {
 					});
 
 				return responseHtml;
-			} else {
+			}
+			else {
 				let step1;
 				if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
 					step1 = await baseDao.findOne("admins", { "forgotToken": params.token }, {}, {}, {});
@@ -75,6 +78,7 @@ export class CommonController {
 				} else {
 					const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
 					const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
+					console.log('isExpireisExpireisExpireisExpireisExpireisExpire', isExpire);
 					if (isExpire) {
 						let step2;
 						if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
@@ -85,16 +89,21 @@ export class CommonController {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 					} else {
 						if (params.type === "forgot") {
+							// const IsTokenExist = userDao.emptyForgotToken({ "token": params.token });
+							// if (!IsTokenExist) {
+							// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+							// }
 							const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 								.compileFile({
 									url: params.android || "", // android scheme,
 									iosLink: params.ios || "", // ios scheme
-									fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+									// fallback: params.fallback || config.CONSTANT.DEEPLINK.RESET_PASSWORD_FALLBACK_URL + params.token,
+									fallback: params.fallback || config.SERVER.API_URL + "/v1/common/resetPasswordWeb?accessToken=" + params.token,
 									title: config.SERVER.APP_NAME,
+									// android_case_fallback: config.SERVER.API_URL + "/v1/common/resetPasswordWeb?accessToken=" + params.token,
 									android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
 									ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
 								});
-
 							return responseHtml;
 						}
 					}
@@ -105,9 +114,30 @@ export class CommonController {
 		}
 	}
 
-	async veryEmail(params) {
+
+	async deepLinkShare(params) {
 		try {
 
+			const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
+				.compileFile({
+					url: params.android || "", // android scheme,
+					iosLink: params.ios || "", // ios scheme
+					fallback: params.fallback || config.CONSTANT.DEEPLINK.GOOGLE,
+					title: config.SERVER.APP_NAME,
+					android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
+
+					ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
+				});
+			return responseHtml;
+
+		} catch (error) {
+			errorReporter(error);
+			return Promise.reject(error);
+		}
+	}
+
+	async veryEmail(params) {
+		try {
 			// const jwtPayload = await tokenManager.decodeToken({ "accessToken": params.token });
 			// const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			// if (isExpire) {
@@ -120,30 +150,28 @@ export class CommonController {
 			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 			// }
 			if (params.type === "verifyEmail") {
-
 				const userData = await baseDao.findOne("users", { _id: params.userId }, {}, {});
 				if (!userData) {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
 				}
-				if (userData.isEmailVerified) {
-					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+				if (userData && userData.isEmailVerified) {
+					return Promise.reject('alreadyVerified');
 				}
-
-				if (userData) {
-					const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
-					if (findSameEmail) {
-						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
-					}
-				}
+				// if (userData) {
+				// 	const findSameEmail = await baseDao.findOne("users", { _id: { $ne: params.userId }, email: userData.email, isEmailVerified: true }, {}, {}, {});
+				// 	if (findSameEmail) {
+				// 		return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+				// 	}
+				// }
 
 				// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
 				const step1 = await baseDao.updateOne("users", { _id: params.userId }, { isEmailVerified: true }, {});
 
 				const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
 					.compileFile({
-						url: params.android || "", // android scheme,
-						iosLink: params.ios || "", // ios scheme
-						fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+						url: params.android || config.CONSTANT.DEEPLINK.ANDROID_SCHEME, // android scheme,
+						iosLink: params.ios || config.CONSTANT.DEEPLINK.IOS_SCHEME,  // ios scheme
+						fallback: params.fallback || config.CONSTANT.DEEPLINK.WELCOME_FALLBACK,
 						title: config.SERVER.APP_NAME,
 						android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
 						ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
@@ -151,6 +179,35 @@ export class CommonController {
 
 				return responseHtml;
 			}
+
+
+		} catch (error) {
+			return Promise.reject(error)
+		}
+	}
+
+	/** 
+	 * @param veryEmailAndroid 
+	 * @description used only for android browser directly not open on android for default api hit
+	 */
+	async veryEmailAndroid(params) {
+		try {
+			const userData = await baseDao.findOne("users", { _id: params.userId }, {}, {});
+			if (!userData) {
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.TOKEN_EXPIRED);
+			}
+
+			if (userData && userData.isEmailVerified) {
+				// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+				// return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.EMAIL_ALREADY_VERIFIED);
+			}
+
+			// const step1 = await baseDao.findOne("users", { _id: jwtPayload.payload.userId }, {}, {}, {});
+			const step1 = await baseDao.findOneAndUpdate("users", { _id: params.userId }, { isEmailVerified: true }, {});
+
+			// return { email: step1.email }
+			return config.CONSTANT.MESSAGES.SUCCESS.USER_EMAIL_VERIFY({ email: step1.email })
 
 
 		} catch (error) {

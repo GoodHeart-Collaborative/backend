@@ -11,11 +11,11 @@ export const plugin = {
 	register: async function (server) {
 		const swaggerOptions = {
 			info: {
-				title: "WOMEN COMMUNITY API Documentation",
-				description: "RCC",
+				title: "Good Heart Collaborative API Documentation",
+				description: "Good Heart Collaborative",
 				contact: {
-					name: "Rajat Maheshwari",
-					email: "rajat.maheshwari@appinventiv.com"
+					name: "Shubham Maheshwari",
+					email: "shubham.maheshwari@appinventiv.com"
 				},
 				version: "1.0.0"
 			},

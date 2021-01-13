@@ -6,25 +6,27 @@ import * as config from "@config/index";
 let validaExpertAdd = Joi.object({
     categoryId: Joi.array().items(Joi.string()),
     name: Joi.string().required(),
-    email: Joi.string().email().required(),
-    profession: Joi.string().required(),
-    industry: Joi.number().valid([
-        // config.INDUSTRIES.Compassion_Fatigue,
-        // config.INDUSTRIES.Experts_in_Executive_Burnout,
-        // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-        // config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-        // config.INDUSTRIES.Wellness_Coaches,
-        // config.INDUSTRIES.Emergency_Services,
-        // config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-        // config.INDUSTRIES.Law_Enforcement,
-        // config.INDUSTRIES.Nonprofit,
-        // config.INDUSTRIES.Social_And_Community_Services,
-        config.INDUSTRIES.NONPROFIT,
-        config.INDUSTRIES.EMERGENCY_SERVICES,
-        config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
-        config.INDUSTRIES.LAW_ENFORCEMENT,
-        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    email: Joi.string().email().trim().lowercase().required(),
+    profession: Joi.string().valid([
+        config.PROFESSION_TYPE.CEO,
+        config.PROFESSION_TYPE.Founder,
+        config.PROFESSION_TYPE.Consultant,
+        config.PROFESSION_TYPE.Director,
+        config.PROFESSION_TYPE.Executive_Director,
+        config.PROFESSION_TYPE.Licensed_Counselor,
+        config.PROFESSION_TYPE.Managing_Director,
+        config.PROFESSION_TYPE.Professional_Coach,
+        config.PROFESSION_TYPE.Professional_Trainer,
+        config.PROFESSION_TYPE.Professor
     ]).required(),
+    industry: Joi.string().required(),
+    //  Joi.number().valid([
+    //     config.INDUSTRIES.NONPROFIT,
+    //     config.INDUSTRIES.EMERGENCY_SERVICES,
+    //     config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+    //     config.INDUSTRIES.LAW_ENFORCEMENT,
+    //     config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    // ]).required(),
     bio: Joi.string().required(),
     experience: Joi.string().valid([
         'Junior', 'Mid', 'Senior',
@@ -45,6 +47,11 @@ let validateGetExpert = Joi.object({
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
     ]),
+    status: Joi.string().valid([
+        config.CONSTANT.STATUS.ACTIVE,
+        config.CONSTANT.STATUS.BLOCKED,
+        config.CONSTANT.STATUS.DELETED,
+    ]),
     categoryId: Joi.string().trim()
 
 }).unknown()
@@ -55,28 +62,31 @@ let validateExpertId = Joi.object({
 }).unknown()
 
 
-let updateExpertPost = Joi.object({
+let updateExpert = Joi.object({
     categoryId: Joi.array().items(Joi.string()).required(),
     name: Joi.string().required(),
-    email: Joi.string().required(),
-    profession: Joi.string().required(),
-    industry: Joi.number().valid([
-        // config.INDUSTRIES.Compassion_Fatigue,
-        // config.INDUSTRIES.Experts_in_Executive_Burnout,
-        // config.INDUSTRIES.Licensed_Therapists_specializing_in_Vicarious_and_Secondary_Trauma,
-        // config.INDUSTRIES.Nonprofit_Resiliency_Coaches,
-        // config.INDUSTRIES.Wellness_Coaches,
-        // config.INDUSTRIES.Emergency_Services,
-        // config.INDUSTRIES.Healthcare_And_Community_Medical_Services,
-        // config.INDUSTRIES.Law_Enforcement,
-        // config.INDUSTRIES.Nonprofit,
-        // config.INDUSTRIES.Social_And_Community_Services,
-        config.INDUSTRIES.NONPROFIT,
-        config.INDUSTRIES.EMERGENCY_SERVICES,
-        config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
-        config.INDUSTRIES.LAW_ENFORCEMENT,
-        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    // email: Joi.string().email().lowercase(),
+    // profession: Joi.string().required(),
+    profession: Joi.string().valid([
+        config.PROFESSION_TYPE.CEO,
+        config.PROFESSION_TYPE.Founder,
+        config.PROFESSION_TYPE.Consultant,
+        config.PROFESSION_TYPE.Director,
+        config.PROFESSION_TYPE.Executive_Director,
+        config.PROFESSION_TYPE.Licensed_Counselor,
+        config.PROFESSION_TYPE.Managing_Director,
+        config.PROFESSION_TYPE.Professional_Coach,
+        config.PROFESSION_TYPE.Professional_Trainer,
+        config.PROFESSION_TYPE.Professor
     ]).required(),
+    // industry: Joi.number().valid([
+    //     config.INDUSTRIES.NONPROFIT,
+    //     config.INDUSTRIES.EMERGENCY_SERVICES,
+    //     config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
+    //     config.INDUSTRIES.LAW_ENFORCEMENT,
+    //     config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+    // ]).required(),
+    industry: Joi.string().required(),
     bio: Joi.string().required(),
     experience: Joi.string().valid([
         'Junior', 'Mid', 'Senior',
@@ -97,6 +107,6 @@ export {
     validaExpertAdd,
     validateGetExpert,
     validateExpertId,
-    updateExpertPost,
+    updateExpert,
     updateStatus
 };

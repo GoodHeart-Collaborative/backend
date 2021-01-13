@@ -27,8 +27,8 @@ declare namespace AdminExpertPostRequest {
         sortOrder: number;
     }
 
-    export interface adminUpdateExpertPost {
-        postId: string,
+    export interface adminUpdateExpertPost extends IpostId {
+        // postId: string,
         topic: string;
         expertId: string;
         categoryId: string;
@@ -41,9 +41,12 @@ declare namespace AdminExpertPostRequest {
         privacy: string;
     }
 
-    export interface updateStatus {
-        postId: string;
+    export interface updateStatus extends IpostId {
         status: string
+    }
+
+    export interface IpostId {
+        postId: string;
     }
 }
 

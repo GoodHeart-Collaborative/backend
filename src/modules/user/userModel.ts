@@ -7,15 +7,8 @@ import { Schema, Model, Document } from "mongoose";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
-import { ElasticSearch } from "@lib/ElasticSearch";
-
-const elasticSearch = new ElasticSearch();
-
-// const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
-// autoIncrement.initialize(connection);
 
 export interface IUser extends Document {
-	// sno: string;
 	appleId: string;
 	isAppleLogin: boolean;
 	isAppleVerified: boolean;
@@ -25,6 +18,7 @@ export interface IUser extends Document {
 	isFacebookLogin: boolean;
 	googleId: string;
 	isGoogleLogin: boolean;
+	isSubscribed: boolean;
 	firstName: string;
 	lastName: string;
 	email: string;
@@ -46,19 +40,25 @@ export interface IUser extends Document {
 	about: string;
 	userPrivacy: string;
 	loginToken: string;
-	createdAt: number;
 	countMember: number;
-	memberCreatedAt: Date;
+	memberCreatedAt: string;
 	isMemberOfDay: boolean;
 	likeCount: number,
 	commentCount: number,
 	adminStatus: string;
-	// isAdminRejected: boolean;
-	// isAdminVerified: boolean;
+	reportCount: number;
+	// memberType: number;
+	subscriptionType: string;
+	subscriptionEndDate: number;
+	badgeCount: number;
+	subscriptionPlatform: string;
+	subscriptionStartDate: number;
+	isDowngradeDone: boolean;
+	companyName: string;
 }
 
 var geoSchema = new Schema({
-	location: { type: String, trim: true, required: true, default: '' },
+	// location: { type: String, trim: true, required: true, default: "" },
 	type: { type: String, default: "Point" },
 	coordinates: { type: [Number], default: [0, 0] }// [lngitude, latitude]
 }, {
@@ -67,7 +67,6 @@ var geoSchema = new Schema({
 
 const userSchema = new Schema({
 	mobileOtp: { type: Number },
-	// social data
 	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },
@@ -76,6 +75,7 @@ const userSchema = new Schema({
 	isFacebookLogin: { type: Boolean, default: false },
 	googleId: { type: String, trim: true, index: true },
 	isGoogleLogin: { type: Boolean, default: false },
+	isSubscribed: { type: Boolean, default: false },
 	firstName: { type: String, trim: true, index: true, required: true },
 	lastName: { type: String, trim: true, index: true },
 	email: { type: String, trim: true, index: true, lowercase: true },
@@ -94,6 +94,7 @@ const userSchema = new Schema({
 			config.CONSTANT.PROFESSION_TYPE.Managing_Director,
 		]
 	},
+	companyName: { type: String },
 	gender: {
 		type: String,
 		enum: [
@@ -112,13 +113,32 @@ const userSchema = new Schema({
 		],
 		default: config.CONSTANT.STATUS.ACTIVE
 	},
-	memberType: {
-		type: String, default: config.CONSTANT.MEMBER_TYPE.FREE, enum: [
-			config.CONSTANT.MEMBER_TYPE.FREE,
-			config.CONSTANT.MEMBER_TYPE.PREMIUM,
-		]
-	}, // Free(Default rakho)
+	subscriptionType: {
+		// memberType: {
+		type: Number, enum: [
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.FREE.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.MONTHLY.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.YEARLY.value,
+			config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
+		],
+		default: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value
+	},
+	subscriptionEndDate: {
+		type: Number
+	},
+	subscriptionStartDate: {
+		type: Number
+	},
+	subscriptionPlatform: {
+		type: String, enum: [
+			config.CONSTANT.DEVICE_TYPE.ANDROID,
+			config.CONSTANT.DEVICE_TYPE.IOS,
+		],
+		default: config.CONSTANT.DEVICE_TYPE.IOS,
+
+	},
 	memberShipStatus: { type: String },
+	myConnection: { type: Number, default: 0 },
 	emailOtp: { type: Number },
 	preference: { type: String },
 	industryType: {
@@ -130,10 +150,8 @@ const userSchema = new Schema({
 			config.INDUSTRIES.LAW_ENFORCEMENT,
 			config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
 		],
-		default: config.INDUSTRIES.NONPROFIT
+		// default: config.INDUSTRIES.NONPROFIT
 	},
-	// isAdminVerified: { type: Boolean, default: false },
-	// isAdminRejected: { type: Boolean, default: false },
 	adminStatus: {
 		type: String, enum: [
 			config.CONSTANT.USER_ADMIN_STATUS.PENDING,
@@ -144,17 +162,19 @@ const userSchema = new Schema({
 	},
 	experience: {
 		type: String, enum: [
-			config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
-			config.CONSTANT.EXPERIENCE_LEVEL.MID,
-			config.CONSTANT.EXPERIENCE_LEVEL.SENIOR
+			config.CONSTANT.EXPERIENCE_LEVEL.years_0_2,
+			config.CONSTANT.EXPERIENCE_LEVEL.years_2_5,
+			config.CONSTANT.EXPERIENCE_LEVEL.years_5_10,
+			config.CONSTANT.EXPERIENCE_LEVEL.year_10
 		]
 	},
 	countMember: { type: Number, default: 0 },
 	memberCreatedAt: { type: Date },
 	isMemberOfDay: { type: Boolean, default: false },
+	isDowngradeDone: { type: Boolean, default: false },
+	members: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
 	about: { type: String },
 	userPrivacy: {
-
 		type: String, enum: [
 			config.CONSTANT.PRIVACY_STATUS.PRIVATE,
 			config.CONSTANT.PRIVACY_STATUS.PROTECTED,
@@ -164,8 +184,8 @@ const userSchema = new Schema({
 	location: geoSchema,
 	likeCount: { type: Number, default: 0 },
 	commentCount: { type: Number, default: 0 },
-	createdAt: { type: Date },
-	updatedAt: { type: Date }
+	badgeCount: { type: Number, default: 0 },
+	reportCount: { type: Number, default: 0 }
 }, {
 	versionKey: false,
 	timestamps: true
@@ -182,44 +202,9 @@ userSchema.virtual("password")
 	})
 	.set(function (password) {
 		this._password = password;
-		// const salt = this.salt = bcrypt.genSaltSync(config.SERVER.SALT_ROUNDS);
 		const salt = this.salt = appUtils.genRandomString(config.SERVER.SALT_ROUNDS);
 		this.hash = appUtils.encryptHashPassword(password, salt);
 	});
-
-// userSchema.virtual("fullName")
-// 	.get(function () {
-// 		if (this.middleName) {
-// 			this.firstName = this.firstName + " " + this.middleName;
-// 		} if (this.lastName) {
-// 			this.firstName = this.firstName + " " + this.lastName;
-// 		}
-// 		return this.firstName;
-// 	});
-
-// If elastic search engine is enabled
-// if (config.SERVER.IS_ELASTIC_SEARCH_ENABLE) {
-// 	// save user data in elastic search db
-// 	userSchema.post("save", function (doc) {
-// 		doc = doc.toJSON();
-// 		const id = doc["_id"];
-// 		if (doc["_id"]) delete doc["_id"];
-// 		if (doc["password"]) delete doc["password"];
-// 		elasticSearch.addDocument("admin_rcc", id, "users", doc);
-// 	});
-
-// 	// update user data in elastic search db
-// 	userSchema.post("findOneAndUpdate", async function (doc) {
-// 		doc = doc.toJSON();
-// 		const id = doc["_id"];
-// 		return await elasticSearch.deleteDocument("admin_rcc", id, "users")
-// 			.then(async () => {
-// 				if (doc["_id"]) delete doc["_id"];
-// 				if (doc["password"]) delete doc["password"];
-// 				return await elasticSearch.addDocument("admin_rcc", id, "users", doc);
-// 			});
-// 	});
-// }
 
 userSchema.methods.toJSON = function () {
 	const object = appUtils.clean(this.toObject());
@@ -227,14 +212,10 @@ userSchema.methods.toJSON = function () {
 };
 /* Crate 2dsphere index */
 userSchema.index({
-	location: '2dsphere'
+	location: "2dsphere"
 });
 
 // to set findAndModify false
 mongoose.set("useFindAndModify", false);
 
-// mongoose autoincrement
-// userSchema.plugin(autoIncrement.plugin, { model: "User", field: "sno" });
-
-// Export user
 export const users: Model<IUser> = mongoose.model<IUser>(config.CONSTANT.DB_MODEL_REF.USER, userSchema);

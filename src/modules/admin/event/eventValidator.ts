@@ -15,13 +15,17 @@ let getEvents = Joi.object({
     sortOrder: Joi.number().valid([
         config.CONSTANT.ENUM.SORT_TYPE
     ]),
+    type: Joi.number().valid([
+        config.CONSTANT.CATEGORY_TYPE.EVENT_CAEGORY,
+        config.CONSTANT.CATEGORY_TYPE.OTHER_CATEGORY,
+    ]),
     // categoryId: Joi.string().trim(),
     status: Joi.string().allow([
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
-        // config.CONSTANT.STATUS.DELETED ,
     ]),
-    userId: Joi.string().trim()
+    userId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).trim(),
+    isExpired: Joi.boolean(),
 }).unknown()
 
 
@@ -32,7 +36,7 @@ let validateEventId = Joi.object({
 
 
 let updateStatus = Joi.object({
-    Id: Joi.string().required(),
+    Id: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     status: Joi.string().valid([
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
@@ -51,24 +55,27 @@ let addEvents = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
-    startDate: Joi.date().required(),
-    endDate: Joi.date().required(),
+    startDate: Joi.number().required(), //  Joi.date().required(),
+    endDate: Joi.number().required(),
     price: Joi.number(),
+    isEventFree: Joi.boolean().required(),
     imageUrl: Joi.string(),
-    eventUrl: Joi.string(),
+    eventUrl: Joi.string().allow(''),
     location: Joi.object().keys({
         type: Joi.string().required().valid(["Point"]),
         coordinates: Joi.array().items(Joi.number())
     }),
     address: Joi.string().required().trim(),
-    eventCategory: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING
-    ]).required(),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
+    // .allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]).required(),
+    allowSharing: Joi.number().allow(0, 1).default(1),
     description: Joi.string().allow('').required(),
+    isFeatured: Joi.number().allow(0, 1).default(0),
 })
 
 let updateEvent = Joi.object({
@@ -81,11 +88,12 @@ let updateEvent = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PROTECTED,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
-    startDate: Joi.date(),
-    endDate: Joi.date(),
+    startDate: Joi.number().required(),
+    endDate: Joi.number().required(),
     price: Joi.number(),
+    isEventFree: Joi.boolean().required(),
     imageUrl: Joi.string(),
-    eventUrl: Joi.string(),
+    eventUrl: Joi.string().allow(''),
     location: Joi.object().keys({
         type: Joi.string().required().valid(["Point"]),
         coordinates: Joi.array().items(Joi.number())
@@ -94,20 +102,29 @@ let updateEvent = Joi.object({
         // }]
     }),
     address: Joi.string().trim(),
-    eventCategory: Joi.string().allow([
-        config.CONSTANT.EVENT_CATEGORY.CLASSES,
-        config.CONSTANT.EVENT_CATEGORY.EVENTS,
-        config.CONSTANT.EVENT_CATEGORY.MEETUP,
-        config.CONSTANT.EVENT_CATEGORY.TRAINING
-    ]),
-    allowSharing: Joi.boolean().default(true),
+    eventCategoryId: Joi.string(),
+    //.allow([
+    //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.EVENTS.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
+    //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
+    // ]),
+    allowSharing: Joi.number().allow(0, 1), //.default(true),
     description: Joi.string(),
+    isFeatured: Joi.number().allow(0, 1).default(0),
 })
 
+// let eventCalender = Joi.object({
+//     fromDate: Joi.date(),
+//     toDate: Joi.date(),
+//     limit: Joi.number(),
+//     page: Joi.number()
+// })
 export {
     getEvents,
     updateStatus,
     validateEventId,
     addEvents,
-    updateEvent
+    updateEvent,
+    // eventCalender
 };

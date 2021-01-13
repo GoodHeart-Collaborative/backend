@@ -76,12 +76,12 @@ npm install -g ts-node
 ### configure db authentication ###
 db.createUser(
    {
-     user: "rcc",
-     pwd: "rcc",
+     user: "WOMEN_APP",
+     pwd: "WOMEN_APP",
      "roles" : [ 
         {
             "role" : "readWrite",
-            "db" : "adminRcc"
+            "db" : "adminGoodHeart"
         }
     ]
    }

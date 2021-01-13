@@ -23,28 +23,28 @@ export const MESSAGES = {
         },
         SUCCESSFULLY_ADDED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude added successfully",
+            "message": "Gratitude and Self-Love added successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_UPDATED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude has been updated successfully",
+            "message": "Gratitude and Self-Love has been updated successfully",
             "type": "DEFAULT"
         },
 
         SUCCESSFULLY_DELETED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude has been deleted successfully",
+            "message": "Gratitude and Self-Love has been deleted successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_BLOCKED: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude has been blocked successfully",
+            "message": "Gratitude and Self-Love has been blocked successfully",
             "type": "DEFAULT"
         },
         SUCCESSFULLY_ACTIVE: {
             "statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-            "message": "Gratitude has been active successfully",
+            "message": "Gratitude and Self-Love has been active successfully",
             "type": "DEFAULT"
         },
 

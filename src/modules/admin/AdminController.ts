@@ -239,14 +239,13 @@ class AdminController {
 					return Promise.reject(config.CONSTANT.MESSAGES.ERROR.BLOCKED);
 				} else {
 					params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
-					if (
-						(config.SERVER.ENVIRONMENT !== "production") ?
-							(
-								params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
-								step1.hash !== params.hash
-							) :
-							step1.hash !== params.hash
-					) {
+					// if (
+					// 	(config.SERVER.ENVIRONMENT !== "production") ?
+					// 		(
+					// 			params.password !== config.CONSTANT.DEFAULT_PASSWORD &&
+					// 			step1.hash !== params.hash
+					// 		) :
+					if (step1.hash !== params.hash) {
 						return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
 					} else {
 						const tokenData = _.extend(params, {
@@ -304,6 +303,7 @@ class AdminController {
 			} else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
 				const step2 = adminDao.changePassword(params, tokenData);
+				// const step3 = loginHistoryDao.removeDeviceById()
 			}
 
 			return adminConstant.MESSAGES.SUCCESS.CHANGE_PASSWORD;
@@ -384,28 +384,6 @@ class AdminController {
 		}
 	}
 
-	/**
-	 * @function userReportGraph
-	 */
-	async userReportGraph(params: AdminRequest.UserReportGraph) {
-		try {
-			if (params.type === config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year & Month"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.year) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Year"));
-			} else if ((params.type === config.CONSTANT.GRAPH_TYPE.DAILY || config.CONSTANT.GRAPH_TYPE.WEEKLY) && params.type !== config.CONSTANT.GRAPH_TYPE.YEARLY && params.type !== config.CONSTANT.GRAPH_TYPE.MONTHLY && !params.month) {
-				return Promise.reject(config.CONSTANT.MESSAGES.ERROR.FIELD_REQUIRED("Month"));
-			} else {
-				let step1 = await loginHistoryDao.userReportGraph(params);
-				step1 = adminMapper.userReportGraphResponseMapping(params, step1);
-				return adminConstant.MESSAGES.SUCCESS.DASHBOARD(step1);
-			}
-		} catch (error) {
-			throw error;
-		}
-	}
 
 	async verifyLink(params) {
 		try {
@@ -414,45 +392,28 @@ class AdminController {
 			const isExpire = appUtils.isTimeExpired(jwtPayload.payload.exp * 1000);
 			if (isExpire) {
 				let step2;
-				// if (params.accountLevel === config.CONSTANT.ACCOUNT_LEVEL.ADMIN) {
-				// step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
-				// } 
-				// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
-				// step2 = userDao.emptyForgotToken({ "token": params.token });
-				// }
-				return Promise.reject('LinkExpired');
+				step2 = adminDao.emptyForgotToken({ "token": params.payload.token });
+				return Promise.reject('link-expired');
 			}
-			// if (params.type === "forgot") {
-			const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
-				.compileFile({
-					webUrl: config.SERVER.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL,
-					url: params.android || "", // android scheme,
-					iosLink: params.ios || "", // ios scheme
-					fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
-					title: config.SERVER.APP_NAME,
-					android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
-					ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
-				});
+			const criteriaToken = {
+				email: jwtPayload.payload.email,
+			};
+			const getAdmindata = await adminDao.findAdminById({ userId: jwtPayload.payload.userId })
+			if (getAdmindata.forgotToken !== params.payload.token || getAdmindata.forgotToken === "") {
+				return Promise.reject('link-expired');
+			}
+			// const responseHtml = await (new TemplateUtil(config.SERVER.TEMPLATE_PATH + "deeplink.html"))
+			// 	.compileFile({
+			// 		webUrl: config.SERVER.ADMIN_URL + config.SERVER.ADMIN_RESST_PASSWORD_URL,
+			// 		url: params.android || "", // android scheme,
+			// 		iosLink: params.ios || "", // ios scheme
+			// 		fallback: params.fallback || config.CONSTANT.DEEPLINK.DEFAULT_FALLBACK_URL,
+			// 		title: config.SERVER.APP_NAME,
+			// 		android_package_name: config.CONSTANT.DEEPLINK.ANDROID_PACKAGE_NAME,
+			// 		ios_store_link: config.CONSTANT.DEEPLINK.IOS_STORE_LINK
+			// 	});
 
-			return responseHtml;
-			// }
-			// const findByEmail = {
-			// 	email: result,
-			// };
-			// const adminData = await adminDao.findOne('admins', { email: result.email }, {}, {})
-			// if (!adminData) {
-			// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.USER_NOT_FOUND);
-			// } else {
-			// 	const criteria = { email: result };
-			// 	const userExirationTime: any = await adminDao.findOne('admins', criteria, {}, {});
-			// 	const today: any = new Date();
-			// 	const diffMs = (today - userExirationTime.passwordResetTokenExpirationTime);
-			// 	const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
-			// 	if (diffMins > 0) { return Promise.reject('LinkExpired'); }
-			// 	else { return {}; } // success
-			// }
-
-
+			// return responseHtml;
 		} catch (error) {
 			return Promise.reject(error);
 		}
@@ -471,71 +432,28 @@ class AdminController {
 				// 	// else { // config.CONSTANT.ACCOUNT_LEVEL.NORMAL_USER
 				// 	// step2 = userDao.emptyForgotToken({ "token": params.token });
 				// 	// }
-				// 	return Promise.reject('LinkExpired');
+				return Promise.reject('LinkExpired');
 			} else {
 				const step1 = await adminDao.findOne('admins', { _id: jwtPayload.payload.userId }, {}, {});
+				// const step1 = await userDao.findOne('users', { forgotToken: params.accessToken }, {}, {})  //(tokenData);
+
+				// if (!step1 || (step1 && step1.forgotToken === "") || !step1.forgotToken) {
+				// 	return Promise.reject(userConstant.MESSAGES.ERROR.LINK_EXPIRED)
+				// }
+
+				// const oldHash = appUtils.encryptHashPassword(params.password, step1.salt);
+				// if (oldHash !== step1.hash) {
+				// 	return Promise.reject(userConstant.MESSAGES.ERROR.INVALID_OLD_PASSWORD);
+				// } else {
 				params.hash = appUtils.encryptHashPassword(params.password, step1.salt);
+				const step2 = adminDao.changePassword(params, { userId: step1._id });
+				const step3 = loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
 
-				// 	return Promise.reject(config.CONSTANT.MESSAGES.ERROR.INCORRECT_PASSWORD);
-				// } else {
-				let salt;
-				salt = await appUtils.CryptDataMD5(step1._id + "." + new Date().getTime() + "." + params.deviceId);
-
-				const tokenData = _.extend(params, {
-					"userId": step1._id,
-					"name": step1.name,
-					"email": step1.email,
-					"salt": step1.salt,
-					"accountLevel": config.CONSTANT.ACCOUNT_LEVEL.ADMIN,
-					"adminType": step1.adminType
-				});
-				const adminObject = appUtils.buildToken(tokenData);
-
-				const accessToken = await tokenManager.generateAdminToken({ "type": "ADMIN_LOGIN", "object": adminObject });
-
-				const step3 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-
-				const step4 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
-
-				const loginObj = {
-					"userId": step1._id,
-					"remoteAddress": params.remoteAddress,
-					"platform": params.platform,
-					"deviceId": params.deviceId,
-					"deviceToken": params.deviceToken,
-					"lastLogin": step4
-				};
-
-				const step5 = loginHistoryDao.createUserLoginHistory(loginObj);
-
-				delete step1.salt, delete step1.hash;
-				const refreshToken = appUtils.encodeToBase64(appUtils.genRandomString(32));
-
-				// if (config.SERVER.IS_SINGLE_DEVICE_LOGIN) {
-				// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-				// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id });
-				// } else {
-				// 	const step2 = await loginHistoryDao.removeDeviceById({ "userId": step1._id, "deviceId": params.deviceId });
-				// 	step3 = await loginHistoryDao.findDeviceLastLogin({ "userId": step1._id, "deviceId": params.deviceId });
-				// }
-				// params = _.extend(params, { "arn": arn, "salt": salt, "refreshToken": refreshToken, "lastLogin": step3 });
-				// let step5, step6;
-				// if (config.SERVER.IS_REDIS_ENABLE) {
-				// 	if (!config.SERVER.IN_ACTIVITY_SESSION)
-				// 		step5 = redisClient.storeValue(accessToken, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
-				// 	else
-				// 		step5 = redisClient.setExp(accessToken, config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME / 1000, JSON.stringify({ "deviceId": params.deviceId, "salt": salt, "userId": step1._id }));
-				// 	const jobPayload = {
-				// 		jobName: config.CONSTANT.JOB_SCHEDULER_TYPE.AUTO_SESSION_EXPIRE,
-				// 		time: Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME,
-				// 		params: { "userId": step1._id, "deviceId": params.deviceId, "eventAlertTime": Date.now() + config.SERVER.LOGIN_TOKEN_EXPIRATION_TIME }
-				// 	};
-				// 	step6 = redisClient.createJobs(jobPayload);
-				// }
-
-				return adminConstant.MESSAGES.SUCCESS.ADMIN_LOGIN({ "accessToken": accessToken, "adminData": step1 });
+				if (step2) {
+					adminDao.emptyForgotToken({ "token": params.token });
+				}
+				return adminConstant.MESSAGES.SUCCESS.CHANGE_FORGOT_PASSWORD;
 			}
-
 		}
 		catch (error) {
 			throw error;

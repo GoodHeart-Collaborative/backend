@@ -27,6 +27,11 @@ export const MESSAGES = {
 				data: data
 			}
 		},
+		CAN_NOT_CHANGE_MOBILE: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "mobile Number can not be changed",
+			"type": "BLOCKED_USER"
+		},
 		USER_ACCOUNT_SCREENING: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING,
 			"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
@@ -57,6 +62,11 @@ export const MESSAGES = {
 			"message": "Mobile No. is not registered with us.",
 			"type": "MOBILE_NO_NOT_REGISTERED"
 		},
+		PLEASE_CONTACT_ADMIN: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Sorry, your account has been deleted by admin. Please contact our team.",
+			"type": "PLEASE_CONTACT_ADMIN"
+		},
 		EMAIL_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_REGISTER,
 			"message": "Email is not registered with us.",
@@ -78,11 +88,27 @@ export const MESSAGES = {
 			"message": "User already exist",
 			"type": "EMAIL_OR_PHONE_REQUIRED"
 		},
+		DELETED_USER_TRYING_TO_REGISTER: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Sorry, this account has been deleted by admin. Please try again with other credentials.",
+			"type": "EMAIL_OR_PHONE_REQUIRED"
+		},
+		BLOCKED_USER_TRYING_TO_REGISTER_OR_LOGIN: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Sorry, this account has been blocked by admin. please contact admin.",
+			"type": "EMAIL_OR_PHONE_REQUIRED"
+		},
 		// SOCIAL_ACCOUNT_ALREADY_EXIST: {
 		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.SOCIAL_ACCOUNT_ALREADY_EXIST,
 		// 	"message": "Account with this social id already exist.",
 		// 	"type": "SOCIAL_ACCOUNT_ALREADY_EXIST"
 		// },
+		MOBILE_ALREADY_IN_USER_SOCIAL_CASE: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "It seems this mobile no is already linked with some other account, please try again.",
+			"type": "SOCIAL_ACCOUNT_NOT_REGISTERED"
+		},
+
 		SOCIAL_ACCOUNT_NOT_REGISTERED: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.SOCIAL_ACCOUNT_ALREADY_EXIST,
 			"message": "Account with this social id not registered.",
@@ -100,14 +126,29 @@ export const MESSAGES = {
 		},
 		CANNOT_CHANGE_PASSWORD: {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			message: "You cannot reset your password since you have logged in using Social Account.",
+			message: "You can not reset your password as this email or phone is associated with social account.",
 			type: "CANNOT_CHANGE_PASSWORD"
+		},
+		LINK_EXPIRED: {
+			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			message: "Link has been expired. Please try again with new link",
+			type: "LINK_EXPIRED"
+		},
+		PASSWORD_ALREADY_BEEN_CHANGED: {
+			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			message: "Please try again to reset the password",
+			type: "PASSWORD_ALREADY_BEEN_CHANGED"
 		},
 		CANNOT_LOGIN: {
 			statusCode: config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
-			message: "You cannot login since you have logged in using Social Account.",
+			message: "You can not login as these credentials are associated with social account",
 			type: "CANNOT_LOGIN"
-		}
+		},
+		INVALID_OLD_PASSWORD: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.BAD_REQUEST,
+			"message": "Old password is incorrect.",
+			"type": "INVALID_OLD_PASSWORD"
+		},
 	},
 	SUCCESS: {
 		DEFAULT: {
@@ -121,6 +162,11 @@ export const MESSAGES = {
 			"message": "Password reset successfully",
 			"type": "DEFAULT",
 			data: {}
+		},
+		CHANGE_PASSWORD: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Password changed successfully.",
+			"type": "CHANGE_PASSWORD"
 		},
 		RESET_PASSWORD_SUCCESSFULLY: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
@@ -137,8 +183,8 @@ export const MESSAGES = {
 		},
 		DELETED: (data) => {
 			return {
-				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-				"message": "Your account has been blocked by admin",
+				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.DELETD_USER,
+				"message": "Your account has been deleted by admin",
 				"type": "USER_DELETED",
 				data: data,
 			}
@@ -262,11 +308,11 @@ export const MESSAGES = {
 				"data": data
 			}
 		},
-		// FORGET_PASSWORD: {
-		// 	"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-		// 	"message": "Please check your number for password reset link.",
-		// 	"type": "FORGOT_PASSWORD_ON_PHONE",
-		// },
+		CHANGE_LOCATION: {
+			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
+			"message": "Location enable successfully.",
+			"type": "CHANGE_LOCATION",
+		},
 		CHANGE_FORGOT_PASSWORD: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
 			"message": "Password changed successfully.",
