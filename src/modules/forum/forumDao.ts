@@ -107,9 +107,8 @@ export class ForumTopic extends BaseDao {
                 }
             }
             let findBlockedUser = await userDao.findBlcokedUser();
-            findBlockedUser = findBlockedUser[0].Ids1 ? findBlockedUser[0].Ids1 : [];
 
-            console.log('findBlockedUserfindBlockedUserfindBlockedUser', findBlockedUser);
+            findBlockedUser = (findBlockedUser.length > 0 && findBlockedUser[0].Ids1) ? findBlockedUser[0].Ids1 : [];
 
             match['createrId'] = { $nin: findBlockedUser };
             aggPipe.push({ $match: match });
