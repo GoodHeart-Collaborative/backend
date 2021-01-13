@@ -213,16 +213,19 @@ export class UserController {
 					const userObject = appUtils.buildToken(tokenData);
 					const accessToken = await tokenManager.generateUserToken({ "type": "USER_LOGIN", "object": userObject, "salt": step1.salt });
 					const removePreviousHistroy = await loginHistoryDao.removeDeviceById({ "userId": step1._id });
-					const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+					// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 
 
 					if (params.email && !step2) {
-						const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken, userId: step1._id });
+						const step3 = mailManager.sendRegisterMailToUser({ "email": step1.email, "firstName": step1.firstName, "lastName": step1.lastName, userId: step1._id });
 						return userConstant.MESSAGES.SUCCESS.EMAIL_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.EMAIL_NOT_VERIFIED, accessToken: '' })
 					}
 					if (params.mobileNo && !step2) {
 						// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
-						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+						// return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
+						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: '' })
+
 					}
 
 
