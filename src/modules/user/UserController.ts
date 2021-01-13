@@ -236,7 +236,7 @@ export class UserController {
 						return Promise.reject(userConstant.MESSAGES.SUCCESS.DELETED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.BLOCKED_USER, accessToken: '' }));
 					}
 					else if (step2 && !step2.dob || !step2.dob == null && step2.industryType) {
-						// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 
 					}
@@ -244,12 +244,14 @@ export class UserController {
 					// 	return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					// }
 					else if (step2.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.REJECTED) {
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.ADMIN_REJECTED_USER_ACCOUNT({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_REJECT_ACCOUNT, accessToken: '' });
 					}
 					// else if (!step2.isAdminVerified) {
 					// 	return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					// }
 					else if (step2.adminStatus === config.CONSTANT.USER_ADMIN_STATUS.PENDING) {
+						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						return userConstant.MESSAGES.SUCCESS.USER_ACCOUNT_SCREENING({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING, accessToken: '' });
 					}
 					else {
