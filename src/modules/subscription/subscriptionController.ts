@@ -17,7 +17,7 @@ class SubscriptionController {
         try {
             let tokenData;
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
-                tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscription_type, params.receiptToken);
+                tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscriptionType, params.receiptToken);
                 console.log("puchase details", tokenData);
                 if (tokenData) {
                     params.startDate = tokenData.startTimeMillis;
