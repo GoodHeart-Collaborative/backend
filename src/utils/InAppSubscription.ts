@@ -46,7 +46,7 @@ export class InAppSubscription {
             }
 
             if (ack) {
-                //await this.acknowledgeAndroidSubscription(subscriptionId, purchaseToken);
+                await this.acknowledgeAndroidSubscription(subscriptionId, purchaseToken);
             }
 
             subscription = subscription.data;
