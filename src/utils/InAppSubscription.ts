@@ -46,12 +46,12 @@ export class InAppSubscription {
             }
 
             if (ack) {
-                await this.acknowledgeAndroidSubscription(subscriptionId, purchaseToken);
+                //await this.acknowledgeAndroidSubscription(subscriptionId, purchaseToken);
             }
 
             subscription = subscription.data;
-            subscription.startTimeMillis = await appUtils.formatDate(parseInt(subscription.startTimeMillis));
-            subscription.expiryTimeMillis = await appUtils.formatDate(parseInt(subscription.expiryTimeMillis));
+            subscription.startTimeMillis = parseInt(subscription.startTimeMillis);
+            subscription.expiryTimeMillis = parseInt(subscription.expiryTimeMillis);
 
             return subscription;
         } catch (err) {
