@@ -224,7 +224,7 @@ class SubscriptionController {
                         if (subs.tries < 1) {
                             await subscriptionDao.updateUserSubscription({
                                 isSubscribed: false,
-                                subscriptionType: subs.subscription_id,
+                                subscriptionType: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
                                 endDate: tokenDetails.expiryTimeMillis,
                                 userId: subs.userId
                             });
