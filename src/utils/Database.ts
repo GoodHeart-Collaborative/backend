@@ -33,7 +33,7 @@ export class Database {
 				mongoose.connection.on("connected", function () {
 					console.info(config.SERVER.DISPLAY_COLORS ? "\x1b[32m%s\x1b[0m" : "%s", `Connected to ${dbUrl}`);
 					logger.info("Connected to DB", dbName, "at", dbUrl);
-					resolve();
+					resolve(true);
 				});
 
 				// If the connection throws an error

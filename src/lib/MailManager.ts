@@ -34,10 +34,10 @@ export class MailManager {
 				transporter.sendMail(mailOptions, function (error, info) {
 					if (error) {
 						console.log(error);
-						resolve();
+						resolve(error);
 					} else {
 						console.log("Message sent: " + info.response);
-						resolve();
+						resolve(info);
 					}
 				});
 			});
