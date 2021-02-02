@@ -36,6 +36,15 @@ switch (ENVIRONMENT) {
 		}
 		break;
 	}
+	case "beta":
+	case "beta": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.beta"))) {
+			dotenv.config({ path: ".env.beta" });
+		} else {
+			process.exit(1);
+		}
+		break;
+	}
 	case "prod":
 	case "production": {
 		if (fs.existsSync(path.join(process.cwd(), "/.env"))) {
@@ -109,6 +118,7 @@ export const SERVER = Object.freeze({
 			// reconnectTries: 100000,
 			// reconnectInterval: 6000,
 			// useFindAndModify: false
+			// retryWrites: true
 		}
 	},
 	ADMIN_CREDENTIALS: {

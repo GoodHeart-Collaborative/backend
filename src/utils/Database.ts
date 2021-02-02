@@ -16,12 +16,27 @@ export class Database {
 				let dbUrl = config.SERVER.MONGO.DB_URL;
 				const dbOptions = config.SERVER.MONGO.OPTIONS;
 
+				console.log('PPPPPPP', dbName);
+				console.log('QQQQQQQQQQQQQ', dbUrl);
+				console.log('IOOOOOOOOOOOOOOOO', dbOptions);
+
 				if (config.SERVER.ENVIRONMENT === "production") {
 					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
-					dbUrl = dbUrl + dbName;
-				} else {
+					// dbUrl = dbUrl + dbName;
+					dbUrl = "mongodb+srv://goodheart_dbusr:JJEvz3Qg3N5Kb2Nh@goodheart.i4sc0.mongodb.net/goodheartprod_api?retryWrites=true&w=majority"
+				}
+				else if (config.SERVER.ENVIRONMENT === "beta") {
+					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
+					// db name-- goodheartprod_api
+					// user-- goodheart_dbusr
+					// passwd-- JJEvz3Qg3N5Kb2Nh
+					dbUrl = "mongodb+srv://goodheart_dbusr:JJEvz3Qg3N5Kb2Nh@goodheart.i4sc0.mongodb.net/goodheartprod_api?retryWrites=true&w=majority"
+				}
+				else {
 					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
 					dbUrl = dbUrl + dbName;
+					console.log('>>>>>>>>>>>>>>>>>>>>>>>>>', dbUrl);
+
 					mongoose.set("debug", true);
 				}
 
