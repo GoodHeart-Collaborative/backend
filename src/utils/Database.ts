@@ -16,10 +16,6 @@ export class Database {
 				let dbUrl = config.SERVER.MONGO.DB_URL;
 				const dbOptions = config.SERVER.MONGO.OPTIONS;
 
-				console.log('PPPPPPP', dbName);
-				console.log('QQQQQQQQQQQQQ', dbUrl);
-				console.log('IOOOOOOOOOOOOOOOO', dbOptions);
-
 				if (config.SERVER.ENVIRONMENT === "production") {
 					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
 					// dbUrl = dbUrl + dbName;
