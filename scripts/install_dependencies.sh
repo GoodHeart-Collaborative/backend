@@ -4,4 +4,4 @@ cd /var/www/html/goodheart_api
 sudo npm install -g pm2
 sudo npm install -g typescript
 sudo npm install
-tsc
+tsc && cp ./google_auth.json ./build/ 
