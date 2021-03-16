@@ -197,7 +197,10 @@ export const SERVER = Object.freeze({
 export const IN_APP = {
 	ANDROID: {
 		SUBSCRIPTIONS: {
-
+			"1": "FREE_TRIAL",
+			"2": "com.goodheart.monthly.limited.subscription",
+			"3": "com.goodheart.monthly.premium.subscription",
+			"4": "NO_SUBSCRIPTION"
 		},
 		ANDROID_PACKAGE_NAME: process.env["ANDROID_PACKAGE_NAME"]
 	},
