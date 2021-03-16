@@ -80,7 +80,7 @@ switch (ENVIRONMENT) {
 }
 
 export const SERVER = Object.freeze({
-	APP_NAME: "WC",
+	APP_NAME: "Good heart",
 	// BASE_PATH: process.cwd(),
 	TEMPLATE_PATH: process.cwd() + "/src/views/",
 	UPLOAD_DIR: process.cwd() + "/src/uploads/",
