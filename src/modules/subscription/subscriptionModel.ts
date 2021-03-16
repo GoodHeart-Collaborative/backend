@@ -62,7 +62,8 @@ const subscriptionSchema = new Schema({
     tries: { type: Number, default: 0 },
     created: { type: Number },
     deviceType: {
-        type: Number, enum: [
+        type: String,
+        enum: [
             CONSTANT.DEVICE_TYPE.ANDROID,
             CONSTANT.DEVICE_TYPE.IOS
         ]
