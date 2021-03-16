@@ -128,10 +128,10 @@ export const SERVER = Object.freeze({
 	},
 	MAIL: {
 		SMTP: {
-			HOST: "smtp.gmail.com",
+			HOST: "email-smtp.us-west-2.amazonaws.com",
 			PORT: "587",
-			USER: "womencommunite@gmail.com",
-			PASSWORD: "12345@women"
+			USER: "AKIASLXO7KC3432ELONN",
+			PASSWORD: "BDItCWFVI22LKxqaCMwKHolcUK2st6iPy4O5DrYKOHlf"
 		}
 	},
 	BASIC_AUTH: {
@@ -152,6 +152,11 @@ export const SERVER = Object.freeze({
 		REGION: process.env["SNS_REGION"],
 		TOPIC_ARN: process.env["TOPIC_ARN"],
 		PROTOCOL: process.env["SNS_PROTOCOL"]
+	},
+	SNS_SMS: {
+		region: process.env['REGION'],
+		accessKeyId: process.env['ACCESS_KEY_ID'],
+		secretAccessKey: process.env['SECRET_ACCESS_KEY']
 	},
 	// option parameters constantys for s3
 	S3: {

@@ -619,7 +619,7 @@ const EMAIL_TEMPLATE = {
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
 	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
-	FROM_MAIL: "do-not-reply@mail.appinventive.com"
+	FROM_MAIL: "app_support@goodheart.app"
 };
 
 const SMS = {

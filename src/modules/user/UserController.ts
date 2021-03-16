@@ -83,6 +83,8 @@ export class UserController {
 
 					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
 					console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
+					const mailData = await mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
+					// console.log('mailDatamailDatamailDatamailDatamailDatamailDatamailDatamailData', mailData);
 
 					const step6 = await loginHistoryDao.createUserLoginHistory(params);
 
@@ -95,7 +97,6 @@ export class UserController {
 				if (!step && step1 && step1.isMobileVerified === false) {
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
-
 
 				const generateOtp = await appUtils.generateOtp();
 
@@ -146,7 +147,9 @@ export class UserController {
 				let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
 				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
-				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
+				const step3 = await mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
+				// console.log('step3step3step3', step3);
+
 				// let userResponse = appUtils.formatUserData(updateUserQr);
 				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken, mobileNo: step2.mobileNo, countryCode: step2.countryCode });
 			}
