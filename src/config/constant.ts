@@ -455,7 +455,7 @@ const MESSAGES = {
 		},
 		EMAIL_ALREADY_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Hi your email is already been verified, please login to continue",
+			"message": "Hi your email is already verified, please login to continue",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_REGISTERED: {

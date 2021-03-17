@@ -145,7 +145,7 @@ export class UserController {
 
 
 				let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+				smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
 				const step3 = await mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
 				// console.log('step3step3step3', step3);
@@ -952,7 +952,7 @@ export class UserController {
 			}
 			const updateOTP = await userDao.updateOne('users', { _id: Types.ObjectId(findByMobile._id) }, dataToUpdate, {});
 			let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-			// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+			smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 			return {};
 
 		} catch (error) {
