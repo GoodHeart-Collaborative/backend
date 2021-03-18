@@ -100,7 +100,7 @@ export class UserController {
 
 				const generateOtp = await appUtils.generateOtp();
 
-				params['mobileOtp'] = generateOtp;
+				params['mobileOtp'] = generateOtp.toString();
 
 				const step2 = await userDao.signup(params);
 				const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
@@ -946,7 +946,7 @@ export class UserController {
 			if (!findByMobile) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 			}
-			const generateOtp = await appUtils.generateOtp();
+			const generateOtp = await (await appUtils.generateOtp()).toString();
 			const dataToUpdate = {
 				mobileOtp: generateOtp
 			}

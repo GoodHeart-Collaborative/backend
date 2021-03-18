@@ -33,7 +33,7 @@ export interface IUser extends Document {
 	profilePicUrl: [string];
 	address: Address;
 	status: string;
-	mobileOtp: number;
+	mobileOtp: string;
 	preference: string;
 	industryType: string;
 	experience: number;
@@ -66,7 +66,7 @@ var geoSchema = new Schema({
 });
 
 const userSchema = new Schema({
-	mobileOtp: { type: Number },
+	mobileOtp: { type: String },
 	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },
