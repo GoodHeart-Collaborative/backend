@@ -15,7 +15,7 @@
 		"test": "tsc && cp ./google_auth.json ./build/ && NODE_ENV=testing node ./build/server.js",
 		"stag": "tsc && cp ./google_auth.json ./build/ && NODE_ENV=staging node ./build/server.js",
 		"beta": "tsc  && cp ./google_auth.json ./build/ && NODE_ENV=beta node ./build/server.js",
-		"prod": "tsc  && cp ./google_auth.json ./build/ && NODE_ENV=prodction node ./build/server.js",
+		"prod": "tsc && cp ./google_auth.json ./build/ && NODE_ENV=production node ./build/server.js",
 		"dev": "nodemon server.ts",
 		"dev:debug": "nodemon --inspect server.ts",
 		"pm2:dev": "tsc && cp ./google_auth.json ./build/ && NODE_ENV=development pm2 start ./build/server.js --name good_heart-dev",

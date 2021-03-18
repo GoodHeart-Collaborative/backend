@@ -47,8 +47,8 @@ switch (ENVIRONMENT) {
 	}
 	case "prod":
 	case "production": {
-		if (fs.existsSync(path.join(process.cwd(), "/.env"))) {
-			dotenv.config({ path: ".env" });
+		if (fs.existsSync(path.join(process.cwd(), "/.env.production"))) {
+			dotenv.config({ path: ".env.production" });
 		} else {
 			process.exit(1);
 		}

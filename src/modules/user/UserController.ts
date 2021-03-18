@@ -1020,12 +1020,23 @@ export class UserController {
 						if (data && !data.dob || !data.dob == null && data.industryType) {
 							return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 						}
+						data['isPasswordAvailable'] = (data && data['hash']) ? true : false;
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...data });
+						// return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...data });
 					};
 				}
-
+				else if (params.type === 'email') {
+					if (data.emailOtp === params.otp) {
+						const dataToUpdate = {
+							isEmailVerified: true,
+						}
+						await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
+					}
+				}
 				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 			}
+			return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 
 		} catch (error) {
 			return Promise.reject(error)

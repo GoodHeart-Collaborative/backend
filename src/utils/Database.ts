@@ -31,8 +31,6 @@ export class Database {
 				else {
 					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
 					dbUrl = dbUrl + dbName;
-					console.log('>>>>>>>>>>>>>>>>>>>>>>>>>', dbUrl);
-
 					mongoose.set("debug", true);
 				}
 
