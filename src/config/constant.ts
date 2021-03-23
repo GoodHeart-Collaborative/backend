@@ -242,11 +242,11 @@ export const PROFESSION_TYPE = {
 	Director: " Director",
 	Manager_Supervisor: "Manager/Supervisor",
 	Therapist_Counselor: "Therapist/Counselor",
-	Social_Worker: "Social_Worker",
+	Social_Worker: "Social Worker",
 	Direct_Care_Staff: "Direct Care Staff",
 	Caregiver: "Caregiver",
-	Doctor_Nurse_Medical_Staff: "Doctor Nurse Medical Staff",
-	Teacher_School_Staff: "Teacher School Staff",
+	Doctor_Nurse_Medical_Staff: "Doctor/Nurse/Medical Staff",
+	Teacher_School_Staff: "Teacher/School Staff",
 	First_Responder: "First Responder"
 }
 
