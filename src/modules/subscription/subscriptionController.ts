@@ -16,8 +16,9 @@ class SubscriptionController {
     async createSubscription(params) {
         try {
             let tokenData;
+            const endDate = {};
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
-                tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscription_type, params.receiptToken);
+                tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscriptionType, params.receiptToken);
                 console.log("puchase details", tokenData);
                 if (tokenData) {
                     params.startDate = tokenData.startTimeMillis;
@@ -223,7 +224,7 @@ class SubscriptionController {
                         if (subs.tries < 1) {
                             await subscriptionDao.updateUserSubscription({
                                 isSubscribed: false,
-                                subscriptionType: subs.subscription_id,
+                                subscriptionType: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
                                 endDate: tokenDetails.expiryTimeMillis,
                                 userId: subs.userId
                             });

@@ -43,7 +43,7 @@ export class CronUtils extends BaseDao {
 		// if (payload.type === 'memberOfDay') {
 		this.createMember()
 		// } else if (payload.type === 'subscription') {
-		subscriptionController.verifySubscriptionRenewal()
+		subscriptionController.verifySubscriptionRenewal();
 		// } else if (payload.type === 'eventReminder') {
 		// this.eventReminder()
 		// }

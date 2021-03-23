@@ -83,6 +83,8 @@ export class UserController {
 
 					const removeLoginHistory = await loginHistoryDao.removeDeviceById({ ...params, userId: step1._id });
 					console.log('removeLoginHistoryremoveLoginHistoryremoveLoginHistory', removeLoginHistory);
+					const mailData = await mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step1._id });
+					// console.log('mailDatamailDatamailDatamailDatamailDatamailDatamailDatamailData', mailData);
 
 					const step6 = await loginHistoryDao.createUserLoginHistory(params);
 
@@ -96,10 +98,9 @@ export class UserController {
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
 
-
 				const generateOtp = await appUtils.generateOtp();
 
-				params['mobileOtp'] = generateOtp;
+				params['mobileOtp'] = generateOtp.toString();
 
 				const step2 = await userDao.signup(params);
 				const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
@@ -144,9 +145,11 @@ export class UserController {
 
 
 				let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-				// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+				smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 
-				const step3 = mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
+				const step3 = await mailManager.sendRegisterMailToUser({ "email": params.email, "firstName": params.firstName, "lastName": params.lastName, "token": accessToken, userId: step2._id });
+				// console.log('step3step3step3', step3);
+
 				// let userResponse = appUtils.formatUserData(updateUserQr);
 				return userConstant.MESSAGES.SUCCESS.SIGNUP({ "accessToken": accessToken, "refreshToken": refreshToken, mobileNo: step2.mobileNo, countryCode: step2.countryCode });
 			}
@@ -948,13 +951,13 @@ export class UserController {
 			if (!findByMobile) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 			}
-			const generateOtp = await appUtils.generateOtp();
+			const generateOtp = await (await appUtils.generateOtp()).toString();
 			const dataToUpdate = {
 				mobileOtp: generateOtp
 			}
 			const updateOTP = await userDao.updateOne('users', { _id: Types.ObjectId(findByMobile._id) }, dataToUpdate, {});
 			let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
-			// smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+			smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 			return {};
 
 		} catch (error) {
@@ -1022,12 +1025,23 @@ export class UserController {
 						if (data && !data.dob || !data.dob == null && data.industryType) {
 							return userConstant.MESSAGES.SUCCESS.REGISTER_BDAY({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.REGISTER_BDAY, accessToken: accessToken });
 						}
+						data['isPasswordAvailable'] = (data && data['hash']) ? true : false;
 						return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...data });
+						// return userConstant.MESSAGES.SUCCESS.LOGIN({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.LOGIN_STATUS_HOME_SCREEN, "accessToken": accessToken, ...data });
 					};
 				}
-
+				else if (params.type === 'email') {
+					if (data.emailOtp === params.otp) {
+						const dataToUpdate = {
+							isEmailVerified: true,
+						}
+						await userDao.updateOne('users', { _id: userData.userId }, dataToUpdate, {});
+						return userConstant.MESSAGES.SUCCESS.DEFAULT_WITH_DATA({});
+					}
+				}
 				return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 			}
+			return Promise.reject(userConstant.MESSAGES.ERROR.OTP_NOT_MATCH);
 
 		} catch (error) {
 			return Promise.reject(error)

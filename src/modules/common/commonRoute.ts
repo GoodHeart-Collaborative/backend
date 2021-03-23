@@ -82,8 +82,8 @@ export const commonRoute: ServerRoute = [
 			const payload = request.query;
 			try {
 				const tokenData = await tokenManager.verifyToken({ ...payload }, "common", false);
-				let result;
-				result = await userController.redirectResetPassword(payload);
+				// let result;
+				// result = await userController.redirectResetPassword(payload);
 				// const message = "Your link has been expired. Please regenerate your link again.";
 				return h.view("reset-password-web", { "name": request.query.name, "message": "message", "year": new Date().getFullYear(), "logoUrl": config.SERVER.UPLOAD_IMAGE_DIR + "womenLogo.png", token: payload.accessToken, API_URL: config.SERVER.API_URL });
 			} catch (error) {
@@ -196,7 +196,7 @@ export const commonRoute: ServerRoute = [
 				let message;
 				let title;
 				if (error === "alreadyVerified") {
-					message = "Hi your email is already been verified. Please login to continue."
+					message = "Hi your email is already verified. Please login to continue."
 					title = "Email already verified";
 					return h.view("mail-link-expired", { "name": request.query.name, "message": message, "year": new Date().getFullYear(), title: title });
 				} else {

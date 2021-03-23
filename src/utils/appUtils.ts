@@ -535,6 +535,7 @@ const getLocationByIp = async (ipaddress: string) => {
 }
 
 const formatDate = async (date) => {
+	console.log(date);
 	return moment(date).format("YYYY-MM-DD");
 };
 

@@ -33,10 +33,10 @@ export class InAppSubscription {
      */
     async verifyAndroidSubscription(subscriptionId: any, purchaseToken: string, ack: boolean = true) {
         try {
-            console.log("*****************", IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
+            console.log("*****************", IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId.toString()],
                 IN_APP.ANDROID.ANDROID_PACKAGE_NAME, subscriptionId, purchaseToken);
             let subscription = await this.publisher.get({
-                subscriptionId: IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId],
+                subscriptionId: IN_APP.ANDROID.SUBSCRIPTIONS[subscriptionId.toString()],
                 token: purchaseToken,
                 packageName: IN_APP.ANDROID.ANDROID_PACKAGE_NAME
             });
@@ -50,8 +50,8 @@ export class InAppSubscription {
             }
 
             subscription = subscription.data;
-            subscription.startTimeMillis = await appUtils.formatDate(parseInt(subscription.startTimeMillis));
-            subscription.expiryTimeMillis = await appUtils.formatDate(parseInt(subscription.expiryTimeMillis));
+            subscription.startTimeMillis = parseInt(subscription.startTimeMillis);
+            subscription.expiryTimeMillis = parseInt(subscription.expiryTimeMillis);
 
             return subscription;
         } catch (err) {

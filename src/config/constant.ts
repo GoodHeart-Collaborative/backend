@@ -465,7 +465,7 @@ const MESSAGES = {
 		},
 		EMAIL_ALREADY_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Hi your email is already been verified, please login to continue",
+			"message": "Hi your email is already verified, please login to continue",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_REGISTERED: {
@@ -629,7 +629,7 @@ const EMAIL_TEMPLATE = {
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
 	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
-	FROM_MAIL: "do-not-reply@mail.appinventive.com"
+	FROM_MAIL: "app_support@goodheart.app"
 };
 
 const SMS = {

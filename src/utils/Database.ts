@@ -18,8 +18,19 @@ export class Database {
 
 				if (config.SERVER.ENVIRONMENT === "production") {
 					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
-					dbUrl = dbUrl + dbName;
-				} else {
+					// dbUrl = dbUrl + dbName;
+					// dbUrl = "mongodb+srv://goodheart_dbusr:JJEvz3Qg3N5Kb2Nh@goodheart.i4sc0.mongodb.net/goodheartprod_api?retryWrites=true&w=majority"
+					mongoose.set("debug", true);
+				}
+				else if (config.SERVER.ENVIRONMENT === "beta") {
+					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
+					// db name-- goodheartprod_api
+					// user-- goodheart_dbusr
+					// passwd-- JJEvz3Qg3N5Kb2Nh
+					dbUrl = "mongodb+srv://goodheart_dbusr:JJEvz3Qg3N5Kb2Nh@goodheart.i4sc0.mongodb.net/goodheartprod_api?retryWrites=true&w=majority"
+					mongoose.set("debug", true);
+				}
+				else {
 					logger.info("Configuring db in " + config.SERVER.TAG + " mode");
 					dbUrl = dbUrl + dbName;
 					mongoose.set("debug", true);

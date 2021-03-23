@@ -10,9 +10,6 @@ import * as config from "@config/index";
 import { IN_APP } from "@config/environment";
 import { CONSTANT } from "@config/index";
 
-// const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
-// autoIncrement.initialize(connection);
-
 export interface Isubscription extends Document {
     // sno: string;
     userId: string;
@@ -62,7 +59,8 @@ const subscriptionSchema = new Schema({
     tries: { type: Number, default: 0 },
     created: { type: Number },
     deviceType: {
-        type: Number, enum: [
+        type: String,
+        enum: [
             CONSTANT.DEVICE_TYPE.ANDROID,
             CONSTANT.DEVICE_TYPE.IOS
         ]
