@@ -523,18 +523,18 @@ export class UserDao extends BaseDao {
 			var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
 			var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 			const currentMonthEarning = [
-				// {
-				// 	$match: {
-				// 		createdAt: {
-				// 			$gt: {
-				// 				firstDay
-				// 			},
-				// 			$lt: {
-				// 				lastDay
-				// 			}
-				// 		},
-				// 	},
-				// },
+				{
+					$match: {
+						createdAt: {
+							$gt: {
+								firstDay
+							},
+							// $lt: {
+							// 	lastDay
+							// }
+						},
+					},
+				},
 				{
 					$group: {
 						_id: null,

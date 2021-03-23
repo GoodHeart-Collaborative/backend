@@ -705,7 +705,12 @@ export class UserController {
 						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
 					} else {
 						console.log('FOR_MOBILE_MESSAGE_OTP',);
-						// const step2 = smsManager.sendForgotPasswordLink(params.countryCode, params.mobileNo, accessToken);
+						const generateOtp = (await appUtils.generateOtp()).toString();
+						params['mobileOtp'] = generateOtp.toString();
+						const updteOtp = await userDao.updateOne('users', { _id: step1._id }, { mobileOtp: generateOtp }, {});
+						let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
+						smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
+						// const step2 = smsManager.sendMessageViaAWS (params.countryCode, params.mobileNo, accessToken);
 						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_PHONE({});
 					}
 				}

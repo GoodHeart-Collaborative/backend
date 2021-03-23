@@ -215,12 +215,12 @@ export class ExpertDao extends BaseDao {
                 key['type'] = 2
             }
 
-            if (getNewlyAddedExperts.length > 0) {
-                EXPERTS1.unshift({
-                    onBoardData: getNewlyAddedExperts,
-                    type: 1
-                })
-            }
+            // if (getNewlyAddedExperts.length > 0) {
+            //     EXPERTS1.unshift({
+            //         onBoardData: getNewlyAddedExperts,
+            //         type: 1
+            //     })
+            // }
 
             if (CategoryLIST.length > 0) {
                 EXPERTS1.unshift({

@@ -211,6 +211,15 @@ let updateProfile = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Executive_Director,
         config.CONSTANT.PROFESSION_TYPE.Founder,
         config.CONSTANT.PROFESSION_TYPE.Managing_Director,
+
+        config.CONSTANT.PROFESSION_TYPE.Manager_Supervisor,
+        config.CONSTANT.PROFESSION_TYPE.Therapist_Counselor,
+        config.CONSTANT.PROFESSION_TYPE.Social_Worker,
+        config.CONSTANT.PROFESSION_TYPE.Direct_Care_Staff,
+        config.CONSTANT.PROFESSION_TYPE.Caregiver,
+        config.CONSTANT.PROFESSION_TYPE.Doctor_Nurse_Medical_Staff,
+        config.CONSTANT.PROFESSION_TYPE.Teacher_School_Staff,
+        config.CONSTANT.PROFESSION_TYPE.First_Responder,
     ]),
     companyName: Joi.string().trim().optional(),
     // userName: Joi.string(),
@@ -219,7 +228,9 @@ let updateProfile = Joi.object({
         config.INDUSTRIES.EMERGENCY_SERVICES,
         config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
         config.INDUSTRIES.LAW_ENFORCEMENT,
-        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
+        config.INDUSTRIES.Mental_Health,
+        config.INDUSTRIES.Education,
     ]),
     experience: Joi.string().valid([
         // config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
@@ -242,6 +253,14 @@ let updateProfileUser = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Executive_Director,
         config.CONSTANT.PROFESSION_TYPE.Founder,
         config.CONSTANT.PROFESSION_TYPE.Managing_Director,
+        config.CONSTANT.PROFESSION_TYPE.Manager_Supervisor,
+        config.CONSTANT.PROFESSION_TYPE.Social_Worker,
+        config.CONSTANT.PROFESSION_TYPE.Direct_Care_Staff,
+        config.CONSTANT.PROFESSION_TYPE.Caregiver,
+        config.CONSTANT.PROFESSION_TYPE.Doctor_Nurse_Medical_Staff,
+        config.CONSTANT.PROFESSION_TYPE.Teacher_School_Staff,
+        config.CONSTANT.PROFESSION_TYPE.First_Responder,
+        config.CONSTANT.PROFESSION_TYPE.Therapist_Counselor
     ]).required(),
     email: Joi.string().email().required(),
     // firstName: Joi.string().regex(config.CONSTANT.REGEX)required(),
@@ -271,7 +290,9 @@ let updateProfileUser = Joi.object({
         config.INDUSTRIES.EMERGENCY_SERVICES,
         config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
         config.INDUSTRIES.LAW_ENFORCEMENT,
-        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES
+        config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
+        config.INDUSTRIES.Mental_Health,
+        config.INDUSTRIES.Education
     ]).required(),
     experience: Joi.string().valid([
         // config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,

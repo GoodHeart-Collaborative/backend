@@ -224,7 +224,9 @@ export const INDUSTRIES = {
 	EMERGENCY_SERVICES: 2,
 	SOCIAL_AND_COMMUNITY_SERVICES: 3,
 	LAW_ENFORCEMENT: 4,
-	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5
+	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5,
+	Mental_Health: 6,
+	Education: 7
 };
 
 export const PROFESSION_TYPE = {
@@ -237,7 +239,15 @@ export const PROFESSION_TYPE = {
 	Consultant: "Consultant",
 	Professor: "Professor",
 	Professional_Trainer: "Professional Trainer",
-	Director: " Director"
+	Director: " Director",
+	Manager_Supervisor: "Manager/Supervisor",
+	Therapist_Counselor: "Therapist/Counselor",
+	Social_Worker: "Social_Worker",
+	Direct_Care_Staff: "Direct Care Staff",
+	Caregiver: "Caregiver",
+	Doctor_Nurse_Medical_Staff: "Doctor Nurse Medical Staff",
+	Teacher_School_Staff: "Teacher School Staff",
+	First_Responder: "First Responder"
 }
 
 const SOCIAL_LOGIN_TYPE = {
