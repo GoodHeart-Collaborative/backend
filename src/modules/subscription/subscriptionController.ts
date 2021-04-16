@@ -15,7 +15,7 @@ class SubscriptionController {
      */
     async createSubscription(params) {
         try {
-          console.log("Subscription", params);
+          console.log("Subscription Params", params);
             let tokenData;
             const endDate = {};
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
