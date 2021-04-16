@@ -83,6 +83,7 @@ export class InAppSubscription {
 
     async verifyIosInAppToken(receipt) {
         try {
+            console.log("Token", receipt);
             let data: any = await request({
                 method: "POST",
                 uri: IN_APP.IOS.LIVE_URL,

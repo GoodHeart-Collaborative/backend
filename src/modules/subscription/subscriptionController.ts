@@ -15,6 +15,7 @@ class SubscriptionController {
      */
     async createSubscription(params) {
         try {
+          console.log("Subscription", params);
             let tokenData;
             const endDate = {};
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
@@ -27,9 +28,11 @@ class SubscriptionController {
                     params.transaction_id = tokenData.orderId;
                 }
             } else if (params.platform == CONSTANT.DEVICE_TYPE.IOS) {
+                console.log("Request", params);
                 tokenData = await inAppSubscription.verifyIosInAppToken(params.receiptToken);
 
                 if (!tokenData.flag) {
+                  console.log("Request", tokenData);
                     return Promise.reject(CONSTANT.MESSAGES.ERROR.INTERNAL_SERVER_ERROR);
                 }
 
