@@ -137,9 +137,10 @@ export class HomeDao extends BaseDao {
             aggPipe.push({ $project: project });
             if (!type) {
                 result = await this.aggregate('home', aggPipe, {})
+                // console.log('resultresultresultresult>>>>>>>>>>>>>>>>', result);
                 if (result && result.length > 1) {
-                    result.sort(function (a, b) { return b.type - a.type });
-                    result.reverse()
+                    // result.sort(function (a, b) { return b.type - a.type });
+                    // result.reverse()
                 }
             } else {
                 aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];
