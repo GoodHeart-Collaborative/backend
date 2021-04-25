@@ -60,6 +60,7 @@ export class CronUtils extends BaseDao {
 					adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
 					countMember: minMemberCount.memberOfDayCount,
 					profession: { $ne: "" },
+					firstName: { $exists: true }
 				}
 			},
 			{ $sample: { size: 1 } } // You want to get 5 docs
