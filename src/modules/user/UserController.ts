@@ -98,7 +98,12 @@ export class UserController {
 					const updateEmailToNA = await userDao.findOneAndUpdate('users', { _id: step1._id }, { mobileNo: 'N/A' }, {})
 				}
 
-				const generateOtp = await appUtils.generateOtp();
+				let generateOtp;
+				if (config.SERVER.ENVIRONMENT == "production") {
+					generateOtp = await appUtils.generateOtp().toString()
+				}
+				generateOtp = CONSTANT.BYPASS_OTP
+				// const generateOtp = await appUtils.generateOtp();
 
 				params['mobileOtp'] = generateOtp.toString();
 
@@ -707,8 +712,18 @@ export class UserController {
 						const step3 = mailManager.forgotPasswordEmailToUser({ "email": params.email, "firstName": step1.firstName, "lastName": step1.lastName, "token": accessToken });
 						return userConstant.MESSAGES.SUCCESS.FORGOT_PASSWORD_ON_EMAIL;
 					} else {
-						console.log('FOR_MOBILE_MESSAGE_OTP',);
-						const generateOtp = (await appUtils.generateOtp()).toString();
+						console.log('FOR_MOBILE_MESSAGE_OTP');
+						let generateOtp;
+						if (config.SERVER.ENVIRONMENT == "production") {
+							generateOtp = await appUtils.generateOtp().toString()
+						}
+						generateOtp = CONSTANT.BYPASS_OTP
+						// const generateOtp = await appUtils.generateOtp();
+
+						params['mobileOtp'] = generateOtp.toString();
+						// const generateOtp = await appUtils.generateOtp();
+
+						// const generateOtp = (await appUtils.generateOtp()).toString();
 						params['mobileOtp'] = generateOtp.toString();
 						const updteOtp = await userDao.updateOne('users', { _id: step1._id }, { mobileOtp: generateOtp }, {});
 						let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
@@ -951,7 +966,12 @@ export class UserController {
 			if (!findByMobile) {
 				return Promise.reject(userConstant.MESSAGES.ERROR.MOBILE_NO_NOT_REGISTERED);
 			}
-			const generateOtp = await (await appUtils.generateOtp()).toString();
+			// const generateOtp = await (await appUtils.generateOtp()).toString();	
+			let generateOtp;
+			if (config.SERVER.ENVIRONMENT == "production") {
+				generateOtp = await appUtils.generateOtp().toString()
+			}
+			generateOtp = CONSTANT.BYPASS_OTP
 			const dataToUpdate = {
 				mobileOtp: generateOtp
 			}
