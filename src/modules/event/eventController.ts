@@ -80,7 +80,7 @@ class EventController {
             let defaultAndInterestEveent = [];
             let typeAggPipe = [];
             let match: any = {};
-
+            let goingList = [];
             match['userId'] = appUtils.toObjectId(tokenData.userId);
             // match['status'] = config.CONSTANT.STATUS.ACTIVE;
 
@@ -190,10 +190,15 @@ class EventController {
 
             defaultAndInterestEveent = [...defaultAndInterestEveent, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
-            let myInterestedEventslist, myHostedEventslist;
-            if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST || params.type == config.CONSTANT.EVENT_INTEREST.GOING) {
+            let myInterestedEventslist, myHostedEventslist, goingEventList;
+            if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
                 myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
                 return { myInterestedEventslist }
+
+            }
+            else if (params.type == config.CONSTANT.EVENT_INTEREST.GOING) {
+                goingEventList = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+                return { goingEventList }
 
             }
             else if (params.type == config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
@@ -203,9 +208,22 @@ class EventController {
             else {
                 myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
                 myHostedEventslist = await eventDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
+
+                defaultAndInterestEveent.splice(0, 1, {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE,
+                        userId: appUtils.toObjectId(tokenData.userId),
+                        type: config.CONSTANT.EVENT_INTEREST.GOING
+                    }
+                })
+                // arr.splice(fromIndex, itemsToDelete, item1ToAdd, item2ToAdd, ...);
+
+                goingEventList = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+
                 return {
                     myInterestedEventslist,
-                    myHostedEventslist
+                    myHostedEventslist,
+                    goingEventList
                 }
             }
 
