@@ -21,9 +21,9 @@ class EventController {
         });
         return result[0];
     }
-	/**
-	 * @function addEvent
-	 * @description user add event
+    /**
+     * @function addEvent
+     * @description user add event
      * @params (UserEventRequest.AddEvent)
      */
     async addEvent(params: UserEventRequest.AddEvent) {
@@ -92,12 +92,12 @@ class EventController {
             // }
             typeAggPipe.push({ $match: match });
 
-            if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
+            if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST || config.CONSTANT.EVENT_INTEREST.GOING) {
                 defaultAndInterestEveent.push({
                     $match: {
                         status: config.CONSTANT.STATUS.ACTIVE,
                         userId: appUtils.toObjectId(tokenData.userId),
-                        type: config.CONSTANT.EVENT_INTEREST.INTEREST
+                        type: params.type || config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
                 });
 
@@ -191,7 +191,7 @@ class EventController {
             defaultAndInterestEveent = [...defaultAndInterestEveent, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
             let myInterestedEventslist, myHostedEventslist;
-            if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
+            if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST || params.type == config.CONSTANT.EVENT_INTEREST.GOING) {
                 myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
                 return { myInterestedEventslist }
 

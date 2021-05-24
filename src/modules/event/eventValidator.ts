@@ -112,6 +112,7 @@ let getEventCalendar = Joi.object({
     // userId: Joi.string(),
     type: Joi.number().allow([
         // 'myInterest', 'myEvent',
+        config.CONSTANT.EVENT_INTEREST.GOING,
         config.CONSTANT.EVENT_INTEREST.INTEREST,
         config.CONSTANT.EVENT_INTEREST.MY_EVENT,
     ]).description(
