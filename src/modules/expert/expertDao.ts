@@ -54,7 +54,7 @@ export class ExpertDao extends BaseDao {
             },
             {
                 $lookup: {
-                    from: 'experts',
+                    from: 'expert_posts',
                     let: { cId: '$_id' },
                     as: 'expertData',
                     pipeline: [
@@ -62,7 +62,7 @@ export class ExpertDao extends BaseDao {
                             $match: {
                                 $expr: {
                                     $and: [{
-                                        $in: ['$$cId', '$categoryId'],
+                                        $eq: ['$$cId', '$categoryId'],
                                     },
                                     {
                                         $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
@@ -152,7 +152,7 @@ export class ExpertDao extends BaseDao {
                     $limit: paginateOptions.limit
                 }
             ]
-            const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {});
+            // const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {});
 
             const expertPipline = [
                 {
@@ -170,19 +170,20 @@ export class ExpertDao extends BaseDao {
                 },
                 {
                     $lookup: {
-                        from: 'experts',
+                        from: 'expert_posts',
                         let: { cId: '$_id' },
-                        as: 'expertData',
+                        as: 'categoryPost',
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $and: [{
-                                            $in: ['$$cId', '$categoryId'],
-                                        },
-                                        {
-                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                        }]
+                                        $and: [
+                                            {
+                                                $eq: ['$$cId', '$categoryId'],
+                                            },
+                                            {
+                                                $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                            }]
                                     }
                                 }
                             },
@@ -197,7 +198,7 @@ export class ExpertDao extends BaseDao {
                 },
                 {
                     $match: {
-                        expertData: { $ne: [] }
+                        categoryPost: { $ne: [] }
                     }
                 },
                 {

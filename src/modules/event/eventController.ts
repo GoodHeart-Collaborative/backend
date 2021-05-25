@@ -11,6 +11,7 @@ import * as appUtils from "@utils/appUtils";
 import { categoryDao } from "@modules/admin/catgeory";
 import * as tokenManager from '@lib/tokenManager';
 import { errorReporter } from "@lib/flockErrorReporter";
+import { CONSTANT } from "@config/index";
 class EventController {
 
     getTypeAndDisplayName(findObj, num: number) {
@@ -104,7 +105,7 @@ class EventController {
                 defaultAndInterestEveent.push({
                     $lookup: {
                         from: 'events',
-                        let: { eId: '$eventId', uId: appUtils.toObjectId(tokenData.userId) },
+                        let: { eId: '$eventId', uId: appUtils.toObjectId(tokenData.userId), userIdd: '$userId', typ: '$type', status: '$status' },
                         as: 'eventData',
                         pipeline: [{
                             $match: {
@@ -121,7 +122,24 @@ class EventController {
                         },
                         {
                             $addFields: {
-                                isInterest: true,
+                                isInterest: {
+                                    $cond: {
+                                        if: {
+                                            $and: [
+                                                {
+                                                    $eq: ['$$userIdd', appUtils.toObjectId(tokenData.userId)]
+                                                },
+                                                {
+                                                    $eq: ['$$typ', CONSTANT.EVENT_INTEREST.INTEREST]
+                                                },
+                                                {
+                                                    $eq: ['$$status', config.CONSTANT.STATUS.ACTIVE]
+                                                }
+                                            ]
+                                        }, then: true,
+                                        else: false
+                                    }
+                                },
                                 isHostedByMe: {
                                     $cond: {
                                         if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
@@ -129,11 +147,32 @@ class EventController {
                                         else: false
                                     },
                                 },
-                            }
+                                isGoing: {
+                                    $cond: {
+                                        if: {
+                                            $and: [
+                                                {
+                                                    $eq: ['$$userIdd', appUtils.toObjectId(tokenData.userId)]
+                                                },
+                                                {
+                                                    $eq: ['$$typ', CONSTANT.EVENT_INTEREST.GOING]
+                                                },
+                                                {
+                                                    $eq: ['$$status', config.CONSTANT.STATUS.ACTIVE]
+                                                }
+                                            ]
+                                        },
+                                        then: true,
+                                        else: false
+                                    }
+                                }
+                            },
                         }
+                            // }
                         ],
                     }
                 })
+
                 defaultAndInterestEveent.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
 
                 defaultAndInterestEveent.push({
