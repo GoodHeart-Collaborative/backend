@@ -35,7 +35,9 @@ class ExpertPostController {
             params['contentDisplayName'] = result['DISPLAY_NAME'];
 
             const expertData = await expertDao.findOne('expert', { _id: params.expertId }, {}, {})
-            params['expertName'] = params['expertData']['name'];
+            console.log('expertDataexpertDataexpertData', expertData);
+
+            params['expertName'] = expertData.name;
 
             params['created'] = new Date().getTime();
             const data = await expertPostDao.insert("expert_post", params, {});
