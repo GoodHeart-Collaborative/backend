@@ -36,7 +36,7 @@ class ExpertPostController {
 
             const expertData = await expertDao.findOne('expert', { _id: params.expertId }, {}, {})
             console.log('expertDataexpertDataexpertData', expertData);
-
+            params['profilePicUrl'] = expertData.profilePicUrl
             params['expertName'] = expertData.name;
 
             params['created'] = new Date().getTime();
