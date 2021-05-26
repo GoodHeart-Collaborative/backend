@@ -153,8 +153,8 @@ export class ExpertDao extends BaseDao {
                 }
             ]
             // const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {});
-
-            const expertPipline = [
+            let expertPipline = []
+            expertPipline = [
                 {
                     $match: {
                         status: config.CONSTANT.STATUS.ACTIVE
@@ -201,8 +201,98 @@ export class ExpertDao extends BaseDao {
                         categoryPost: { $ne: [] }
                     }
                 },
+
                 {
                     $limit: paginateOptions.limit
+                },
+                { '$unwind': { path: '$categoryPost', preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: 'likes',
+                        let: { pId: '$categoryPost._id', uId: appUtils.toObjectId(payload.userId), },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$userId', '$$uId']
+                                        },
+                                        {
+                                            $eq: ['$postId', '$$pId']
+                                        },
+                                        {
+                                            $eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+                                        },
+                                        {
+                                            $eq: ["$type", config.CONSTANT.HOME_TYPE.EXPERTS_POST]
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        ],
+                        as: 'likeData'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "comments",
+                        let: { "post": "$categoryPost._id", "user": await appUtils.toObjectId(payload.userId) },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$postId", "$$post"]
+                                        },
+                                        {
+                                            $eq: ["$userId", "$$user"]
+                                        },
+                                        {
+                                            $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+                                        }
+                                    ]
+                                }
+                            }
+
+                        }],
+                        as: "commentData",
+                    }
+                },
+                {
+                    $addFields: {
+                        "categoryPost.isLike": {
+                            $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
+                        },
+                        "categoryPost.isComment": {
+                            $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                        },
+                    }
+                },
+                // {
+                //     $replaceRoot: { newRoot: "$categoryPost" }
+                // }
+                {
+                    $group: {
+                        _id: "$_id",
+                        // "_id": { $first: '$_id' },
+                        "status": { $first: '$status' },
+                        "created": { $first: '$created' },
+                        "imageUrl": { $first: '$imageUrl' },
+                        "title": { $first: '$title' },
+                        "type": { $first: '$type' },
+                        "name": { $first: '$name' },
+                        "createdAt": { $first: '$createdAt' },
+                        "updatedAt": { $first: '$updatedAt' },
+                        categoryPost: {
+                            $push: '$categoryPost'
+                        }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: -1,
+                    }
                 }
             ];
 

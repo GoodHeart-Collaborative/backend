@@ -23,6 +23,7 @@ declare namespace userExpertRequest {
         limit: number;
         page: number;
         searchTerm: string;
+        userId: string;
     }
 
     export interface IgetExpertRelatedPost {

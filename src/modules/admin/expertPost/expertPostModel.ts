@@ -8,6 +8,7 @@ import * as config from "@config/index";
 
 export interface IExpert extends Document {
     expertId: string,
+    expertName: string
     topic: string;
     // profession: string,
     categoryId: string,
@@ -27,11 +28,14 @@ export interface IExpert extends Document {
     thumbnailUrl: string;
     created: number;
     reportCount: number;
+    profilePicUrl: [string];
 }
 
 
 const expertPostSchema = new Schema({
     expertId: { type: Schema.Types.ObjectId, ref: 'expert' },
+    expertName: { type: String },
+    profilePicUrl: [Schema.Types.String],
     topic: { type: String },
     categoryId: { type: Schema.Types.ObjectId },
     price: { type: Number, default: 0 },
@@ -76,7 +80,7 @@ const expertPostSchema = new Schema({
     mediaUrl: { type: String },
     thumbnailUrl: { type: String },
     created: { type: Number },
-    reportCount: { type: Number, default: 0 }
+    reportCount: { type: Number, default: 0 },
 }, {
     versionKey: false,
     timestamps: true
