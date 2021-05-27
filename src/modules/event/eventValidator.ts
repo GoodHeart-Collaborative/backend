@@ -17,7 +17,7 @@ let getEventHomeScreen = Joi.object({
         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
         5
     ]).description('5-All'),
-    isVirtual: Joi.boolean().default(false),
+    isVirtual: Joi.boolean(),
     // date: Joi.string().allow([
     //     config.CONSTANT.DATE_FILTER.TODAY,
     //     config.CONSTANT.DATE_FILTER.TOMORROW,
