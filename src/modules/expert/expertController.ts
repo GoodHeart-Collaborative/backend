@@ -49,7 +49,7 @@ class ExpertController {
 
     async getcategoryExpertsPost(payload: userExpertRequest.ICategoryRelatedExpert) {
         try {
-            return await expertDao.getcategoryExperts(payload);
+            return await expertDao.getcategoryExpertsPost(payload);
         } catch (error) {
             return Promise.reject(error)
         }
