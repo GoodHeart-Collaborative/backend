@@ -294,14 +294,13 @@ class EventController {
                 ];
             }
 
-            // if (params.isVirtual) {
-            //     if (longitude == undefined && latitude == undefined) {
-            //         const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+            if (longitude == undefined && latitude == undefined) {
+                // const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                //     latitude = lat_lng.lat;
+                //     longitude = lat_lng.long;
+                match['isVirtual'] = false;
+            }
 
-            //         latitude = lat_lng.lat;
-            //         longitude = lat_lng.long;
-            //     }
-            // }
 
             if (isVirtual === false) {
                 if (longitude != undefined && latitude != undefined) {
@@ -330,10 +329,9 @@ class EventController {
                         { "$sort": { endDate: 1, } }
                     )
                 }
+            } else {
+                match['isVirtual'] = true;
 
-            }
-            if (isVirtual) {
-                match['isVirtual'] = true
             }
             // if(startDate)
             match['endDate'] = { $gt: new Date().getTime() }

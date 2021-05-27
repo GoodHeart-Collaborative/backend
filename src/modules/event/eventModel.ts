@@ -79,7 +79,7 @@ const eventSchema = new Schema({
     eventCategoryId: { type: Schema.Types.ObjectId, required: true },
     interestCount: { type: Number, default: 0 },
     created: { type: Number },
-    isVirtual: { type: Boolean }
+    isVirtual: { type: Boolean, default: false }
 
 }, {
     versionKey: false,

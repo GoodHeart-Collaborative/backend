@@ -63,6 +63,7 @@ declare namespace UserEventRequest {
         isFeaturedEvent: number;
         date: string;
         privacy: string;
+        isVirtual: string;
     }
 
 

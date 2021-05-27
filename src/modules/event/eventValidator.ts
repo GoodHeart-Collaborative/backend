@@ -55,7 +55,7 @@ let eventViewAllScreen = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
-    isVirtual: Joi.boolean(),
+    isVirtual: Joi.boolean().default(false),
     startDate: Joi.number(),
     endDate: Joi.number(),
 })
