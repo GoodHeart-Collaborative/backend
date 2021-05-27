@@ -17,6 +17,7 @@ let getEventHomeScreen = Joi.object({
         config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE,
         5
     ]).description('5-All'),
+    isVirtual: Joi.boolean().default(false),
     // date: Joi.string().allow([
     //     config.CONSTANT.DATE_FILTER.TODAY,
     //     config.CONSTANT.DATE_FILTER.TOMORROW,
@@ -90,7 +91,7 @@ let addEvents = Joi.object({
     //     type: Joi.string().required().valid(["Point"]),
     //     coordinates: Joi.array().items(Joi.number())
     // }),
-    address: Joi.string().trim().required(),
+    address: Joi.string().trim(),
     eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     // Joi.number().allow([
     //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
@@ -100,7 +101,7 @@ let addEvents = Joi.object({
     // ]).required(),
     allowSharing: Joi.number().allow(0, 1), //boolean().default(true),
     description: Joi.string().required(),
-    isVirtual: Joi.boolean()
+    isVirtual: Joi.boolean().default(false)
 })
 
 
@@ -149,7 +150,7 @@ let updateEvent = Joi.object({
         type: Joi.string().valid(["Point"]).default('Point'),
         coordinates: Joi.array().items(Joi.number())
     }),
-    address: Joi.string().trim().required(),
+    address: Joi.string().trim(),
     eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     // Joi.number().allow([
     //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,

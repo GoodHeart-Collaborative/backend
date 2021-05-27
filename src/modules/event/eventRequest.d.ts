@@ -45,6 +45,7 @@ declare namespace UserEventRequest {
         getIpfromNtwk: string;
         startDate: number;
         endDate: number;
+        isVirtual: boolean;
     }
 
     export interface getEventDetail {

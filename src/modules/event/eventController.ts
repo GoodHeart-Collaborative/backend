@@ -277,7 +277,7 @@ class EventController {
       */
     async getEvent(params: UserEventRequest.getEvents, tokenData) {
         try {
-            const { distance, eventCategoryId, date, searchKey, getIpfromNtwk, startDate, endDate } = params;
+            const { distance, eventCategoryId, date, searchKey, getIpfromNtwk, startDate, endDate, isVirtual } = params;
             let { longitude, latitude, } = params;
             let pickupLocation = [];
             let aggPipe = [];
@@ -294,30 +294,19 @@ class EventController {
                 ];
             }
 
-            if (longitude == undefined && latitude == undefined) {
-                const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+            if (params.isVirtual) {
+                if (longitude == undefined && latitude == undefined) {
+                    const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
 
-                latitude = lat_lng.lat;
-                longitude = lat_lng.long;
+                    latitude = lat_lng.lat;
+                    longitude = lat_lng.long;
+                }
             }
 
-
-            if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(longitude, latitude);
-                aggPipe.push({
-                    '$geoNear': {
-                        near: { type: "Point", coordinates: pickupLocation },
-                        spherical: true,
-                        maxDistance: searchDistance,
-                        distanceField: "dist",
-                    }
-                },
-                    { "$sort": { endDate: 1 } }
-                )
-                //     { "$sort": { dist: -1 } }
-                // )
-                featureAggPipe.push(
-                    {
+            if (params.isVirtual === false) {
+                if (longitude != undefined && latitude != undefined) {
+                    pickupLocation.push(longitude, latitude);
+                    aggPipe.push({
                         '$geoNear': {
                             near: { type: "Point", coordinates: pickupLocation },
                             spherical: true,
@@ -325,10 +314,27 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { endDate: 1, } }
-                )
-            }
+                        { "$sort": { endDate: 1 } }
+                    )
+                    //     { "$sort": { dist: -1 } }
+                    // )
+                    featureAggPipe.push(
+                        {
+                            '$geoNear': {
+                                near: { type: "Point", coordinates: pickupLocation },
+                                spherical: true,
+                                maxDistance: searchDistance,
+                                distanceField: "dist",
+                            }
+                        },
+                        { "$sort": { endDate: 1, } }
+                    )
+                }
 
+            }
+            if (isVirtual) {
+                match['isVirtual'] = true
+            }
             // if(startDate)
             match['endDate'] = { $gt: new Date().getTime() }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
