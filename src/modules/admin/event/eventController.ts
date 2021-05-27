@@ -59,7 +59,7 @@ class EventController {
 
     async getEvent(params: AdminEventRequest.IGetEvent) {
         try {
-            const { limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status, isExpired } = params;
+            const { limit, page, sortOrder, sortBy, fromDate, toDate, searchTerm, userId, status, isExpired, isVirtual } = params;
             let aggPipe = [];
             const match: any = {};
             let sort = {};
@@ -70,6 +70,9 @@ class EventController {
 
             if (userId) {
                 match.userId = appUtils.toObjectId(params.userId);
+            }
+            if (isVirtual) {
+                match.isVirtual = true
             }
             if (status) {
                 match["$and"] = [{ status: status }, { status: { $ne: config.CONSTANT.STATUS.DELETED } }];
@@ -250,7 +253,8 @@ class EventController {
                     createdAt: 1,
                     shareUrl: 1,
                     isEventFree: 1,
-                    isExpired: 1
+                    isExpired: 1,
+                    isVirtual: 1
                 }
             })
             const data = await eventDao.aggregate('event', aggPipe, {});

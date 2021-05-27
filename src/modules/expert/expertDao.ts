@@ -183,7 +183,11 @@ export class ExpertDao extends BaseDao {
                                             },
                                             {
                                                 $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                            }]
+                                            },
+                                            {
+                                                $eq: ['$privacy', config.CONSTANT.PRIVACY_STATUS.PUBLIC]
+                                            },
+                                        ]
                                     }
                                 }
                             },
@@ -927,40 +931,27 @@ export class ExpertDao extends BaseDao {
                 pageNo: page || 1,
             };
 
-            match['categoryId'] = {
-                $in: ['categoryId', appUtils.toObjectId(payload.categoryId)]
-            }
+            const reportedIdsCriteria = {
+                userId: appUtils.toObjectId(payload['userId']),
+                type: config.CONSTANT.HOME_TYPE.EXPERTS_POST,
+            };
+            const reportedIds = await this.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
+            let reportedpost = [];
+            let Ids1 = await reportedIds.map(function (item) {
+                return reportedpost.push(appUtils.toObjectId(item.postId));
+            });
+
+            match['categoryId'] = appUtils.toObjectId(payload.categoryId)
+
+            match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC;
+
+            match['_id'] = {
+                $nin: reportedpost
+            };
 
             let categoryPipeline: any = [
                 {
                     $match: match
-                },
-                {
-                    $lookup: {
-                        from: 'categories',
-                        let: { cId: '$categoryId' },
-                        as: 'categoryData',
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [{
-                                            $in: ['$_id', '$$cId'],
-                                        },
-                                            // {
-                                            //     $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
-                                            // }
-                                        ]
-                                    }
-                                }
-                            },
-                        ],
-                    }
-                },
-                {
-                    $match: {
-                        categoryData: { $ne: [] }
-                    }
                 },
                 {
                     $sort: {
@@ -968,22 +959,131 @@ export class ExpertDao extends BaseDao {
                     }
                 },
                 {
+                    $lookup: {
+                        from: 'likes',
+                        let: { pId: '$_id', uId: appUtils.toObjectId(payload['userId']), },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [{
+                                        $eq: ['$userId', '$$uId']
+                                    },
+                                    {
+                                        $eq: ['$postId', '$$pId']
+                                    },
+                                    {
+                                        $eq: ["$category", config.CONSTANT.COMMENT_CATEGORY.POST]
+                                    },
+                                    {
+                                        $eq: ["$type", config.CONSTANT.HOME_TYPE.EXPERTS_POST]
+                                    }
+                                    ]
+                                }
+                            }
+                        }],
+                        as: 'likeData'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "comments",
+                        let: { "post": "$_id", "user": await appUtils.toObjectId(payload['userId']) },
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$postId", "$$post"]
+                                        },
+                                        {
+                                            $eq: ["$userId", "$$user"]
+                                        },
+                                        {
+                                            $eq: ['$category', config.CONSTANT.COMMENT_CATEGORY.POST]
+                                        }
+                                    ]
+                                }
+                            }
+
+                        }],
+                        as: "commentData",
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        let: { cId: '$categoryId' },
+                        as: 'categoryData',
+                        pipeline: [{
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$_id', '$$cId']
+                                        },
+                                        {
+                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                title: 1,
+                                imageUrl: 1
+                            }
+                        }],
+
+                    }
+                },
+                {
                     $project: {
-                        categoryData: 0,
-                        createdAt: 0,
+                        // categoryData: 0,
                         updatedAt: 0,
-                        categoryId: 0,
-                        email: 0,
+                        createdAt: 0,
                         status: 0,
                         privacy: 0,
-                        contentId: 0,
-                        contentType: 0,
-                        contentDisplayName: 0
                     }
-                }
+                },
             ];
+            categoryPipeline.push({
+                $project: {
+                    // _id: 1,
+                    price: 1,
+                    expertName: 1,
+                    profilePicUrl: 1,
+                    contentId: 1,
+                    likeCount: 1,
+                    commentCount: 1,
+                    status: 1,
+                    privacy: 1,
+                    mediaType: 1,
+                    categoryId: 1,
+                    mediaUrl: 1,
+                    expertId: 1,
+                    contentType: 1,
+                    thumbnailUrl: 1,
+                    topic: 1,
+                    description: 1,
+                    categoryData: 1,
+                    type: 1,
+                    created: 1,
+                    contentDisplayName: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    isLike: {
+                        $cond: { if: { "$eq": [{ $size: "$likeData" }, 0] }, then: false, else: true }
+                    },
+                    isComment: {
+                        $cond: { if: { "$eq": [{ $size: "$commentData" }, 0] }, then: false, else: true }
+                    },
+                }
+            });
             categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(limit, page)];
-            let result = await this.aggregateWithPagination("expert", categoryPipeline, limit, page, true)
+            let result = await this.aggregateWithPagination("expert_post", categoryPipeline, limit, page, true)
 
             return result;
         } catch (error) {

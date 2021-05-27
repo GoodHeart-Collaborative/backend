@@ -24,6 +24,7 @@ let getEvents = Joi.object({
         config.CONSTANT.STATUS.ACTIVE,
         config.CONSTANT.STATUS.BLOCKED,
     ]),
+    isVirtual: Joi.boolean(),
     userId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).trim(),
     isExpired: Joi.boolean(),
 }).unknown()
@@ -73,6 +74,7 @@ let addEvents = Joi.object({
     //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
     //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
     // ]).required(),
+    isVirtual: Joi.boolean().default(false),
     allowSharing: Joi.number().allow(0, 1).default(1),
     description: Joi.string().allow('').required(),
     isFeatured: Joi.number().allow(0, 1).default(0),
@@ -109,6 +111,7 @@ let updateEvent = Joi.object({
     //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
     //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
     // ]),
+    isVirtual: Joi.boolean(),
     allowSharing: Joi.number().allow(0, 1), //.default(true),
     description: Joi.string(),
     isFeatured: Joi.number().allow(0, 1).default(0),

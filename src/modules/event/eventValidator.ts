@@ -54,6 +54,7 @@ let eventViewAllScreen = Joi.object({
         config.CONSTANT.PRIVACY_STATUS.PRIVATE,
         config.CONSTANT.PRIVACY_STATUS.PUBLIC
     ]),
+    isVirtual: Joi.boolean(),
     startDate: Joi.number(),
     endDate: Joi.number(),
 })
@@ -99,6 +100,7 @@ let addEvents = Joi.object({
     // ]).required(),
     allowSharing: Joi.number().allow(0, 1), //boolean().default(true),
     description: Joi.string().required(),
+    isVirtual: Joi.boolean()
 })
 
 

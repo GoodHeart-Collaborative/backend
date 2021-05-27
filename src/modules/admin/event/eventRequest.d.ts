@@ -39,6 +39,7 @@ declare namespace AdminEventRequest {
         status: string;
         userId: string;
         isExpired: boolean;
+        isVirtual: boolean;
     }
 
     export interface IupdateStatus {
@@ -66,6 +67,7 @@ declare namespace AdminEventRequest {
         //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
         //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
         // ]),
+        isVirtual: boolean;
         allowSharing: number; //.default(true),
         description: string;
         isFeatured: number;
