@@ -59,11 +59,14 @@ declare namespace UserEventRequest {
         longitude: number;
         latitude: number;
         distance: number;
-        eventCategoryId: number;
+        eventCategoryId: any;
         isFeaturedEvent: number;
-        date: string;
+        date: number;
         privacy: string;
-        isVirtual: string;
+        // getIpfromNtwk: string;
+        // startDate: number;
+        // endDate: number;
+        isVirtual: boolean;
     }
 
 

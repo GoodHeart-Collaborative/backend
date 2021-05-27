@@ -46,7 +46,7 @@ let eventViewAllScreen = Joi.object({
     //     5
     // ]).description('5-All'),
     isFeaturedEvent: Joi.number().required().allow(0, 1, 2), // 2for categoryfeatured
-    date: Joi.string().allow([
+    date: Joi.number().allow([
         config.CONSTANT.DATE_FILTER.TODAY,
         config.CONSTANT.DATE_FILTER.TOMORROW,
         config.CONSTANT.DATE_FILTER.WEEKEND

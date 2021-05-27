@@ -51,7 +51,7 @@ switch (ENVIRONMENT) {
 			dotenv.config({ path: ".env.production" });
 		} else {
 			process.exit(1);
-		}
+		}​​
 		break;
 	}
 	case "default": {

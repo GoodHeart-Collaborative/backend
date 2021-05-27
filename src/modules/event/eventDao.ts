@@ -92,11 +92,12 @@ export class EventDao extends BaseDao {
                 ];
             }
 
-
-            if (longitude == undefined && latitude == undefined) {
-                // const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                // latitude = lat_lng.lat;
-                // longitude = lat_lng.long;
+            if (isVirtual === false) {
+                if (longitude == undefined && latitude == undefined) {
+                    const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                    latitude = lat_lng.lat;
+                    longitude = lat_lng.long;
+                }
                 match['isVirtual'] = false
             }
 
