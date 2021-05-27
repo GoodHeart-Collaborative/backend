@@ -294,16 +294,16 @@ class EventController {
                 ];
             }
 
-            if (params.isVirtual) {
-                if (longitude == undefined && latitude == undefined) {
-                    const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+            // if (params.isVirtual) {
+            //     if (longitude == undefined && latitude == undefined) {
+            //         const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
 
-                    latitude = lat_lng.lat;
-                    longitude = lat_lng.long;
-                }
-            }
+            //         latitude = lat_lng.lat;
+            //         longitude = lat_lng.long;
+            //     }
+            // }
 
-            if (params.isVirtual === false) {
+            if (isVirtual === false) {
                 if (longitude != undefined && latitude != undefined) {
                     pickupLocation.push(longitude, latitude);
                     aggPipe.push({

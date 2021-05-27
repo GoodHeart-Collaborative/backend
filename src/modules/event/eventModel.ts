@@ -55,7 +55,7 @@ const eventSchema = new Schema({
     endDate: { type: Number, index: true },
     location: geoSchema,
     isEventFree: { type: Boolean, required: true },
-    address: { type: String, trim: true, required: true, index: true },
+    address: { type: String, trim: true, index: true },
     price: { type: Number },
     title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
