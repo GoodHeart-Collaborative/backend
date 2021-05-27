@@ -47,6 +47,14 @@ class ExpertController {
         }
     }
 
+    async getcategoryExpertsPost(payload: userExpertRequest.ICategoryRelatedExpert) {
+        try {
+            return await expertDao.getcategoryExperts(payload);
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+
     /**
     * @function expertDetailWithPost
     * @params (userExpertRequest.IgetExpertRelatedPost)

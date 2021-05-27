@@ -907,11 +907,101 @@ export class ExpertDao extends BaseDao {
     }
 
     /**
-     * @function getcategoryExperts
+      * @function getcategoryExperts
+      * @params ( userExpertRequest.getCategoryExpert)
+      * @description categoryRelatedExperts
+      */
+    async getcategoryExperts(payload: userExpertRequest.ICategoryRelatedExpert) {
+        try {
+            let { limit, page, searchTerm } = payload
+
+            const match: any = {};
+
+            match.status = config.CONSTANT.STATUS.ACTIVE;
+
+            if (searchTerm) {
+                match["$or"] = [
+                    { "title": { "$regex": searchTerm, "$options": "-i" } },
+                    { "name": { "$regex": searchTerm, "$options": "-i" } },
+                ];
+            }
+
+            const paginateOptions = {
+                limit: limit || 10,
+                pageNo: page || 1,
+            };
+
+            match['categoryId'] = {
+                $in: ['categoryId', appUtils.toObjectId(payload.categoryId)]
+            }
+
+            let categoryPipeline: any = [
+                {
+                    $match: match
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        let: { cId: '$categoryId' },
+                        as: 'categoryData',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [{
+                                            $in: ['$_id', '$$cId'],
+                                        },
+                                            // {
+                                            //     $eq: ['status', config.CONSTANT.STATUS.ACTIVE]
+                                            // }
+                                        ]
+                                    }
+                                }
+                            },
+                        ],
+                    }
+                },
+                {
+                    $match: {
+                        categoryData: { $ne: [] }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                },
+                {
+                    $project: {
+                        categoryData: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        categoryId: 0,
+                        email: 0,
+                        status: 0,
+                        privacy: 0,
+                        contentId: 0,
+                        contentType: 0,
+                        contentDisplayName: 0
+                    }
+                }
+            ];
+            categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(limit, page)];
+            let result = await this.aggregateWithPagination("expert", categoryPipeline, limit, page, true)
+
+            return result;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+
+    /**
+     * @function getcategoryExpertsPosts
      * @params ( userExpertRequest.getCategoryExpert)
      * @description categoryRelatedExperts
      */
-    async getcategoryExperts(payload: userExpertRequest.ICategoryRelatedExpert) {
+    async getcategoryExpertsPost(payload: userExpertRequest.ICategoryRelatedExpert) {
         try {
             let { limit, page, searchTerm } = payload
 

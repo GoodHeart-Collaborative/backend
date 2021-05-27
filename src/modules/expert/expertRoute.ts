@@ -118,7 +118,38 @@ export const userExpertRoute: ServerRoute[] = [
             }
         }
     },
-
+    {
+        method: "GET",
+        path: `${config.SERVER.API_BASE_URL}/v1/users/experts/category/ExpertsPost`,
+        handler: async (request: Request, h: ResponseToolkit) => {
+            const tokenData: TokenData = request.auth && request.auth.credentials && request.auth.credentials.tokenData;
+            const payload: userExpertRequest.ICategoryRelatedExpert = request.query;
+            try {
+                payload["userId"] = tokenData.userId
+                const result = await expertController.getcategoryExpertsPost(payload);
+                return responseHandler.sendSuccess(h, result);
+            } catch (error) {
+                return responseHandler.sendError(error);
+            }
+        },
+        config: {
+            tags: ["api", "experts"],
+            description: "get experts and category",
+            auth: {
+                strategies: ["UserAuth"]
+            },
+            validate: {
+                headers: validator.userAuthorizationHeaderObj,
+                query: expertValidator.categoryRelatedExperts,
+                failAction: appUtils.failActionFunction
+            },
+            plugins: {
+                "hapi-swagger": {
+                    responseMessages: config.CONSTANT.SWAGGER_DEFAULT_RESPONSE_MESSAGES
+                }
+            }
+        }
+    },
     {
         method: "GET",
         path: `${config.SERVER.API_BASE_URL}/v1/users/experts/detail`,
