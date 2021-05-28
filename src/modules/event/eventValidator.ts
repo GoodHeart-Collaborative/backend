@@ -160,6 +160,7 @@ let updateEvent = Joi.object({
     // ]).required(),
     allowSharing: Joi.number().allow(0, 1), //boolean().default(true),
     description: Joi.string().required(),
+    isVirtual: Joi.boolean().default(false)
 })
 
 export {
