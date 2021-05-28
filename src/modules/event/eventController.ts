@@ -764,6 +764,7 @@ class EventController {
                     address: 1,
                     status: 1,
                     friends: [],
+                    isVirtual: 1,
                     // hostUser: 1,
                     hostUser: {
                         _id: 1,

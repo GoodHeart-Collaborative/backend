@@ -387,6 +387,6 @@ export const MESSAGES = {
 		}
 	},
 	OTP_TEXT: (otp) => {
-		return `Your verification code is " + ${otp} + ". " + "Welcome to the community!`
+		return `Your verification code is this ${otp}  Welcome to the community!`
 	},
 };
