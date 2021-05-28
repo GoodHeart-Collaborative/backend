@@ -4,10 +4,24 @@ import * as AWS from "aws-sdk";
 
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
+import { SNS } from "aws-sdk";
+import { CONNREFUSED } from "dns";
+import { CONSTANT } from "@config/index";
 
 let smsCounter = 0;
 
 export class SMSManager {
+	private sns: SNS
+
+	// constructor() {
+	// this.sns = new SNS({
+	// 	region: "us-west-1", // "us-east-1", // config.SERVER.SNS.REGION,
+	// 	accessKeyId: config.SERVER.SNS.ACCESS_KEY_ID,
+	// 	secretAccessKey: config.SERVER.SNS.sec
+	// })
+	// }
+	// accessKeyId: "AKIASLXO7KC3YOB4W3XC",  CONFIG.SNS.ACCESS_KEY,
+	// secretAccessKey: "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" //CONFIG.SNS.SECRET_KEY
 
 	sendMessageViaAWS(countryCode, mobileNo, body) {
 		// Set region
@@ -16,7 +30,7 @@ export class SMSManager {
 			accessKeyId: config.SERVER.SNS.ACCESS_KEY_ID,
 			secretAccessKey: config.SERVER.SNS.SECRET_ACCESS_KEY
 		});
-		console.log(countryCode ? "+" + countryCode + mobileNo : "+" + mobileNo);
+
 		// Create promise and SNS service object
 		const publishTextPromise = new AWS.SNS({ apiVersion: "2010-03-31" }).publish({
 			Message: body,

@@ -167,8 +167,6 @@ export class NotificationDao extends BaseDao {
 			this.update('notifications', { receiverId: await toObjectId(tokenData.userId) }, { isRead: true }, { multi: true })
 			this.updateOne('users', { _id: await toObjectId(tokenData.userId) }, { badgeCount: 0 }, {});
 
-			// }
-
 			return result
 
 		} catch (error) {

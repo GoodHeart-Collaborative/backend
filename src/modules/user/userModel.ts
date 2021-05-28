@@ -33,7 +33,7 @@ export interface IUser extends Document {
 	profilePicUrl: [string];
 	address: Address;
 	status: string;
-	mobileOtp: number;
+	mobileOtp: string;
 	preference: string;
 	industryType: string;
 	experience: number;
@@ -66,7 +66,7 @@ var geoSchema = new Schema({
 });
 
 const userSchema = new Schema({
-	mobileOtp: { type: Number },
+	mobileOtp: { type: String },
 	isAppleLogin: { type: Boolean, default: false },
 	isMobileVerified: { type: Boolean, default: false },
 	isEmailVerified: { type: Boolean, default: false },
@@ -92,6 +92,15 @@ const userSchema = new Schema({
 			config.CONSTANT.PROFESSION_TYPE.Executive_Director,
 			config.CONSTANT.PROFESSION_TYPE.Founder,
 			config.CONSTANT.PROFESSION_TYPE.Managing_Director,
+			config.CONSTANT.PROFESSION_TYPE.Manager_Supervisor,
+			config.CONSTANT.PROFESSION_TYPE.Social_Worker,
+			config.CONSTANT.PROFESSION_TYPE.Direct_Care_Staff,
+			config.CONSTANT.PROFESSION_TYPE.Caregiver,
+			config.CONSTANT.PROFESSION_TYPE.Doctor_Nurse_Medical_Staff,
+			config.CONSTANT.PROFESSION_TYPE.Teacher_School_Staff,
+			config.CONSTANT.PROFESSION_TYPE.First_Responder,
+			config.CONSTANT.PROFESSION_TYPE.Therapist_Counselor
+
 		]
 	},
 	companyName: { type: String },
@@ -149,6 +158,8 @@ const userSchema = new Schema({
 			config.INDUSTRIES.SOCIAL_AND_COMMUNITY_SERVICES,
 			config.INDUSTRIES.LAW_ENFORCEMENT,
 			config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
+			config.INDUSTRIES.Mental_Health,
+			config.INDUSTRIES.Education,
 		],
 		// default: config.INDUSTRIES.NONPROFIT
 	},

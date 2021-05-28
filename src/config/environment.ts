@@ -36,13 +36,22 @@ switch (ENVIRONMENT) {
 		}
 		break;
 	}
-	case "prod":
-	case "production": {
-		if (fs.existsSync(path.join(process.cwd(), "/.env"))) {
-			dotenv.config({ path: ".env" });
+	case "beta":
+	case "beta": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.beta"))) {
+			dotenv.config({ path: ".env.beta" });
 		} else {
 			process.exit(1);
 		}
+		break;
+	}
+	case "prod":
+	case "production": {
+		if (fs.existsSync(path.join(process.cwd(), "/.env.production"))) {
+			dotenv.config({ path: ".env.production" });
+		} else {
+			process.exit(1);
+		}​​
 		break;
 	}
 	case "default": {
@@ -71,7 +80,7 @@ switch (ENVIRONMENT) {
 }
 
 export const SERVER = Object.freeze({
-	APP_NAME: "WC",
+	APP_NAME: "Good heart",
 	// BASE_PATH: process.cwd(),
 	TEMPLATE_PATH: process.cwd() + "/src/views/",
 	UPLOAD_DIR: process.cwd() + "/src/uploads/",
@@ -109,6 +118,7 @@ export const SERVER = Object.freeze({
 			// reconnectTries: 100000,
 			// reconnectInterval: 6000,
 			// useFindAndModify: false
+			// retryWrites: true
 		}
 	},
 	ADMIN_CREDENTIALS: {
@@ -118,10 +128,10 @@ export const SERVER = Object.freeze({
 	},
 	MAIL: {
 		SMTP: {
-			HOST: "smtp.gmail.com",
+			HOST: "email-smtp.us-west-2.amazonaws.com",
 			PORT: "587",
-			USER: "womencommunite@gmail.com",
-			PASSWORD: "12345@women"
+			USER: "AKIASLXO7KC3432ELONN",
+			PASSWORD: "BDItCWFVI22LKxqaCMwKHolcUK2st6iPy4O5DrYKOHlf"
 		}
 	},
 	BASIC_AUTH: {
@@ -142,6 +152,11 @@ export const SERVER = Object.freeze({
 		REGION: process.env["SNS_REGION"],
 		TOPIC_ARN: process.env["TOPIC_ARN"],
 		PROTOCOL: process.env["SNS_PROTOCOL"]
+	},
+	SNS_SMS: {
+		region: process.env['REGION'],
+		accessKeyId: process.env['ACCESS_KEY_ID'],
+		secretAccessKey: process.env['SECRET_ACCESS_KEY']
 	},
 	// option parameters constantys for s3
 	S3: {
@@ -187,7 +202,10 @@ export const SERVER = Object.freeze({
 export const IN_APP = {
 	ANDROID: {
 		SUBSCRIPTIONS: {
-
+			"1": "FREE_TRIAL",
+			"2": "com.goodheart.monthly.limited.subscription",
+			"3": "com.goodheart.monthly.premium.subscription",
+			"4": "NO_SUBSCRIPTION"
 		},
 		ANDROID_PACKAGE_NAME: process.env["ANDROID_PACKAGE_NAME"]
 	},

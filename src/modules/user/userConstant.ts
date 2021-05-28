@@ -34,7 +34,7 @@ export const MESSAGES = {
 		},
 		USER_ACCOUNT_SCREENING: {
 			"statusCode": config.CONSTANT.HTTP_STATUS_CODE.ADMIN_ACCOUNT_SCREENING,
-			"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
+			"message": "Thank you for signing up! Your account is under admin's approval process. Verification can take up to 48 hours. Once verified, you will receive a message from the admin about your access to our supportive community",
 			"type": "BLOCKED_USER"
 		},
 		ADMIN_REJECTED_USER_ACCOUNT: {
@@ -260,10 +260,10 @@ export const MESSAGES = {
 			}
 		},
 		USER_ACCOUNT_SCREENING: (data) => {
-			data["message"] = "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!"
+			data["message"] = "Thank you for signing up! Your account is under admin's approval process. Verification can take up to 48 hours. Once verified, you will receive a message from the admin about your access to our supportive community."
 			return {
 				"statusCode": config.CONSTANT.HTTP_STATUS_CODE.OK,
-				"message": "Your account is under admins approval process. Once verified, you’ll be on your way to building personal and professional resiliency with other like-minded Unicorns!",
+				"message": "Thank you for signing up! Your account is under admin's approval process. Verification can take up to 48 hours. Once verified, you will receive a message from the admin about your access to our supportive community.",
 				"type": "BLOCKED_USER",
 				data: data
 			}
@@ -387,6 +387,6 @@ export const MESSAGES = {
 		}
 	},
 	OTP_TEXT: (otp) => {
-		return `Your App code is " + ${otp} + ". " + "Welcome to the community!`
+		return `Your verification code is this ${otp}  Welcome to the community!`
 	},
 };

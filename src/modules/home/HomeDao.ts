@@ -32,7 +32,7 @@ export class HomeDao extends BaseDao {
                 aggPipe.push({ "$match": match });
             } else {
                 aggPipe.push({ "$match": match });
-                idKey = '$_idd'
+                idKey = '$_idd' 
                 aggPipe.push({
                     $group: {
                         _id: "$type",
@@ -137,9 +137,31 @@ export class HomeDao extends BaseDao {
             aggPipe.push({ $project: project });
             if (!type) {
                 result = await this.aggregate('home', aggPipe, {})
+                const arr = [0, 0, 0];
+                // console.log('resultresultresultresult>>>>>>>>>>>>>>>>', result);
                 if (result && result.length > 1) {
-                    result.sort(function (a, b) { return b.type - a.type });
-                    result.reverse()
+                    // result.sort(function (a, b) { return b.type - a.type });
+                    // result.reverse()
+                    result.map((data: any) => {
+                        if (data.type === 3) {
+                            arr[0] = data;
+                        }
+                        else if (data.type === 1) {
+                            arr[1] = data;
+                        }
+                        else if (data.type === 2) {
+                            arr[2] = data;
+                        }
+                    })
+                    for (let i = 0; i < arr.length; i++) {
+                        if (arr[i] === 0) {
+                            let index = i;
+                            if (index > -1) {
+                                arr.splice(index, 1);
+                            }
+                        }
+                    }
+                    result = arr
                 }
             } else {
                 aggPipe = [...aggPipe, ...await this.addSkipLimit(limit, pageNo)];

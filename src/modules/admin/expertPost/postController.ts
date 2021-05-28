@@ -22,9 +22,9 @@ class ExpertPostController {
 
         return result[0];
     }
-	/**
-	 * @function addExpertPosts
-	 * @description admin add post to the experts
+    /**
+     * @function addExpertPosts
+     * @description admin add post to the experts
      * /
      **/
     async addExpertPost(params: AdminExpertPostRequest.AddPost) {
@@ -33,6 +33,11 @@ class ExpertPostController {
             const result = this.getTypeAndDisplayName(config.CONSTANT.EXPERT_CONTENT_TYPE, params['contentId'])
             params['contentType'] = result['TYPE']
             params['contentDisplayName'] = result['DISPLAY_NAME'];
+
+            const expertData = await expertDao.findOne('expert', { _id: params.expertId }, {}, {})
+            console.log('expertDataexpertDataexpertData', expertData);
+            params['profilePicUrl'] = expertData.profilePicUrl
+            params['expertName'] = expertData.name;
 
             params['created'] = new Date().getTime();
             const data = await expertPostDao.insert("expert_post", params, {});

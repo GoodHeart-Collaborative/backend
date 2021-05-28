@@ -25,6 +25,7 @@ export interface Ievent extends Document {
     eventCategoryId: string;
     eventCategoryImage: string;
     isEventFree: boolean;
+    isVirtual: string;
 }
 var geoSchema = new Schema({
     // location: { type: String, trim: true, required: true, default: '' },
@@ -54,7 +55,7 @@ const eventSchema = new Schema({
     endDate: { type: Number, index: true },
     location: geoSchema,
     isEventFree: { type: Boolean, required: true },
-    address: { type: String, trim: true, required: true, index: true },
+    address: { type: String, trim: true, index: true },
     price: { type: Number },
     title: { type: String, trim: true, required: true },
     description: { type: String, trim: true, required: true },
@@ -78,6 +79,7 @@ const eventSchema = new Schema({
     eventCategoryId: { type: Schema.Types.ObjectId, required: true },
     interestCount: { type: Number, default: 0 },
     created: { type: Number },
+    isVirtual: { type: Boolean, default: false }
 
 }, {
     versionKey: false,

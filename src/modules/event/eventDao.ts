@@ -26,7 +26,7 @@ export class EventDao extends BaseDao {
             // if ((params.isFeaturedEvent === 2 && !params.eventCategoryId) || (!params.isFeaturedEvent == 2 && params.eventCategoryId)) {
             //     return Promise.reject(c)
             // }
-            const { pageNo, limit, date, searchKey, distance, eventCategoryId, isFeaturedEvent, getIpfromNtwk, startDate, endDate } = params;
+            const { pageNo, limit, date, searchKey, distance, eventCategoryId, isFeaturedEvent, getIpfromNtwk, startDate, endDate, isVirtual } = params;
             let { longitude, latitude, } = params;
 
             const paginateOptions = {
@@ -92,11 +92,13 @@ export class EventDao extends BaseDao {
                 ];
             }
 
-
-            if (longitude == undefined && latitude == undefined) {
-                const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-                latitude = lat_lng.lat;
-                longitude = lat_lng.long;
+            if (isVirtual === false) {
+                if (longitude == undefined && latitude == undefined) {
+                    const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                    latitude = lat_lng.lat;
+                    longitude = lat_lng.long;
+                }
+                match['isVirtual'] = false
             }
 
 
@@ -113,6 +115,8 @@ export class EventDao extends BaseDao {
                     },
                     { "$sort": { endDate: 1 } }
                 )
+            } else {
+                match['isVirtual'] = true;
             }
             // else {
             //     aggPipe.push(
@@ -205,6 +209,7 @@ export class EventDao extends BaseDao {
                     },
 
                     users: 1,
+                    isVirtual: 1
                 }
             };
 

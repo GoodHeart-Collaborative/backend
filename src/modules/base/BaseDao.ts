@@ -1,7 +1,8 @@
 "use strict";
 
 import * as _ from "lodash";
-import { QueryFindOneAndUpdateOptions } from "mongoose";
+// import { any } from "mongoose";
+// import { QueryFindOneAndUpdateOptions } from "mongoose";
 
 import * as models from "@modules/models";
 
@@ -213,7 +214,7 @@ export class BaseDao {
 
 
 
-	async find(model: ModelNames, query: any, projection: any, options: QueryFindOneAndUpdateOptions, sort, paginate, populateQuery: any) {
+	async find(model: ModelNames, query: any, projection: any, options: any, sort, paginate, populateQuery: any) {
 		try {
 			const ModelName: any = models[model];
 			if (!_.isEmpty(sort) && !_.isEmpty(paginate) && _.isEmpty(populateQuery)) { // sorting with pagination
@@ -231,7 +232,7 @@ export class BaseDao {
 			return Promise.reject(error);
 		}
 	}
-	async findAll(model: ModelNames, query: any, projection: any, options: QueryFindOneAndUpdateOptions) {
+	async findAll(model: ModelNames, query: any, projection: any, options: any) {
 		try {
 			let ModelName: any = models[model];
 			let cehck = await ModelName.find(query, projection, options);
@@ -275,7 +276,7 @@ export class BaseDao {
 		}
 	}
 
-	async findOneAndUpdate(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async findOneAndUpdate(model: ModelNames, query: any, update: any, options: any) {
 		try {
 			const ModelName: any = models[model];
 			return await ModelName.findOneAndUpdate(query, update, options);
@@ -284,7 +285,7 @@ export class BaseDao {
 		}
 	}
 
-	async findAndRemove(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async findAndRemove(model: ModelNames, query: any, update: any, options: any) {
 		try {
 			const ModelName: any = models[model];
 			return await ModelName.findOneAndRemove(query, update, options);
@@ -306,7 +307,7 @@ export class BaseDao {
 		}
 	}
 
-	async updateOne(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async updateOne(model: ModelNames, query: any, update: any, options: any) {
 		try {
 
 			const ModelName: any = models[model];
@@ -316,7 +317,7 @@ export class BaseDao {
 		}
 	}
 
-	async updateMany(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async updateMany(model: ModelNames, query: any, update: any, options: any) {
 		try {
 			const ModelName: any = models[model];
 			return await ModelName.updateMany(query, update, options);
@@ -361,7 +362,7 @@ export class BaseDao {
 		}
 	}
 
-	async aggregate(model: ModelNames, aggPipe, options: QueryFindOneAndUpdateOptions) {
+	async aggregate(model: ModelNames, aggPipe, options: any) {
 		try {
 			const ModelName: any = models[model];
 			const aggregation: any = ModelName.aggregate(aggPipe);
@@ -374,7 +375,7 @@ export class BaseDao {
 		}
 	}
 
-	async insert(model: ModelNames, data, options: QueryFindOneAndUpdateOptions) {
+	async insert(model: ModelNames, data, options: any) {
 		try {
 			// data['createdAt'] = Date.now();
 			// data['updatedAt'] = Date.now();
@@ -388,7 +389,7 @@ export class BaseDao {
 		}
 	}
 
-	async insertMany(model: ModelNames, data, options: QueryFindOneAndUpdateOptions) {
+	async insertMany(model: ModelNames, data, options: any) {
 		try {
 			const ModelName: any = models[model];
 			return await ModelName.collection.insertMany(data, options);
@@ -408,7 +409,7 @@ export class BaseDao {
 		}
 	}
 
-	async bulkFindAndUpdate(bulk, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async bulkFindAndUpdate(bulk, query: any, update: any, options: any) {
 		try {
 			return await bulk.find(query).upsert().update(update, options);
 		} catch (error) {
@@ -416,7 +417,7 @@ export class BaseDao {
 		}
 	}
 
-	async bulkFindAndUpdateOne(bulk, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async bulkFindAndUpdateOne(bulk, query: any, update: any, options: any) {
 		try {
 			return await bulk.find(query).upsert().updateOne(update, options);
 		} catch (error) {
@@ -424,7 +425,7 @@ export class BaseDao {
 		}
 	}
 
-	async findByIdAndUpdate(model: ModelNames, query: any, update: any, options: QueryFindOneAndUpdateOptions) {
+	async findByIdAndUpdate(model: ModelNames, query: any, update: any, options: any) {
 		try {
 			const ModelName: any = models[model];
 			return await ModelName.findByIdAndUpdate(query, update, options);

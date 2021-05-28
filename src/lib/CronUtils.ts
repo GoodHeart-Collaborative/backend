@@ -1,4 +1,4 @@
-// const cron = require("node-cron");
+const cron = require("node-cron");
 // const request = require("request");
 // import { memberDao } from "@modules/admin/memberOfDay/v1/MemberDao";
 import * as config from "@config/index";
@@ -19,8 +19,8 @@ export class CronUtils extends BaseDao {
 	init(payload) {
 		console.log("Cron job");
 		// this will execute on the server time at 00:01:00 each day by server time
-		// task = cron.schedule("5 0 * * *", async function () {
-		// 	// task = cron.schedule('* * * * * *', function () {
+		// task = cron.schedule("*/1 * * * *") //, async function () {
+		// task = cron.schedule('* * * * * *', function () {
 		// 	console.log("this will execute on the server time at 00:01:00 each day by server time");
 		// 	cronJob.createMember();
 
@@ -43,7 +43,7 @@ export class CronUtils extends BaseDao {
 		// if (payload.type === 'memberOfDay') {
 		this.createMember()
 		// } else if (payload.type === 'subscription') {
-		subscriptionController.verifySubscriptionRenewal()
+		subscriptionController.verifySubscriptionRenewal();
 		// } else if (payload.type === 'eventReminder') {
 		// this.eventReminder()
 		// }
@@ -60,6 +60,7 @@ export class CronUtils extends BaseDao {
 					adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
 					countMember: minMemberCount.memberOfDayCount,
 					profession: { $ne: "" },
+					firstName: { $exists: true },
 				}
 			},
 			{ $sample: { size: 1 } } // You want to get 5 docs

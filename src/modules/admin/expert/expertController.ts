@@ -7,6 +7,7 @@ import * as config from "@config/index";
 import * as expertConstant from "@modules/admin/expert/expertConstant";
 import { expertDao } from "@modules/admin/expert/expertDao";
 import * as appUtils from "@utils/appUtils";
+import { expertPostDao } from "../expertPost/expertPostDao";
 
 class ExpertController {
 
@@ -18,11 +19,11 @@ class ExpertController {
         });
         return result[0];
     }
-	/**
-	 * @function addExpert
-	 * @description admin add experts
+    /**
+     * @function addExpert
+     * @description admin add experts
      * @param (AdminExpertRequest.expertAdd)
-	 */
+     */
     async addExpert(params: AdminExpertRequest.expertAdd) {
         try {
             params['created'] = new Date().getTime()
@@ -39,10 +40,10 @@ class ExpertController {
         }
     }
 
-	/**
-	 * @function getExpert
-	 * @description admin get xperts and search and filter on the there [] category choose
-	 */
+    /**
+     * @function getExpert
+     * @description admin get xperts and search and filter on the there [] category choose
+     */
 
     async getExpert(params: AdminExpertRequest.getExpert) {
         try {
@@ -145,10 +146,10 @@ class ExpertController {
         }
     }
 
-	/**
-	 * @function updateExpert
-	 * @description admin update experts
-	 */
+    /**
+     * @function updateExpert
+     * @description admin update experts
+     */
 
     async updateExpert(params: AdminExpertRequest.updateExpert) {
         try {
@@ -160,6 +161,13 @@ class ExpertController {
                 ...params
             }
             const data = await expertDao.updateOne('expert', criteria, dataToUpdate, {})
+
+            const updateData = {
+                expertName: params.name,
+                profilePicUrl: params.profilePicUrl
+            }
+            const expertPost = expertPostDao.updateMany('expert_post', criteria, updateData, {})
+
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
             }

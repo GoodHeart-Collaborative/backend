@@ -32,6 +32,7 @@ export class SubscriptionDao extends BaseDao {
             query.transaction_id = params.transaction_id;
             query.receiptToken = params.receiptToken;
             query.subscriptionType = params.subscriptionType;
+            query.deviceType = (params.platform).toString();
             query.amount = params.amount || 0;
             query.startDate = params.startDate;
             query.subscriptionEndDate = params.endDate || 0;
@@ -64,6 +65,7 @@ export class SubscriptionDao extends BaseDao {
             update.subscriptionType = params.subscriptionType;
             update.subscriptionEndDate = params.endDate;
             update.isSubscribed = params.isSubscribed;
+            update.subscriptionPlatform = (params.platform).toString();
 
 
             return await this.findOneAndUpdate("users", query, update, {});
@@ -129,7 +131,7 @@ export class SubscriptionDao extends BaseDao {
         query.deviceType = params.deviceType;
         query.isRenewTried = false;
         query.subscriptionRenewalType = IN_APP.SUBSCRIPTION_TYPE.RENEWAL;
-        
+
         return await this.findAll("subscription", query, {}, {});
     }
 
@@ -150,7 +152,7 @@ export class SubscriptionDao extends BaseDao {
         if (params.status) {
             update.status = params.status;
         }
-        
+
         return await this.findAll("subscription", query, {}, {});
     }
 

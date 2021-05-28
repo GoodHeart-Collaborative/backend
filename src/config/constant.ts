@@ -224,7 +224,9 @@ export const INDUSTRIES = {
 	EMERGENCY_SERVICES: 2,
 	SOCIAL_AND_COMMUNITY_SERVICES: 3,
 	LAW_ENFORCEMENT: 4,
-	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5
+	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5,
+	Mental_Health: 6,
+	Education: 7
 };
 
 export const PROFESSION_TYPE = {
@@ -237,7 +239,15 @@ export const PROFESSION_TYPE = {
 	Consultant: "Consultant",
 	Professor: "Professor",
 	Professional_Trainer: "Professional Trainer",
-	Director: " Director"
+	Director: " Director",
+	Manager_Supervisor: "Manager/Supervisor",
+	Therapist_Counselor: "Therapist/Counselor",
+	Social_Worker: "Social Worker",
+	Direct_Care_Staff: "Direct Care Staff",
+	Caregiver: "Caregiver",
+	Doctor_Nurse_Medical_Staff: "Doctor/Nurse/Medical Staff",
+	Teacher_School_Staff: "Teacher/School Staff",
+	First_Responder: "First Responder"
 }
 
 const SOCIAL_LOGIN_TYPE = {
@@ -455,7 +465,7 @@ const MESSAGES = {
 		},
 		EMAIL_ALREADY_VERIFIED: {
 			"statusCode": HTTP_STATUS_CODE.BAD_REQUEST,
-			"message": "Hi your email is already been verified, please login to continue",
+			"message": "Hi your email is already verified, please login to continue",
 			"type": "EMAIL_NOT_REGISTERED"
 		},
 		EMAIL_NOT_REGISTERED: {
@@ -619,7 +629,7 @@ const EMAIL_TEMPLATE = {
 		IMPORT_SHEET_FAILURE: "Import Sheet Failure"
 	},
 	BCC_MAIL: ["shubham.maheshwari@appinventiv.com"],
-	FROM_MAIL: "do-not-reply@mail.appinventive.com"
+	FROM_MAIL: "app_support@goodheart.app"
 };
 
 const SMS = {

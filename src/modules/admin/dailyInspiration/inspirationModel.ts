@@ -7,9 +7,6 @@ import { Schema, Model, Document } from "mongoose";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 
-// const connection = mongoose.createConnection(config.SERVER.MONGO.DB_URL + config.SERVER.MONGO.DB_NAME, config.SERVER.MONGO.OPTIONS);
-// autoIncrement.initialize(connection);
-
 export interface Inspiration extends Document {
 
     // categoryId: string,

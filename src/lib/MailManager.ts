@@ -5,6 +5,7 @@ import * as nodemailer from "nodemailer";
 import * as appUtils from "@utils/appUtils";
 import * as config from "@config/index";
 import { TemplateUtil } from "@utils/TemplateUtil";
+import * as ses from "nodemailer-ses-transport";
 
 // using smtp
 const transporter = nodemailer.createTransport({
@@ -18,11 +19,31 @@ const transporter = nodemailer.createTransport({
 	}
 });
 
+// const options = {
+// 	auth: {
+// 		api_user: config.SERVER.MAIL.SENDGRID.API_USER,
+// 		api_key: config.SERVER.MAIL.SENDGRID.API_KEY
+// 	}
+// };
+// const client = nodemailer.createTransport(sgTransport(options));
+
+// using Amazon SES
+let sesTransporter = nodemailer.createTransport(ses({
+	accessKeyId: "AKIA6DQMUBGGZLL3VB6F", // config.SERVER.AWS_IAM_USER.ACCESS_KEY_ID,
+	secretAccessKey: "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", //config.SERVER.AWS_IAM_USER.SECRET_ACCESS_KEY,
+	region: "us-east-1 ues kr lena"
+	// Port: 587,
+	// TLS: Yes
+
+}));
+
+
 export class MailManager {
 	private fromEmail: string = config.CONSTANT.EMAIL_TEMPLATE.FROM_MAIL;
 
 	async sendMailViaSmtp(params) {
 		try {
+
 			const mailOptions = {
 				from: `${config.SERVER.APP_NAME} <${this.fromEmail}>`,
 				to: params.email,
@@ -34,10 +55,10 @@ export class MailManager {
 				transporter.sendMail(mailOptions, function (error, info) {
 					if (error) {
 						console.log(error);
-						resolve();
+						resolve(error);
 					} else {
 						console.log("Message sent: " + info.response);
-						resolve();
+						resolve(info);
 					}
 				});
 			});
@@ -47,8 +68,73 @@ export class MailManager {
 		return {};
 	}
 
+	// async sendMailViaSmtp(params) {
+	// 	try {
+	// 		// let mailOptions = {
+	// 		// 	from: `${config.SERVER.APP_NAME} <${this.fromEmail}>`,
+	// 		// 	to: params.email,
+	// 		// 	subject: params.subject,
+	// 		// 	html: params.content
+	// 		// };
+	// 		// if (params.bcc) mailOptions["bcc"] = params["bcc"];
+	// 		// if (params.attachments) {
+	// 		// 	mailOptions["attachments"] = [{
+	// 		// 		filename: "My Cool Document",
+	// 		// 		content: params.base64,
+	// 		// 		encoding: "base64"
+	// 		// 	}];
+	// 		// }
+
+	// 		// return new Promise((resolve, reject) => {
+	// 		// 	sesTransporter.sendMail(mailOptions, function (error, info) {
+	// 		// 		if (error) {
+	// 		// 			console.log(error);
+	// 		// 			resolve(false);
+	// 		// 		} else {
+	// 		// 			console.log("Message sent: " + info.response);
+	// 		// 			resolve(true);
+	// 		// 		}
+	// 		// 	});
+	// 		// })
+	// 		console.log('vvv', this.fromEmail);
+
+	// 		let mailOptions: Object = {
+	// 			from: `good heart <${this.fromEmail}>`,
+	// 			to: params.email,
+	// 			subject: params.subject,
+	// 			html: params.content,
+	// 		}
+	// 		if (params.bcc) mailOptions["bcc"] = params.bcc;
+	// 		if (params.attachments) mailOptions['attachments'] = params.attachments;
+	// 		// sesTransporter.sendMail(mailOptions);
+	// 		return new Promise(function (resolve, reject) {
+	// 			sesTransporter.sendMail(mailOptions, function (error, info) {
+	// 				if (error) {
+	// 					console.log(error);
+	// 					resolve(error);
+	// 				} else {
+	// 					console.log("Message sent: " + info.response);
+	// 					resolve(info);
+	// 				}
+	// 			});
+	// 		});
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// }
+
+	// async sendMail(params) {
+	// 	return await this.sendMailViaSmtp(params);
+	// }
 	async sendMail(params) {
+		// if (config.SERVER.MAIL_TYPE === config.CONSTANT.MAIL_SENDING_TYPE.SENDGRID) {
+		// return await this.sendMailViaSendgrid(params);
+		// } else {
+		// if (config.SERVER.ENVIRONMENT === "production" || config.SERVER.ENVIRONMENT === "preproduction")
+		// return await this.sendMailViaAmazonSes(params);
+		// else
 		return await this.sendMailViaSmtp(params);
+		// }
 	}
 
 	// async forgotPasswordEmailToAdmin(params) {

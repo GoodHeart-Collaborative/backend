@@ -15,9 +15,11 @@ class SubscriptionController {
      */
     async createSubscription(params) {
         try {
+          console.log("Subscription Params", params);
             let tokenData;
+            const endDate = {};
             if (params.platform == CONSTANT.DEVICE_TYPE.ANDROID) {
-                tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscription_type, params.receiptToken);
+                tokenData = await inAppSubscription.verifyAndroidSubscription(params.subscriptionType, params.receiptToken);
                 console.log("puchase details", tokenData);
                 if (tokenData) {
                     params.startDate = tokenData.startTimeMillis;
@@ -26,9 +28,11 @@ class SubscriptionController {
                     params.transaction_id = tokenData.orderId;
                 }
             } else if (params.platform == CONSTANT.DEVICE_TYPE.IOS) {
+                console.log("Request", params);
                 tokenData = await inAppSubscription.verifyIosInAppToken(params.receiptToken);
 
                 if (!tokenData.flag) {
+                  console.log("Request", tokenData);
                     return Promise.reject(CONSTANT.MESSAGES.ERROR.INTERNAL_SERVER_ERROR);
                 }
 
@@ -223,7 +227,7 @@ class SubscriptionController {
                         if (subs.tries < 1) {
                             await subscriptionDao.updateUserSubscription({
                                 isSubscribed: false,
-                                subscriptionType: subs.subscription_id,
+                                subscriptionType: config.CONSTANT.USER_SUBSCRIPTION_PLAN.NONE.value,
                                 endDate: tokenDetails.expiryTimeMillis,
                                 userId: subs.userId
                             });

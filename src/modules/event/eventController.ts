@@ -11,6 +11,7 @@ import * as appUtils from "@utils/appUtils";
 import { categoryDao } from "@modules/admin/catgeory";
 import * as tokenManager from '@lib/tokenManager';
 import { errorReporter } from "@lib/flockErrorReporter";
+import { CONSTANT } from "@config/index";
 class EventController {
 
     getTypeAndDisplayName(findObj, num: number) {
@@ -21,9 +22,9 @@ class EventController {
         });
         return result[0];
     }
-	/**
-	 * @function addEvent
-	 * @description user add event
+    /**
+     * @function addEvent
+     * @description user add event
      * @params (UserEventRequest.AddEvent)
      */
     async addEvent(params: UserEventRequest.AddEvent) {
@@ -80,7 +81,7 @@ class EventController {
             let defaultAndInterestEveent = [];
             let typeAggPipe = [];
             let match: any = {};
-
+            let goingList = [];
             match['userId'] = appUtils.toObjectId(tokenData.userId);
             // match['status'] = config.CONSTANT.STATUS.ACTIVE;
 
@@ -92,19 +93,19 @@ class EventController {
             // }
             typeAggPipe.push({ $match: match });
 
-            if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST) {
+            if (!params.type || params.type === config.CONSTANT.EVENT_INTEREST.INTEREST || config.CONSTANT.EVENT_INTEREST.GOING) {
                 defaultAndInterestEveent.push({
                     $match: {
                         status: config.CONSTANT.STATUS.ACTIVE,
                         userId: appUtils.toObjectId(tokenData.userId),
-                        type: config.CONSTANT.EVENT_INTEREST.INTEREST
+                        type: params.type || config.CONSTANT.EVENT_INTEREST.INTEREST
                     }
                 });
 
                 defaultAndInterestEveent.push({
                     $lookup: {
                         from: 'events',
-                        let: { eId: '$eventId', uId: appUtils.toObjectId(tokenData.userId) },
+                        let: { eId: '$eventId', uId: appUtils.toObjectId(tokenData.userId), userIdd: '$userId', typ: '$type', status: '$status' },
                         as: 'eventData',
                         pipeline: [{
                             $match: {
@@ -121,7 +122,24 @@ class EventController {
                         },
                         {
                             $addFields: {
-                                isInterest: true,
+                                isInterest: {
+                                    $cond: {
+                                        if: {
+                                            $and: [
+                                                {
+                                                    $eq: ['$$userIdd', appUtils.toObjectId(tokenData.userId)]
+                                                },
+                                                {
+                                                    $eq: ['$$typ', CONSTANT.EVENT_INTEREST.INTEREST]
+                                                },
+                                                {
+                                                    $eq: ['$$status', config.CONSTANT.STATUS.ACTIVE]
+                                                }
+                                            ]
+                                        }, then: true,
+                                        else: false
+                                    }
+                                },
                                 isHostedByMe: {
                                     $cond: {
                                         if: { $eq: ['$userId', appUtils.toObjectId(tokenData.userId)] },
@@ -129,11 +147,32 @@ class EventController {
                                         else: false
                                     },
                                 },
-                            }
+                                isGoing: {
+                                    $cond: {
+                                        if: {
+                                            $and: [
+                                                {
+                                                    $eq: ['$$userIdd', appUtils.toObjectId(tokenData.userId)]
+                                                },
+                                                {
+                                                    $eq: ['$$typ', CONSTANT.EVENT_INTEREST.GOING]
+                                                },
+                                                {
+                                                    $eq: ['$$status', config.CONSTANT.STATUS.ACTIVE]
+                                                }
+                                            ]
+                                        },
+                                        then: true,
+                                        else: false
+                                    }
+                                }
+                            },
                         }
+                            // }
                         ],
                     }
                 })
+
                 defaultAndInterestEveent.push({ '$unwind': { path: '$eventData', preserveNullAndEmptyArrays: true } });
 
                 defaultAndInterestEveent.push({
@@ -190,10 +229,15 @@ class EventController {
 
             defaultAndInterestEveent = [...defaultAndInterestEveent, ...await eventInterestDao.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
 
-            let myInterestedEventslist, myHostedEventslist;
+            let myInterestedEventslist, myHostedEventslist, goingEventList;
             if (params.type == config.CONSTANT.EVENT_INTEREST.INTEREST) {
                 myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
                 return { myInterestedEventslist }
+
+            }
+            else if (params.type == config.CONSTANT.EVENT_INTEREST.GOING) {
+                goingEventList = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+                return { goingEventList }
 
             }
             else if (params.type == config.CONSTANT.EVENT_INTEREST.MY_EVENT) {
@@ -203,9 +247,22 @@ class EventController {
             else {
                 myInterestedEventslist = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
                 myHostedEventslist = await eventDao.aggregateWithPagination('event', typeAggPipe, paginateOptions.limit, paginateOptions.page, true)
+
+                defaultAndInterestEveent.splice(0, 1, {
+                    $match: {
+                        status: config.CONSTANT.STATUS.ACTIVE,
+                        userId: appUtils.toObjectId(tokenData.userId),
+                        type: config.CONSTANT.EVENT_INTEREST.GOING
+                    }
+                })
+                // arr.splice(fromIndex, itemsToDelete, item1ToAdd, item2ToAdd, ...);
+
+                goingEventList = await eventInterestDao.aggregateWithPagination('event_interest', defaultAndInterestEveent, paginateOptions.limit, paginateOptions.page, true)
+
                 return {
                     myInterestedEventslist,
-                    myHostedEventslist
+                    myHostedEventslist,
+                    goingEventList
                 }
             }
 
@@ -220,7 +277,7 @@ class EventController {
       */
     async getEvent(params: UserEventRequest.getEvents, tokenData) {
         try {
-            const { distance, eventCategoryId, date, searchKey, getIpfromNtwk, startDate, endDate } = params;
+            const { distance, eventCategoryId, date, searchKey, getIpfromNtwk, startDate, endDate, isVirtual } = params;
             let { longitude, latitude, } = params;
             let pickupLocation = [];
             let aggPipe = [];
@@ -236,31 +293,19 @@ class EventController {
                     { title: reg },
                 ];
             }
-
-            if (longitude == undefined && latitude == undefined) {
-                const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
-
-                latitude = lat_lng.lat;
-                longitude = lat_lng.long;
+            if (isVirtual === false) {
+                if (longitude == undefined && latitude == undefined) {
+                    const lat_lng: any = await appUtils.getLocationByIp(getIpfromNtwk);
+                    latitude = lat_lng.lat;
+                    longitude = lat_lng.long;
+                }
+                match['isVirtual'] = false
             }
 
-
-            if (longitude != undefined && latitude != undefined) {
-                pickupLocation.push(longitude, latitude);
-                aggPipe.push({
-                    '$geoNear': {
-                        near: { type: "Point", coordinates: pickupLocation },
-                        spherical: true,
-                        maxDistance: searchDistance,
-                        distanceField: "dist",
-                    }
-                },
-                    { "$sort": { endDate: 1 } }
-                )
-                //     { "$sort": { dist: -1 } }
-                // )
-                featureAggPipe.push(
-                    {
+            if (isVirtual === false) {
+                if (longitude != undefined && latitude != undefined) {
+                    pickupLocation.push(longitude, latitude);
+                    aggPipe.push({
                         '$geoNear': {
                             near: { type: "Point", coordinates: pickupLocation },
                             spherical: true,
@@ -268,10 +313,25 @@ class EventController {
                             distanceField: "dist",
                         }
                     },
-                    { "$sort": { endDate: 1, } }
-                )
+                        { "$sort": { endDate: 1 } }
+                    )
+                    //     { "$sort": { dist: -1 } }
+                    // )
+                    featureAggPipe.push(
+                        {
+                            '$geoNear': {
+                                near: { type: "Point", coordinates: pickupLocation },
+                                spherical: true,
+                                maxDistance: searchDistance,
+                                distanceField: "dist",
+                            }
+                        },
+                        { "$sort": { endDate: 1, } }
+                    )
+                }
+            } else {
+                match['isVirtual'] = true;
             }
-
             // if(startDate)
             match['endDate'] = { $gt: new Date().getTime() }
             match['status'] = config.CONSTANT.STATUS.ACTIVE;
@@ -704,6 +764,7 @@ class EventController {
                     address: 1,
                     status: 1,
                     friends: [],
+                    isVirtual: 1,
                     // hostUser: 1,
                     hostUser: {
                         _id: 1,

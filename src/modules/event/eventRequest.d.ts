@@ -45,6 +45,7 @@ declare namespace UserEventRequest {
         getIpfromNtwk: string;
         startDate: number;
         endDate: number;
+        isVirtual: boolean;
     }
 
     export interface getEventDetail {
@@ -58,10 +59,14 @@ declare namespace UserEventRequest {
         longitude: number;
         latitude: number;
         distance: number;
-        eventCategoryId: number;
+        eventCategoryId: any;
         isFeaturedEvent: number;
-        date: string;
+        date: number;
         privacy: string;
+        // getIpfromNtwk: string;
+        // startDate: number;
+        // endDate: number;
+        isVirtual: boolean;
     }
 
 
