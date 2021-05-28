@@ -111,7 +111,7 @@ let updateEvent = Joi.object({
     //     config.CONSTANT.EVENT_CATEGORY.MEETUP.VALUE,
     //     config.CONSTANT.EVENT_CATEGORY.TRAINING.VALUE
     // ]),
-    isVirtual: Joi.boolean(),
+    isVirtual: Joi.boolean().default(false),
     allowSharing: Joi.number().allow(0, 1), //.default(true),
     description: Joi.string(),
     isFeatured: Joi.number().allow(0, 1).default(0),
