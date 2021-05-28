@@ -66,7 +66,7 @@ let addEvents = Joi.object({
         type: Joi.string().required().valid(["Point"]),
         coordinates: Joi.array().items(Joi.number())
     }),
-    address: Joi.string().required().trim(),
+    address: Joi.string().trim(),
     eventCategoryId: Joi.string().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
     // .allow([
     //     config.CONSTANT.EVENT_CATEGORY.CLASSES.VALUE,
