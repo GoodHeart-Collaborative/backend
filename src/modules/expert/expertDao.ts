@@ -1021,11 +1021,14 @@ export class ExpertDao extends BaseDao {
             const match: any = {};
 
             match.status = config.CONSTANT.STATUS.ACTIVE;
-
+            if (payload.categoryId) {
+                match['categoryId'] = appUtils.toObjectId(payload.categoryId)
+            }
             if (searchTerm) {
                 match["$or"] = [
                     { "title": { "$regex": searchTerm, "$options": "-i" } },
                     { "name": { "$regex": searchTerm, "$options": "-i" } },
+                    { "topic": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
 
@@ -1076,7 +1079,6 @@ export class ExpertDao extends BaseDao {
                 return reportedpost.push(appUtils.toObjectId(item.postId));
             });
 
-            match['categoryId'] = appUtils.toObjectId(payload.categoryId)
 
             match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC;
 
@@ -1241,12 +1243,14 @@ export class ExpertDao extends BaseDao {
 
             let match: any = {};
             let aggPipe = []
-            match['status'] = config.CONSTANT.STATUS.ACTIVE
+            match['status'] = config.CONSTANT.STATUS.ACTIVE;
+            match['privacy'] = config.CONSTANT.PRIVACY_STATUS.PUBLIC;
 
             if (searchKey) {
                 match["$or"] = [
                     { "topic": { "$regex": searchKey, "$options": "-i" } },
-                    { name: { "$regex": searchKey, "$options": "-i" } },
+                    // { name: { "$regex": searchKey, "$options": "-i" } },
+                    { topic: { "$regex": searchKey, "$options": "-i" } },
                 ];
             }
             aggPipe.push({ $match: match })
@@ -1301,7 +1305,7 @@ export class ExpertDao extends BaseDao {
             )
 
             aggPipe = [...aggPipe, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
-            let result = await this.aggregateWithPagination("expert", aggPipe)
+            let result = await this.aggregateWithPagination("expert_post", aggPipe)
             return result;
         } catch (error) {
             return Promise.reject(error)

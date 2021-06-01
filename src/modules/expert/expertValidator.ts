@@ -28,7 +28,7 @@ let categoryRelatedExperts = Joi.object({
     limit: Joi.number(),
     page: Joi.number(),
     searchTerm: Joi.string(),
-    categoryId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID).required(),
+    categoryId: Joi.string().trim().regex(config.CONSTANT.REGEX.MONGO_ID), //.required(),
     posted: Joi.number().allow([
         config.CONSTANT.DATE_FILTER.LAST_MONTH,
         config.CONSTANT.DATE_FILTER.LAST_WEEK
