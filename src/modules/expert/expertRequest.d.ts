@@ -18,6 +18,8 @@ declare namespace userExpertRequest {
         page: number;
         searchTerm: string;
         categoryId: string;
+        posted: number;
+        contentType: string;
     }
     export interface IgetExpert {
         limit: number;

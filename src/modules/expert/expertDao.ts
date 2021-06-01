@@ -103,56 +103,66 @@ export class ExpertDao extends BaseDao {
             }
             // const getCatgeory = await categoryDao.find('categories', criteria, {}, {}, { _id: -1 }, paginateOptions, {})
 
-            const newlyAdded = [
-                {
-                    $match: {
-                        status: config.CONSTANT.STATUS.ACTIVE
-                    }
-                }, {
-                    $lookup: {
-                        from: 'categories',
-                        let: { cId: '$categoryId' },
-                        as: 'categoryData',
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [{
-                                            $in: ['$_id', '$$cId'],
-                                        },
-                                        {
-                                            $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
-                                        }]
-                                    }
-                                }
-                            }
-                        ],
-                    },
-                },
-                {
-                    $sort: {
-                        _id: -1
-                    }
-                },
-                {
-                    $match: {
-                        categoryData: { $ne: [] }
-                    }
-                },
-                {
-                    $project: {
-                        categoryId: 0,
-                        status: 0,
-                        createdAt: 0,
-                        updatedAt: 0
+            // const newlyAdded = [
+            //     {
+            //         $match: {
+            //             status: config.CONSTANT.STATUS.ACTIVE
+            //         }
+            //     }, {
+            //         $lookup: {
+            //             from: 'categories',
+            //             let: { cId: '$categoryId' },
+            //             as: 'categoryData',
+            //             pipeline: [
+            //                 {
+            //                     $match: {
+            //                         $expr: {
+            //                             $and: [{
+            //                                 $in: ['$_id', '$$cId'],
+            //                             },
+            //                             {
+            //                                 $eq: ['$status', config.CONSTANT.STATUS.ACTIVE]
+            //                             }]
+            //                         }
+            //                     }
+            //                 }
+            //             ],
+            //         },
+            //     },
+            //     {
+            //         $sort: {
+            //             _id: -1
+            //         }
+            //     },
+            //     {
+            //         $match: {
+            //             categoryData: { $ne: [] }
+            //         }
+            //     },
+            //     {
+            //         $project: {
+            //             categoryId: 0,
+            //             status: 0,
+            //             createdAt: 0,
+            //             updatedAt: 0
 
-                    }
-                },
-                {
-                    $limit: paginateOptions.limit
-                }
-            ]
+            //         }
+            //     },
+            //     {
+            //         $limit: paginateOptions.limit
+            //     }
+            // ]
             // const getNewlyAddedExperts = await expertDao.aggregate('expert', newlyAdded, {});
+
+            const reportedIdsCriteria = {
+                userId: appUtils.toObjectId(payload.userId),
+                type: config.CONSTANT.HOME_TYPE.EXPERTS_POST,
+            };
+            const reportedIds = await this.find('report', reportedIdsCriteria, { postId: 1 }, {}, {}, {}, {});
+            let reportedpost = [];
+            let Ids1 = await reportedIds.map(function (item) {
+                return reportedpost.push(appUtils.toObjectId(item.postId));
+            });
             let expertPipline = []
             expertPipline = [
                 {
@@ -171,13 +181,16 @@ export class ExpertDao extends BaseDao {
                 {
                     $lookup: {
                         from: 'expert_posts',
-                        let: { cId: '$_id' },
+                        let: { cId: '$_id', reportedIds: reportedpost },
                         as: 'categoryPost',
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
                                         $and: [
+                                            {
+                                                $ne: ['$_id', reportedIds]
+                                            },
                                             {
                                                 $eq: ['$$cId', '$categoryId'],
                                             },
@@ -1021,6 +1034,38 @@ export class ExpertDao extends BaseDao {
                 pageNo: page || 1,
             };
 
+
+
+            if (payload.posted === 1) {
+                console.log('last week');
+                match['created'] = {
+                    $gte: moment().subtract(7, 'days').toDate(),
+                    $lte: moment().startOf('day').toDate()
+                    // new Date(new Date() - 7 * 60 * 60 * 24 * 1000))
+                }
+            }
+            else if (payload.posted === 2) {
+                var date = new Date(), y = date.getFullYear(), m = date.getMonth() - 1;
+                var firstDay = new Date(y, m, 1);
+                console.log('firstDay', firstDay);
+                var lastDay = new Date(y, m + 1, 0);
+
+                match['created'] = {
+                    $gt: firstDay,
+                    $lt: lastDay
+                }
+            }
+
+            if (payload.contentType) {
+                let aa = [];
+                let bb = payload.contentType.split(',')
+                for (var i = 0; i < bb.length; i++) {
+                    aa.push(parseInt(bb[i]))
+                }
+                match['contentId'] = {
+                    $in: aa
+                }
+            };
             const reportedIdsCriteria = {
                 userId: appUtils.toObjectId(payload['userId']),
                 type: config.CONSTANT.HOME_TYPE.EXPERTS_POST,
