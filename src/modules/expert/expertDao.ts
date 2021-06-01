@@ -1020,6 +1020,12 @@ export class ExpertDao extends BaseDao {
 
             const match: any = {};
 
+            const paginateOptions = {
+                limit: limit || 10,
+                page: page || 1,
+            };
+
+
             match.status = config.CONSTANT.STATUS.ACTIVE;
             if (payload.categoryId) {
                 match['categoryId'] = appUtils.toObjectId(payload.categoryId)
@@ -1031,13 +1037,6 @@ export class ExpertDao extends BaseDao {
                     { "topic": { "$regex": searchTerm, "$options": "-i" } },
                 ];
             }
-
-            const paginateOptions = {
-                limit: limit || 10,
-                pageNo: page || 1,
-            };
-
-
 
             if (payload.posted === 1) {
                 console.log('last week');
@@ -1219,8 +1218,8 @@ export class ExpertDao extends BaseDao {
                     },
                 }
             });
-            categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(limit, page)];
-            let result = await this.aggregateWithPagination("expert_post", categoryPipeline, limit, page, true)
+            categoryPipeline = [...categoryPipeline, ...await this.addSkipLimit(paginateOptions.limit, paginateOptions.page)];
+            let result = await this.aggregateWithPagination("expert_post", categoryPipeline, paginateOptions.limit, paginateOptions.page, true)
 
             return result;
         } catch (error) {
