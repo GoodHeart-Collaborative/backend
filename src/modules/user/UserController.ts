@@ -101,8 +101,9 @@ export class UserController {
 				let generateOtp;
 				if (config.SERVER.ENVIRONMENT == "production") {
 					generateOtp = await appUtils.generateOtp().toString()
+				} else {
+					generateOtp = CONSTANT.BYPASS_OTP
 				}
-				generateOtp = CONSTANT.BYPASS_OTP
 				// const generateOtp = await appUtils.generateOtp();
 
 				params['mobileOtp'] = generateOtp.toString();
@@ -721,8 +722,9 @@ export class UserController {
 						let generateOtp;
 						if (config.SERVER.ENVIRONMENT == "production") {
 							generateOtp = await appUtils.generateOtp().toString()
+						} else {
+							generateOtp = CONSTANT.BYPASS_OTP
 						}
-						generateOtp = CONSTANT.BYPASS_OTP
 						// const generateOtp = await appUtils.generateOtp();
 
 						params['mobileOtp'] = generateOtp.toString();
@@ -975,8 +977,9 @@ export class UserController {
 			let generateOtp;
 			if (config.SERVER.ENVIRONMENT == "production") {
 				generateOtp = await appUtils.generateOtp().toString()
+			} else {
+				generateOtp = CONSTANT.BYPASS_OTP
 			}
-			generateOtp = CONSTANT.BYPASS_OTP
 			const dataToUpdate = {
 				mobileOtp: generateOtp
 			}
