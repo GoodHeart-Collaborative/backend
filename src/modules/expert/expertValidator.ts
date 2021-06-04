@@ -55,7 +55,8 @@ let expertDetailAndPosts = Joi.object({
         config.CONSTANT.DATE_FILTER.LAST_MONTH,
         config.CONSTANT.DATE_FILTER.LAST_WEEK
     ]).description('1-lastWeek, 2-lastMonth'),
-    contentType: Joi.string().description('1-image ,2- video ,3- article')
+    contentType: Joi.string().description('1-image ,2- video ,3- article'),
+    categoryId: Joi.string().required(),
 })
 
 let postId = Joi.object({

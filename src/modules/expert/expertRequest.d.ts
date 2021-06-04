@@ -35,6 +35,7 @@ declare namespace userExpertRequest {
         expertId: string;
         posted: number;
         contentType: string;
+        categoryId: string;
 
     }
     export interface IPostId {
