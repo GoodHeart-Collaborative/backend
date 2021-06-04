@@ -100,13 +100,13 @@ export class UserController {
 
 				let generateOtp;
 				if (config.SERVER.ENVIRONMENT == "production") {
-					generateOtp = await appUtils.generateOtp().toString()
+					generateOtp = (await appUtils.generateOtp()).toString()
 				} else {
 					generateOtp = CONSTANT.BYPASS_OTP
 				}
 				// const generateOtp = await appUtils.generateOtp();
 
-				params['mobileOtp'] = generateOtp.toString();
+				params['mobileOtp'] = generateOtp;
 
 				const step2 = await userDao.signup(params);
 				const salt = await appUtils.CryptDataMD5(step2._id + "." + new Date().getTime() + "." + params.deviceId);
@@ -232,6 +232,18 @@ export class UserController {
 					if (params.mobileNo && !step2) {
 						// const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
 						const step4 = loginHistoryDao.createUserLoginHistory(tokenData);
+
+						let generateOtp;
+						if (config.SERVER.ENVIRONMENT == "production") {
+							generateOtp = (await appUtils.generateOtp()).toString()
+						} else {
+							generateOtp = CONSTANT.BYPASS_OTP
+						}
+						// const generateOtp = await appUtils.generateOtp();
+
+						params['mobileOtp'] = generateOtp;
+						let body = userConstant.MESSAGES.OTP_TEXT(generateOtp);
+						smsManager.sendMessageViaAWS(params.countryCode, params.mobileNo, body);
 						// return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: accessToken })
 						return userConstant.MESSAGES.SUCCESS.MOBILE_NOT_VERIFIED({ profileStep: config.CONSTANT.HTTP_STATUS_CODE.MOBILE_NO_NOT_VERIFY, accessToken: '' })
 
@@ -721,13 +733,14 @@ export class UserController {
 						console.log('FOR_MOBILE_MESSAGE_OTP');
 						let generateOtp;
 						if (config.SERVER.ENVIRONMENT == "production") {
-							generateOtp = await appUtils.generateOtp().toString()
+							generateOtp = (await appUtils.generateOtp()).toString()
+							console.log('generateOtpgenerateOtpgenerateOtp', generateOtp);
 						} else {
-							generateOtp = CONSTANT.BYPASS_OTP
+							generateOtp = await CONSTANT.BYPASS_OTP
 						}
 						// const generateOtp = await appUtils.generateOtp();
 
-						params['mobileOtp'] = generateOtp.toString();
+						// params['mobileOtp'] = generateOtp.toString();
 						// const generateOtp = await appUtils.generateOtp();
 
 						// const generateOtp = (await appUtils.generateOtp()).toString();
@@ -976,7 +989,7 @@ export class UserController {
 			// const generateOtp = await (await appUtils.generateOtp()).toString();	
 			let generateOtp;
 			if (config.SERVER.ENVIRONMENT == "production") {
-				generateOtp = await appUtils.generateOtp().toString()
+				generateOtp = (await appUtils.generateOtp()).toString()
 			} else {
 				generateOtp = CONSTANT.BYPASS_OTP
 			}
