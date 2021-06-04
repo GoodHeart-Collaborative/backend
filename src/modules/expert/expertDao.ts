@@ -470,7 +470,7 @@ export class ExpertDao extends BaseDao {
             //         $gt: ['$createdAt',]
             //     })
             // }
-            match['categoryId'] = payload.categoryId
+            match['categoryId'] = appUtils.toObjectId(payload.categoryId)
 
             const reportedIdsCriteria = {
                 userId: appUtils.toObjectId(payload.userId),
