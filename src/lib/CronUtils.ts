@@ -61,7 +61,7 @@ export class CronUtils extends BaseDao {
 				$match: {
 					status: config.CONSTANT.STATUS.ACTIVE,
 					adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
-					countMember: minMemberCount.memberOfDayCount,
+					countMember: 0,// minMemberCount.memberOfDayCount,
 					profession: { $ne: "" },
 					firstName: { $exists: true },
 				}
@@ -127,8 +127,10 @@ export class CronUtils extends BaseDao {
 	}
 
 	async updateCount(minMemberCount) {
-		const findGlobalCount = await userDao.findOneAndUpdate('global_var', { _id: minMemberCount._id }, { memberOfDayCount: minMemberCount.memberOfDayCount + 1 }, {});
+		// const findGlobalCount = await userDao.findOneAndUpdate('global_var', { _id: minMemberCount._id }, { memberOfDayCount: minMemberCount.memberOfDayCount + 1 }, {});
+		await userDao.updateMany('users', { countMember: 1 }, { countMember: 0 }, {})
 		this.createMember();
+
 	}
 
 	async eventReminder() {
