@@ -15,7 +15,7 @@ export const cronRoute: ServerRoute[] = [
         handler: async (request: Request, h: ResponseToolkit) => {
             const payload = request.query;
             try {
-                const result = await cronJob.init(payload);
+                const result = await cronJob.init();
 
                 return responseHandler.sendSuccess(h, result);
             } catch (error) {

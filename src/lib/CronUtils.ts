@@ -16,37 +16,40 @@ let task3;
 
 export class CronUtils extends BaseDao {
 
-	init(payload) {
+	init() {
 		console.log("Cron job");
 		// this will execute on the server time at 00:01:00 each day by server time
-		// task = cron.schedule("*/1 * * * *") //, async function () {
-		// task = cron.schedule('* * * * * *', function () {
-		// 	console.log("this will execute on the server time at 00:01:00 each day by server time");
-		// 	cronJob.createMember();
+		task = cron.schedule(" */1 * * * *", () => {
+			// task = cron.schedule('* * * * * *', function () {
+			console.log("this will execute on the server time at 00:01:00 each day by server time");
+			this.createMember()
+			// cronJob.createMember();
+			// }, { scheduled: false });
+			// task.start();
 
-		// }, { scheduled: false });
-		// task.start();
+			// task2.start();
 
-		// task2 = cron.schedule("*/10 * * * *", () => {  //every past 10 minute
-		// 	this.eventReminder();
-		// }, { scheduled: false });
+			// task3 = cron.schedule("0 0 0 * * *", async () => {
+			// 	await subscriptionController.verifySubscriptionRenewal();
+			// }, { schedule: false });
+			// task3.start();
 
-		// task2.start();
+			// type: Joi.string().allow(['memberOfDay', 'subscription', 'eventReminder']),
 
-		// task3 = cron.schedule("0 0 0 * * *", async () => {
-		// 	await subscriptionController.verifySubscriptionRenewal();
-		// }, { schedule: false });
-		// task3.start();
+			// if (payload.type === 'memberOfDay') {
+			// this.createMember()
+			// } else if (payload.type === 'subscription') {
+			// } else if (payload.type === 'eventReminder') {
+			// this.eventReminder()
+			// }
 
-		// type: Joi.string().allow(['memberOfDay', 'subscription', 'eventReminder']),
+			subscriptionController.verifySubscriptionRenewal();
 
-		// if (payload.type === 'memberOfDay') {
-		this.createMember()
-		// } else if (payload.type === 'subscription') {
-		subscriptionController.verifySubscriptionRenewal();
-		// } else if (payload.type === 'eventReminder') {
-		// this.eventReminder()
-		// }
+		})
+		task2 = cron.schedule("*/10 * * * *", () => {  //every past 10 minute
+			this.eventReminder();
+		}, { scheduled: false });
+
 	}
 
 	async createMember() {

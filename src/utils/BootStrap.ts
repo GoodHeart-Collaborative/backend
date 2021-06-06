@@ -80,7 +80,9 @@ export class BootStrap {
 	}
 
 	async generateMemberOfDay() {
-		// cronJob.init();
+		console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>generateMemberOfDay');
+
+		await cronJob.init()
 		try {
 			let a = 0;
 			// if (globalVariable = 1) {
@@ -124,30 +126,30 @@ export class BootStrap {
 
 
 			// }
-			const checkMember = await userDao.findOne('users', { isMemberOfDay: true }, {}, {});
-			console.log('checkMember', checkMember);
+			// const checkMember = await userDao.findOne('users', { isMemberOfDay: true }, {}, {});
+			// console.log('checkMember', checkMember);
 
-			if (!checkMember) {
-				const criteria = [
-					{
-						$match: {
-							status: config.CONSTANT.STATUS.ACTIVE,
-							adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
-							countMember: 1,//minMemberCount.memberOfDayCount,
-							profession: { $ne: "" },
-						}
-					},
-					{ $sample: { size: 1 } } // You want to get 5 docs
-				];
-				const isUsers = await userDao.findOne('users', criteria, {}, {})
-				console.log('22', isUsers);
+			// if (!checkMember) {
+			// 	const criteria = [
+			// 		{
+			// 			$match: {
+			// 				status: config.CONSTANT.STATUS.ACTIVE,
+			// 				adminStatus: config.CONSTANT.USER_ADMIN_STATUS.VERIFIED,
+			// 				countMember: 1,//minMemberCount.memberOfDayCount,
+			// 				profession: { $ne: "" },
+			// 			}
+			// 		},
+			// 		{ $sample: { size: 1 } } // You want to get 5 docs
+			// 	];
+			// 	const isUsers = await userDao.findOne('users', criteria, {}, {})
+			// 	console.log('22', isUsers);
 
-				if (!isUsers) {
-					await userDao.insert('global_var', { memberOfDayCount: 0 }, {})
-					cronJob.createMember()
-				}
-				return
-			}
+			// 	if (!isUsers) {
+			// 		await userDao.insert('global_var', { memberOfDayCount: 0 }, {})
+			// 		cronJob.createMember()
+			// 	}
+			// 	return
+			// }
 			// CronUtils.init();
 			return;
 		} catch (error) {
