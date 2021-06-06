@@ -19,7 +19,7 @@ export class CronUtils extends BaseDao {
 	init() {
 		console.log("Cron job");
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule(" */1 * * * *", () => {
+		task = cron.schedule(" 0 0 * * *", () => {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			this.createMember()
