@@ -19,7 +19,7 @@ export class CronUtils extends BaseDao {
 	init() {
 		console.log("Cron job");
 		// this will execute on the server time at 00:01:00 each day by server time
-		task = cron.schedule(" 1 0 * * *", () => {
+		task = cron.schedule(" */1 * * * *", () => {
 			// task = cron.schedule('* * * * * *', function () {
 			console.log("this will execute on the server time at 00:01:00 each day by server time");
 			this.createMember()
@@ -46,6 +46,7 @@ export class CronUtils extends BaseDao {
 			subscriptionController.verifySubscriptionRenewal();
 
 		})
+		
 		task2 = cron.schedule("*/10 * * * *", () => {  //every past 10 minute
 			this.eventReminder();
 		}, { scheduled: false });
@@ -64,6 +65,7 @@ export class CronUtils extends BaseDao {
 					countMember: 0,// minMemberCount.memberOfDayCount,
 					profession: { $ne: "" },
 					firstName: { $exists: true },
+					experience: { $exixts: true }
 				}
 			},
 			{ $sample: { size: 1 } } // You want to get 5 docs
