@@ -8,12 +8,12 @@ import * as  CategoryConstant from '@modules/admin/catgeory/';
 import * as apputils from '@utils/appUtils'
 class CategoryController {
 
-	/**
-	 * @function addCategory
-	 * @description admin add category name is unique
-	 * @returns object
-	 * @author Shubham Maheshwari
-	 */
+    /**
+     * @function addCategory
+     * @description admin add category name is unique
+     * @returns object
+     * @author Shubham Maheshwari
+     */
     async addCategory(params: CategoryRequest.CategoryAdd) {
         try {
 
