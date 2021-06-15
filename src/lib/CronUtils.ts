@@ -65,7 +65,8 @@ export class CronUtils extends BaseDao {
 					countMember: 0,// minMemberCount.memberOfDayCount,
 					profession: { $ne: "" },
 					firstName: { $exists: true },
-					experience: { $exixts: true }
+					experience: { $exists: true }
+					// email : not equal to n/a can be 
 				}
 			},
 			{ $sample: { size: 1 } } // You want to get 5 docs
@@ -81,7 +82,7 @@ export class CronUtils extends BaseDao {
 		const params: any = {};
 
 		if (!getUsers || !getUsers[0]) {
-			const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
+			// const updatePreviousMemberToFalse = await userDao.findOneAndUpdate('users', { isMemberOfDay: true }, { isMemberOfDay: false }, {});
 			await this.updateCount(minMemberCount);
 			return;
 		}
@@ -131,7 +132,7 @@ export class CronUtils extends BaseDao {
 	async updateCount(minMemberCount) {
 		// const findGlobalCount = await userDao.findOneAndUpdate('global_var', { _id: minMemberCount._id }, { memberOfDayCount: minMemberCount.memberOfDayCount + 1 }, {});
 		await userDao.updateMany('users', { countMember: 1 }, { countMember: 0 }, {})
-		this.createMember();
+		await this.createMember();
 
 	}
 
