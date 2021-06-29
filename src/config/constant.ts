@@ -226,7 +226,8 @@ export const INDUSTRIES = {
 	LAW_ENFORCEMENT: 4,
 	HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES: 5,
 	Mental_Health: 6,
-	Education: 7
+	Education: 7,
+	Legal_Profession: 8
 };
 
 export const PROFESSION_TYPE = {
@@ -247,7 +248,11 @@ export const PROFESSION_TYPE = {
 	Caregiver: "Caregiver",
 	Doctor_Nurse_Medical_Staff: "Doctor/Nurse/Medical Staff",
 	Teacher_School_Staff: "Teacher/School Staff",
-	First_Responder: "First Responder"
+	First_Responder: "First Responder",
+	Attorney: "Attorney",
+	Lawyer: "Lawyer",
+	Paralegal: "Paralegal",
+	Judge: "Judge"
 }
 
 const SOCIAL_LOGIN_TYPE = {

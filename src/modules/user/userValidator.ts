@@ -220,6 +220,20 @@ let updateProfile = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Doctor_Nurse_Medical_Staff,
         config.CONSTANT.PROFESSION_TYPE.Teacher_School_Staff,
         config.CONSTANT.PROFESSION_TYPE.First_Responder,
+
+
+        config.CONSTANT.PROFESSION_TYPE.Licensed_Counselor,
+        config.CONSTANT.PROFESSION_TYPE.Professional_Coach,
+        config.CONSTANT.PROFESSION_TYPE.Consultant,
+        config.CONSTANT.PROFESSION_TYPE.Professor,
+        config.CONSTANT.PROFESSION_TYPE.Professional_Trainer,
+
+        config.CONSTANT.PROFESSION_TYPE.Attorney,
+        config.CONSTANT.PROFESSION_TYPE.Lawyer,
+        config.CONSTANT.PROFESSION_TYPE.Paralegal,
+        config.CONSTANT.PROFESSION_TYPE.Judge,
+
+
     ]),
     companyName: Joi.string().trim().optional(),
     // userName: Joi.string(),
@@ -260,7 +274,22 @@ let updateProfileUser = Joi.object({
         config.CONSTANT.PROFESSION_TYPE.Doctor_Nurse_Medical_Staff,
         config.CONSTANT.PROFESSION_TYPE.Teacher_School_Staff,
         config.CONSTANT.PROFESSION_TYPE.First_Responder,
-        config.CONSTANT.PROFESSION_TYPE.Therapist_Counselor
+        config.CONSTANT.PROFESSION_TYPE.Therapist_Counselor,
+
+
+        config.CONSTANT.PROFESSION_TYPE.Licensed_Counselor,
+        config.CONSTANT.PROFESSION_TYPE.Professional_Coach,
+        config.CONSTANT.PROFESSION_TYPE.Consultant,
+        config.CONSTANT.PROFESSION_TYPE.Professor,
+        config.CONSTANT.PROFESSION_TYPE.Professional_Trainer,
+
+        config.CONSTANT.PROFESSION_TYPE.Attorney,
+        config.CONSTANT.PROFESSION_TYPE.Lawyer,
+        config.CONSTANT.PROFESSION_TYPE.Paralegal,
+        config.CONSTANT.PROFESSION_TYPE.Judge,
+
+
+
     ]).required(),
     email: Joi.string().email().required(),
     // firstName: Joi.string().regex(config.CONSTANT.REGEX)required(),

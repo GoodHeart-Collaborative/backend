@@ -99,8 +99,18 @@ const userSchema = new Schema({
 			config.CONSTANT.PROFESSION_TYPE.Doctor_Nurse_Medical_Staff,
 			config.CONSTANT.PROFESSION_TYPE.Teacher_School_Staff,
 			config.CONSTANT.PROFESSION_TYPE.First_Responder,
-			config.CONSTANT.PROFESSION_TYPE.Therapist_Counselor
+			config.CONSTANT.PROFESSION_TYPE.Therapist_Counselor,
 
+			config.CONSTANT.PROFESSION_TYPE.Licensed_Counselor,
+			config.CONSTANT.PROFESSION_TYPE.Professional_Coach,
+			config.CONSTANT.PROFESSION_TYPE.Consultant,
+			config.CONSTANT.PROFESSION_TYPE.Professor,
+			config.CONSTANT.PROFESSION_TYPE.Professional_Trainer,
+
+			config.CONSTANT.PROFESSION_TYPE.Attorney,
+			config.CONSTANT.PROFESSION_TYPE.Lawyer,
+			config.CONSTANT.PROFESSION_TYPE.Paralegal,
+			config.CONSTANT.PROFESSION_TYPE.Judge,
 		]
 	},
 	companyName: { type: String },
@@ -160,6 +170,7 @@ const userSchema = new Schema({
 			config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
 			config.INDUSTRIES.Mental_Health,
 			config.INDUSTRIES.Education,
+			config.INDUSTRIES.Legal_Profession,
 		],
 		// default: config.INDUSTRIES.NONPROFIT
 	},
