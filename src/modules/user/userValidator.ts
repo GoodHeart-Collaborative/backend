@@ -245,6 +245,7 @@ let updateProfile = Joi.object({
         config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
         config.INDUSTRIES.Mental_Health,
         config.INDUSTRIES.Education,
+        config.INDUSTRIES.Legal_Profession
     ]),
     experience: Joi.string().valid([
         // config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
@@ -321,7 +322,8 @@ let updateProfileUser = Joi.object({
         config.INDUSTRIES.LAW_ENFORCEMENT,
         config.INDUSTRIES.HEALTHCARE_AND_COMMUNITY_MEDICAL_SERVICES,
         config.INDUSTRIES.Mental_Health,
-        config.INDUSTRIES.Education
+        config.INDUSTRIES.Education,
+        config.INDUSTRIES.Legal_Profession
     ]).required(),
     experience: Joi.string().valid([
         // config.CONSTANT.EXPERIENCE_LEVEL.JUNIOR,
