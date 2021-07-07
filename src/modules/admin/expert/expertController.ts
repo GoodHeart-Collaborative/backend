@@ -162,12 +162,14 @@ class ExpertController {
             }
             const data = await expertDao.updateOne('expert', criteria, dataToUpdate, {})
 
+            const expertPostCriteria = {
+                expertId: params.expertId
+            }
             const updateData = {
-                expertId: params.expertId,
                 expertName: params.name,
                 profilePicUrl: params.profilePicUrl
             }
-            const expertPost = expertPostDao.updateMany('expert_post', criteria, updateData, {})
+            const expertPost = expertPostDao.updateMany('expert_post', expertPostCriteria, updateData, {})
 
             if (!data) {
                 return expertConstant.MESSAGES.SUCCESS.SUCCESS_WITH_NO_DATA;
