@@ -163,6 +163,7 @@ class ExpertController {
             const data = await expertDao.updateOne('expert', criteria, dataToUpdate, {})
 
             const updateData = {
+                expertId: params.expertId,
                 expertName: params.name,
                 profilePicUrl: params.profilePicUrl
             }
