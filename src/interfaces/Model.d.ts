@@ -131,4 +131,5 @@ declare type ModelNames =
 	'forum' |
 	'report' |
 	'global_var' |
-	'subscription';
+	'subscription' |
+	'selfCare'

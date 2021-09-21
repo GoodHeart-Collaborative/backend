@@ -140,7 +140,8 @@ const DB_MODEL_REF: any = {
 	FORUM: "forum",
 	REPORT: "report",
 	GLOBAL_VARIABLE: "global_var",
-	SUBSCRIPTION: "subscription"
+	SUBSCRIPTION: "subscription",
+	SELF_CARE: 'selfCare'
 };
 
 const DEVICE_TYPE = {

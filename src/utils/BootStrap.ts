@@ -7,6 +7,9 @@ import { cronJob } from "@lib/CronUtils";
 import { Database } from "@utils/Database";
 import { userDao } from "@modules/user";
 import { global_var } from "@modules/models";
+import {
+	redisClient
+} from "@lib/index"
 
 export class BootStrap {
 
@@ -19,6 +22,8 @@ export class BootStrap {
 		await this.generateMemberOfDay();
 
 		console.log("Init Request");
+		redisClient.init()
+		// console.log('aaaaaaaaaaaa', aa);
 
 		// ENABLE/DISABLE Console Logs
 		if (config.SERVER.ENVIRONMENT === "production") {

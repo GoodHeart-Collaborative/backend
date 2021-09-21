@@ -9,3 +9,4 @@ export { logger } from "./logger";
 export { mailManager } from "./MailManager";
 export { smsManager } from "./SMSManager";
 export * from "./tokenManager";
+export { redisClient } from '../lib/redis/RedisClient'

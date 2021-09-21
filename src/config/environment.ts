@@ -51,7 +51,7 @@ switch (ENVIRONMENT) {
 			dotenv.config({ path: ".env.production" });
 		} else {
 			process.exit(1);
-		}​​
+		}
 		break;
 	}
 	case "default": {
@@ -179,6 +179,13 @@ export const SERVER = Object.freeze({
 		SMALL_BUCKET: process.env["SMALL_PHOTOS"],
 		LARGE_BUUCKET: process.env["LARGE_PHOTOS"],
 		MEDIUM_BUCKET: process.env["MEDIUM_PHOTOS"]
+	},
+	REDIS: {
+		HOST: process.env['REDIS_HOST'],
+		PORT: process.env['REDIS_PORT'],
+		DB: process.env['REDIS_DB'],
+		NAMESPACE: 'AirHireApp',
+		APP_NAME: 'AirhireMe',
 	},
 	ENVIRONMENT: process.env["NODE_ENV"],
 	IP: process.env["IP"],

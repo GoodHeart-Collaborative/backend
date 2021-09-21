@@ -58,6 +58,8 @@ import { AdminReportRoutes as AdminReportRoutesV1 } from "@modules/admin/report/
 
 import { subscriptionRoute as SubscriptionRoutesV1 } from "@modules/subscription/subscriptionRoute";
 import { cronRoute as cronRoutesV1 } from '@modules/cron/cronRoutes';
+import { selfCareRoutes as selfCareRoutesV1 } from '@modules/selfCare/selfCareRoute';
+
 const baseRoute = [
 	{
 		method: ["GET", "POST", "PUT", "DEconst E", "OPTIONS", "PATCH"],
@@ -107,5 +109,6 @@ export const routes: ServerRoute[] = [
 	...ReportRouteV1,
 	...AdminReportRoutesV1,
 	...SubscriptionRoutesV1,
-	...cronRoutesV1
+	...cronRoutesV1,
+	...selfCareRoutesV1
 ];
